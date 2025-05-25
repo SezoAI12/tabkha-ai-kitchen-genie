@@ -13,7 +13,7 @@ import { Link } from 'react-router-dom';
 import { DailyIndependenceChallenges } from '@/components/health/DailyIndependenceChallenges';
 import { BMICalculator } from '@/components/health/BMICalculator';
 import { useRTL } from '@/contexts/RTLContext';
-import { useUserHealth } from './useUserHealth';
+import { useUserHealth } from '@/hooks/useUserHealth';
 
 const IngredientSwapCard = ({ swap, t }) => (
   <Card className="border border-gray-200 dark:border-gray-700">
