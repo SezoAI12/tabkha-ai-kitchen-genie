@@ -208,7 +208,7 @@ export default function FindRecipePage() {
               <Card className="shadow-lg">
                 <CardHeader>
                   <CardTitle className="text-2xl font-bold text-center text-primary">
-                    2. Select Subcategory
+                    Select Subcategory
                     {selectedMainCategory && <span className="text-xl text-gray-600 ml-2">({selectedMainCategory})</span>}
                   </CardTitle>
                 </CardHeader>
