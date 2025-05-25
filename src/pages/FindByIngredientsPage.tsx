@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   ShoppingBag, Plus, Trash2, FileText, Share2, Search, Copy, Filter,
-  Apple, Carrot, Fish, Bread, Milk, Egg, Cheese, Wine, Coffee, Leaf, Droplet, Candy, Cake, Utensils
+  Apple, Carrot, Fish, Milk, Egg, Wine, Coffee, Leaf, Droplet, Candy, Cake, Utensils
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -30,7 +31,7 @@ const categoryIcons = {
   'Meat': <Utensils className="h-4 w-4" />,
   'Oils': <Droplet className="h-4 w-4" />,
   'Vegetables': <Carrot className="h-4 w-4" />,
-  'Grains': <Bread className="h-4 w-4" />,
+  'Grains': <Utensils className="h-4 w-4" />,
   'Dairy': <Milk className="h-4 w-4" />,
   'Fruits': <Apple className="h-4 w-4" />,
   'Other': <Leaf className="h-4 w-4" />,
@@ -133,7 +134,7 @@ export default function ShoppingListPage() {
     if (itemToEdit) {
       setEditingItemId(id);
       setNewItemName(itemToEdit.name);
-      setNewItemQuantity(itemToEdit.quantity);
+      setNewItemQuantity(itemToEdit.quantity.toString());
       setNewItemUnit(itemToEdit.unit);
       setNewItemCategory(itemToEdit.category);
     }

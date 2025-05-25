@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
@@ -119,7 +120,7 @@ export default function ShoppingListPage() {
     if (itemToEdit) {
       setEditingItemId(id);
       setNewItemName(itemToEdit.name);
-      setNewItemQuantity(itemToEdit.quantity);
+      setNewItemQuantity(itemToEdit.quantity.toString());
       setNewItemUnit(itemToEdit.unit);
       setNewItemCategory(itemToEdit.category);
     }
