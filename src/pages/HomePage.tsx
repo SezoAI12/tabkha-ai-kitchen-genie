@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { TodayMealPlan } from '@/components/home/TodayMealPlan';
 import { ExpiringIngredients } from '@/components/home/ExpiringIngredients';
 import { motion } from 'framer-motion';
-import { NutritionTip } from '@/components/nutrition/NutritionTip';
+// import { NutritionTip } from '@/components/nutrition/NutritionTip'; // Removed import
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTheme } from 'next-themes';
 
@@ -126,15 +126,7 @@ const HomePage = () => {
           </Link>
         </motion.div>
 
-        {/* Nutrition Tip */}
-        <div className="my-4">
-          <NutritionTip
-            tip="Our AI analysis of your recent meals suggests you might benefit from more lean protein. Try our salmon with broccoli recipe for dinner tonight."
-            source="Wasfah AI"
-            type="ai"
-            onApply={() => console.log("Applied AI tip")}
-          />
-        </div>
+        {/* Nutrition Tip section has been removed */}
 
         {/* Main Features Grid with Icons only */}
         <div>
