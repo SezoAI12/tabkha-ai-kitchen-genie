@@ -1,112 +1,129 @@
-// MealPlanningScreen.js
 
-import React, { useState, useRef, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  FlatList,
-  ScrollView,
-  Modal,
-  Alert,
-  Keyboard,
-  Platform,
-  UIManager,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/Feather'; // Requires 'react-native-vector-icons'
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Plus, ChevronLeft, ChevronRight, Trash2, Zap, ShoppingCart, Printer } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
-// For better dropdowns (optional, but recommended for UX)
-// import { Picker } from '@react-native-picker/picker'; // Requires '@react-native-picker/picker'
-
-// Enable LayoutAnimation for smooth UI transitions (e.g., adding/removing items)
-if (Platform.OS === 'android') {
-  UIManager.setLayoutAnimationEnabledExperimental &&
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-}
-
-// --- Mock Data & Helpers (for UI demonstration purposes) ---
-const mockRecipes = [
-  { id: 'rec1', name: 'Chicken Stir-fry', category: 'Dinner', baseServings: 4, ingredients: [] },
-  { id: 'rec2', name: 'Oatmeal', category: 'Breakfast', baseServings: 1, ingredients: [] },
-  { id: 'rec3', name: 'Quinoa Salad', category: 'Lunch', baseServings: 2, ingredients: [] },
-  { id: 'rec4', name: 'Fruit Smoothie', category: 'Snack', baseServings: 1, ingredients: [] },
-  { id: 'rec5', name: 'Lentil Soup', category: 'Dinner', baseServings: 6, ingredients: [] },
-  { id: 'rec6', name: 'Scrambled Eggs', category: 'Breakfast', baseServings: 1, ingredients: [] },
-  { id: 'rec7', name: 'Pasta with Pesto', category: 'Dinner', baseServings: 4, ingredients: [] },
-  { id: 'rec8', name: 'Turkey Sandwich', category: 'Lunch', baseServings: 1, ingredients: [] },
-];
-
-const getWeekDays = (startDate) => {
+// --- Helper Functions ---
+const getWeekDays = (startDate: Date) => {
   const days = [];
   for (let i = 0; i < 7; i++) {
     const date = new Date(startDate);
     date.setDate(startDate.getDate() + i);
-    days.push(date.toISOString().split('T')[0]); // YYYY-MM-DD format
+    days.push(date.toISOString().split('T')[0]); // YYYY-MM-DD
   }
   return days;
 };
 
-const formatDateForDisplay = (isoString) => {
+const formatDateForDisplay = (isoString: string) => {
   const date = new Date(isoString);
-  return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  return date.toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric'
+  });
 };
 
-const getMealTypeLabel = (type) => {
-    switch (type) {
-        case 'breakfast': return 'Breakfast';
-        case 'lunch': return 'Lunch';
-        case 'dinner': return 'Dinner';
-        case 'snack': return 'Snack';
-        default: return '';
-    }
+const getMealTypeLabel = (type: string) => {
+  switch (type) {
+    case 'breakfast': return 'Breakfast';
+    case 'lunch': return 'Lunch';
+    case 'dinner': return 'Dinner';
+    case 'snack': return 'Snack';
+    default: return '';
+  }
 };
 
-const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
-const categories = [...new Set(mockRecipes.map(r => r.category))]; // For category pickers
+interface Recipe {
+  id: string;
+  name: string;
+  category: string;
+}
 
-// --- Main Component ---
-const MealPlanningScreen = () => {
-  // --- State Management for UI/UX ---
-  const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
-  // Meal plan structure: Array of objects with date, mealType, type ('recipe' or 'custom'), etc.
-  const [mealPlan, setMealPlan] = useState([]);
-  const [isAddMealModalVisible, setIsAddMealModalVisible] = useState(false);
+interface Meal {
+  id: string;
+  type: 'recipe' | 'custom';
+  recipeId?: string;
+  customText?: string;
+  servings?: number;
+  date: string;
+  mealType: string;
+  addedDate: string;
+}
+
+const MealPlanPage = () => {
+  const { toast } = useToast();
   
-  // State for new meal form
-  const [selectedRecipeForNewMeal, setSelectedRecipeForNewMeal] = useState(null); // Full recipe object
+  // --- State Management ---
+  const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
+  const [mealPlan, setMealPlan] = useState<Meal[]>([]);
+  const [isAddingMeal, setIsAddingMeal] = useState(false);
+  const [newMealRecipeId, setNewMealRecipeId] = useState<string | null>(null);
   const [newMealCustomText, setNewMealCustomText] = useState('');
   const [newMealDate, setNewMealDate] = useState(getWeekDays(new Date())[0]);
   const [newMealType, setNewMealType] = useState('lunch');
-  const [newMealServings, setNewMealServings] = useState('1'); // String for TextInput
-
-  // State for inline editing
-  const [editingMealId, setEditingMealId] = useState(null);
-  const [editingFieldName, setEditingFieldName] = useState(null); // 'name', 'servings', 'category'
-  const editingInputRef = useRef(null); // Ref for auto-focusing inline editor
-
-  // State for recipe search within modal
+  const [newMealServings, setNewMealServings] = useState('1');
+  const [editingMealId, setEditingMealId] = useState<string | null>(null);
+  const [editingFieldName, setEditingFieldName] = useState<string | null>(null);
+  const editingInputRef = useRef<HTMLInputElement>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredRecipes, setFilteredRecipes] = useState([]);
 
-  // Memoize week days to avoid re-calculating on every render
-  const weekDays = React.useMemo(() => getWeekDays(currentWeekStart), [currentWeekStart]);
+  // Mock data for recipes
+  const mockRecipes: Recipe[] = [
+    { id: 'rec1', name: 'Chicken Stir-fry', category: 'Dinner' },
+    { id: 'rec2', name: 'Oatmeal', category: 'Breakfast' },
+    { id: 'rec3', name: 'Quinoa Salad', category: 'Lunch' },
+    { id: 'rec4', name: 'Fruit Smoothie', category: 'Snack' },
+    { id: 'rec5', name: 'Lentil Soup', category: 'Dinner' }
+  ];
 
-  // --- Mock Data Loading (Replace with actual data fetching/persistence) ---
+  const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
+  const weekDays = useMemo(() => getWeekDays(currentWeekStart), [currentWeekStart]);
+
+  // Filter recipes based on search
+  const filteredRecipes = mockRecipes.filter(recipe =>
+    recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // --- Mock Data Loading ---
   useEffect(() => {
-    // Simulate loading a meal plan for the current week
     setMealPlan([
-      { id: 'm1', type: 'recipe', recipeId: 'rec1', servings: 4, date: weekDays[0], mealType: 'dinner', addedDate: new Date().toISOString() },
-      { id: 'm2', type: 'custom', customText: 'Eating Out', date: weekDays[1], mealType: 'dinner', addedDate: new Date().toISOString() },
-      { id: 'm3', type: 'recipe', recipeId: 'rec3', servings: 2, date: weekDays[2], mealType: 'lunch', addedDate: new Date().toISOString() },
-      { id: 'm4', type: 'recipe', recipeId: 'rec4', servings: 1, date: weekDays[0], mealType: 'snack', addedDate: new Date(Date.now() - 86400000 * 3).toISOString() }, // Older date for "added date"
+      {
+        id: 'm1',
+        type: 'recipe',
+        recipeId: 'rec1',
+        servings: 2,
+        date: weekDays[0],
+        mealType: 'dinner',
+        addedDate: new Date().toISOString()
+      },
+      {
+        id: 'm2',
+        type: 'custom',
+        customText: 'Eating Out',
+        date: weekDays[1],
+        mealType: 'dinner',
+        addedDate: new Date().toISOString()
+      },
+      {
+        id: 'm3',
+        type: 'recipe',
+        recipeId: 'rec3',
+        servings: 1,
+        date: weekDays[2],
+        mealType: 'lunch',
+        addedDate: new Date().toISOString()
+      }
     ]);
-  }, [weekDays]); // Re-run when week changes (for mock purposes)
+  }, [weekDays]);
 
-  // --- UI/UX Handlers (placeholders for actual logic) ---
-
+  // --- Handlers ---
   const handlePreviousWeek = () => {
     const newDate = new Date(currentWeekStart);
     newDate.setDate(newDate.getDate() - 7);
@@ -119,653 +136,344 @@ const MealPlanningScreen = () => {
     setCurrentWeekStart(newDate);
   };
 
-  const handleAddMealSubmit = () => {
-    if (!selectedRecipeForNewMeal && !newMealCustomText.trim()) {
-      Alert.alert('Error', 'Please select a recipe or enter custom text.');
+  const handleAddMeal = () => {
+    if (newMealRecipeId === null && !newMealCustomText.trim()) {
+      toast({
+        title: "Error",
+        description: "Please select a recipe or enter custom text.",
+        variant: "destructive"
+      });
       return;
     }
 
-    const newMeal = {
-      id: Date.now().toString(), // Unique ID
+    const newMeal: Meal = {
+      id: Date.now().toString(),
       date: newMealDate,
       mealType: newMealType,
-      type: selectedRecipeForNewMeal ? 'recipe' : 'custom',
+      type: newMealRecipeId ? 'recipe' : 'custom',
       addedDate: new Date().toISOString(),
-      ...(selectedRecipeForNewMeal && {
-        recipeId: selectedRecipeForNewMeal.id,
-        servings: Number(newMealServings) || selectedRecipeForNewMeal.baseServings,
+      ...(newMealRecipeId && {
+        recipeId: newMealRecipeId,
+        servings: Number(newMealServings) || 1
       }),
-      ...(!selectedRecipeForNewMeal && { customText: newMealCustomText.trim() }),
+      ...(!newMealRecipeId && {
+        customText: newMealCustomText.trim()
+      })
     };
 
-    // Use LayoutAnimation for smooth add
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setMealPlan([...mealPlan, newMeal]);
-
-    // Reset form states
-    setIsAddMealModalVisible(false);
-    setSelectedRecipeForNewMeal(null);
+    setIsAddingMeal(false);
+    setNewMealRecipeId(null);
     setNewMealCustomText('');
     setNewMealServings('1');
     setSearchQuery('');
-    setFilteredRecipes([]);
 
-    Alert.alert('Success', 'Meal added!'); // Simple toast/feedback
+    toast({
+      title: "Success",
+      description: "Meal added to plan!"
+    });
   };
 
-  const handleRemoveMeal = (id) => {
-    Alert.alert(
-      'Remove Meal',
-      'Are you sure you want to remove this meal?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Remove',
-          onPress: () => {
-            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-            setMealPlan(mealPlan.filter(meal => meal.id !== id));
-          },
-          style: 'destructive',
-        },
-      ]
-    );
+  const handleRemoveMeal = (id: string) => {
+    setMealPlan(mealPlan.filter(meal => meal.id !== id));
+    toast({
+      title: "Meal removed",
+      description: "The meal has been removed from your plan."
+    });
   };
 
-  // Inline editing: Start
-  const startEditing = (mealId, field) => {
+  const handleEditMealField = (mealId: string, field: string, value: any) => {
+    setMealPlan(mealPlan.map(meal =>
+      meal.id === mealId ? { ...meal, [field]: value } : meal
+    ));
+  };
+
+  const startEditing = (mealId: string, field: string) => {
     setEditingMealId(mealId);
     setEditingFieldName(field);
-    setTimeout(() => editingInputRef.current?.focus(), 50); // Auto-focus
+    setTimeout(() => {
+      editingInputRef.current?.focus();
+    }, 50);
   };
 
-  // Inline editing: Stop (on blur or submit)
   const stopEditing = () => {
     setEditingMealId(null);
     setEditingFieldName(null);
-    Keyboard.dismiss(); // Hide keyboard
   };
 
-  // Inline editing: Handle value change
-  const handleMealItemEdit = (mealId, field, value) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setMealPlan(prevPlan => prevPlan.map(meal => {
-      if (meal.id === mealId) {
-        return { ...meal, [field]: value };
-      }
-      return meal;
-    }));
+  const selectRecipe = (recipe: Recipe) => {
+    setNewMealRecipeId(recipe.id);
+    setNewMealCustomText('');
+    setSearchQuery(recipe.name);
   };
 
-  // Filter recipes for search in modal
-  useEffect(() => {
-    if (searchQuery.length > 1) {
-      setFilteredRecipes(mockRecipes.filter(recipe =>
-        recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
-      ));
-    } else {
-      setFilteredRecipes([]);
-    }
-  }, [searchQuery]);
-
-  // --- UI/UX Rendering Logic ---
-
-  // Renders a single meal item within a day/meal type slot
-  const renderMealItem = ({ item }) => {
+  // --- Render Functions ---
+  const renderMealItem = (item: Meal) => {
     const recipe = item.type === 'recipe' ? mockRecipes.find(r => r.id === item.recipeId) : null;
-    const isEditingName = editingMealId === item.id && editingFieldName === 'name';
-    const isEditingServings = editingMealId === item.id && editingFieldName === 'servings';
-    const isEditingCategory = editingMealId === item.id && editingFieldName === 'category'; // For future category inline edit
 
     return (
-      <View style={styles.mealItemCard}>
-        <View style={styles.mealItemContent}>
-          {/* Inline Editing for Name/Custom Text */}
-          {isEditingName ? (
-            <TextInput
-              ref={editingInputRef}
-              style={styles.inlineEditInput}
-              value={item.type === 'recipe' ? (recipe?.name || '') : (item.customText || '')}
-              onChangeText={(text) => handleMealItemEdit(item.id, item.type === 'recipe' ? 'name' : 'customText', text)}
-              onBlur={stopEditing}
-              onSubmitEditing={stopEditing}
-            />
-          ) : (
-            <TouchableOpacity onPress={() => startEditing(item.id, 'name')}>
-              <Text style={styles.mealItemName}>
-                {item.type === 'recipe' ? recipe?.name : item.customText || 'Custom Meal'}
-              </Text>
-            </TouchableOpacity>
-          )}
+      <Card key={item.id} className="p-3 mb-2 bg-blue-50 border-blue-200">
+        <div className="flex justify-between items-start">
+          <div className="flex-1">
+            {editingMealId === item.id && editingFieldName === 'customText' && item.type === 'custom' ? (
+              <Input
+                ref={editingInputRef}
+                value={item.customText}
+                onChange={(e) => handleEditMealField(item.id, 'customText', e.target.value)}
+                onBlur={stopEditing}
+                onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
+                className="text-sm"
+              />
+            ) : (
+              <div 
+                onClick={() => item.type === 'custom' && startEditing(item.id, 'customText')}
+                className={item.type === 'custom' ? 'cursor-pointer' : ''}
+              >
+                <h4 className="font-medium text-sm">
+                  {item.type === 'recipe' ? recipe?.name : item.customText || 'Unknown Meal'}
+                </h4>
+              </div>
+            )}
 
-          {item.type === 'recipe' && (
-            <View style={styles.mealItemDetailsRow}>
-              {/* Inline Editing for Servings */}
-              {isEditingServings ? (
-                <TextInput
-                  ref={editingInputRef}
-                  style={styles.inlineEditServingsInput}
-                  keyboardType="numeric"
-                  value={String(item.servings)}
-                  onChangeText={(text) => handleMealItemEdit(item.id, 'servings', Number(text))}
-                  onBlur={stopEditing}
-                  onSubmitEditing={stopEditing}
-                />
-              ) : (
-                <TouchableOpacity onPress={() => startEditing(item.id, 'servings')}>
-                  <Text style={styles.mealItemDetailText}>{item.servings} servings</Text>
-                </TouchableOpacity>
-              )}
-              <Text style={styles.mealItemDetailSeparator}> • </Text>
-              {/* Category Selection for Recipes */}
-              {/* This would ideally be a custom Picker/Modal for inline editing */}
-              <Text style={styles.mealItemDetailText}>{recipe?.category || 'N/A'}</Text>
-              <Text style={styles.mealItemDetailSeparator}> • </Text>
-              <Text style={styles.mealItemDetailDate}>{formatDateForDisplay(item.addedDate)}</Text>
-            </View>
-          )}
-        </View>
-        <TouchableOpacity onPress={() => handleRemoveMeal(item.id)} style={styles.deleteButton}>
-          <Icon name="x-circle" size={20} color="#FF6347" />
-        </TouchableOpacity>
-      </View>
+            {item.type === 'recipe' && (
+              <div className="flex items-center gap-2 mt-1">
+                {editingMealId === item.id && editingFieldName === 'servings' ? (
+                  <Input
+                    ref={editingInputRef}
+                    type="number"
+                    value={String(item.servings)}
+                    onChange={(e) => handleEditMealField(item.id, 'servings', Number(e.target.value))}
+                    onBlur={stopEditing}
+                    onKeyDown={(e) => e.key === 'Enter' && stopEditing()}
+                    className="w-16 text-xs"
+                  />
+                ) : (
+                  <span 
+                    onClick={() => startEditing(item.id, 'servings')}
+                    className="text-xs text-gray-600 cursor-pointer"
+                  >
+                    {item.servings} servings
+                  </span>
+                )}
+                <span className="text-xs text-gray-500">•</span>
+                <Badge variant="secondary" className="text-xs">{recipe?.category || 'N/A'}</Badge>
+              </div>
+            )}
+            
+            <p className="text-xs text-gray-500 mt-1">
+              Added: {formatDateForDisplay(item.addedDate)}
+            </p>
+          </div>
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleRemoveMeal(item.id)}
+            className="text-red-500 hover:text-red-700 p-1"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      </Card>
     );
   };
 
-  // Renders a column for each day of the week
-  const renderDayColumn = (dateString) => {
+  const renderDayColumn = (dateString: string) => {
     return (
-      <View key={dateString} style={styles.dayColumn}>
-        <Text style={styles.dayColumnHeader}>{formatDateForDisplay(dateString).split(',')[0]}</Text> {/* Just day name */}
-        <Text style={styles.dayColumnDate}>{formatDateForDisplay(dateString).split(',')[1]}</Text> {/* Date */}
+      <div key={dateString} className="min-w-[200px] mr-4">
+        <Card className="h-full">
+          <div className="p-4">
+            <div className="text-center mb-4">
+              <h3 className="font-semibold">{formatDateForDisplay(dateString).split(',')[0]}</h3>
+              <p className="text-sm text-gray-600">{formatDateForDisplay(dateString).split(',')[1]}</p>
+            </div>
 
-        <ScrollView style={styles.mealTypesScroll}>
-          {mealTypes.map(mealType => (
-            <View key={`${dateString}-${mealType}`} style={styles.mealTypeSection}>
-              <Text style={styles.mealTypeTitle}>{getMealTypeLabel(mealType)}</Text>
-              {mealPlan
-                .filter(meal => meal.date === dateString && meal.mealType === mealType)
-                .map(item => (
-                  <View key={item.id} style={styles.mealSlot}>
-                    {renderMealItem({ item })}
-                  </View>
-                ))}
-              {/* Add Meal to specific slot */}
-              <TouchableOpacity
-                style={styles.addMealToSlotButton}
-                onPress={() => {
-                  setNewMealDate(dateString);
-                  setNewMealType(mealType);
-                  setIsAddMealModalVisible(true);
-                }}
-              >
-                <Icon name="plus" size={16} color="#007BFF" />
-                <Text style={styles.addMealToSlotButtonText}>Add</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </ScrollView>
-      </View>
+            <div className="space-y-4">
+              {mealTypes.map(mealType => (
+                <div key={`${dateString}-${mealType}`}>
+                  <h4 className="font-medium text-sm border-b pb-1 mb-2">
+                    {getMealTypeLabel(mealType)}
+                  </h4>
+                  
+                  <div className="min-h-[60px]">
+                    {mealPlan
+                      .filter(meal => meal.date === dateString && meal.mealType === mealType)
+                      .map(renderMealItem)}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full mt-2 text-blue-600 border-blue-300 hover:bg-blue-50"
+                    onClick={() => {
+                      setNewMealDate(dateString);
+                      setNewMealType(mealType);
+                      setIsAddingMeal(true);
+                    }}
+                  >
+                    <Plus className="h-4 w-4 mr-1" />
+                    Add
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Card>
+      </div>
     );
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Meal Planner</Text>
-      </View>
+    <PageContainer>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="text-2xl font-bold">Meal Planner</h1>
+        </div>
 
-      {/* Week Navigation */}
-      <View style={styles.weekNavigator}>
-        <TouchableOpacity onPress={handlePreviousWeek} style={styles.navButton}>
-          <Icon name="chevron-left" size={24} color="#333" />
-        </TouchableOpacity>
-        <Text style={styles.weekRange}>
-          {formatDateForDisplay(weekDays[0])} - {formatDateForDisplay(weekDays[6])}
-        </Text>
-        <TouchableOpacity onPress={handleNextWeek} style={styles.navButton}>
-          <Icon name="chevron-right" size={24} color="#333" />
-        </TouchableOpacity>
-      </View>
+        {/* Week Navigation */}
+        <div className="flex justify-between items-center bg-white p-4 rounded-lg border">
+          <Button variant="outline" onClick={handlePreviousWeek}>
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <h2 className="font-semibold">
+            {formatDateForDisplay(weekDays[0])} - {formatDateForDisplay(weekDays[6])}
+          </h2>
+          <Button variant="outline" onClick={handleNextWeek}>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
 
-      {/* Global Actions Bar */}
-      <View style={styles.globalActionsBar}>
-        <TouchableOpacity style={styles.globalActionButton} onPress={() => Alert.alert('AI Plan', 'AI-Powered meal planning coming soon!')}>
-          <Icon name="zap" size={20} color="#fff" />
-          <Text style={styles.globalActionButtonText}>AI Plan</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.globalActionButton} onPress={() => Alert.alert('Shopping List', 'Generate shopping list from plan.')}>
-          <Icon name="shopping-cart" size={20} color="#fff" />
-          <Text style={styles.globalActionButtonText}>List</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.globalActionButton} onPress={() => Alert.alert('Print/Export', 'Print or export plan.')}>
-          <Icon name="printer" size={20} color="#fff" />
-          <Text style={styles.globalActionButtonText}>Print</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.globalActionButton} onPress={() => setIsAddMealModalVisible(true)}>
-          <Icon name="plus-circle" size={20} color="#fff" />
-          <Text style={styles.globalActionButtonText}>Add Meal</Text>
-        </TouchableOpacity>
-      </View>
+        {/* Global Actions */}
+        <div className="flex justify-center gap-2 bg-purple-600 p-4 rounded-lg">
+          <Button variant="secondary" size="sm">
+            <Zap className="h-4 w-4 mr-1" />
+            AI Plan
+          </Button>
+          <Button variant="secondary" size="sm">
+            <ShoppingCart className="h-4 w-4 mr-1" />
+            List
+          </Button>
+          <Button variant="secondary" size="sm">
+            <Printer className="h-4 w-4 mr-1" />
+            Print
+          </Button>
+          <Button variant="secondary" size="sm" onClick={() => setIsAddingMeal(true)}>
+            <Plus className="h-4 w-4 mr-1" />
+            Add Meal
+          </Button>
+        </div>
 
-      {/* Main Calendar Grid Scrollable */}
-      <ScrollView horizontal contentContainerStyle={styles.calendarGridContainer}>
-        {weekDays.map(renderDayColumn)}
-      </ScrollView>
+        {/* Calendar Grid */}
+        <div className="overflow-x-auto">
+          <div className="flex pb-4">
+            {weekDays.map(renderDayColumn)}
+          </div>
+        </div>
 
-      {/* Add Meal Modal */}
-      <Modal
-        visible={isAddMealModalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setIsAddMealModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Add Meal</Text>
-
-            {/* Recipe Search */}
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Search recipe by name..."
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-            {searchQuery.length > 1 && (
-              <FlatList
-                data={filteredRecipes}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={styles.searchResultRow}
-                    onPress={() => {
-                      setSelectedRecipeForNewMeal(item);
-                      setSearchQuery(item.name); // Show selected recipe name
-                      setFilteredRecipes([]); // Clear results
-                    }}
-                  >
-                    <Text style={styles.searchResultText}>{item.name} <Text style={styles.searchResultCategory}>({item.category})</Text></Text>
-                  </TouchableOpacity>
+        {/* Add Meal Dialog */}
+        <Dialog open={isAddingMeal} onOpenChange={setIsAddingMeal}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Add Meal</DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              {/* Recipe Search */}
+              <div>
+                <Input
+                  placeholder="Search recipe by name..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                {searchQuery.length > 1 && (
+                  <div className="mt-2 max-h-32 overflow-y-auto border rounded-md">
+                    {filteredRecipes.map(recipe => (
+                      <div
+                        key={recipe.id}
+                        className="p-2 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
+                        onClick={() => selectRecipe(recipe)}
+                      >
+                        <span className="text-sm">{recipe.name}</span>
+                        <span className="text-xs text-gray-500 ml-2">({recipe.category})</span>
+                      </div>
+                    ))}
+                  </div>
                 )}
-                style={styles.searchResultsContainer}
-                keyboardShouldPersistTaps="always" // Keep keyboard active for further typing
+              </div>
+
+              <div className="text-center text-gray-500 font-medium">— OR —</div>
+
+              {/* Custom Text */}
+              <Input
+                placeholder="Enter custom meal text (e.g., Leftovers)"
+                value={newMealCustomText}
+                onChange={(e) => {
+                  setNewMealCustomText(e.target.value);
+                  setNewMealRecipeId(null);
+                  setSearchQuery('');
+                }}
               />
-            )}
 
-            <Text style={styles.modalOrText}>— OR —</Text>
+              {/* Date Picker */}
+              <div>
+                <label className="text-sm font-medium">Date:</label>
+                <Select value={newMealDate} onValueChange={setNewMealDate}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {weekDays.map(day => (
+                      <SelectItem key={day} value={day}>
+                        {formatDateForDisplay(day)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            {/* Manual/Placeholder Entry */}
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Enter custom meal text (e.g., Leftovers)"
-              value={newMealCustomText}
-              onChangeText={(text) => {
-                setNewMealCustomText(text);
-                setSelectedRecipeForNewMeal(null); // Clear recipe if custom text is entered
-                setNewMealServings('1');
-                setSearchQuery(''); // Clear search
-              }}
-            />
+              {/* Meal Type Picker */}
+              <div>
+                <label className="text-sm font-medium">Meal Type:</label>
+                <Select value={newMealType} onValueChange={setNewMealType}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mealTypes.map(type => (
+                      <SelectItem key={type} value={type}>
+                        {getMealTypeLabel(type)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            {/* Date and Meal Type Pickers */}
-            <View style={styles.modalPickerRow}>
-              <Text style={styles.modalPickerLabel}>Date:</Text>
-              {/* Replace with @react-native-picker/picker or similar for better UX */}
-              <View style={styles.pickerWrapper}>
-                <Picker
-                  selectedValue={newMealDate}
-                  style={styles.pickerStyle}
-                  onValueChange={(itemValue) => setNewMealDate(itemValue)}
-                >
-                  {weekDays.map(day => (
-                    <Picker.Item key={day} label={formatDateForDisplay(day)} value={day} />
-                  ))}
-                </Picker>
-              </View>
-            </View>
+              {/* Servings for recipes */}
+              {newMealRecipeId && (
+                <Input
+                  type="number"
+                  placeholder="Servings (e.g., 2, 4)"
+                  value={newMealServings}
+                  onChange={(e) => setNewMealServings(e.target.value)}
+                />
+              )}
 
-            <View style={styles.modalPickerRow}>
-              <Text style={styles.modalPickerLabel}>Meal Type:</Text>
-               <View style={styles.pickerWrapper}>
-                <Picker
-                  selectedValue={newMealType}
-                  style={styles.pickerStyle}
-                  onValueChange={(itemValue) => setNewMealType(itemValue)}
-                >
-                  {mealTypes.map(type => (
-                    <Picker.Item key={type} label={getMealTypeLabel(type)} value={type} />
-                  ))}
-                </Picker>
-              </View>
-            </View>
-
-            {/* Servings for recipes */}
-            {selectedRecipeForNewMeal && (
-              <TextInput
-                style={styles.modalInput}
-                placeholder="Servings (e.g., 2, 4)"
-                keyboardType="numeric"
-                value={newMealServings}
-                onChangeText={setNewMealServings}
-              />
-            )}
-
-            {/* Modal Action Buttons */}
-            <View style={styles.modalActionButtons}>
-              <TouchableOpacity style={[styles.modalButton, styles.cancelButton]} onPress={() => setIsAddMealModalVisible(false)}>
-                <Text style={styles.modalButtonText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.modalButton, styles.addButton]} onPress={handleAddMealSubmit}>
-                <Text style={styles.modalButtonText}>Add Meal</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-    </SafeAreaView>
+              {/* Action Buttons */}
+              <div className="flex gap-2 justify-end">
+                <Button variant="outline" onClick={() => setIsAddingMeal(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleAddMeal}>
+                  Add Meal
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </PageContainer>
   );
 };
 
-// --- Stylesheet ---
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F7F7F7', // Light background
-  },
-  header: {
-    paddingVertical: 15,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#EDEDED',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333333',
-  },
-  weekNavigator: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#EDEDED',
-  },
-  navButton: {
-    padding: 8,
-  },
-  weekRange: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#555555',
-  },
-  globalActionsBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 10,
-    backgroundColor: '#6A5ACD', // Purple for actions
-    borderRadius: 8,
-    marginHorizontal: 10,
-    marginTop: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
-  },
-  globalActionButton: {
-    alignItems: 'center',
-    paddingHorizontal: 5,
-  },
-  globalActionButtonText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '500',
-    marginTop: 5,
-  },
-  calendarGridContainer: {
-    paddingVertical: 15,
-    paddingHorizontal: 5,
-  },
-  dayColumn: {
-    width: 140, // Fixed width for each day
-    marginHorizontal: 5,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
-    paddingTop: 10,
-  },
-  dayColumnHeader: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#333333',
-  },
-  dayColumnDate: {
-    fontSize: 12,
-    textAlign: 'center',
-    color: '#777777',
-    marginBottom: 10,
-  },
-  mealTypesScroll: {
-    flexGrow: 1,
-    paddingHorizontal: 8,
-  },
-  mealTypeSection: {
-    marginBottom: 15,
-  },
-  mealTypeTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#555555',
-    marginBottom: 5,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-    paddingBottom: 3,
-  },
-  mealSlot: {
-    minHeight: 60, // Minimum height for a meal slot
-    backgroundColor: '#F0F8FF', // Light blue for meal backgrounds
-    borderRadius: 8,
-    marginBottom: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#D0E0FF',
-  },
-  mealItemCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 8,
-    width: '100%',
-  },
-  mealItemContent: {
-    flex: 1,
-  },
-  mealItemName: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#333333',
-  },
-  mealItemDetailsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 3,
-  },
-  mealItemDetailText: {
-    fontSize: 11,
-    color: '#666666',
-  },
-  mealItemDetailSeparator: {
-    fontSize: 11,
-    color: '#999999',
-    marginHorizontal: 4,
-  },
-  mealItemDetailDate: {
-    fontSize: 10,
-    color: '#999999',
-  },
-  inlineEditInput: {
-    fontSize: 14,
-    fontWeight: '500',
-    borderBottomWidth: 1,
-    borderBottomColor: '#007BFF',
-    paddingVertical: 0,
-    color: '#333333',
-    minWidth: 80, // Ensure visibility
-  },
-  inlineEditServingsInput: {
-    fontSize: 11,
-    color: '#666666',
-    borderBottomWidth: 1,
-    borderBottomColor: '#007BFF',
-    paddingVertical: 0,
-    width: 30,
-    textAlign: 'center',
-  },
-  deleteButton: {
-    padding: 5,
-    marginLeft: 8,
-  },
-  addMealToSlotButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 5,
-    paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: '#E6F0FF', // Light blue
-    borderWidth: 1,
-    borderColor: '#C0D9FF',
-  },
-  addMealToSlotButtonText: {
-    color: '#007BFF',
-    marginLeft: 5,
-    fontSize: 12,
-    fontWeight: '500',
-  },
-
-  // Modal Styles
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.6)',
-  },
-  modalContent: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 15,
-    padding: 20,
-    width: '90%',
-    maxHeight: '80%', // Limit height for scrollability
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 5,
-    elevation: 8,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    textAlign: 'center',
-    color: '#333333',
-  },
-  modalInput: {
-    borderWidth: 1,
-    borderColor: '#DDDDDD',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 10,
-    fontSize: 16,
-    color: '#333333',
-  },
-  searchResultRow: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
-    backgroundColor: '#F9F9F9',
-  },
-  searchResultText: {
-    fontSize: 15,
-    color: '#333333',
-  },
-  searchResultCategory: {
-    fontSize: 13,
-    color: '#888888',
-  },
-  searchResultsContainer: {
-    maxHeight: 150, // Limit height of search results list
-    marginBottom: 10,
-    borderRadius: 10,
-    overflow: 'hidden', // Clip content
-  },
-  modalOrText: {
-    textAlign: 'center',
-    marginVertical: 10,
-    color: '#777777',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-  modalPickerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#DDDDDD',
-    borderRadius: 10,
-    height: 50, // Standard height for input/picker
-    overflow: 'hidden', // For picker border
-  },
-  modalPickerLabel: {
-    fontSize: 16,
-    color: '#333333',
-    paddingLeft: 12,
-    marginRight: 10,
-  },
-  pickerWrapper: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  pickerStyle: {
-    height: 50,
-    width: '100%',
-    color: '#333333',
-  },
-  modalActionButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
-  },
-  modalButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minWidth: 120,
-  },
-  addButton: {
-    backgroundColor: '#6A5ACD', // Primary action color
-  },
-  cancelButton: {
-    backgroundColor: '#B0B0B0', // Gray for cancel
-  },
-  modalButtonText: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-});
-
-export default MealPlanningScreen;
+export default MealPlanPage;
