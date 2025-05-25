@@ -2,455 +2,234 @@
 import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
-  ShoppingBag, Plus, Trash2, FileText, Share2, Search, Copy, Filter,
-  Apple, Carrot, Fish, Milk, Egg, Wine, Coffee, Leaf, Droplet, Candy, Cake, Utensils
+  Search, Plus, X, Filter, ChefHat, Clock, Users, Heart
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { mockRecipes } from '@/data/mockData';
 
-// Sample shopping list data
-const initialItems = [
-  { id: '1', name: 'Chicken breast', quantity: 500, unit: 'g', category: 'Meat', checked: false, dateAdded: new Date() },
-  { id: '2', name: 'Olive oil', quantity: 1, unit: 'bottle', category: 'Oils', checked: false, dateAdded: new Date() },
-  { id: '3', name: 'Garlic', quantity: 5, unit: 'cloves', category: 'Vegetables', checked: false, dateAdded: new Date() },
-  { id: '4', name: 'Onions', quantity: 2, unit: '', category: 'Vegetables', checked: true, dateAdded: new Date() },
-  { id: '5', name: 'Rice', quantity: 1, unit: 'kg', category: 'Grains', checked: false, dateAdded: new Date() },
-  { id: '6', name: 'Tomatoes', quantity: 4, unit: '', category: 'Vegetables', checked: false, dateAdded: new Date() },
-  { id: '7', name: 'Greek yogurt', quantity: 500, unit: 'g', category: 'Dairy', checked: true, dateAdded: new Date() },
-  { id: '8', name: 'Lemons', quantity: 3, unit: '', category: 'Fruits', checked: false, dateAdded: new Date() },
+// Sample ingredients
+const availableIngredients = [
+  'Chicken', 'Beef', 'Fish', 'Eggs', 'Milk', 'Cheese', 'Yogurt',
+  'Rice', 'Pasta', 'Bread', 'Potatoes', 'Onions', 'Garlic', 'Tomatoes',
+  'Carrots', 'Broccoli', 'Spinach', 'Bell Peppers', 'Mushrooms',
+  'Olive Oil', 'Butter', 'Salt', 'Pepper', 'Herbs', 'Lemon'
 ];
 
-// Mapping of categories to icons
-const categoryIcons = {
-  'Meat': <Utensils className="h-4 w-4" />,
-  'Oils': <Droplet className="h-4 w-4" />,
-  'Vegetables': <Carrot className="h-4 w-4" />,
-  'Grains': <Utensils className="h-4 w-4" />,
-  'Dairy': <Milk className="h-4 w-4" />,
-  'Fruits': <Apple className="h-4 w-4" />,
-  'Other': <Leaf className="h-4 w-4" />,
-};
-
-export default function ShoppingListPage() {
+export default function FindByIngredientsPage() {
   const { toast } = useToast();
-  const [items, setItems] = useState(initialItems);
-  const [newItemName, setNewItemName] = useState('');
-  const [newItemQuantity, setNewItemQuantity] = useState('');
-  const [newItemUnit, setNewItemUnit] = useState('');
-  const [newItemCategory, setNewItemCategory] = useState('Other');
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [editingItemId, setEditingItemId] = useState(null);
+  const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortOption, setSortOption] = useState('name');
+  const [foundRecipes, setFoundRecipes] = useState(mockRecipes.slice(0, 6));
+  const [isSearching, setIsSearching] = useState(false);
 
-  const categories = [...new Set(items.map(item => item.category))].sort();
+  const filteredIngredients = availableIngredients.filter(ingredient =>
+    ingredient.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    !selectedIngredients.includes(ingredient)
+  );
 
-  const handleCheck = (id) => {
-    setItems(items.map(item =>
-      item.id === id ? { ...item, checked: !item.checked } : item
-    ));
+  const handleAddIngredient = (ingredient: string) => {
+    if (!selectedIngredients.includes(ingredient)) {
+      setSelectedIngredients([...selectedIngredients, ingredient]);
+      setSearchQuery('');
+    }
   };
 
-  const handleAddItem = (e) => {
-    e.preventDefault();
+  const handleRemoveIngredient = (ingredient: string) => {
+    setSelectedIngredients(selectedIngredients.filter(i => i !== ingredient));
+  };
 
-    if (!newItemName.trim()) {
+  const handleFindRecipes = async () => {
+    if (selectedIngredients.length === 0) {
       toast({
-        title: "Error",
-        description: "Please enter an item name",
+        title: "No ingredients selected",
+        description: "Please select at least one ingredient to find recipes.",
         variant: "destructive",
       });
       return;
     }
 
-    const newItem = {
-      id: Date.now().toString(),
-      name: newItemName.trim(),
-      quantity: Number(newItemQuantity) || 1,
-      unit: newItemUnit.trim(),
-      category: newItemCategory,
-      checked: false,
-      dateAdded: new Date(),
-    };
-
-    setItems([newItem, ...items]);
-    setNewItemName('');
-    setNewItemQuantity('');
-    setNewItemUnit('');
-    setNewItemCategory('Other');
-    setShowAddForm(false);
-
-    toast({
-      title: "Item added",
-      description: `${newItem.name} added to your shopping list.`,
-    });
-  };
-
-  const handleRemoveChecked = () => {
-    const checkedItems = items.filter(item => item.checked);
-    if (checkedItems.length === 0) {
+    setIsSearching(true);
+    // Simulate API call
+    setTimeout(() => {
+      setFoundRecipes(mockRecipes.slice(0, 8));
+      setIsSearching(false);
       toast({
-        title: "No items selected",
-        description: "Please check items to remove.",
+        title: "Recipes found!",
+        description: `Found ${mockRecipes.length} recipes with your ingredients.`,
       });
-      return;
-    }
-
-    setItems(items.filter(item => !item.checked));
-    toast({
-      title: "Items removed",
-      description: `${checkedItems.length} item(s) removed from your list.`,
-    });
+    }, 1500);
   };
 
   const handleClearAll = () => {
-    setItems([]);
-    toast({
-      title: "List cleared",
-      description: "All items have been removed from your list.",
-    });
+    setSelectedIngredients([]);
+    setFoundRecipes([]);
   };
-
-  const handleDuplicateList = () => {
-    const duplicatedItems = items.map(item => ({
-      ...item,
-      id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
-    }));
-    setItems([...items, ...duplicatedItems]);
-    toast({
-      title: "List duplicated",
-      description: "Your shopping list has been duplicated.",
-    });
-  };
-
-  const handleEditItem = (id) => {
-    const itemToEdit = items.find(item => item.id === id);
-    if (itemToEdit) {
-      setEditingItemId(id);
-      setNewItemName(itemToEdit.name);
-      setNewItemQuantity(itemToEdit.quantity.toString());
-      setNewItemUnit(itemToEdit.unit);
-      setNewItemCategory(itemToEdit.category);
-    }
-  };
-
-  const handleUpdateItem = (e) => {
-    e.preventDefault();
-
-    if (!newItemName.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter an item name",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setItems(items.map(item =>
-      item.id === editingItemId
-        ? {
-            ...item,
-            name: newItemName.trim(),
-            quantity: Number(newItemQuantity) || 1,
-            unit: newItemUnit.trim(),
-            category: newItemCategory,
-          }
-        : item
-    ));
-
-    setEditingItemId(null);
-    setNewItemName('');
-    setNewItemQuantity('');
-    setNewItemUnit('');
-    setNewItemCategory('Other');
-    setShowAddForm(false);
-
-    toast({
-      title: "Item updated",
-      description: "Your item has been updated.",
-    });
-  };
-
-  const handleSortChange = (option) => {
-    setSortOption(option);
-  };
-
-  const sortedItems = [...items].sort((a, b) => {
-    if (sortOption === 'name') {
-      return a.name.localeCompare(b.name);
-    } else if (sortOption === 'category') {
-      return a.category.localeCompare(b.category);
-    } else if (sortOption === 'checked') {
-      return a.checked === b.checked ? 0 : a.checked ? 1 : -1;
-    }
-    return 0;
-  });
-
-  const filteredItems = sortedItems.filter(item =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   return (
-    <PageContainer header={{ title: 'Shopping List', showBackButton: true }}>
-      <div className="space-y-4 pb-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <ShoppingBag className="h-5 w-5 text-wasfah-bright-teal mr-2" />
-            <h2 className="text-lg font-bold text-wasfah-deep-teal">My Shopping List</h2>
-          </div>
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center"
-            >
-              <Share2 className="h-4 w-4 mr-1" />
-              Share
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center"
-            >
-              <FileText className="h-4 w-4 mr-1" />
-              Lists
-            </Button>
-          </div>
-        </div>
-
-        <Card className="p-4">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-sm text-gray-600">{items.length} items ({items.filter(i => i.checked).length} checked)</p>
-            <div className="flex space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-red-500 border-red-200 hover:bg-red-50"
-                onClick={handleRemoveChecked}
-              >
-                <Trash2 className="h-4 w-4 mr-1" />
-                Clear Checked
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-red-500 border-red-200 hover:bg-red-50"
-                onClick={handleClearAll}
-              >
-                <Trash2 className="h-4 w-4 mr-1" />
-                Clear All
-              </Button>
-              <Button
-                size="sm"
-                className="bg-wasfah-bright-teal hover:bg-wasfah-teal"
-                onClick={() => setShowAddForm(!showAddForm)}
-              >
-                <Plus className="h-4 w-4 mr-1" />
-                Add Item
-              </Button>
-              <Button
-                size="sm"
-                className="bg-wasfah-bright-teal hover:bg-wasfah-teal"
-                onClick={handleDuplicateList}
-              >
-                <Copy className="h-4 w-4 mr-1" />
-                Duplicate List
-              </Button>
-            </div>
-          </div>
-
-          {showAddForm && (
-            <form onSubmit={editingItemId ? handleUpdateItem : handleAddItem} className="mb-4 p-3 bg-wasfah-light-gray rounded-md">
-              <div className="grid grid-cols-12 gap-2">
-                <div className="col-span-6">
-                  <Input
-                    placeholder="Item name"
-                    value={newItemName}
-                    onChange={(e) => setNewItemName(e.target.value)}
-                    className="h-9"
-                  />
-                </div>
-                <div className="col-span-2">
-                  <Input
-                    placeholder="Quantity"
-                    type="number"
-                    value={newItemQuantity}
-                    onChange={(e) => setNewItemQuantity(e.target.value)}
-                    className="h-9"
-                  />
-                </div>
-                <div className="col-span-2">
-                  <Input
-                    placeholder="Unit"
-                    value={newItemUnit}
-                    onChange={(e) => setNewItemUnit(e.target.value)}
-                    className="h-9"
-                  />
-                </div>
-                <div className="col-span-2">
-                  <Select value={newItemCategory} onValueChange={setNewItemCategory}>
-                    <SelectTrigger className="h-9">
-                      <SelectValue placeholder="Category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map(category => (
-                        <SelectItem key={category} value={category}>{category}</SelectItem>
-                      ))}
-                      <SelectItem value="Other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
+    <PageContainer header={{ title: 'Find by Ingredients', showBackButton: true }}>
+      <div className="space-y-6 pb-24">
+        {/* Ingredient Selection */}
+        <Card>
+          <CardContent className="p-6">
+            <h2 className="text-xl font-bold text-wasfah-deep-teal mb-4">What ingredients do you have?</h2>
+            
+            {/* Selected Ingredients */}
+            {selectedIngredients.length > 0 && (
+              <div className="mb-4">
+                <h3 className="text-sm font-medium text-gray-700 mb-2">Selected Ingredients:</h3>
+                <div className="flex flex-wrap gap-2">
+                  <AnimatePresence>
+                    {selectedIngredients.map((ingredient) => (
+                      <motion.div
+                        key={ingredient}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                      >
+                        <Badge variant="secondary" className="bg-wasfah-bright-teal text-white">
+                          {ingredient}
+                          <X
+                            className="h-3 w-3 ml-1 cursor-pointer"
+                            onClick={() => handleRemoveIngredient(ingredient)}
+                          />
+                        </Badge>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
                 </div>
               </div>
-              <div className="flex justify-end mt-2 space-x-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setShowAddForm(false);
-                    setEditingItemId(null);
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  size="sm"
-                  className="bg-wasfah-bright-teal hover:bg-wasfah-teal"
-                >
-                  {editingItemId ? 'Update' : 'Add'}
-                </Button>
-              </div>
-            </form>
-          )}
+            )}
 
-          <div className="flex items-center space-x-2 mb-4">
-            <div className="relative flex-grow">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+            {/* Search for ingredients */}
+            <div className="relative mb-4">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
               <Input
-                placeholder="Search items..."
+                placeholder="Search for ingredients..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8"
+                className="pl-10"
               />
             </div>
-            <Select value={sortOption} onValueChange={handleSortChange}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="name">Name</SelectItem>
-                <SelectItem value="category">Category</SelectItem>
-                <SelectItem value="checked">Checked Status</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
 
-          <Tabs defaultValue="all">
-            <TabsList className="grid grid-cols-2 mb-4">
-              <TabsTrigger value="all">All Items</TabsTrigger>
-              <TabsTrigger value="byCategory">By Category</TabsTrigger>
-            </TabsList>
+            {/* Available ingredients */}
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 mb-4">
+              {filteredIngredients.slice(0, 12).map((ingredient) => (
+                <Button
+                  key={ingredient}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleAddIngredient(ingredient)}
+                  className="text-xs h-8 border-wasfah-bright-teal/20 hover:bg-wasfah-bright-teal hover:text-white"
+                >
+                  <Plus className="h-3 w-3 mr-1" />
+                  {ingredient}
+                </Button>
+              ))}
+            </div>
 
-            <TabsContent value="all" className="space-y-1">
-              <AnimatePresence>
-                {filteredItems.map(item => (
-                  <motion.div
-                    key={item.id}
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className={`flex items-center justify-between p-3 rounded-md ${
-                      item.checked ? 'bg-gray-50 text-gray-500' : 'bg-white'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <Checkbox
-                        checked={item.checked}
-                        onCheckedChange={() => handleCheck(item.id)}
-                        className="h-5 w-5"
+            {/* Action buttons */}
+            <div className="flex gap-2">
+              <Button
+                onClick={handleFindRecipes}
+                disabled={selectedIngredients.length === 0 || isSearching}
+                className="flex-1 bg-wasfah-bright-teal hover:bg-wasfah-teal"
+              >
+                {isSearching ? (
+                  <>
+                    <Search className="h-4 w-4 mr-2 animate-spin" />
+                    Searching...
+                  </>
+                ) : (
+                  <>
+                    <Search className="h-4 w-4 mr-2" />
+                    Find Recipes ({selectedIngredients.length} ingredients)
+                  </>
+                )}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleClearAll}
+                disabled={selectedIngredients.length === 0}
+              >
+                Clear All
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Recipe Results */}
+        {foundRecipes.length > 0 && (
+          <div>
+            <h2 className="text-xl font-bold text-wasfah-deep-teal mb-4">
+              Recipes found ({foundRecipes.length})
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {foundRecipes.map((recipe, index) => (
+                <motion.div
+                  key={recipe.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <Link to={`/recipe/${recipe.id}`}>
+                    <Card className="hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]">
+                      <div
+                        className="h-40 bg-cover bg-center rounded-t-lg"
+                        style={{ backgroundImage: `url(${recipe.image})` }}
                       />
-                      <div className="flex items-center">
-                        <div className="mr-2">
-                          {categoryIcons[item.category] || <Leaf className="h-4 w-4" />}
-                        </div>
-                        <div className={item.checked ? 'line-through' : ''}>
-                          <div className="font-medium">{item.name}</div>
-                          <div className="text-xs text-gray-500">
-                            {item.quantity} {item.unit} • {item.category} • Added: {item.dateAdded.toLocaleDateString()}
+                      <CardContent className="p-4">
+                        <h3 className="font-bold text-lg text-wasfah-deep-teal mb-2 line-clamp-2">
+                          {recipe.title}
+                        </h3>
+                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                          {recipe.description}
+                        </p>
+                        <div className="flex items-center justify-between text-xs text-gray-500">
+                          <div className="flex items-center">
+                            <Clock className="h-3 w-3 mr-1" />
+                            {recipe.time}
+                          </div>
+                          <div className="flex items-center">
+                            <Users className="h-3 w-3 mr-1" />
+                            {recipe.servings}
+                          </div>
+                          <div className="flex items-center">
+                            <ChefHat className="h-3 w-3 mr-1" />
+                            {recipe.difficulty}
                           </div>
                         </div>
-                      </div>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEditItem(item.id)}
-                    >
-                      Edit
-                    </Button>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </TabsContent>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )}
 
-            <TabsContent value="byCategory" className="space-y-4">
-              {categories.map(category => {
-                const categoryItems = filteredItems.filter(item => item.category === category);
-                return (
-                  <div key={category}>
-                    <h3 className="font-semibold text-wasfah-deep-teal mb-2 flex items-center">
-                      {categoryIcons[category] || <Leaf className="h-4 w-4 mr-1" />}
-                      {category}
-                    </h3>
-                    <div className="space-y-1">
-                      <AnimatePresence>
-                        {categoryItems.map(item => (
-                          <motion.div
-                            key={item.id}
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
-                            className={`flex items-center justify-between p-3 rounded-md ${
-                              item.checked ? 'bg-gray-50 text-gray-500' : 'bg-white'
-                            }`}
-                          >
-                            <div className="flex items-center space-x-3">
-                              <Checkbox
-                                checked={item.checked}
-                                onCheckedChange={() => handleCheck(item.id)}
-                                className="h-5 w-5"
-                              />
-                              <div className={item.checked ? 'line-through' : ''}>
-                                <div className="font-medium">{item.name}</div>
-                                <div className="text-xs text-gray-500">
-                                  {item.quantity} {item.unit} • Added: {item.dateAdded.toLocaleDateString()}
-                                </div>
-                              </div>
-                            </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditItem(item.id)}
-                            >
-                              Edit
-                            </Button>
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
-                    </div>
-                  </div>
-                );
-              })}
-            </TabsContent>
-          </Tabs>
-        </Card>
+        {/* No results state */}
+        {selectedIngredients.length > 0 && foundRecipes.length === 0 && !isSearching && (
+          <Card>
+            <CardContent className="p-8 text-center">
+              <ChefHat className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No recipes found</h3>
+              <p className="text-gray-600 mb-4">
+                Try adjusting your ingredient selection or adding more common ingredients.
+              </p>
+              <Button variant="outline" onClick={handleClearAll}>
+                Start Over
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </PageContainer>
   );

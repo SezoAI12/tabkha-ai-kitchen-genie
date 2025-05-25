@@ -37,6 +37,7 @@ import FavoritesPage from "./pages/FavoritesPage";
 import MainSettingsPage from "./pages/MainSettingsPage";
 import CommunityPage from "./pages/CommunityPage";
 import ScanDishPage from "./pages/ScanDishPage";
+import MenuPage from "./pages/MenuPage";
 
 // Admin Panel Routes
 import AdminPage from "./pages/AdminPage";
@@ -84,6 +85,7 @@ const App = () => (
               <Route path="/shared-recipes-tracking" element={<SharedRecipesTrackingPage />} />
               <Route path="/community" element={<CommunityPage />} />
               <Route path="/scan-dish" element={<ScanDishPage />} />
+              <Route path="/menu" element={<MenuPage />} />
               
               {/* Secondary Pages */}
               <Route path="/new-home" element={<NewHomePage />} />
