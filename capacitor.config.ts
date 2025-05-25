@@ -2,18 +2,38 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.55ccc3a081c345dba0c220764d6839b3',
-  appName: 'wasfah-ai-kitchen-pal',
+  appId: 'com.wasfah.app',
+  appName: 'Wasfah AI Kitchen Pal',
   webDir: 'dist',
   server: {
-    url: 'https://55ccc3a0-81c3-45db-a0c2-20764d6839b3.lovableproject.com?forceHideBadge=true',
-    cleartext: true
+    androidScheme: 'https'
+  },
+  plugins: {
+    SplashScreen: {
+      launchShowDuration: 2000,
+      backgroundColor: "#009594",
+      androidSplashResourceName: "splash",
+      androidScaleType: "CENTER_CROP",
+      showSpinner: false,
+      spinnerColor: "#ffffff"
+    },
+    StatusBar: {
+      style: 'dark',
+      backgroundColor: '#009594'
+    },
+    Keyboard: {
+      resize: 'body',
+      style: 'dark',
+      resizeOnFullScreen: true
+    }
   },
   ios: {
-    contentInset: 'automatic'
+    contentInset: 'automatic',
+    backgroundColor: '#009594'
   },
   android: {
-    backgroundColor: '#ffffff'
+    backgroundColor: '#009594',
+    allowMixedContent: true
   }
 };
 

@@ -2,7 +2,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
-import { LanguageSelector } from '../language/LanguageSelector.tsx';
+import { LanguageSelector } from '../language/LanguageSelector';
+import { HungerButton } from '../ui/hunger-button';
 
 interface HeaderProps {
   title?: string;
@@ -10,6 +11,7 @@ interface HeaderProps {
   onBackClick?: () => void;
   actions?: React.ReactNode;
   className?: string;
+  showHungerButton?: boolean;
 }
 
 export const MobileHeader: React.FC<HeaderProps> = ({
@@ -18,6 +20,7 @@ export const MobileHeader: React.FC<HeaderProps> = ({
   onBackClick,
   actions,
   className = '',
+  showHungerButton = true,
 }) => {
   const navigate = useNavigate();
   
@@ -30,20 +33,21 @@ export const MobileHeader: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className={`bg-white dark:bg-gray-950 sticky top-0 z-50 h-14 flex items-center justify-between px-4 shadow-sm ${className}`}>
+    <header className={`bg-white dark:bg-gray-950 sticky top-0 z-50 h-14 flex items-center justify-between px-4 shadow-sm border-b border-wasfah-mint/20 ${className}`}>
       <div className="flex items-center space-x-4">
         {showBackButton && (
           <button
-            className="h-10 w-10 inline-flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="h-10 w-10 inline-flex items-center justify-center rounded-full hover:bg-wasfah-light-gray transition-colors"
             onClick={handleBackClick}
           >
-            <ChevronLeft className="h-6 w-6" />
+            <ChevronLeft className="h-6 w-6 text-wasfah-deep-teal" />
           </button>
         )}
-        {title && <h1 className="text-lg font-semibold truncate">{title}</h1>}
+        {title && <h1 className="text-lg font-semibold truncate text-wasfah-deep-teal">{title}</h1>}
       </div>
       <div className="flex items-center space-x-2">
         <LanguageSelector />
+        {showHungerButton && <HungerButton />}
         {actions}
       </div>
     </header>
