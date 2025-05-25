@@ -1,75 +1,30 @@
 import React, { useState } from 'react';
-import { PageContainer } from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { motion, AnimatePresence } from 'framer-motion'; // Ensure AnimatePresence is imported
 import {
-  Utensils, Cake, Coffee, Search, Plus, List, Camera, Mic, Filter, Trash2, // Added Filter and Trash2 icons
-  Salad, Cookie, Beer, Timer, ChefHat, Globe, LeafyGreen, Soup, Droplet
+  Utensils, Cake, Coffee, Search, Plus, List, Camera, Mic, Filter, Trash2,
+  ArrowLeft, ChevronDown, X, Settings
 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast'; // Assuming you have this hook
 
-// Design tokens (re-emphasized for clarity and consistency)
-const primaryColor = 'hsl(var(--primary))'; // Assuming primary color from your CSS variables
-const accentColor = 'hsl(var(--accent))';   // Assuming accent color from your CSS variables
-const textColor = 'hsl(var(--foreground))'; // Assuming text color
-const cardBackground = 'hsl(var(--card))';  // Assuming card background
-
-// --- Main Categories Data ---
+// Main Categories Data
 const mainCategories = [
-  { name: 'Food', icon: <Utensils className="h-10 w-10 text-primary" />, subcategories: ['Main Dishes', 'Appetizers', 'Pickles', 'Soups', 'Sauces', 'Others'] },
-  { name: 'Desserts', icon: <Cake className="h-10 w-10 text-primary" />, subcategories: ['Traditional', 'Western', 'Pastries', 'Ice Cream', 'Others'] },
-  { name: 'Drinks', icon: <Coffee className="h-10 w-10 text-primary" />, subcategories: ['Detox', 'Cocktails', 'Alcoholic', 'Hot Drinks', 'Others'] },
+  { name: 'Food', icon: <Utensils className="h-6 w-6" />, subcategories: ['Main Dishes', 'Appetizers', 'Pickles', 'Soups', 'Sauces', 'Others'] },
+  { name: 'Desserts', icon: <Cake className="h-6 w-6" />, subcategories: ['Traditional', 'Western', 'Pastries', 'Ice Cream', 'Others'] },
+  { name: 'Drinks', icon: <Coffee className="h-6 w-6" />, subcategories: ['Detox', 'Cocktails', 'Alcoholic', 'Hot Drinks', 'Others'] },
 ];
 
-// --- Filter Options Data ---
+// Filter Options Data
 const filterOptions = {
-  dietary: {
-    label: 'Dietary',
-    icon: <LeafyGreen className="h-4 w-4 mr-2" />,
-    options: ['Normal', 'Healthy', 'Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Keto', 'Low-Carb'],
-  },
-  cookingTime: {
-    label: 'Cooking Time',
-    icon: <Timer className="h-4 w-4 mr-2" />,
-    options: ['Under 30 mins', '30-60 mins', '1-2 hours', 'Over 2 hours'],
-  },
-  difficultyLevel: {
-    label: 'Difficulty Level',
-    icon: <ChefHat className="h-4 w-4 mr-2" />,
-    options: ['Beginner', 'Intermediate', 'Expert'],
-  },
-  cuisineType: {
-    label: 'Cuisine Type',
-    icon: <Globe className="h-4 w-4 mr-2" />,
-    options: ['Levant', 'Italian', 'Mexican', 'Chinese', 'Indian', 'Japanese', 'Thai', 'Turkish', 'Syrian', 'Iraqi', 'Yemeni', 'American', 'Moroccan', 'Lebanese', 'German'],
-  },
-  allergenFree: {
-    label: 'Allergen-Free',
-    icon: <Droplet className="h-4 w-4 mr-2" />, // More generic for allergens
-    options: ['None', 'Dairy', 'Gluten', 'Tree Nuts', 'Shellfish', 'Soy', 'Eggs'],
-  },
-  mealType: {
-    label: 'Meal Type',
-    icon: <Soup className="h-4 w-4 mr-2" />, // Represents a meal
-    options: ['Any Meal', 'Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Snack'],
-  },
-  religiousRestrictions: {
-    label: 'Religious Restrictions',
-    icon: <Salad className="h-4 w-4 mr-2" />, // Represents dietary restrictions
-    options: ['None', 'Halal', 'Kosher'],
-  },
-  healthGoals: {
-    label: 'Health Goals',
-    icon: <Cookie className="h-4 w-4 mr-2" />, // Represents a healthy choice
-    options: ['None', 'Low Calorie', 'Low Carb', 'High Protein', 'Low Fat'],
-  },
+  dietary: ['Normal', 'Healthy', 'Vegetarian', 'Vegan', 'Gluten-Free'],
+  cookingTime: ['Under 30 mins', '30-60 mins', '1-2 hours', 'Over 2 hours'],
+  difficulty: ['Beginner', 'Intermediate', 'Expert'],
+  cuisine: ['Levant', 'Italian', 'Mexican', 'Chinese', 'Indian', 'American'],
 };
 
-// --- Smart Pantry Simulation (replace with actual integration) ---
+// Smart Pantry Items
 const smartPantryItems = [
   { id: 'sp1', name: 'Flour', quantity: 1, unit: 'kg' },
   { id: 'sp2', name: 'Sugar', quantity: 500, unit: 'g' },
@@ -77,314 +32,417 @@ const smartPantryItems = [
   { id: 'sp4', name: 'Milk', quantity: 1, unit: 'liter' },
   { id: 'sp5', name: 'Chicken Breast', quantity: 500, unit: 'g' },
   { id: 'sp6', name: 'Spinach', quantity: 200, unit: 'g' },
-  { id: 'sp7', name: 'Tomatoes', quantity: 4, unit: '' },
-  { id: 'sp8', name: 'Onions', quantity: 2, unit: '' },
 ];
 
-export default function FindRecipePage() {
-  const { toast } = useToast();
-  const [selectedMainCategory, setSelectedMainCategory] = useState<string | null>(null);
-  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
-
-  // --- Filter States ---
-  const [filters, setFilters] = useState<Record<string, string>>({
+export default function MobileRecipeFinder() {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState({
     dietary: 'Normal',
     cookingTime: '',
-    difficultyLevel: '',
-    cuisineType: '',
-    allergenFree: 'None',
-    mealType: 'Any Meal',
-    religiousRestrictions: 'None',
-    healthGoals: 'None',
+    difficulty: '',
+    cuisine: '',
   });
 
-  const handleFilterChange = (filterName: string, value: string) => {
-    setFilters(prev => ({ ...prev, [filterName]: value }));
-  };
-
-  // --- Ingredient States ---
-  const [currentIngredientName, setCurrentIngredientName] = useState('');
-  const [currentIngredientQuantity, setCurrentIngredientQuantity] = useState<number | ''>('');
-  const [currentIngredientUnit, setCurrentIngredientUnit] = useState('');
-  const [addedIngredients, setAddedIngredients] = useState<Array<{ id: string; name: string; quantity: number; unit: string; source: 'manual' | 'pantry' }>>([]);
-  const [ingredientInputTab, setIngredientInputTab] = useState('manual'); // 'manual' or 'pantry'
+  // Ingredient States
+  const [ingredientName, setIngredientName] = useState('');
+  const [ingredientQuantity, setIngredientQuantity] = useState('');
+  const [ingredientUnit, setIngredientUnit] = useState('');
+  const [addedIngredients, setAddedIngredients] = useState([]);
+  const [ingredientTab, setIngredientTab] = useState('manual');
 
   const handleAddIngredient = () => {
-    if (!currentIngredientName.trim()) {
-      toast({ title: "Error", description: "Ingredient name cannot be empty.", variant: "destructive" });
-      return;
-    }
-
+    if (!ingredientName.trim()) return;
+    
     const newIngredient = {
       id: Date.now().toString(),
-      name: currentIngredientName.trim(),
-      quantity: Number(currentIngredientQuantity) || 1,
-      unit: currentIngredientUnit.trim(),
-      source: 'manual' as 'manual',
+      name: ingredientName.trim(),
+      quantity: ingredientQuantity || '1',
+      unit: ingredientUnit.trim(),
+      source: 'manual',
     };
     setAddedIngredients(prev => [...prev, newIngredient]);
-    setCurrentIngredientName('');
-    setCurrentIngredientQuantity('');
-    setCurrentIngredientUnit('');
-    toast({ title: "Ingredient Added", description: `${newIngredient.name} added to your list.` });
+    setIngredientName('');
+    setIngredientQuantity('');
+    setIngredientUnit('');
   };
 
-  const handleRemoveIngredient = (id: string) => {
+  const handleRemoveIngredient = (id) => {
     setAddedIngredients(prev => prev.filter(ing => ing.id !== id));
-    toast({ title: "Ingredient Removed", description: "Ingredient removed from your list." });
   };
 
-  const handleSelectPantryItem = (item: typeof smartPantryItems[0]) => {
-    const isAlreadyAdded = addedIngredients.some(ing => ing.name === item.name); // Check by name regardless of source
-    if (isAlreadyAdded) {
-      toast({ title: "Already Added", description: `${item.name} is already in your ingredient list.` });
-      return;
-    }
+  const handleSelectPantryItem = (item) => {
+    const isAlreadyAdded = addedIngredients.some(ing => ing.name === item.name);
+    if (isAlreadyAdded) return;
+    
     setAddedIngredients(prev => [...prev, { ...item, source: 'pantry' }]);
-    toast({ title: "Pantry Item Added", description: `${item.name} added from your pantry.` });
   };
 
   const handleFindRecipes = () => {
-    if (addedIngredients.length === 0) {
-      toast({ title: "No Ingredients", description: "Please add some ingredients to find recipes.", variant: "destructive" });
-      return;
-    }
-    // Here, you would send selectedMainCategory, selectedSubcategory, filters, and addedIngredients
-    // to your AI backend for recipe generation.
-    toast({ title: "Finding Recipes...", description: "Searching for recipes based on your criteria and ingredients!" });
     console.log("Searching with:", {
-      selectedMainCategory,
+      selectedCategory,
       selectedSubcategory,
       filters,
       addedIngredients,
     });
-    // Placeholder for navigation to results page
-    // router.push('/recipe-results', { state: { ingredients: addedIngredients, filters: filters } });
   };
 
-  const currentSubcategories = selectedMainCategory
-    ? mainCategories.find(cat => cat.name === selectedMainCategory)?.subcategories || []
-    : [];
+  const renderStepIndicator = () => (
+    <div className="flex justify-center mb-6">
+      <div className="flex space-x-2">
+        {[1, 2, 3, 4].map((step) => (
+          <div
+            key={step}
+            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
+              step <= currentStep 
+                ? 'bg-blue-500 text-white' 
+                : 'bg-gray-200 text-gray-500'
+            }`}
+          >
+            {step}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
-  return (
-    <PageContainer header={{ title: 'Find Recipe by Ingredients', showBackButton: true }}>
-      <div className="space-y-8 pb-20"> {/* Increased spacing */}
+  const renderHeader = () => (
+    <div className="sticky top-0 z-50 bg-white border-b shadow-sm">
+      <div className="flex items-center justify-between p-4">
+        <Button variant="ghost" size="sm" className="p-2">
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <h1 className="text-lg font-semibold">Find Recipe</h1>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="p-2"
+          onClick={() => setShowFilters(!showFilters)}
+        >
+          <Settings className="h-5 w-5" />
+        </Button>
+      </div>
+    </div>
+  );
 
-        {/* --- Main Categories --- */}
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center text-primary">1. Select Main Category</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4"> {/* Increased gap and padding */}
-            {mainCategories.map((category) => (
-              <motion.div
-                key={category.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                whileHover={{ scale: 1.05, boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.1)" }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setSelectedMainCategory(category.name)}
-                className={`flex flex-col items-center justify-center p-8 border-2 rounded-xl cursor-pointer transition-all duration-300 ease-in-out
-                          ${selectedMainCategory === category.name ? 'border-accent bg-accent/10 shadow-xl' : 'border-gray-200 bg-card hover:border-primary/50'}`}
-              >
-                {category.icon}
-                <p className="mt-4 font-semibold text-xl text-center text-foreground">{category.name}</p>
-              </motion.div>
-            ))}
-          </CardContent>
-        </Card>
+  const renderCategorySelection = () => (
+    <div className="p-4 space-y-4">
+      <h2 className="text-xl font-semibold text-center">Choose Category</h2>
+      <div className="grid grid-cols-1 gap-3">
+        {mainCategories.map((category) => (
+          <button
+            key={category.name}
+            onClick={() => {
+              setSelectedCategory(category.name);
+              setCurrentStep(2);
+            }}
+            className={`flex items-center p-4 rounded-xl border-2 transition-all ${
+              selectedCategory === category.name
+                ? 'border-blue-500 bg-blue-50'
+                : 'border-gray-200 bg-white active:bg-gray-50'
+            }`}
+          >
+            <div className="p-3 rounded-lg bg-blue-100 text-blue-600 mr-4">
+              {category.icon}
+            </div>
+            <div className="flex-1 text-left">
+              <p className="font-semibold text-lg">{category.name}</p>
+              <p className="text-sm text-gray-500">
+                {category.subcategories.length} subcategories
+              </p>
+            </div>
+            <ChevronDown className="h-5 w-5 text-gray-400 rotate-[-90deg]" />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 
-        {/* --- Dynamic Subcategories --- */}
-        <AnimatePresence>
-          {selectedMainCategory && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
+  const renderSubcategorySelection = () => {
+    const currentSubcategories = selectedCategory
+      ? mainCategories.find(cat => cat.name === selectedCategory)?.subcategories || []
+      : [];
+
+    return (
+      <div className="p-4 space-y-4">
+        <div className="flex items-center justify-between">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setCurrentStep(1)}
+            className="p-2"
+          >
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            Back
+          </Button>
+          <h2 className="text-lg font-semibold">{selectedCategory}</h2>
+          <div className="w-10" />
+        </div>
+        
+        <div className="space-y-2">
+          {currentSubcategories.map((sub) => (
+            <button
+              key={sub}
+              onClick={() => {
+                setSelectedSubcategory(sub);
+                setCurrentStep(3);
+              }}
+              className={`w-full p-4 text-left rounded-lg border transition-all ${
+                selectedSubcategory === sub
+                  ? 'border-blue-500 bg-blue-50'
+                  : 'border-gray-200 bg-white active:bg-gray-50'
+              }`}
             >
-              <Card className="shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-2xl font-bold text-center text-primary">
-                    Select Subcategory
-                    {selectedMainCategory && <span className="text-xl text-gray-600 ml-2">({selectedMainCategory})</span>}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <Select value={selectedSubcategory || ''} onValueChange={setSelectedSubcategory}>
-                    <SelectTrigger className="w-full text-lg h-12 border-2 border-gray-300 focus:border-accent transition-colors">
-                      <SelectValue placeholder="Choose a subcategory that best fits" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {currentSubcategories.map(sub => (
-                        <SelectItem key={sub} value={sub} className="text-base py-2">{sub}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <p className="font-medium">{sub}</p>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
-        {/* --- Integrated Advanced Filters --- */}
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center text-primary flex items-center justify-center">
-              <Filter className="mr-3 h-7 w-7 text-primary" /> 3. Advanced Filters
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4"> {/* Increased gap */}
-            {Object.entries(filterOptions).map(([key, { label, icon, options }]) => (
-              <div key={key} className="space-y-2">
-                <label className="flex items-center text-base font-medium text-foreground">
-                  {icon} {label}
-                </label>
-                <Select value={filters[key]} onValueChange={(value) => handleFilterChange(key, value)}>
-                  <SelectTrigger className="w-full h-10 border border-gray-300 focus:border-accent transition-colors text-base">
-                    <SelectValue placeholder={`Select ${label.toLowerCase()}`} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {options.map(option => (
-                      <SelectItem key={option} value={option} className="text-base py-2">{option}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+  const renderFiltersPanel = () => (
+    <div className={`fixed inset-0 z-50 bg-white transition-transform ${
+      showFilters ? 'translate-x-0' : 'translate-x-full'
+    }`}>
+      <div className="flex items-center justify-between p-4 border-b">
+        <h2 className="text-lg font-semibold">Filters</h2>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowFilters(false)}
+          className="p-2"
+        >
+          <X className="h-5 w-5" />
+        </Button>
+      </div>
+      
+      <div className="p-4 space-y-6">
+        {Object.entries(filterOptions).map(([key, options]) => (
+          <div key={key} className="space-y-2">
+            <label className="text-sm font-medium capitalize text-gray-700">
+              {key.replace(/([A-Z])/g, ' $1').trim()}
+            </label>
+            <select
+              value={filters[key]}
+              onChange={(e) => setFilters(prev => ({ ...prev, [key]: e.target.value }))}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+            >
+              <option value="">Select {key}</option>
+              {options.map(option => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
+          </div>
+        ))}
+      </div>
+      
+      <div className="p-4 border-t bg-gray-50">
+        <Button
+          onClick={() => setShowFilters(false)}
+          className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3"
+        >
+          Apply Filters
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderIngredientInput = () => (
+    <div className="p-4 space-y-4">
+      <div className="flex items-center justify-between">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setCurrentStep(2)}
+          className="p-2"
+        >
+          <ArrowLeft className="h-4 w-4 mr-1" />
+          Back
+        </Button>
+        <h2 className="text-lg font-semibold">Add Ingredients</h2>
+        <div className="w-10" />
+      </div>
+
+      <Tabs value={ingredientTab} onValueChange={setIngredientTab}>
+        <TabsList className="grid w-full grid-cols-2 bg-gray-100 p-1 rounded-lg">
+          <TabsTrigger value="manual" className="rounded-md">Manual</TabsTrigger>
+          <TabsTrigger value="pantry" className="rounded-md">Pantry</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="manual" className="space-y-4 mt-4">
+          <div className="space-y-3">
+            <Input
+              placeholder="Ingredient name"
+              value={ingredientName}
+              onChange={(e) => setIngredientName(e.target.value)}
+              className="h-12 text-base"
+            />
+            <div className="flex gap-2">
+              <Input
+                placeholder="Qty"
+                value={ingredientQuantity}
+                onChange={(e) => setIngredientQuantity(e.target.value)}
+                className="h-12 flex-1"
+              />
+              <Input
+                placeholder="Unit"
+                value={ingredientUnit}
+                onChange={(e) => setIngredientUnit(e.target.value)}
+                className="h-12 flex-1"
+              />
+            </div>
+            <Button
+              onClick={handleAddIngredient}
+              className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white"
+            >
+              <Plus className="mr-2 h-5 w-5" /> Add Ingredient
+            </Button>
+          </div>
+          
+          <div className="flex gap-2">
+            <Button variant="outline" className="flex-1 h-12">
+              <Camera className="mr-2 h-4 w-4" /> Scan
+            </Button>
+            <Button variant="outline" className="flex-1 h-12">
+              <Mic className="mr-2 h-4 w-4" /> Voice
+            </Button>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="pantry" className="space-y-4 mt-4">
+          <div className="space-y-2 max-h-60 overflow-y-auto">
+            {smartPantryItems.map(item => (
+              <div key={item.id} className="flex items-center justify-between p-3 border rounded-lg bg-white">
+                <div>
+                  <p className="font-medium">{item.name}</p>
+                  <p className="text-sm text-gray-500">{item.quantity} {item.unit}</p>
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleSelectPantryItem(item)}
+                  className="text-blue-500 border-blue-500"
+                >
+                  Add
+                </Button>
               </div>
             ))}
-          </CardContent>
-        </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
 
-        {/* --- Add Ingredients --- */}
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center text-primary">4. Add Your Ingredients</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4">
-            <Tabs value={ingredientInputTab} onValueChange={setIngredientInputTab} className="mb-6">
-              <TabsList className="grid w-full grid-cols-2 bg-gray-100 rounded-lg p-1">
-                <TabsTrigger value="manual" className="text-base data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md transition-colors">Manual Entry</TabsTrigger>
-                <TabsTrigger value="pantry" className="text-base data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md transition-colors">Smart Pantry</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="manual" className="p-6 border border-gray-200 rounded-lg mt-4 bg-gray-50 space-y-4">
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Input
-                    placeholder="e.g., Chicken Breast"
-                    value={currentIngredientName}
-                    onChange={(e) => setCurrentIngredientName(e.target.value)}
-                    className="flex-grow h-11 text-base border-gray-300 focus:border-accent"
-                  />
-                  <Input
-                    placeholder="Qty"
-                    type="number"
-                    value={currentIngredientQuantity}
-                    onChange={(e) => setCurrentIngredientQuantity(Number(e.target.value))}
-                    className="w-full sm:w-28 h-11 text-base border-gray-300 focus:border-accent"
-                  />
-                  <Input
-                    placeholder="Unit (e.g., kg, pcs)"
-                    value={currentIngredientUnit}
-                    onChange={(e) => setCurrentIngredientUnit(e.target.value)}
-                    className="w-full sm:w-36 h-11 text-base border-gray-300 focus:border-accent"
-                  />
-                  <Button
-                    onClick={handleAddIngredient}
-                    className="bg-accent hover:bg-accent/90 h-11 px-6 text-base font-semibold"
-                  >
-                    <Plus className="mr-2 h-5 w-5" /> Add
-                  </Button>
+      {/* Added Ingredients List */}
+      <div className="space-y-3">
+        <h3 className="font-semibold flex items-center">
+          <List className="mr-2 h-5 w-5" />
+          Added Ingredients ({addedIngredients.length})
+        </h3>
+        
+        {addedIngredients.length === 0 ? (
+          <p className="text-gray-500 text-center py-8 border-2 border-dashed border-gray-200 rounded-lg">
+            No ingredients added yet
+          </p>
+        ) : (
+          <div className="space-y-2 max-h-40 overflow-y-auto">
+            {addedIngredients.map(ing => (
+              <div key={ing.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div>
+                  <p className="font-medium">{ing.name}</p>
+                  <p className="text-sm text-gray-500">
+                    {ing.quantity} {ing.unit} • {ing.source}
+                  </p>
                 </div>
-                <div className="flex flex-col sm:flex-row justify-between gap-3 mt-4">
-                  <Button variant="outline" className="flex-1 h-11 text-base border-gray-300 hover:bg-gray-100">
-                    <Camera className="mr-2 h-5 w-5" /> Scan Ingredients
-                  </Button>
-                  <Button variant="outline" className="flex-1 h-11 text-base border-gray-300 hover:bg-gray-100">
-                    <Mic className="mr-2 h-5 w-5" /> Voice Input
-                  </Button>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="pantry" className="p-6 border border-gray-200 rounded-lg mt-4 bg-gray-50 space-y-4">
-                <h4 className="font-bold text-lg text-foreground mb-3">Available in Smart Pantry:</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar"> {/* Added scrollbar and grid */}
-                  {smartPantryItems.length > 0 ? (
-                    smartPantryItems.map(item => (
-                      <div key={item.id} className="flex items-center justify-between p-3 border rounded-md bg-white shadow-sm">
-                        <span className="text-base font-medium text-foreground">{item.name} <span className="text-sm text-gray-500">({item.quantity} {item.unit})</span></span>
-                        <Button variant="outline" size="sm" onClick={() => handleSelectPantryItem(item)}
-                          className="text-primary border-primary hover:bg-primary/10">
-                          Add
-                        </Button>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-gray-500 col-span-full text-center py-4">Your Smart Pantry is empty. Time to stock up!</p>
-                  )}
-                </div>
-              </TabsContent>
-            </Tabs>
-
-            <h3 className="font-bold text-xl mb-3 flex items-center text-primary">
-              <List className="mr-2 h-6 w-6" /> Your Added Ingredients:
-            </h3>
-            {addedIngredients.length === 0 ? (
-              <p className="text-gray-500 text-center py-4 border-2 border-dashed border-gray-200 rounded-lg">
-                Start by adding ingredients manually or from your Smart Pantry.
-              </p>
-            ) : (
-              <ul className="space-y-3">
-                <AnimatePresence>
-                  {addedIngredients.map(ing => (
-                    <motion.li
-                      key={ing.id}
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, x: 50, transition: { duration: 0.2 } }}
-                      className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white shadow-sm"
-                    >
-                      <span className="text-lg font-medium text-foreground">
-                        {ing.name} <span className="text-base text-gray-500">({ing.quantity} {ing.unit})</span>
-                        <span className="ml-2 text-xs text-blue-500 capitalize">({ing.source})</span>
-                      </span>
-                      <Button variant="ghost" size="icon" onClick={() => handleRemoveIngredient(ing.id)}
-                        className="text-red-500 hover:bg-red-50 rounded-full">
-                        <Trash2 className="h-5 w-5" />
-                      </Button>
-                    </motion.li>
-                  ))}
-                </AnimatePresence>
-              </ul>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* --- Find Recipes Button --- */}
-        <Button
-          onClick={handleFindRecipes}
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-xl py-4 rounded-lg shadow-lg font-bold transition-all duration-300 hover:scale-[1.01]"
-          size="lg"
-        >
-          <Search className="mr-3 h-6 w-6" /> Find Recipes
-        </Button>
-
-        {/* --- Recipe Results Display (Conceptual) --- */}
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center text-primary">Recipe Results</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6 text-center">
-            <p className="text-gray-600 text-lg">
-              Exciting recipes tailored to your choices will appear here after you tap "Find Recipes"!
-            </p>
-            <p className="text-gray-500 text-sm mt-2">
-              This section will feature visual recipe cards, filtering options, and detailed views with nutritional information, instructions, and media.
-            </p>
-          </CardContent>
-        </Card>
-
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => handleRemoveIngredient(ing.id)}
+                  className="text-red-500 p-2"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    </PageContainer>
+
+      <Button
+        onClick={() => setCurrentStep(4)}
+        disabled={addedIngredients.length === 0}
+        className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white disabled:bg-gray-300"
+      >
+        Continue to Results
+      </Button>
+    </div>
+  );
+
+  const renderResults = () => (
+    <div className="p-4 space-y-4">
+      <div className="flex items-center justify-between">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setCurrentStep(3)}
+          className="p-2"
+        >
+          <ArrowLeft className="h-4 w-4 mr-1" />
+          Back
+        </Button>
+        <h2 className="text-lg font-semibold">Recipe Results</h2>
+        <div className="w-10" />
+      </div>
+
+      <Card className="border-2 border-dashed border-gray-200">
+        <CardContent className="p-8 text-center space-y-4">
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
+            <Search className="h-8 w-8 text-blue-500" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Ready to Find Recipes!</h3>
+            <p className="text-gray-600 mb-4">
+              We'll search for recipes based on your selected category, ingredients, and preferences.
+            </p>
+            <Button
+              onClick={handleFindRecipes}
+              className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white font-semibold"
+            >
+              <Search className="mr-2 h-5 w-5" /> Find My Recipes
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Summary Card */}
+      <Card className="bg-gray-50">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">Search Summary</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <p className="text-sm"><strong>Category:</strong> {selectedCategory || 'Not selected'}</p>
+          <p className="text-sm"><strong>Subcategory:</strong> {selectedSubcategory || 'Not selected'}</p>
+          <p className="text-sm"><strong>Ingredients:</strong> {addedIngredients.length} items</p>
+          <p className="text-sm"><strong>Filters:</strong> {Object.values(filters).filter(v => v).length} applied</p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {renderHeader()}
+      {renderStepIndicator()}
+      
+      <div className="pb-20">
+        {currentStep === 1 && renderCategorySelection()}
+        {currentStep === 2 && renderSubcategorySelection()}
+        {currentStep === 3 && renderIngredientInput()}
+        {currentStep === 4 && renderResults()}
+      </div>
+      
+      {renderFiltersPanel()}
+    </div>
   );
 }
