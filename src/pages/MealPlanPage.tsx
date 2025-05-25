@@ -1,305 +1,172 @@
 import React, { useState } from 'react';
-import { Search, Activity, Heart, Globe, Calendar, ShoppingCart, Users, Camera, ArrowRight, Sparkles, Share2, Layout, Grid, List } from 'lucide-react';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { mockMealPlans } from '@/data/mockData';
+import { MealCard } from '@/components/meal-plan/MealCard';
+import { Button } from '@/components/ui/button';
+import { Plus, ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react';
+import { format, addDays, startOfWeek, parseISO } from 'date-fns';
 
-// Sample shared recipes data
-const sharedRecipes = [
-  { id: 1, name: 'Spaghetti Carbonara', sharedBy: 'Chef Mario', likes: 45, image: '🍝' },
-  { id: 2, name: 'Chicken Tikka Masala', sharedBy: 'Chef Priya', likes: 32, image: '🍛' },
-  { id: 3, name: 'Vegetable Stir Fry', sharedBy: 'Chef Li', likes: 28, image: '🥗' },
-  { id: 4, name: 'Chocolate Lava Cake', sharedBy: 'Chef Anna', likes: 56, image: '🍰' }
-];
+export default function MealPlanPage() {
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
-const mainFeatures = [
-  {
-    icon: <Search className="h-6 w-6 text-white" />,
-    label: "Find by Ingredients",
-    path: "/find-by-ingredients",
-    color: "bg-teal-500",
-    description: "Search recipes using ingredients you have"
-  },
-  {
-    icon: <Globe className="h-6 w-6 text-white" />,
-    label: "Global Cuisine",
-    path: "/global-cuisine",
-    color: "bg-teal-600",
-    description: "Explore recipes from around the world"
-  },
-  {
-    icon: <Calendar className="h-6 w-6 text-white" />,
-    label: "Meal Plan",
-    path: "/meal-plan",
-    color: "bg-green-500",
-    description: "Plan your weekly meals"
-  },
-  {
-    icon: <Activity className="h-6 w-6 text-white" />,
-    label: "Health Tracking",
-    path: "/health-tracking-home",
-    color: "bg-red-500",
-    description: "Track your nutrition and health goals"
-  },
-  {
-    icon: <ShoppingCart className="h-6 w-6 text-white" />,
-    label: "Pantry",
-    path: "/pantry",
-    color: "bg-purple-500",
-    description: "Manage your ingredients and pantry"
-  },
-  {
-    icon: <Users className="h-6 w-6 text-white" />,
-    label: "Community",
-    path: "/community",
-    color: "bg-blue-500",
-    description: "Connect with other food enthusiasts"
-  },
-  {
-    icon: <Heart className="h-6 w-6 text-white" />,
-    label: "Favorites",
-    path: "/favorites",
-    color: "bg-pink-500",
-    description: "Your saved favorite recipes"
-  },
-];
+  // Get the start of the week (Sunday)
+  const weekStart = startOfWeek(selectedDate, { weekStartsOn: 0 });
 
-const SharedRecipeCard = ({ recipe, layout }) => (
-  <div className={`bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 ${layout === 'list' ? 'flex items-center space-x-4' : ''}`}>
-    <div className={`text-4xl ${layout === 'list' ? 'flex-shrink-0' : 'text-center mb-2'}`}>
-      {recipe.image}
-    </div>
-    <div className={layout === 'list' ? 'flex-1' : ''}>
-      <h3 className="font-bold text-lg text-gray-800 dark:text-white">{recipe.name}</h3>
-      <p className="text-sm text-gray-600 dark:text-gray-300">Shared by: {recipe.sharedBy}</p>
-      <div className="flex items-center mt-2">
-        <Heart className="h-4 w-4 text-red-500 mr-1" />
-        <span className="text-sm text-gray-600 dark:text-gray-300">{recipe.likes} Likes</span>
-      </div>
-    </div>
-  </div>
-);
+  // Generate array of dates for the week
+  const weekDays = Array.from({ length: 7 }).map((_, i) => addDays(weekStart, i));
 
-const FeatureCard = ({ feature }) => (
-  <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-    <div className={`${feature.color} rounded-full w-12 h-12 flex items-center justify-center mb-4`}>
-      {React.cloneElement(feature.icon, { className: "h-6 w-6 text-white" })}
-    </div>
-    <h3 className="font-bold text-lg text-gray-800 dark:text-white mb-2">{feature.label}</h3>
-    <p className="text-gray-600 dark:text-gray-300 text-sm">{feature.description}</p>
-  </div>
-);
+  // Get meal plan for selected date
+  const selectedDateStr = format(selectedDate, 'yyyy-MM-dd');
+  const mealPlan = mockMealPlans.find(mp => mp.date === selectedDateStr) || mockMealPlans[0];
 
-const HomePage = () => {
-  const [layoutOption, setLayoutOption] = useState('option1'); // 'option1' or 'option2'
-  const [recipesLayout, setRecipesLayout] = useState('grid');
+  const handlePreviousWeek = () => {
+    setSelectedDate(addDays(weekStart, -7));
+  };
 
-  // Option 1: Compact Grid Layout (Original)
-  const Option1Layout = () => (
-    <div className="space-y-6 pb-24">
-      {/* AI Scan Card */}
-      <div className="relative overflow-hidden border-2 border-teal-300 dark:border-teal-600 shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg">
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-teal-100 to-teal-200 dark:from-teal-800 dark:to-teal-900 opacity-50"></div>
-        <div className="p-6 relative">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <div className="flex items-center mb-1">
-                <Sparkles className="h-5 w-5 text-teal-600 mr-2" />
-                <span className="text-sm font-medium text-teal-600">NEW AI FEATURE</span>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">Scan Any Dish</h2>
-              <p className="text-gray-600 dark:text-gray-300 mb-4">Instantly get nutrition info and ingredients from any food photo.</p>
-              <button className="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg flex items-center transition-colors">
-                <Camera className="mr-2 h-4 w-4" />
-                Scan Now
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </button>
-            </div>
-            <div className="hidden md:block ml-4">
-              <div className="w-20 h-20 bg-teal-200 dark:bg-teal-700 border-2 border-teal-400 rounded-full flex items-center justify-center">
-                <Camera className="h-10 w-10 text-teal-600 dark:text-teal-300" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  const handleNextWeek = () => {
+    setSelectedDate(addDays(weekStart, 7));
+  };
 
-      {/* Quick Access - Compact Grid */}
-      <div>
-        <h2 className="font-bold text-lg text-teal-700 dark:text-teal-300 mb-4">Quick Access</h2>
-        <div className="grid grid-cols-4 gap-4">
-          {mainFeatures.map((feature, index) => (
-            <div key={index} className="text-center">
-              <div className="flex flex-col items-center">
-                <div className={`${feature.color} rounded-full w-16 h-16 mb-2 flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-110`}>
-                  {feature.icon}
-                </div>
-                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{feature.label}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+  const handleAddMeal = (mealType) => {
+    // Logic to add a meal
+    console.log(`Add ${mealType}`);
+  };
 
-      {/* Shared Recipes */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-bold text-lg text-teal-700 dark:text-teal-300 flex items-center">
-            <Share2 className="h-5 w-5 mr-2 text-teal-500" />
-            Shared Recipes
+  const handleGenerateShoppingList = () => {
+    // Logic to generate shopping list
+    console.log('Generate Shopping List');
+  };
+
+  return (
+    <PageContainer
+      header={{
+        title: 'Meal Planning',
+        actions: (
+          <Button variant="ghost" size="icon" className="text-wasfah-deep-teal">
+            <Plus size={20} />
+          </Button>
+        ),
+      }}
+    >
+      <div className="container px-4 py-4">
+        <div className="flex justify-between items-center mb-4">
+          <Button variant="ghost" size="icon" onClick={handlePreviousWeek} aria-label="Previous week">
+            <ChevronLeft size={20} />
+          </Button>
+          <h2 className="text-wasfah-deep-teal font-medium">
+            {format(weekStart, 'MMM d')} - {format(addDays(weekStart, 6), 'MMM d, yyyy')}
           </h2>
-          <div className="flex space-x-2">
-            <button
-              onClick={() => setRecipesLayout('grid')}
-              className={`p-2 rounded ${recipesLayout === 'grid' ? 'bg-teal-500 text-white' : 'bg-gray-200 text-gray-600'}`}
-              aria-label="Grid view"
-            >
-              <Grid className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => setRecipesLayout('list')}
-              className={`p-2 rounded ${recipesLayout === 'list' ? 'bg-teal-500 text-white' : 'bg-gray-200 text-gray-600'}`}
-              aria-label="List view"
-            >
-              <List className="h-4 w-4" />
-            </button>
-          </div>
+          <Button variant="ghost" size="icon" onClick={handleNextWeek} aria-label="Next week">
+            <ChevronRight size={20} />
+          </Button>
         </div>
-        <div className={recipesLayout === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' : 'space-y-4'}>
-          {sharedRecipes.map((recipe) => (
-            <SharedRecipeCard key={recipe.id} recipe={recipe} layout={recipesLayout} />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
 
-  // Option 2: Card-Based Layout with Descriptions
-  const Option2Layout = () => (
-    <div className="space-y-6 pb-24">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-teal-500 to-blue-600 text-white p-8 rounded-xl shadow-xl">
-        <div className="text-center">
-          <Sparkles className="h-12 w-12 mx-auto mb-4 animate-pulse" />
-          <h1 className="text-3xl font-bold mb-2">Welcome to Wasfah</h1>
-          <p className="text-lg opacity-90 mb-6">Your AI-powered cooking companion</p>
-          <button className="bg-white text-teal-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors flex items-center mx-auto">
-            <Camera className="mr-2 h-5 w-5" />
-            Start Scanning
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </button>
-        </div>
-      </div>
+        <div className="flex justify-between mb-6 overflow-x-auto pb-2">
+          {weekDays.map((date, i) => {
+            const dateStr = format(date, 'yyyy-MM-dd');
+            const isSelected = dateStr === format(selectedDate, 'yyyy-MM-dd');
 
-      {/* Main Features - Card Layout */}
-      <div>
-        <h2 className="font-bold text-2xl text-teal-700 dark:text-teal-300 mb-6">Discover Features</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mainFeatures.map((feature, index) => (
-            <FeatureCard key={index} feature={feature} />
-          ))}
+            return (
+              <Button
+                key={i}
+                variant="ghost"
+                className={`flex-shrink-0 flex flex-col items-center px-3 rounded-full ${
+                  isSelected ?
+                  'bg-wasfah-bright-teal text-white' :
+                  'text-gray-700 hover:bg-gray-100'
+                }`}
+                onClick={() => setSelectedDate(date)}
+                aria-label={`Select ${format(date, 'EEE')}`}
+              >
+                <span className="text-xs">{format(date, 'EEE')}</span>
+                <span className="font-bold">{format(date, 'd')}</span>
+              </Button>
+            );
+          })}
         </div>
-      </div>
 
-      {/* Community Highlights */}
-      <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl">
-        <h2 className="font-bold text-xl text-teal-700 dark:text-teal-300 mb-4 flex items-center">
-          <Users className="h-6 w-6 mr-2 text-teal-500" />
-          Community Highlights
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {sharedRecipes.slice(0, 4).map((recipe) => (
-            <div key={recipe.id} className="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md">
-              <div className="flex items-center space-x-4">
-                <div className="text-3xl">{recipe.image}</div>
-                <div>
-                  <h3 className="font-semibold text-gray-800 dark:text-white">{recipe.name}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">by {recipe.sharedBy}</p>
-                  <div className="flex items-center mt-1">
-                    <Heart className="h-4 w-4 text-red-500 mr-1" />
-                    <span className="text-sm text-gray-600 dark:text-gray-300">{recipe.likes}</span>
+        {mealPlan ? (
+          <>
+            <div className="space-y-6">
+              {['breakfast', 'lunch', 'dinner', 'snack'].map(mealType => {
+                const meal = mealPlan.meals.find(m => m.type === mealType);
+
+                return (
+                  <div key={mealType}>
+                    <h3 className="font-bold mb-2 text-wasfah-deep-teal">{mealType.charAt(0).toUpperCase() + mealType.slice(1)}</h3>
+                    {meal ? (
+                      <MealCard meal={meal} />
+                    ) : (
+                      <Button
+                        variant="outline"
+                        className="w-full py-6 border-dashed border-gray-300 text-gray-500"
+                        onClick={() => handleAddMeal(mealType)}
+                        aria-label={`Add ${mealType}`}
+                      >
+                        <Plus size={16} className="mr-2" />
+                        Add {mealType}
+                      </Button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {mealPlan.nutritionSummary && (
+              <div className="mt-8 bg-white p-4 rounded-lg shadow-sm">
+                <h3 className="font-bold text-wasfah-deep-teal mb-3">Daily Nutrition</h3>
+
+                <div className="grid grid-cols-4 gap-2">
+                  <div className="text-center p-2 bg-wasfah-light-gray rounded-md">
+                    <p className="font-bold text-wasfah-deep-teal">
+                      {mealPlan.nutritionSummary.calories}
+                    </p>
+                    <p className="text-xs text-gray-500">Calories</p>
+                  </div>
+
+                  <div className="text-center p-2 bg-wasfah-light-gray rounded-md">
+                    <p className="font-bold text-wasfah-deep-teal">
+                      {mealPlan.nutritionSummary.protein}g
+                    </p>
+                    <p className="text-xs text-gray-500">Protein</p>
+                  </div>
+
+                  <div className="text-center p-2 bg-wasfah-light-gray rounded-md">
+                    <p className="font-bold text-wasfah-deep-teal">
+                      {mealPlan.nutritionSummary.carbs}g
+                    </p>
+                    <p className="text-xs text-gray-500">Carbs</p>
+                  </div>
+
+                  <div className="text-center p-2 bg-wasfah-light-gray rounded-md">
+                    <p className="font-bold text-wasfah-deep-teal">
+                      {mealPlan.nutritionSummary.fat}g
+                    </p>
+                    <p className="text-xs text-gray-500">Fat</p>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+            )}
 
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm p-4">
-        <div className="flex items-center justify-between max-w-6xl mx-auto">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-teal-600">Wasfah</h1>
-            <div className="hidden md:flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-              <button
-                onClick={() => setLayoutOption('option1')}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  layoutOption === 'option1'
-                    ? 'bg-teal-500 text-white'
-                    : 'text-gray-600 dark:text-gray-300 hover:text-teal-600'
-                }`}
-              >
-                Compact Layout
-              </button>
-              <button
-                onClick={() => setLayoutOption('option2')}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  layoutOption === 'option2'
-                    ? 'bg-teal-500 text-white'
-                    : 'text-gray-600 dark:text-gray-300 hover:text-teal-600'
-                }`}
-              >
-                Card Layout
-              </button>
-            </div>
+            <Button
+              className="w-full mt-6 bg-wasfah-bright-teal hover:bg-wasfah-teal text-white"
+              onClick={handleGenerateShoppingList}
+              aria-label="Generate Shopping List"
+            >
+              <ShoppingCart size={16} className="mr-2" />
+              Generate Shopping List
+            </Button>
+          </>
+        ) : (
+          <div className="text-center py-10">
+            <p className="text-gray-500 mb-4">No meal plan for this day</p>
+            <Button className="bg-wasfah-bright-teal hover:bg-wasfah-teal">
+              <Plus size={16} className="mr-2" />
+              Create Meal Plan
+            </Button>
           </div>
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search recipes..."
-                className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-              />
-            </div>
-          </div>
-        </div>
+        )}
       </div>
-
-      {/* Mobile Layout Selector */}
-      <div className="md:hidden bg-white dark:bg-gray-800 p-4 border-b dark:border-gray-700">
-        <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-          <button
-            onClick={() => setLayoutOption('option1')}
-            className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              layoutOption === 'option1'
-                ? 'bg-teal-500 text-white'
-                : 'text-gray-600 dark:text-gray-300'
-            }`}
-          >
-            Compact
-          </button>
-          <button
-            onClick={() => setLayoutOption('option2')}
-            className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              layoutOption === 'option2'
-                ? 'bg-teal-500 text-white'
-                : 'text-gray-600 dark:text-gray-300'
-            }`}
-          >
-            Cards
-          </button>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="max-w-6xl mx-auto p-4">
-        {layoutOption === 'option1' ? <Option1Layout /> : <Option2Layout />}
-      </div>
-    </div>
+    </PageContainer>
   );
-};
-
-export default HomePage;
+}
