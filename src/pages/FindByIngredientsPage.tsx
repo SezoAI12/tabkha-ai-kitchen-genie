@@ -57,16 +57,16 @@ const FindRecipeByIngredientsPage = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Find Recipe by Ingredients</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center text-teal-700">Find Recipe by Ingredients</h1>
 
       {/* Main Categories */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         {categories.map((category) => (
-          <Card key={category.id} className="transition-transform transform hover:scale-105">
+          <Card key={category.id} className="transition-transform transform hover:scale-105 bg-gradient-to-br from-teal-50 to-teal-100">
             <CardContent className="p-6 text-center">
-              <h2 className="text-xl font-bold mb-2">{category.name}</h2>
+              <h2 className="text-xl font-bold mb-2 text-teal-700">{category.name}</h2>
               <Select onValueChange={(value) => setSelectedSubcategory(value)}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full bg-white">
                   <SelectValue placeholder="Select Subcategory" />
                 </SelectTrigger>
                 <SelectContent>
@@ -81,8 +81,8 @@ const FindRecipeByIngredientsPage = () => {
       </div>
 
       {/* Advanced Filters */}
-      <div className="mb-6">
-        <h2 className="text-xl font-bold mb-4">Advanced Filters</h2>
+      <div className="mb-6 bg-white p-6 rounded-lg shadow-md">
+        <h2 className="text-xl font-bold mb-4 text-teal-700">Advanced Filters</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Select onValueChange={(value) => setSelectedFilters({ ...selectedFilters, dietary: value })}>
             <SelectTrigger>
@@ -175,8 +175,8 @@ const FindRecipeByIngredientsPage = () => {
       </div>
 
       {/* Ingredient Input */}
-      <div className="mb-6">
-        <h2 className="text-xl font-bold mb-4">Add Ingredients</h2>
+      <div className="mb-6 bg-white p-6 rounded-lg shadow-md">
+        <h2 className="text-xl font-bold mb-4 text-teal-700">Add Ingredients</h2>
         <Tabs defaultValue="manual">
           <TabsList>
             <TabsTrigger value="manual">Manual Entry</TabsTrigger>
@@ -189,11 +189,13 @@ const FindRecipeByIngredientsPage = () => {
                 placeholder="Ingredient"
                 value={ingredientInput}
                 onChange={(e) => setIngredientInput(e.target.value)}
+                className="flex-1"
               />
               <Input
                 placeholder="Quantity"
                 value={ingredientQuantity}
                 onChange={(e) => setIngredientQuantity(e.target.value)}
+                className="flex-1"
               />
               <Select onValueChange={(value) => setIngredientUnit(value)}>
                 <SelectTrigger>
@@ -207,7 +209,7 @@ const FindRecipeByIngredientsPage = () => {
                   <SelectItem value="pcs">pieces</SelectItem>
                 </SelectContent>
               </Select>
-              <Button onClick={handleAddIngredient}>
+              <Button onClick={handleAddIngredient} className="bg-teal-500 hover:bg-teal-600 text-white">
                 <Plus size={16} className="mr-2" />
                 Add Ingredient
               </Button>
@@ -222,10 +224,10 @@ const FindRecipeByIngredientsPage = () => {
         </Tabs>
 
         <div className="mb-4">
-          <h3 className="text-lg font-bold mb-2">Selected Ingredients</h3>
+          <h3 className="text-lg font-bold mb-2 text-teal-700">Selected Ingredients</h3>
           <ul>
             {ingredients.map((ingredient, index) => (
-              <li key={index} className="mb-2">
+              <li key={index} className="mb-2 bg-teal-50 p-2 rounded">
                 {ingredient.quantity} {ingredient.unit} of {ingredient.name}
               </li>
             ))}
@@ -241,34 +243,34 @@ const FindRecipeByIngredientsPage = () => {
 
       {/* Recipe Results */}
       <div className="mt-6">
-        <h2 className="text-xl font-bold mb-4">Recipe Results</h2>
+        <h2 className="text-xl font-bold mb-4 text-teal-700">Recipe Results</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Mock Recipe Cards */}
-          <Card>
+          <Card className="bg-gradient-to-br from-teal-50 to-teal-100">
             <CardContent className="p-4">
-              <h3 className="font-bold mb-2">Recipe 1</h3>
-              <p>Description of Recipe 1</p>
-              <Button variant="outline" className="mt-4">
+              <h3 className="font-bold mb-2 text-teal-700">Recipe 1</h3>
+              <p className="text-gray-600">Description of Recipe 1</p>
+              <Button variant="outline" className="mt-4 bg-white text-teal-700 hover:bg-teal-50">
                 <Heart size={16} className="mr-2" />
                 Save
               </Button>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="bg-gradient-to-br from-teal-50 to-teal-100">
             <CardContent className="p-4">
-              <h3 className="font-bold mb-2">Recipe 2</h3>
-              <p>Description of Recipe 2</p>
-              <Button variant="outline" className="mt-4">
+              <h3 className="font-bold mb-2 text-teal-700">Recipe 2</h3>
+              <p className="text-gray-600">Description of Recipe 2</p>
+              <Button variant="outline" className="mt-4 bg-white text-teal-700 hover:bg-teal-50">
                 <Heart size={16} className="mr-2" />
                 Save
               </Button>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="bg-gradient-to-br from-teal-50 to-teal-100">
             <CardContent className="p-4">
-              <h3 className="font-bold mb-2">Recipe 3</h3>
-              <p>Description of Recipe 3</p>
-              <Button variant="outline" className="mt-4">
+              <h3 className="font-bold mb-2 text-teal-700">Recipe 3</h3>
+              <p className="text-gray-600">Description of Recipe 3</p>
+              <Button variant="outline" className="mt-4 bg-white text-teal-700 hover:bg-teal-50">
                 <Heart size={16} className="mr-2" />
                 Save
               </Button>
