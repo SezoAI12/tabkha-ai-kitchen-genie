@@ -1,42 +1,31 @@
-// MealPlanningScreen.js
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  FlatList,
-  ScrollView,
-  Modal,
-  Picker, // Or use react-native-picker-select for better UX
-  Alert,
-  Keyboard,
-  LayoutAnimation, // For simple animations
-  Platform, // For platform-specific layout animation
-  UIManager,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context'; // For notch/status bar safety
-import Icon from 'react-native-vector-icons/Feather'; // Example icon library (install 'react-native-vector-icons')
+import React, { useState, useEffect, useMemo } from 'react';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ChevronLeft, ChevronRight, Plus, Trash2, Zap, Search } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
-// --- Interfaces for Type Safety (if using TypeScript) ---
+// --- Interfaces for Type Safety ---
 interface Meal {
   id: string;
-  recipeId?: string; // ID of the recipe
-  customText?: string; // For "Eating out", "Leftovers"
+  recipeId?: string;
+  customText?: string;
   type: 'recipe' | 'custom';
   servings?: number;
   date: string; // 'YYYY-MM-DD'
   mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack';
-  addedDate: string; // ISO string for creation date
+  addedDate: string;
 }
 
 interface RecipeSummary {
   id: string;
   name: string;
   category: string;
-  // ... other minimal recipe details needed for display/selection
 }
 
 // --- Helper Functions ---
@@ -45,7 +34,7 @@ const getWeekDays = (startDate: Date) => {
   for (let i = 0; i < 7; i++) {
     const date = new Date(startDate);
     date.setDate(startDate.getDate() + i);
-    days.push(date.toISOString().split('T')[0]); // YYYY-MM-DD
+    days.push(date.toISOString().split('T')[0]);
   }
   return days;
 };
@@ -56,40 +45,31 @@ const formatDateForDisplay = (isoString: string) => {
 };
 
 const getMealTypeLabel = (type: string) => {
-    switch (type) {
-        case 'breakfast': return 'Breakfast';
-        case 'lunch': return 'Lunch';
-        case 'dinner': return 'Dinner';
-        case 'snack': return 'Snack';
-        default: return '';
-    }
+  switch (type) {
+    case 'breakfast': return 'Breakfast';
+    case 'lunch': return 'Lunch';
+    case 'dinner': return 'Dinner';
+    case 'snack': return 'Snack';
+    default: return '';
+  }
 };
 
-// Enable LayoutAnimation for Android
-if (Platform.OS === 'android') {
-  UIManager.setLayoutAnimationEnabledExperimental &&
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-}
-
-const MealPlanningScreen = () => {
+const MealPlanPage = () => {
+  const { toast } = useToast();
+  
   // --- State Management ---
-  const [currentWeekStart, setCurrentWeekStart] = useState(new Date()); // Start of the currently displayed week
-  const [mealPlan, setMealPlan] = useState<Meal[]>([]); // All planned meals
+  const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
+  const [mealPlan, setMealPlan] = useState<Meal[]>([]);
   const [isAddingMeal, setIsAddingMeal] = useState(false);
   const [newMealRecipeId, setNewMealRecipeId] = useState<string | null>(null);
   const [newMealCustomText, setNewMealCustomText] = useState('');
-  const [newMealDate, setNewMealDate] = useState(getWeekDays(new Date())[0]); // Default to today
+  const [newMealDate, setNewMealDate] = useState(getWeekDays(new Date())[0]);
   const [newMealType, setNewMealType] = useState('lunch');
-  const [newMealServings, setNewMealServings] = useState('1'); // As string for input
-  const [editingMealId, setEditingMealId] = useState<string | null>(null);
-  const [editingFieldName, setEditingFieldName] = useState<string | null>(null); // 'customText' or 'servings'
-  const editingInputRef = useRef<TextInput>(null);
-
+  const [newMealServings, setNewMealServings] = useState('1');
   const [searchQuery, setSearchQuery] = useState('');
-  const [isSearchingRecipes, setIsSearchingRecipes] = useState(false);
-  const [searchResults, setSearchResults] = useState<RecipeSummary[]>([]); // Mock search results
+  const [searchResults, setSearchResults] = useState<RecipeSummary[]>([]);
 
-  // Mock data for recipes (replace with actual data fetching)
+  // Mock data for recipes
   const mockRecipes: RecipeSummary[] = [
     { id: 'rec1', name: 'Chicken Stir-fry', category: 'Dinner' },
     { id: 'rec2', name: 'Oatmeal', category: 'Breakfast' },
@@ -101,22 +81,14 @@ const MealPlanningScreen = () => {
   const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
   const weekDays = useMemo(() => getWeekDays(currentWeekStart), [currentWeekStart]);
 
-  // --- Mock Data Loading (Replace with AsyncStorage/API) ---
+  // --- Mock Data Loading ---
   useEffect(() => {
-    // In a real app, load mealPlan from AsyncStorage or an API
     setMealPlan([
       { id: 'm1', type: 'recipe', recipeId: 'rec1', servings: 2, date: weekDays[0], mealType: 'dinner', addedDate: new Date().toISOString() },
       { id: 'm2', type: 'custom', customText: 'Eating Out', date: weekDays[1], mealType: 'dinner', addedDate: new Date().toISOString() },
       { id: 'm3', type: 'recipe', recipeId: 'rec3', servings: 1, date: weekDays[2], mealType: 'lunch', addedDate: new Date().toISOString() },
     ]);
-  }, [weekDays]); // Re-load when weekDays change (for mock purposes)
-
-  // --- Helper to Update Meal Plan ---
-  const updateMealPlan = (updatedMeals: Meal[]) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setMealPlan(updatedMeals);
-    // In a real app, persist to AsyncStorage or API
-  };
+  }, [weekDays]);
 
   // --- Handlers ---
   const handlePreviousWeek = () => {
@@ -133,7 +105,7 @@ const MealPlanningScreen = () => {
 
   const handleAddMeal = () => {
     if (newMealRecipeId === null && !newMealCustomText.trim()) {
-      Alert.alert('Error', 'Please select a recipe or enter custom text.');
+      toast({ title: "Error", description: "Please select a recipe or enter custom text.", variant: "destructive" });
       return;
     }
 
@@ -147,140 +119,75 @@ const MealPlanningScreen = () => {
       ...(!newMealRecipeId && { customText: newMealCustomText.trim() }),
     };
 
-    updateMealPlan([...mealPlan, newMeal]);
+    setMealPlan([...mealPlan, newMeal]);
     setIsAddingMeal(false);
     setNewMealRecipeId(null);
     setNewMealCustomText('');
     setNewMealServings('1');
-    Alert.alert('Success', 'Meal added to plan!');
+    setSearchQuery('');
+    toast({ title: "Success", description: "Meal added to plan!" });
   };
 
   const handleRemoveMeal = (id: string) => {
-    Alert.alert(
-      'Remove Meal',
-      'Are you sure you want to remove this meal?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Remove',
-          onPress: () => updateMealPlan(mealPlan.filter(meal => meal.id !== id)),
-          style: 'destructive',
-        },
-      ]
-    );
-  };
-
-  const handleEditMealField = (mealId: string, field: 'customText' | 'servings', value: string | number) => {
-    updateMealPlan(mealPlan.map(meal =>
-      meal.id === mealId ? { ...meal, [field]: value } : meal
-    ));
-  };
-
-  const startEditing = (mealId: string, field: 'customText' | 'servings') => {
-    setEditingMealId(mealId);
-    setEditingFieldName(field);
-    setTimeout(() => { // Focus after state update and re-render
-      editingInputRef.current?.focus();
-    }, 50);
-  };
-
-  const stopEditing = () => {
-    setEditingMealId(null);
-    setEditingFieldName(null);
-    Keyboard.dismiss();
+    setMealPlan(mealPlan.filter(meal => meal.id !== id));
+    toast({ title: "Meal Removed", description: "Meal has been removed from your plan." });
   };
 
   const handleSearchRecipes = (text: string) => {
     setSearchQuery(text);
-    if (text.length > 2) { // Perform search after 2 characters
-      setIsSearchingRecipes(true);
-      // Simulate API call
-      setTimeout(() => {
-        setSearchResults(mockRecipes.filter(rec =>
-          rec.name.toLowerCase().includes(text.toLowerCase())
-        ));
-        setIsSearchingRecipes(false);
-      }, 500);
+    if (text.length > 2) {
+      const results = mockRecipes.filter(rec =>
+        rec.name.toLowerCase().includes(text.toLowerCase())
+      );
+      setSearchResults(results);
     } else {
       setSearchResults([]);
-      setIsSearchingRecipes(false);
     }
   };
 
-  // --- AI Auto-Planning (Conceptual) ---
   const handleAutoPlan = () => {
-    Alert.alert(
-      'AI Auto-Planning (Premium)',
-      'This feature will generate a meal plan based on your preferences and health goals.\n\n(In a real app, this would involve a modal for preferences and a backend AI API call)',
-      [
-        {
-          text: 'Generate Mock Plan',
-          onPress: () => {
-            // Simulate AI generating a plan
-            const mockGeneratedPlan: Meal[] = [
-              { id: 'ai1', type: 'recipe', recipeId: 'rec2', servings: 1, date: weekDays[0], mealType: 'breakfast', addedDate: new Date().toISOString() },
-              { id: 'ai2', type: 'recipe', recipeId: 'rec3', servings: 2, date: weekDays[1], mealType: 'lunch', addedDate: new Date().toISOString() },
-              { id: 'ai3', type: 'custom', customText: 'Leftovers', date: weekDays[2], mealType: 'dinner', addedDate: new Date().toISOString() },
-            ];
-            updateMealPlan([...mealPlan, ...mockGeneratedPlan]);
-            Alert.alert('Plan Generated', 'A mock plan has been added!');
-          },
-        },
-        { text: 'Cancel', style: 'cancel' },
-      ]
-    );
+    const mockGeneratedPlan: Meal[] = [
+      { id: 'ai1', type: 'recipe', recipeId: 'rec2', servings: 1, date: weekDays[0], mealType: 'breakfast', addedDate: new Date().toISOString() },
+      { id: 'ai2', type: 'recipe', recipeId: 'rec3', servings: 2, date: weekDays[1], mealType: 'lunch', addedDate: new Date().toISOString() },
+      { id: 'ai3', type: 'custom', customText: 'Leftovers', date: weekDays[2], mealType: 'dinner', addedDate: new Date().toISOString() },
+    ];
+    setMealPlan([...mealPlan, ...mockGeneratedPlan]);
+    toast({ title: "AI Plan Generated", description: "A meal plan has been generated for you!" });
   };
 
   // --- Render Functions ---
-  const renderMealItem = ({ item }: { item: Meal }) => {
+  const renderMealItem = (item: Meal) => {
     const recipe = item.type === 'recipe' ? mockRecipes.find(r => r.id === item.recipeId) : null;
 
     return (
-      <View style={styles.mealItem}>
-        <View style={styles.mealItemContent}>
-          {editingMealId === item.id && editingFieldName === 'customText' && item.type === 'custom' ? (
-            <TextInput
-              ref={editingInputRef}
-              style={styles.editableText}
-              value={item.customText}
-              onChangeText={(text) => handleEditMealField(item.id, 'customText', text)}
-              onBlur={stopEditing}
-              onSubmitEditing={stopEditing}
-            />
-          ) : (
-            <TouchableOpacity onPress={() => item.type === 'custom' && startEditing(item.id, 'customText')}>
-              <Text style={styles.mealName}>
-                {item.type === 'recipe' ? recipe?.name : item.customText || 'Unknown Meal'}
-              </Text>
-            </TouchableOpacity>
-          )}
-
-          {item.type === 'recipe' && (
-            <View style={styles.mealDetails}>
-              {editingMealId === item.id && editingFieldName === 'servings' ? (
-                <TextInput
-                  ref={editingInputRef}
-                  style={styles.editableServings}
-                  keyboardType="numeric"
-                  value={String(item.servings)}
-                  onChangeText={(text) => handleEditMealField(item.id, 'servings', Number(text))}
-                  onBlur={stopEditing}
-                  onSubmitEditing={stopEditing}
-                />
-              ) : (
-                <TouchableOpacity onPress={() => startEditing(item.id, 'servings')}>
-                  <Text style={styles.mealQuantity}>{item.servings} servings</Text>
-                </TouchableOpacity>
-              )}
-              <Text style={styles.mealCategory}> • {recipe?.category || 'N/A'}</Text>
-            </View>
-          )}
-          <Text style={styles.mealAddedDate}>Added: {formatDateForDisplay(item.addedDate)}</Text>
-        </View>
-        <TouchableOpacity onPress={() => handleRemoveMeal(item.id)} style={styles.removeButton}>
-          <Icon name="trash-2" size={18} color="#FF6347" />
-        </TouchableOpacity>
-      </View>
+      <Card key={item.id} className="p-3 mb-2">
+        <div className="flex justify-between items-start">
+          <div className="flex-1">
+            <h4 className="font-medium text-sm">
+              {item.type === 'recipe' ? recipe?.name : item.customText || 'Unknown Meal'}
+            </h4>
+            {item.type === 'recipe' && (
+              <div className="flex items-center gap-2 mt-1">
+                <Badge variant="secondary" className="text-xs">
+                  {item.servings} servings
+                </Badge>
+                <span className="text-xs text-gray-500">• {recipe?.category || 'N/A'}</span>
+              </div>
+            )}
+            <p className="text-xs text-gray-400 mt-1">
+              Added: {formatDateForDisplay(item.addedDate)}
+            </p>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleRemoveMeal(item.id)}
+            className="p-1 h-8 w-8"
+          >
+            <Trash2 className="h-4 w-4 text-red-500" />
+          </Button>
+        </div>
+      </Card>
     );
   };
 
@@ -289,446 +196,177 @@ const MealPlanningScreen = () => {
     const dayLabel = formatDateForDisplay(dateString);
 
     return (
-      <View key={dateString} style={styles.dayColumn}>
-        <Text style={styles.dayHeader}>{dayLabel}</Text>
-        <ScrollView style={styles.mealsContainer}>
-          {mealTypes.map(type => (
-            <View key={`${dateString}-${type}`} style={styles.mealTypeSection}>
-              <Text style={styles.mealTypeHeader}>{getMealTypeLabel(type)}:</Text>
-              {mealsForDay.filter(meal => meal.mealType === type).length === 0 ? (
-                <Text style={styles.noMealText}>No meals planned.</Text>
-              ) : (
-                <FlatList
-                  data={mealsForDay.filter(meal => meal.mealType === type)}
-                  renderItem={renderMealItem}
-                  keyExtractor={item => item.id}
-                  scrollEnabled={false} // Nested FlatList
-                />
-              )}
-              <TouchableOpacity
-                style={styles.addMealToDayButton}
-                onPress={() => {
-                  setNewMealDate(dateString);
-                  setNewMealType(type);
-                  setIsAddingMeal(true);
-                }}
-              >
-                <Icon name="plus" size={16} color="#007BFF" />
-                <Text style={styles.addMealToDayButtonText}>Add</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </ScrollView>
-      </View>
+      <Card key={dateString} className="min-w-[280px] flex-shrink-0">
+        <div className="p-4">
+          <h3 className="font-semibold text-center mb-4 border-b pb-2">{dayLabel}</h3>
+          <div className="space-y-4">
+            {mealTypes.map(type => (
+              <div key={`${dateString}-${type}`}>
+                <h4 className="font-medium text-sm text-gray-600 mb-2">{getMealTypeLabel(type)}:</h4>
+                {mealsForDay.filter(meal => meal.mealType === type).length === 0 ? (
+                  <p className="text-xs text-gray-400 italic mb-2">No meals planned.</p>
+                ) : (
+                  <div className="space-y-1">
+                    {mealsForDay.filter(meal => meal.mealType === type).map(renderMealItem)}
+                  </div>
+                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => {
+                    setNewMealDate(dateString);
+                    setNewMealType(type);
+                    setIsAddingMeal(true);
+                  }}
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Card>
     );
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Meal Planner</Text>
-      </View>
-
+    <PageContainer
+      header={{
+        title: "Meal Planner",
+        showBackButton: true,
+      }}
+    >
       {/* Week Navigation */}
-      <View style={styles.weekNavigator}>
-        <TouchableOpacity onPress={handlePreviousWeek} style={styles.navButton}>
-          <Icon name="chevron-left" size={24} color="#333" />
-        </TouchableOpacity>
-        <Text style={styles.weekRange}>
+      <div className="flex justify-between items-center mb-4">
+        <Button variant="outline" size="sm" onClick={handlePreviousWeek}>
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+        <h2 className="font-semibold">
           {formatDateForDisplay(weekDays[0])} - {formatDateForDisplay(weekDays[6])}
-        </Text>
-        <TouchableOpacity onPress={handleNextWeek} style={styles.navButton}>
-          <Icon name="chevron-right" size={24} color="#333" />
-        </TouchableOpacity>
-      </View>
+        </h2>
+        <Button variant="outline" size="sm" onClick={handleNextWeek}>
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
 
       {/* Global Actions */}
-      <View style={styles.globalActions}>
-        <TouchableOpacity style={styles.actionButton} onPress={handleAutoPlan}>
-          <Icon name="zap" size={18} color="#fff" />
-          <Text style={styles.actionButtonText}>AI Plan</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton} onPress={() => setIsAddingMeal(true)}>
-          <Icon name="plus-circle" size={18} color="#fff" />
-          <Text style={styles.actionButtonText}>Add New</Text>
-        </TouchableOpacity>
-        {/* Sorting/Filtering can be added here, perhaps as a modal or dropdown */}
-      </View>
+      <div className="flex gap-2 mb-6">
+        <Button onClick={handleAutoPlan} className="flex-1">
+          <Zap className="h-4 w-4 mr-2" />
+          AI Plan
+        </Button>
+        <Sheet open={isAddingMeal} onOpenChange={setIsAddingMeal}>
+          <SheetTrigger asChild>
+            <Button variant="outline" className="flex-1">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Meal
+            </Button>
+          </SheetTrigger>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>Add Meal to Plan</SheetTitle>
+            </SheetHeader>
+            <div className="space-y-4 mt-6">
+              <div>
+                <Input
+                  placeholder="Search for a recipe..."
+                  value={searchQuery}
+                  onChange={(e) => handleSearchRecipes(e.target.value)}
+                />
+                {searchResults.length > 0 && (
+                  <div className="mt-2 border rounded-md max-h-32 overflow-y-auto">
+                    {searchResults.map((item) => (
+                      <div
+                        key={item.id}
+                        className="p-2 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
+                        onClick={() => {
+                          setNewMealRecipeId(item.id);
+                          setNewMealCustomText('');
+                          setSearchQuery(item.name);
+                          setSearchResults([]);
+                        }}
+                      >
+                        <span className="text-sm">{item.name} ({item.category})</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="text-center text-sm text-gray-500">OR</div>
+
+              <Input
+                placeholder="Enter custom meal text (e.g., Leftovers)"
+                value={newMealCustomText}
+                onChange={(e) => {
+                  setNewMealCustomText(e.target.value);
+                  setNewMealRecipeId(null);
+                  setSearchQuery('');
+                }}
+              />
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Date:</label>
+                <Select value={newMealDate} onValueChange={setNewMealDate}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {weekDays.map(day => (
+                      <SelectItem key={day} value={day}>
+                        {formatDateForDisplay(day)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Meal Type:</label>
+                <Select value={newMealType} onValueChange={setNewMealType}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mealTypes.map(type => (
+                      <SelectItem key={type} value={type}>
+                        {getMealTypeLabel(type)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {newMealRecipeId && (
+                <Input
+                  placeholder="Servings"
+                  type="number"
+                  value={newMealServings}
+                  onChange={(e) => setNewMealServings(e.target.value)}
+                />
+              )}
+
+              <div className="flex gap-2 pt-4">
+                <Button variant="outline" onClick={() => setIsAddingMeal(false)} className="flex-1">
+                  Cancel
+                </Button>
+                <Button onClick={handleAddMeal} className="flex-1">
+                  Add Meal
+                </Button>
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
 
       {/* Calendar Grid */}
-      <ScrollView horizontal contentContainerStyle={styles.calendarGrid}>
+      <div className="flex gap-4 overflow-x-auto pb-4">
         {weekDays.map(renderDayColumn)}
-      </ScrollView>
-
-      {/* Add Meal Modal */}
-      <Modal
-        visible={isAddingMeal}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setIsAddingMeal(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Add Meal to Plan</Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder="Search for a recipe..."
-              value={searchQuery}
-              onChangeText={handleSearchRecipes}
-            />
-            {isSearchingRecipes && <Text style={styles.loadingText}>Searching...</Text>}
-            <FlatList
-              data={searchResults}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.searchResultItem}
-                  onPress={() => {
-                    setNewMealRecipeId(item.id);
-                    setNewMealCustomText(''); // Clear custom text
-                    setSearchQuery(item.name); // Show selected recipe name in search input
-                    setSearchResults([]); // Clear results
-                  }}
-                >
-                  <Text>{item.name} ({item.category})</Text>
-                </TouchableOpacity>
-              )}
-              style={styles.searchResultsList}
-            />
-
-            <Text style={styles.orText}>OR</Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder="Enter custom meal text (e.g., Leftovers)"
-              value={newMealCustomText}
-              onChangeText={(text) => {
-                setNewMealCustomText(text);
-                setNewMealRecipeId(null); // Clear recipe selection if custom text is typed
-                setSearchQuery(''); // Clear search query
-              }}
-            />
-
-            <View style={styles.pickerContainer}>
-              <Text style={styles.pickerLabel}>Date:</Text>
-              <Picker
-                selectedValue={newMealDate}
-                style={styles.picker}
-                onValueChange={(itemValue) => setNewMealDate(itemValue)}
-              >
-                {weekDays.map(day => (
-                  <Picker.Item key={day} label={formatDateForDisplay(day)} value={day} />
-                ))}
-              </Picker>
-            </View>
-
-            <View style={styles.pickerContainer}>
-              <Text style={styles.pickerLabel}>Meal Type:</Text>
-              <Picker
-                selectedValue={newMealType}
-                style={styles.picker}
-                onValueChange={(itemValue) => setNewMealType(itemValue)}
-              >
-                {mealTypes.map(type => (
-                  <Picker.Item key={type} label={getMealTypeLabel(type)} value={type} />
-                ))}
-              </Picker>
-            </View>
-
-            {newMealRecipeId && (
-              <TextInput
-                style={styles.input}
-                placeholder="Servings"
-                keyboardType="numeric"
-                value={newMealServings}
-                onChangeText={setNewMealServings}
-              />
-            )}
-
-            <View style={styles.modalButtons}>
-              <TouchableOpacity style={[styles.modalButton, styles.cancelButton]} onPress={() => setIsAddingMeal(false)}>
-                <Text style={styles.buttonText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.modalButton, styles.addButton]} onPress={handleAddMeal}>
-                <Text style={styles.buttonText}>Add Meal</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-    </SafeAreaView>
+      </div>
+    </PageContainer>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8f8f8',
-  },
-  header: {
-    padding: 15,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  weekNavigator: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  navButton: {
-    padding: 5,
-  },
-  weekRange: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#555',
-  },
-  globalActions: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    padding: 10,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  actionButton: {
-    flexDirection: 'row',
-    backgroundColor: '#007BFF',
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 20,
-    marginHorizontal: 5,
-    alignItems: 'center',
-  },
-  actionButtonText: {
-    color: '#fff',
-    marginLeft: 5,
-    fontWeight: '600',
-  },
-  calendarGrid: {
-    paddingVertical: 10,
-  },
-  dayColumn: {
-    width: 150, // Fixed width for each day column, adjust as needed
-    marginHorizontal: 5,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-    elevation: 2,
-  },
-  dayHeader: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    padding: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    backgroundColor: '#f0f0f0',
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-  },
-  mealsContainer: {
-    padding: 8,
-    minHeight: 300, // Ensure columns have enough height
-  },
-  mealTypeSection: {
-    marginBottom: 10,
-  },
-  mealTypeHeader: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#666',
-    marginBottom: 5,
-  },
-  noMealText: {
-    fontSize: 11,
-    color: '#999',
-    fontStyle: 'italic',
-    marginBottom: 5,
-  },
-  mealItem: {
-    backgroundColor: '#f9f9f9',
-    padding: 8,
-    borderRadius: 6,
-    marginBottom: 5,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#eee',
-  },
-  mealItemContent: {
-    flex: 1,
-  },
-  mealName: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#333',
-  },
-  mealDetails: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 2,
-  },
-  mealQuantity: {
-    fontSize: 12,
-    color: '#666',
-  },
-  mealCategory: {
-    fontSize: 12,
-    color: '#666',
-  },
-  mealAddedDate: {
-    fontSize: 10,
-    color: '#999',
-    marginTop: 2,
-  },
-  editableText: {
-    fontSize: 14,
-    fontWeight: '500',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    paddingVertical: 0,
-    color: '#333',
-  },
-  editableServings: {
-    fontSize: 12,
-    color: '#666',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    paddingVertical: 0,
-    width: 40,
-    textAlign: 'center',
-  },
-  removeButton: {
-    padding: 5,
-    marginLeft: 10,
-  },
-  addMealToDayButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 5,
-    paddingVertical: 5,
-    borderRadius: 5,
-    backgroundColor: '#E0F7FA', // Light teal
-  },
-  addMealToDayButtonText: {
-    color: '#007BFF',
-    marginLeft: 5,
-    fontSize: 12,
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 20,
-    width: '90%',
-    maxHeight: '80%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 10,
-    fontSize: 16,
-  },
-  orText: {
-    textAlign: 'center',
-    marginVertical: 5,
-    color: '#666',
-    fontWeight: 'bold',
-  },
-  pickerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  pickerLabel: {
-    fontSize: 16,
-    marginRight: 10,
-    color: '#333',
-  },
-  picker: {
-    flex: 1,
-    height: 40,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
-  },
-  modalButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minWidth: 100,
-  },
-  addButton: {
-    backgroundColor: '#007BFF',
-  },
-  cancelButton: {
-    backgroundColor: '#ccc',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  searchResultsList: {
-    maxHeight: 150, // Limit height of search results
-    borderColor: '#eee',
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  searchResultItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  loadingText: {
-    textAlign: 'center',
-    marginBottom: 10,
-    color: '#666',
-  }
-});
-
-export default MealPlanningScreen;
+export default MealPlanPage;
