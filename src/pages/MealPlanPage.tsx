@@ -77,6 +77,16 @@ const SharedRecipeCard = ({ recipe, layout }) => (
   </div>
 );
 
+const FeatureCard = ({ feature }) => (
+  <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+    <div className={`${feature.color} rounded-full w-12 h-12 flex items-center justify-center mb-4`}>
+      {React.cloneElement(feature.icon, { className: "h-6 w-6 text-white" })}
+    </div>
+    <h3 className="font-bold text-lg text-gray-800 dark:text-white mb-2">{feature.label}</h3>
+    <p className="text-gray-600 dark:text-gray-300 text-sm">{feature.description}</p>
+  </div>
+);
+
 const HomePage = () => {
   const [layoutOption, setLayoutOption] = useState('option1'); // 'option1' or 'option2'
   const [recipesLayout, setRecipesLayout] = useState('grid');
@@ -139,12 +149,14 @@ const HomePage = () => {
             <button
               onClick={() => setRecipesLayout('grid')}
               className={`p-2 rounded ${recipesLayout === 'grid' ? 'bg-teal-500 text-white' : 'bg-gray-200 text-gray-600'}`}
+              aria-label="Grid view"
             >
               <Grid className="h-4 w-4" />
             </button>
             <button
               onClick={() => setRecipesLayout('list')}
               className={`p-2 rounded ${recipesLayout === 'list' ? 'bg-teal-500 text-white' : 'bg-gray-200 text-gray-600'}`}
+              aria-label="List view"
             >
               <List className="h-4 w-4" />
             </button>
@@ -181,13 +193,7 @@ const HomePage = () => {
         <h2 className="font-bold text-2xl text-teal-700 dark:text-teal-300 mb-6">Discover Features</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {mainFeatures.map((feature, index) => (
-            <div key={index} className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-              <div className={`${feature.color} rounded-full w-12 h-12 flex items-center justify-center mb-4`}>
-                {React.cloneElement(feature.icon, { className: "h-6 w-6 text-white" })}
-              </div>
-              <h3 className="font-bold text-lg text-gray-800 dark:text-white mb-2">{feature.label}</h3>
-              <p className="text-gray-600 dark:text-gray-300 text-sm">{feature.description}</p>
-            </div>
+            <FeatureCard key={index} feature={feature} />
           ))}
         </div>
       </div>
@@ -230,8 +236,8 @@ const HomePage = () => {
               <button
                 onClick={() => setLayoutOption('option1')}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  layoutOption === 'option1' 
-                    ? 'bg-teal-500 text-white' 
+                  layoutOption === 'option1'
+                    ? 'bg-teal-500 text-white'
                     : 'text-gray-600 dark:text-gray-300 hover:text-teal-600'
                 }`}
               >
@@ -240,8 +246,8 @@ const HomePage = () => {
               <button
                 onClick={() => setLayoutOption('option2')}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  layoutOption === 'option2' 
-                    ? 'bg-teal-500 text-white' 
+                  layoutOption === 'option2'
+                    ? 'bg-teal-500 text-white'
                     : 'text-gray-600 dark:text-gray-300 hover:text-teal-600'
                 }`}
               >
@@ -268,8 +274,8 @@ const HomePage = () => {
           <button
             onClick={() => setLayoutOption('option1')}
             className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              layoutOption === 'option1' 
-                ? 'bg-teal-500 text-white' 
+              layoutOption === 'option1'
+                ? 'bg-teal-500 text-white'
                 : 'text-gray-600 dark:text-gray-300'
             }`}
           >
@@ -278,8 +284,8 @@ const HomePage = () => {
           <button
             onClick={() => setLayoutOption('option2')}
             className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              layoutOption === 'option2' 
-                ? 'bg-teal-500 text-white' 
+              layoutOption === 'option2'
+                ? 'bg-teal-500 text-white'
                 : 'text-gray-600 dark:text-gray-300'
             }`}
           >
