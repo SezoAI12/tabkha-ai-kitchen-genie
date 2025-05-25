@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   ShoppingBag, Plus, Trash2, FileText, Share2, Search, Copy, Filter,
-  Apple, Carrot, Fish, Bread, Milk, Egg, Cheese, Wine, Coffee, Leaf, Droplet, Candy, Cake, Utensils
+  Apple, Carrot, Fish, Milk, Egg, Wine, Coffee, Leaf, Droplet, Candy, Cake, Utensils
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -30,13 +30,13 @@ const categoryIcons = {
   'Meat': <Utensils className="h-4 w-4" />,
   'Oils': <Droplet className="h-4 w-4" />,
   'Vegetables': <Carrot className="h-4 w-4" />,
-  'Grains': <Bread className="h-4 w-4" />,
+  'Grains': <Utensils className="h-4 w-4" />,
   'Dairy': <Milk className="h-4 w-4" />,
   'Fruits': <Apple className="h-4 w-4" />,
   'Other': <Leaf className="h-4 w-4" />,
 };
 
-export default function ShoppingListPage() {
+export default function FindByIngredientsPage() {
   const { toast } = useToast();
   const [items, setItems] = useState(initialItems);
   const [newItemName, setNewItemName] = useState('');
@@ -44,19 +44,19 @@ export default function ShoppingListPage() {
   const [newItemUnit, setNewItemUnit] = useState('');
   const [newItemCategory, setNewItemCategory] = useState('Other');
   const [showAddForm, setShowAddForm] = useState(false);
-  const [editingItemId, setEditingItemId] = useState(null);
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOption, setSortOption] = useState('name');
 
   const categories = [...new Set(items.map(item => item.category))].sort();
 
-  const handleCheck = (id) => {
+  const handleCheck = (id: string) => {
     setItems(items.map(item =>
       item.id === id ? { ...item, checked: !item.checked } : item
     ));
   };
 
-  const handleAddItem = (e) => {
+  const handleAddItem = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!newItemName.trim()) {
@@ -128,18 +128,18 @@ export default function ShoppingListPage() {
     });
   };
 
-  const handleEditItem = (id) => {
+  const handleEditItem = (id: string) => {
     const itemToEdit = items.find(item => item.id === id);
     if (itemToEdit) {
       setEditingItemId(id);
       setNewItemName(itemToEdit.name);
-      setNewItemQuantity(itemToEdit.quantity);
+      setNewItemQuantity(itemToEdit.quantity.toString());
       setNewItemUnit(itemToEdit.unit);
       setNewItemCategory(itemToEdit.category);
     }
   };
 
-  const handleUpdateItem = (e) => {
+  const handleUpdateItem = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!newItemName.trim()) {
@@ -176,7 +176,7 @@ export default function ShoppingListPage() {
     });
   };
 
-  const handleSortChange = (option) => {
+  const handleSortChange = (option: string) => {
     setSortOption(option);
   };
 
@@ -196,7 +196,7 @@ export default function ShoppingListPage() {
   );
 
   return (
-    <PageContainer header={{ title: 'Shopping List', showBackButton: true }}>
+    <PageContainer header={{ title: 'Find by Ingredients', showBackButton: true }}>
       <div className="space-y-4 pb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
