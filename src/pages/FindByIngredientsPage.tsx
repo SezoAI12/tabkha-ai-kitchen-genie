@@ -6,8 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { motion } from 'framer-motion';
-import { Utensils, Cake, Coffee, Search, Plus, List, Camera, Mic } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast'; // Assuming you have this hook
+import { Utensils, Cake, Coffee, Search, Plus, List, Camera, Mic, Filter, Trash2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 // --- Main Categories Data ---
 const mainCategories = [
@@ -99,7 +99,6 @@ export default function FindRecipePage() {
     toast({ title: "Pantry Item Added", description: `${item.name} added from your pantry.` });
   };
 
-
   const handleFindRecipes = () => {
     if (addedIngredients.length === 0) {
       toast({ title: "No Ingredients", description: "Please add some ingredients to find recipes.", variant: "destructive" });
@@ -123,7 +122,7 @@ export default function FindRecipePage() {
     : [];
 
   return (
-    <PageContainer header={{ title: 'Find Recipe by Ingredients', showBackButton: true }}>
+    <PageContainer header={{ title: 'Find by Ingredients', showBackButton: true }}>
       <div className="space-y-6 pb-20">
 
         {/* --- 1. Main Categories --- */}
