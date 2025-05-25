@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
@@ -6,12 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion'; // Ensure AnimatePresence is imported
 import {
-  Utensils, Cake, Coffee, Search, Plus, List, Camera, Mic, Filter,
-  Salad, Cookie, Beer, Timer, ChefHat, Globe, LeafyGreen, Soup, Droplet, Nut, Egg, Fish, Wheat, Trash2
+  Utensils, Cake, Coffee, Search, Plus, List, Camera, Mic, // Icons for new features
+  Salad, Cookie, Beer, Timer, ChefHat, Globe, LeafyGreen, Soup, Droplet, Nut, Egg, Fish, Wheat
 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast'; // Assuming you have this hook
 
 // Design tokens (re-emphasized for clarity and consistency)
 const primaryColor = 'hsl(var(--primary))'; // Assuming primary color from your CSS variables
@@ -19,27 +18,11 @@ const accentColor = 'hsl(var(--accent))';   // Assuming accent color from your C
 const textColor = 'hsl(var(--foreground))'; // Assuming text color
 const cardBackground = 'hsl(var(--card))';  // Assuming card background
 
-// --- Main Categories Data (now with image placeholders) ---
+// --- Main Categories Data ---
 const mainCategories = [
-  {
-    name: 'Food',
-    // In a real app, replace this with an actual image path
-    image: '/images/category-food.png', // Placeholder for food icon/image
-    alt: 'Food category icon',
-    subcategories: ['Main Dishes', 'Appetizers', 'Pickles', 'Soups', 'Sauces', 'Others']
-  },
-  {
-    name: 'Desserts',
-    image: '/images/category-desserts.png', // Placeholder for desserts icon/image
-    alt: 'Desserts category icon',
-    subcategories: ['Traditional', 'Western', 'Pastries', 'Ice Cream', 'Others']
-  },
-  {
-    name: 'Drinks',
-    image: '/images/category-drinks.png', // Placeholder for drinks icon/image
-    alt: 'Drinks category icon',
-    subcategories: ['Detox', 'Cocktails', 'Alcoholic', 'Hot Drinks', 'Others']
-  },
+  { name: 'Food', icon: <Utensils className="h-10 w-10 text-primary" />, subcategories: ['Main Dishes', 'Appetizers', 'Pickles', 'Soups', 'Sauces', 'Others'] },
+  { name: 'Desserts', icon: <Cake className="h-10 w-10 text-primary" />, subcategories: ['Traditional', 'Western', 'Pastries', 'Ice Cream', 'Others'] },
+  { name: 'Drinks', icon: <Coffee className="h-10 w-10 text-primary" />, subcategories: ['Detox', 'Cocktails', 'Alcoholic', 'Hot Drinks', 'Others'] },
 ];
 
 // --- Filter Options Data ---
@@ -66,22 +49,22 @@ const filterOptions = {
   },
   allergenFree: {
     label: 'Allergen-Free',
-    icon: <Droplet className="h-4 w-4 mr-2" />,
+    icon: <Droplet className="h-4 w-4 mr-2" />, // More generic for allergens
     options: ['None', 'Dairy', 'Gluten', 'Tree Nuts', 'Shellfish', 'Soy', 'Eggs'],
   },
   mealType: {
     label: 'Meal Type',
-    icon: <Soup className="h-4 w-4 mr-2" />,
+    icon: <Soup className="h-4 w-4 mr-2" />, // Represents a meal
     options: ['Any Meal', 'Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Snack'],
   },
   religiousRestrictions: {
     label: 'Religious Restrictions',
-    icon: <Salad className="h-4 w-4 mr-2" />,
+    icon: <Salad className="h-4 w-4 mr-2" />, // Represents dietary restrictions
     options: ['None', 'Halal', 'Kosher'],
   },
   healthGoals: {
     label: 'Health Goals',
-    icon: <Cookie className="h-4 w-4 mr-2" />,
+    icon: <Cookie className="h-4 w-4 mr-2" />, // Represents a healthy choice
     options: ['None', 'Low Calorie', 'Low Carb', 'High Protein', 'Low Fat'],
   },
 };
@@ -152,7 +135,7 @@ export default function FindRecipePage() {
   };
 
   const handleSelectPantryItem = (item: typeof smartPantryItems[0]) => {
-    const isAlreadyAdded = addedIngredients.some(ing => ing.name === item.name);
+    const isAlreadyAdded = addedIngredients.some(ing => ing.name === item.name); // Check by name regardless of source
     if (isAlreadyAdded) {
       toast({ title: "Already Added", description: `${item.name} is already in your ingredient list.` });
       return;
@@ -161,11 +144,14 @@ export default function FindRecipePage() {
     toast({ title: "Pantry Item Added", description: `${item.name} added from your pantry.` });
   };
 
+
   const handleFindRecipes = () => {
     if (addedIngredients.length === 0) {
       toast({ title: "No Ingredients", description: "Please add some ingredients to find recipes.", variant: "destructive" });
       return;
     }
+    // Here, you would send selectedMainCategory, selectedSubcategory, filters, and addedIngredients
+    // to your AI backend for recipe generation.
     toast({ title: "Finding Recipes...", description: "Searching for recipes based on your criteria and ingredients!" });
     console.log("Searching with:", {
       selectedMainCategory,
@@ -183,14 +169,14 @@ export default function FindRecipePage() {
 
   return (
     <PageContainer header={{ title: 'Find Recipe by Ingredients', showBackButton: true }}>
-      <div className="space-y-8 pb-20">
+      <div className="space-y-8 pb-20"> {/* Increased spacing */}
 
-        {/* --- 1. Main Categories --- */}
+        {/* --- Main Categories --- */}
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-center text-primary">1. Select Main Category</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
+          <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4"> {/* Increased gap and padding */}
             {mainCategories.map((category) => (
               <motion.div
                 key={category.name}
@@ -203,19 +189,14 @@ export default function FindRecipePage() {
                 className={`flex flex-col items-center justify-center p-8 border-2 rounded-xl cursor-pointer transition-all duration-300 ease-in-out
                           ${selectedMainCategory === category.name ? 'border-accent bg-accent/10 shadow-xl' : 'border-gray-200 bg-card hover:border-primary/50'}`}
               >
-                {/* Replaced icon with img tag for image-based buttons */}
-                <img
-                  src={category.image}
-                  alt={category.alt}
-                  className="h-20 w-20 object-contain mb-4" // Larger image size
-                />
-                <p className="font-semibold text-xl text-center text-foreground">{category.name}</p>
+                {category.icon}
+                <p className="mt-4 font-semibold text-xl text-center text-foreground">{category.name}</p>
               </motion.div>
             ))}
           </CardContent>
         </Card>
 
-        {/* --- 2. Dynamic Subcategories --- */}
+        {/* --- Dynamic Subcategories --- */}
         <AnimatePresence>
           {selectedMainCategory && (
             <motion.div
@@ -248,14 +229,14 @@ export default function FindRecipePage() {
           )}
         </AnimatePresence>
 
-        {/* --- 3. Integrated Advanced Filters --- */}
+        {/* --- Integrated Advanced Filters --- */}
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-center text-primary flex items-center justify-center">
               <Filter className="mr-3 h-7 w-7 text-primary" /> 3. Advanced Filters
             </CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4"> {/* Increased gap */}
             {Object.entries(filterOptions).map(([key, { label, icon, options }]) => (
               <div key={key} className="space-y-2">
                 <label className="flex items-center text-base font-medium text-foreground">
@@ -276,7 +257,7 @@ export default function FindRecipePage() {
           </CardContent>
         </Card>
 
-        {/* --- 4. Add Ingredients --- */}
+        {/* --- Add Ingredients --- */}
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-center text-primary">4. Add Your Ingredients</CardTitle>
@@ -317,29 +298,18 @@ export default function FindRecipePage() {
                   </Button>
                 </div>
                 <div className="flex flex-col sm:flex-row justify-between gap-3 mt-4">
-                  {/* Image-based buttons for Scan and Voice input */}
-                  <button
-                    onClick={() => toast({ title: "Feature Coming Soon", description: "Image recognition for ingredients is under development!" })}
-                    className="flex-1 flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition-colors"
-                    aria-label="Scan Ingredients"
-                  >
-                    <img src="/icons/scan-icon.png" alt="Scan Ingredients" className="h-12 w-12 mb-2 object-contain" />
-                    <span className="text-sm font-medium text-foreground">Scan Ingredients</span>
-                  </button>
-                  <button
-                    onClick={() => toast({ title: "Feature Coming Soon", description: "Voice input for ingredients is under development!" })}
-                    className="flex-1 flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition-colors"
-                    aria-label="Voice Input"
-                  >
-                    <img src="/icons/mic-icon.png" alt="Voice Input" className="h-12 w-12 mb-2 object-contain" />
-                    <span className="text-sm font-medium text-foreground">Voice Input</span>
-                  </button>
+                  <Button variant="outline" className="flex-1 h-11 text-base border-gray-300 hover:bg-gray-100">
+                    <Camera className="mr-2 h-5 w-5" /> Scan Ingredients
+                  </Button>
+                  <Button variant="outline" className="flex-1 h-11 text-base border-gray-300 hover:bg-gray-100">
+                    <Mic className="mr-2 h-5 w-5" /> Voice Input
+                  </Button>
                 </div>
               </TabsContent>
 
               <TabsContent value="pantry" className="p-6 border border-gray-200 rounded-lg mt-4 bg-gray-50 space-y-4">
                 <h4 className="font-bold text-lg text-foreground mb-3">Available in Smart Pantry:</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar"> {/* Added scrollbar and grid */}
                   {smartPantryItems.length > 0 ? (
                     smartPantryItems.map(item => (
                       <div key={item.id} className="flex items-center justify-between p-3 border rounded-md bg-white shadow-sm">
