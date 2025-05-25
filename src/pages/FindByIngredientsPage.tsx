@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
@@ -7,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Utensils, Cake, Coffee, Search, Plus, List, Camera, Mic,
+  Utensils, Cake, Coffee, Search, Plus, List, Camera, Mic, Filter,
   Salad, Cookie, Beer, Timer, ChefHat, Globe, LeafyGreen, Soup, Droplet, Nut, Egg, Fish, Wheat, Trash2
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
