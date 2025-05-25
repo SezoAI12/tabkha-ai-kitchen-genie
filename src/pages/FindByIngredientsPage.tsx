@@ -195,7 +195,7 @@ export default function FindByIngredientsPage() {
                         <div className="flex items-center justify-between text-xs text-gray-500">
                           <div className="flex items-center">
                             <Clock className="h-3 w-3 mr-1" />
-                            {recipe.prepTime + recipe.cookTime} min
+                            {recipe.time}
                           </div>
                           <div className="flex items-center">
                             <Users className="h-3 w-3 mr-1" />
