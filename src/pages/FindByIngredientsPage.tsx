@@ -5,12 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { motion, AnimatePresence } from 'framer-motion'; // Ensure AnimatePresence is imported
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Utensils, Cake, Coffee, Search, Plus, List, Camera, Mic, // Icons for new features
+  Utensils, Cake, Coffee, Search, Plus, List, Camera, Mic, Filter, Trash2,
   Salad, Cookie, Beer, Timer, ChefHat, Globe, LeafyGreen, Soup, Droplet, Nut, Egg, Fish, Wheat
 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast'; // Assuming you have this hook
+import { useToast } from '@/hooks/use-toast';
 
 // Design tokens (re-emphasized for clarity and consistency)
 const primaryColor = 'hsl(var(--primary))'; // Assuming primary color from your CSS variables
@@ -143,7 +143,6 @@ export default function FindRecipePage() {
     setAddedIngredients(prev => [...prev, { ...item, source: 'pantry' }]);
     toast({ title: "Pantry Item Added", description: `${item.name} added from your pantry.` });
   };
-
 
   const handleFindRecipes = () => {
     if (addedIngredients.length === 0) {
