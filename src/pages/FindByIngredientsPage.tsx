@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { motion, AnimatePresence } from 'framer-motion'; // Ensure AnimatePresence is imported
 import {
-  Utensils, Cake, Coffee, Search, Plus, List, Camera, Mic, // Icons for new features
+  Utensils, Cake, Coffee, Search, Plus, List, Camera, Mic, Filter, Trash2, // Added Filter and Trash2 icons
   Salad, Cookie, Beer, Timer, ChefHat, Globe, LeafyGreen, Soup, Droplet, Nut, Egg, Fish, Wheat
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast'; // Assuming you have this hook
