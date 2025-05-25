@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,8 +13,8 @@ import { Link } from 'react-router-dom';
 import { DailyIndependenceChallenges } from '@/components/health/DailyIndependenceChallenges';
 import { BMICalculator } from '@/components/health/BMICalculator';
 import { useRTL } from '@/contexts/RTLContext';
+import { useUserHealth } from './useUserHealth';
 
-// Ingredient Swap Card Component
 const IngredientSwapCard = ({ swap, t }) => (
   <Card className="border border-gray-200 dark:border-gray-700">
     <CardContent className="p-4">
@@ -37,28 +37,29 @@ const IngredientSwapCard = ({ swap, t }) => (
   </Card>
 );
 
+const ActionButton = ({ to, children, variant = "default", icon }) => (
+  <Link to={to}>
+    <Button className={`w-full ${variant === "outline" ? "border-wasfah-bright-teal text-wasfah-bright-teal" : "bg-wasfah-bright-teal hover:bg-wasfah-teal"}`}>
+      {icon && <span className="mr-2">{icon}</span>}
+      {children}
+    </Button>
+  </Link>
+);
+
 export default function HealthTrackingHomePage() {
   const { t } = useRTL();
-  const [isHealthGoalsOpen, setIsHealthGoalsOpen] = useState(false);
-  const [userWeight, setUserWeight] = useState(70);
-  const [userHeight, setUserHeight] = useState(170);
-  const [userTargetWeight, setUserTargetWeight] = useState(65);
+  const {
+    isHealthGoalsOpen,
+    setIsHealthGoalsOpen,
+    userWeight,
+    userHeight,
+    userTargetWeight,
+  } = useUserHealth();
 
   const handleApplyTip = (tip) => console.log('Applied tip:', tip);
-
-  const mockNutritionData = [
-    { date: 'Mon', calories: 1800, protein: 85, carbs: 210, fat: 55 },
-    { date: 'Tue', calories: 2100, protein: 95, carbs: 240, fat: 60 },
-    { date: 'Wed', calories: 1950, protein: 90, carbs: 225, fat: 58 },
-    { date: 'Thu', calories: 2000, protein: 92, carbs: 230, fat: 59 },
-    { date: 'Fri', calories: 1900, protein: 88, carbs: 220, fat: 57 },
-    { date: 'Sat', calories: 2200, protein: 100, carbs: 250, fat: 62 },
-    { date: 'Sun', calories: 1850, protein: 86, carbs: 215, fat: 56 },
-  ];
-
   const handleNutritionSubmit = (data) => console.log('Nutrition data submitted:', data);
 
-  const ingredientSwaps = [
+  const ingredientSwaps = useMemo(() => ([
     {
       original: 'Butter',
       alternatives: [
@@ -83,7 +84,23 @@ export default function HealthTrackingHomePage() {
         { name: 'Whole Wheat Flour', benefits: 'More fiber and nutrients', ratio: '1:1 replacement' },
       ],
     },
-  ];
+  ]), []);
+
+  const mockNutritionData = useMemo(() => ([
+    { date: 'Mon', calories: 1800, protein: 85, carbs: 210, fat: 55 },
+    { date: 'Tue', calories: 2100, protein: 95, carbs: 240, fat: 60 },
+    { date: 'Wed', calories: 1950, protein: 90, carbs: 225, fat: 58 },
+    { date: 'Thu', calories: 2000, protein: 92, carbs: 230, fat: 59 },
+    { date: 'Fri', calories: 1900, protein: 88, carbs: 220, fat: 57 },
+    { date: 'Sat', calories: 2200, protein: 100, carbs: 250, fat: 62 },
+    { date: 'Sun', calories: 1850, protein: 86, carbs: 215, fat: 56 },
+  ]), []);
+
+  const recentMeals = useMemo(() => ([
+    { id: 1, type: t('Breakfast', 'إفطار'), time: t('Yesterday, 8:30 AM', 'الأمس، 8:30 صباحًا'), calories: 450, macros: { protein: 25, carbs: 45, fat: 15 } },
+    { id: 2, type: t('Lunch', 'غداء'), time: t('Yesterday, 1:00 PM', 'الأمس، 1:00 مساءً'), calories: 600, macros: { protein: 35, carbs: 60, fat: 20 } },
+    { id: 3, type: t('Dinner', 'عشاء'), time: t('Yesterday, 7:00 PM', 'الأمس، 7:00 مساءً'), calories: 500, macros: { protein: 30, carbs: 50, fat: 18 } },
+  ]), [t]);
 
   return (
     <PageContainer header={{ title: t('Health & Tracking', 'الصحة والتتبع'), showBackButton: true }}>
@@ -111,13 +128,24 @@ export default function HealthTrackingHomePage() {
 
         <Tabs defaultValue="track">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="track"><Activity className="h-4 w-4 mr-1" />{t('Track', 'تتبع')}</TabsTrigger>
-            <TabsTrigger value="goals"><Scale className="h-4 w-4 mr-1" />{t('Goals', 'الأهداف')}</TabsTrigger>
-            <TabsTrigger value="swaps"><ArrowLeftRight className="h-4 w-4 mr-1" />{t('Swaps', 'البدائل')}</TabsTrigger>
-            <TabsTrigger value="history"><CalendarDays className="h-4 w-4 mr-1" />{t('History', 'السجل')}</TabsTrigger>
+            <TabsTrigger value="track" aria-label={t('Track', 'تتبع')}>
+              <Activity className="h-4 w-4 mr-1" />
+              {t('Track', 'تتبع')}
+            </TabsTrigger>
+            <TabsTrigger value="goals" aria-label={t('Goals', 'الأهداف')}>
+              <Scale className="h-4 w-4 mr-1" />
+              {t('Goals', 'الأهداف')}
+            </TabsTrigger>
+            <TabsTrigger value="swaps" aria-label={t('Swaps', 'البدائل')}>
+              <ArrowLeftRight className="h-4 w-4 mr-1" />
+              {t('Swaps', 'البدائل')}
+            </TabsTrigger>
+            <TabsTrigger value="history" aria-label={t('History', 'السجل')}>
+              <CalendarDays className="h-4 w-4 mr-1" />
+              {t('History', 'السجل')}
+            </TabsTrigger>
           </TabsList>
 
-          {/* Track Tab */}
           <TabsContent value="track" className="space-y-4 mt-4">
             <Card className="border border-gray-200 dark:border-gray-700">
               <CardContent className="pt-6">
@@ -138,35 +166,25 @@ export default function HealthTrackingHomePage() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Link to="/health-tracking">
-                <Button className="w-full bg-wasfah-bright-teal hover:bg-wasfah-teal">
-                  <Activity className="mr-2 h-4 w-4" />{t('Detailed Tracking', 'التتبع التفصيلي')}
-                </Button>
-              </Link>
-              <Link to="/body-information">
-                <Button variant="outline" className="w-full border-wasfah-bright-teal text-wasfah-bright-teal">
-                  {t('Body Information', 'معلومات الجسم')}
-                </Button>
-              </Link>
+              <ActionButton to="/health-tracking" icon={<Activity className="mr-2 h-4 w-4" />}>
+                {t('Detailed Tracking', 'التتبع التفصيلي')}
+              </ActionButton>
+              <ActionButton to="/body-information" variant="outline">
+                {t('Body Information', 'معلومات الجسم')}
+              </ActionButton>
             </div>
           </TabsContent>
 
-          {/* Goals Tab */}
           <TabsContent value="goals" className="space-y-4 mt-4">
             <Card><CardContent className="pt-6"><NutritionGoals /></CardContent></Card>
-            <Link to="/nutrition-goals">
-              <Button className="w-full bg-wasfah-bright-teal hover:bg-wasfah-teal">
-                {t('Update Nutrition Goals', 'تحديث أهداف التغذية')}
-              </Button>
-            </Link>
-            <Link to="/dietary-preferences">
-              <Button variant="outline" className="w-full border-wasfah-bright-teal text-wasfah-bright-teal">
-                {t('Manage Dietary Preferences', 'إدارة التفضيلات الغذائية')}
-              </Button>
-            </Link>
+            <ActionButton to="/nutrition-goals">
+              {t('Update Nutrition Goals', 'تحديث أهداف التغذية')}
+            </ActionButton>
+            <ActionButton to="/dietary-preferences" variant="outline">
+              {t('Manage Dietary Preferences', 'إدارة التفضيلات الغذائية')}
+            </ActionButton>
           </TabsContent>
 
-          {/* Swaps Tab */}
           <TabsContent value="swaps" className="space-y-4 mt-4">
             <h3 className="text-lg font-semibold text-wasfah-deep-teal dark:text-wasfah-bright-teal">
               {t('Healthier Ingredient Alternatives', 'بدائل المكونات الصحية')}
@@ -176,47 +194,46 @@ export default function HealthTrackingHomePage() {
                 <IngredientSwapCard key={index} swap={swap} t={t} />
               ))}
             </div>
-            <Link to="/ingredient-swap">
-              <Button className="w-full bg-wasfah-bright-teal hover:bg-wasfah-teal">
-                <ArrowLeftRight className="mr-2 h-4 w-4" />{t('View All Ingredient Swaps', 'عرض جميع بدائل المكونات')}
-              </Button>
-            </Link>
+            <ActionButton to="/ingredient-swap" icon={<ArrowLeftRight className="mr-2 h-4 w-4" />}>
+              {t('View All Ingredient Swaps', 'عرض جميع بدائل المكونات')}
+            </ActionButton>
           </TabsContent>
 
-          {/* History Tab */}
           <TabsContent value="history" className="space-y-4 mt-4">
             <Card>
               <CardContent className="pt-6">
                 <h3 className="text-lg font-semibold text-wasfah-deep-teal dark:text-wasfah-bright-teal mb-2">
                   {t('Weekly Progress', 'التقدم الأسبوعي')}
                 </h3>
-                <NutritionProgressChart data={mockNutritionData} type="weekly" />
+                {mockNutritionData.length > 0 ? (
+                  <NutritionProgressChart data={mockNutritionData} type="weekly" />
+                ) : (
+                  <p className="text-sm text-gray-500">{t('No data available', 'لا توجد بيانات متاحة')}</p>
+                )}
               </CardContent>
             </Card>
             <div className="space-y-3">
               <h3 className="text-lg font-semibold text-wasfah-deep-teal dark:text-wasfah-bright-teal">
                 {t('Recent Meals', 'الوجبات الأخيرة')}
               </h3>
-              {[1, 2, 3].map((i) => (
-                <Card key={i} className="border border-gray-200 dark:border-gray-700">
+              {recentMeals.map((meal) => (
+                <Card key={meal.id} className="border border-gray-200 dark:border-gray-700">
                   <CardContent className="p-3 flex justify-between items-center">
                     <div>
-                      <p className="font-medium">{t('Breakfast', 'إفطار')} #{i}</p>
-                      <p className="text-xs text-gray-500">{t('Yesterday, 8:30 AM', 'الأمس، 8:30 صباحًا')}</p>
+                      <p className="font-medium">{meal.type}</p>
+                      <p className="text-xs text-gray-500">{meal.time}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium text-wasfah-bright-teal">450 kcal</p>
-                      <p className="text-xs text-gray-500">P: 25g | C: 45g | F: 15g</p>
+                      <p className="text-sm font-medium text-wasfah-bright-teal">{meal.calories} kcal</p>
+                      <p className="text-xs text-gray-500">P: {meal.macros.protein}g | C: {meal.macros.carbs}g | F: {meal.macros.fat}g</p>
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
-            <Link to="/health-tracking">
-              <Button className="w-full bg-wasfah-bright-teal hover:bg-wasfah-teal">
-                {t('View Complete History', 'عرض السجل الكامل')}
-              </Button>
-            </Link>
+            <ActionButton to="/health-tracking">
+              {t('View Complete History', 'عرض السجل الكامل')}
+            </ActionButton>
           </TabsContent>
         </Tabs>
       </div>
