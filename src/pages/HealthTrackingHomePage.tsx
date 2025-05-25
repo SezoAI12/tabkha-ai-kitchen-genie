@@ -37,7 +37,7 @@ const IngredientSwapCard = ({ swap, t }) => (
   </Card>
 );
 
-const ActionButton = ({ to, children, variant = "default", icon }) => (
+const ActionButton = ({ to, children, variant = "default", icon }: { to: string; children: React.ReactNode; variant?: string; icon?: React.ReactNode }) => (
   <Link to={to}>
     <Button className={`w-full ${variant === "outline" ? "border-wasfah-bright-teal text-wasfah-bright-teal" : "bg-wasfah-bright-teal hover:bg-wasfah-teal"}`}>
       {icon && <span className="mr-2">{icon}</span>}
