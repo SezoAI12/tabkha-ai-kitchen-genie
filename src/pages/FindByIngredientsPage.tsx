@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   ShoppingBag, Plus, Trash2, FileText, Share2, Search, Copy, Filter,
-  Apple, Carrot, Fish, Bread, Milk, Egg, Cheese, Wine, Coffee, Leaf, Droplet, Candy, Cake, Utensils
+  Apple, Carrot, Fish, Milk, Egg, Wine, Coffee, Leaf, Droplet, Candy, Cake, Utensils
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -30,13 +31,13 @@ const categoryIcons = {
   'Meat': <Utensils className="h-4 w-4" />,
   'Oils': <Droplet className="h-4 w-4" />,
   'Vegetables': <Carrot className="h-4 w-4" />,
-  'Grains': <Bread className="h-4 w-4" />,
+  'Grains': <Coffee className="h-4 w-4" />,
   'Dairy': <Milk className="h-4 w-4" />,
   'Fruits': <Apple className="h-4 w-4" />,
   'Other': <Leaf className="h-4 w-4" />,
 };
 
-export default function ShoppingListPage() {
+export default function FindByIngredientsPage() {
   const { toast } = useToast();
   const [items, setItems] = useState(initialItems);
   const [newItemName, setNewItemName] = useState('');
@@ -44,19 +45,19 @@ export default function ShoppingListPage() {
   const [newItemUnit, setNewItemUnit] = useState('');
   const [newItemCategory, setNewItemCategory] = useState('Other');
   const [showAddForm, setShowAddForm] = useState(false);
-  const [editingItemId, setEditingItemId] = useState(null);
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOption, setSortOption] = useState('name');
 
   const categories = [...new Set(items.map(item => item.category))].sort();
 
-  const handleCheck = (id) => {
+  const handleCheck = (id: string) => {
     setItems(items.map(item =>
       item.id === id ? { ...item, checked: !item.checked } : item
     ));
   };
 
-  const handleAddItem = (e) => {
+  const handleAddItem = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!newItemName.trim()) {
@@ -128,18 +129,19 @@ export default function ShoppingListPage() {
     });
   };
 
-  const handleEditItem = (id) => {
+  const handleEditItem = (id: string) => {
     const itemToEdit = items.find(item => item.id === id);
     if (itemToEdit) {
       setEditingItemId(id);
       setNewItemName(itemToEdit.name);
-      setNewItemQuantity(itemToEdit.quantity);
+      setNewItemQuantity(itemToEdit.quantity.toString());
       setNewItemUnit(itemToEdit.unit);
       setNewItemCategory(itemToEdit.category);
+      setShowAddForm(true);
     }
   };
 
-  const handleUpdateItem = (e) => {
+  const handleUpdateItem = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!newItemName.trim()) {
@@ -176,7 +178,7 @@ export default function ShoppingListPage() {
     });
   };
 
-  const handleSortChange = (option) => {
+  const handleSortChange = (option: string) => {
     setSortOption(option);
   };
 
@@ -196,12 +198,12 @@ export default function ShoppingListPage() {
   );
 
   return (
-    <PageContainer header={{ title: 'Shopping List', showBackButton: true }}>
+    <PageContainer header={{ title: 'Find by Ingredients', showBackButton: true }}>
       <div className="space-y-4 pb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <ShoppingBag className="h-5 w-5 text-wasfah-bright-teal mr-2" />
-            <h2 className="text-lg font-bold text-wasfah-deep-teal">My Shopping List</h2>
+            <h2 className="text-lg font-bold text-wasfah-deep-teal">My Ingredients</h2>
           </div>
           <div className="flex space-x-2">
             <Button
@@ -225,7 +227,7 @@ export default function ShoppingListPage() {
 
         <Card className="p-4">
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm text-gray-600">{items.length} items ({items.filter(i => i.checked).length} checked)</p>
+            <p className="text-sm text-gray-600">{items.length} ingredients ({items.filter(i => i.checked).length} selected)</p>
             <div className="flex space-x-2">
               <Button
                 variant="outline"
@@ -234,7 +236,7 @@ export default function ShoppingListPage() {
                 onClick={handleRemoveChecked}
               >
                 <Trash2 className="h-4 w-4 mr-1" />
-                Clear Checked
+                Remove Selected
               </Button>
               <Button
                 variant="outline"
@@ -251,7 +253,7 @@ export default function ShoppingListPage() {
                 onClick={() => setShowAddForm(!showAddForm)}
               >
                 <Plus className="h-4 w-4 mr-1" />
-                Add Item
+                Add Ingredient
               </Button>
               <Button
                 size="sm"
@@ -269,7 +271,7 @@ export default function ShoppingListPage() {
               <div className="grid grid-cols-12 gap-2">
                 <div className="col-span-6">
                   <Input
-                    placeholder="Item name"
+                    placeholder="Ingredient name"
                     value={newItemName}
                     onChange={(e) => setNewItemName(e.target.value)}
                     className="h-9"
@@ -333,7 +335,7 @@ export default function ShoppingListPage() {
             <div className="relative flex-grow">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
               <Input
-                placeholder="Search items..."
+                placeholder="Search ingredients..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-8"
@@ -346,14 +348,14 @@ export default function ShoppingListPage() {
               <SelectContent>
                 <SelectItem value="name">Name</SelectItem>
                 <SelectItem value="category">Category</SelectItem>
-                <SelectItem value="checked">Checked Status</SelectItem>
+                <SelectItem value="checked">Selected Status</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <Tabs defaultValue="all">
             <TabsList className="grid grid-cols-2 mb-4">
-              <TabsTrigger value="all">All Items</TabsTrigger>
+              <TabsTrigger value="all">All Ingredients</TabsTrigger>
               <TabsTrigger value="byCategory">By Category</TabsTrigger>
             </TabsList>
 
