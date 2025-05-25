@@ -3,7 +3,11 @@ import { Search, Activity, Heart, Globe, Calendar, ShoppingCart, Users, Camera, 
 
 // Sample shared recipes data
 const sharedRecipes = [
-  { id: 1, name: 'Spaghetti Carbonara', sharedBy: 'Chef Mario', likes: 45, imaged: 2, name: 'Chicken Tikka Masala', sharedBy: 'Chef Priya', likes: 32, image: '{ id: 3, name: 'Vegetable Stir Fry', sharedBy: 'Chef Li', likes: 28, image: '4, name: 'Chocolate Lava Cake', sharedBy: 'Chef Anna', likes: 56
+  { id: 1, name: 'Spaghetti Carbonara', sharedBy: 'Chef Mario', likes: 45, image: '🍝' },
+  { id: 2, name: 'Chicken Tikka Masala', sharedBy: 'Chef Priya', likes: 32, image: '🍛' },
+  { id: 3, name: 'Vegetable Stir Fry', sharedBy: 'Chef Li', likes: 28, image: '🥗' },
+  { id: 4, name: 'Chocolate Lava Cake', sharedBy: 'Chef Anna', likes: 56, image: '🍰' }
+];
 
 const mainFeatures = [
   {
