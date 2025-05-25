@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Search, Activity, Heart, Globe, Calendar, ShoppingCart, Users, Camera, ArrowRight, Sparkles } from 'lucide-react';
+import { Search, Activity, Heart, Globe, Calendar, ShoppingCart, Users, Camera, ArrowRight, Sparkles, Share2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { TodayMealPlan } from '@/components/home/TodayMealPlan';
 import { ExpiringIngredients } from '@/components/home/ExpiringIngredients';
@@ -10,6 +10,30 @@ import { motion } from 'framer-motion';
 import { NutritionTip } from '@/components/nutrition/NutritionTip';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTheme } from 'next-themes';
+
+// Sample shared recipes data
+const sharedRecipes = [
+  { id: 1, name: 'Spaghetti Carbonara', sharedBy: 'Chef Mario', likes: 45 },
+  { id: 2, name: 'Chicken Tikka Masala', sharedBy: 'Chef Priya', likes: 32 },
+  { id: 3, name: 'Vegetable Stir Fry', sharedBy: 'Chef Li', likes: 28 },
+  { id: 4, name: 'Chocolate Lava Cake', sharedBy: 'Chef Anna', likes: 56 },
+];
+
+const SharedRecipeCard = ({ recipe }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
+    className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+  >
+    <h3 className="font-bold text-lg text-gray-800 dark:text-white">{recipe.name}</h3>
+    <p className="text-sm text-gray-600 dark:text-gray-300">Shared by: {recipe.sharedBy}</p>
+    <div className="flex items-center mt-2">
+      <Heart className="h-4 w-4 text-red-500 mr-1" />
+      <span className="text-sm text-gray-600 dark:text-gray-300">{recipe.likes} Likes</span>
+    </div>
+  </motion.div>
+);
 
 const HomePage = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -150,6 +174,24 @@ const HomePage = () => {
                   </div>
                 </Link>
               </motion.div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Shared Recipes Section */}
+        <div>
+          <h2 className="font-bold text-lg text-wasfah-deep-teal dark:text-wasfah-bright-teal mb-4 flex items-center">
+            <Share2 className="h-5 w-5 mr-2 text-wasfah-bright-teal" />
+            Shared Recipes
+          </h2>
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+            variants={container}
+            initial="hidden"
+            animate="show"
+          >
+            {sharedRecipes.map((recipe) => (
+              <SharedRecipeCard key={recipe.id} recipe={recipe} />
             ))}
           </motion.div>
         </div>
