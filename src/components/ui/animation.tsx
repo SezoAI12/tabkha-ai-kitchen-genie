@@ -52,13 +52,13 @@ export const ResponsiveButton: React.FC<ResponsiveButtonProps> = ({
     ghost: 'hover:bg-gray-100 text-gray-700'
   };
 
-  // Map our size prop to valid Button sizes - fix the mapping
-  const getButtonSize = (): "sm" | "lg" | "default" | "icon" => {
+  // Map our size prop to valid Button sizes
+  const getButtonSize = () => {
     switch (size) {
-      case 'sm': return 'sm';
-      case 'lg': return 'lg';
+      case 'sm': return 'sm' as const;
+      case 'lg': return 'lg' as const;
       case 'md':
-      default: return 'default';
+      default: return 'default' as const;
     }
   };
 
