@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -8,126 +9,189 @@ interface RTLContextProps {
   language: string;
   setLanguage: (lang: string) => void;
   direction: 'ltr' | 'rtl';
-  t: (en: string, ar: string) => string;
+  t: (en: string, ar: string, tr?: string) => string;
 }
 
 interface TranslationDictionary {
   [key: string]: {
     en: string;
     ar: string;
+    tr: string;
   };
 }
 
-// Common translations that are used throughout the app
+// Enhanced translations that are used throughout the app
 const commonTranslations: TranslationDictionary = {
   home: { 
     en: 'Home', 
-    ar: 'الرئيسية' 
+    ar: 'الرئيسية',
+    tr: 'Ana Sayfa'
   },
   settings: { 
     en: 'Settings', 
-    ar: 'الإعدادات' 
+    ar: 'الإعدادات',
+    tr: 'Ayarlar'
   },
   favorites: { 
     en: 'Favorites', 
-    ar: 'المفضلة' 
+    ar: 'المفضلة',
+    tr: 'Favoriler'
   },
   search: { 
     en: 'Search', 
-    ar: 'البحث' 
+    ar: 'البحث',
+    tr: 'Ara'
   },
   profile: { 
     en: 'Profile', 
-    ar: 'الملف الشخصي' 
+    ar: 'الملف الشخصي',
+    tr: 'Profil'
   },
   save: { 
     en: 'Save', 
-    ar: 'حفظ' 
+    ar: 'حفظ',
+    tr: 'Kaydet'
   },
   cancel: { 
     en: 'Cancel', 
-    ar: 'إلغاء' 
+    ar: 'إلغاء',
+    tr: 'İptal'
   },
   delete: { 
     en: 'Delete', 
-    ar: 'حذف' 
+    ar: 'حذف',
+    tr: 'Sil'
   },
   edit: { 
     en: 'Edit', 
-    ar: 'تعديل' 
+    ar: 'تعديل',
+    tr: 'Düzenle'
   },
   view: { 
     en: 'View', 
-    ar: 'عرض' 
+    ar: 'عرض',
+    tr: 'Görüntüle'
   },
   add: { 
     en: 'Add', 
-    ar: 'إضافة' 
+    ar: 'إضافة',
+    tr: 'Ekle'
   },
   remove: { 
     en: 'Remove', 
-    ar: 'إزالة' 
+    ar: 'إزالة',
+    tr: 'Kaldır'
   },
   confirm: { 
     en: 'Confirm', 
-    ar: 'تأكيد' 
+    ar: 'تأكيد',
+    tr: 'Onayla'
   },
   next: { 
     en: 'Next', 
-    ar: 'التالي' 
+    ar: 'التالي',
+    tr: 'İleri'
   },
   previous: { 
     en: 'Previous', 
-    ar: 'السابق' 
+    ar: 'السابق',
+    tr: 'Geri'
   },
   done: { 
     en: 'Done', 
-    ar: 'تم' 
+    ar: 'تم',
+    tr: 'Tamamlandı'
   },
   submit: { 
     en: 'Submit', 
-    ar: 'إرسال' 
+    ar: 'إرسال',
+    tr: 'Gönder'
   },
   loading: { 
     en: 'Loading...', 
-    ar: 'جاري التحميل...' 
+    ar: 'جاري التحميل...',
+    tr: 'Yükleniyor...'
   },
   scan: { 
     en: 'Scan', 
-    ar: 'فحص' 
+    ar: 'فحص',
+    tr: 'Tara'
   },
   ingredients: { 
     en: 'Ingredients', 
-    ar: 'المكونات' 
+    ar: 'المكونات',
+    tr: 'Malzemeler'
   },
   nutritionalInfo: { 
     en: 'Nutritional Information', 
-    ar: 'المعلومات الغذائية' 
+    ar: 'المعلومات الغذائية',
+    tr: 'Beslenme Bilgisi'
   },
   recipes: { 
     en: 'Recipes', 
-    ar: 'وصفات' 
+    ar: 'وصفات',
+    tr: 'Tarifler'
   },
   cookTime: { 
     en: 'Cook Time', 
-    ar: 'وقت الطهي' 
+    ar: 'وقت الطهي',
+    tr: 'Pişirme Süresi'
   },
   prepTime: { 
     en: 'Prep Time', 
-    ar: 'وقت التحضير' 
+    ar: 'وقت التحضير',
+    tr: 'Hazırlık Süresi'
   },
   servings: { 
     en: 'Servings', 
-    ar: 'الحصص' 
+    ar: 'الحصص',
+    tr: 'Porsiyon'
   },
   difficulty: { 
     en: 'Difficulty', 
-    ar: 'الصعوبة' 
+    ar: 'الصعوبة',
+    tr: 'Zorluk'
   },
   calories: { 
     en: 'Calories', 
-    ar: 'السعرات الحرارية' 
+    ar: 'السعرات الحرارية',
+    tr: 'Kalori'
   },
+  menu: {
+    en: 'Menu',
+    ar: 'القائمة',
+    tr: 'Menü'
+  },
+  language: {
+    en: 'Language',
+    ar: 'اللغة',
+    tr: 'Dil'
+  },
+  notifications: {
+    en: 'Notifications',
+    ar: 'الإشعارات',
+    tr: 'Bildirimler'
+  },
+  appearance: {
+    en: 'Appearance',
+    ar: 'المظهر',
+    tr: 'Görünüm'
+  },
+  help: {
+    en: 'Help & Support',
+    ar: 'المساعدة والدعم',
+    tr: 'Yardım ve Destek'
+  },
+  track: {
+    en: 'Track',
+    ar: 'التتبع',
+    tr: 'Takip'
+  },
+  find: {
+    en: 'Find',
+    ar: 'البحث',
+    tr: 'Bul'
+  }
 };
 
 const RTLContext = createContext<RTLContextProps | undefined>(undefined);
@@ -165,11 +229,19 @@ export const RTLProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const newIsRTL = lang === 'ar';
       setRTLState(newIsRTL);
       
+      const languageNames = {
+        en: 'English',
+        ar: 'العربية',
+        tr: 'Türkçe'
+      };
+      
       toast({
-        title: newIsRTL ? "تم تغيير اللغة" : "Language Changed",
+        title: newIsRTL ? "تم تغيير اللغة" : lang === 'tr' ? "Dil Değiştirildi" : "Language Changed",
         description: newIsRTL ? 
           "تم تغيير لغة التطبيق إلى العربية" : 
-          `The application language has been changed to ${lang === 'en' ? 'English' : lang}`
+          lang === 'tr' ? 
+            "Uygulama dili Türkçe olarak değiştirildi" :
+            `The application language has been changed to ${languageNames[lang as keyof typeof languageNames] || lang}`
       });
     } catch (error) {
       console.error('Error setting language:', error);
@@ -185,17 +257,22 @@ export const RTLProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setLanguage(isRTL ? 'en' : 'ar');
   };
   
-  // Translation function that returns the appropriate string based on current language
-  const t = (en: string, ar: string): string => {
+  // Enhanced translation function that supports Turkish
+  const t = (en: string, ar: string, tr?: string): string => {
     // First check if the text exists in our common translations
     for (const key in commonTranslations) {
       if (commonTranslations[key].en === en) {
-        return language === 'ar' ? commonTranslations[key].ar : en;
+        const translation = commonTranslations[key];
+        return language === 'ar' ? translation.ar : 
+               language === 'tr' ? translation.tr : 
+               translation.en;
       }
     }
     
-    // If not found in common translations, use the provided ar text or en text
-    return language === 'ar' ? ar : en;
+    // If not found in common translations, use the provided text
+    return language === 'ar' ? ar : 
+           language === 'tr' ? (tr || en) : 
+           en;
   };
 
   return (
