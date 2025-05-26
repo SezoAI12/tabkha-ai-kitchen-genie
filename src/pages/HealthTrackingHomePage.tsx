@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,8 +12,38 @@ import { Activity, Scale, CalendarDays, ArrowLeftRight, Tag } from 'lucide-react
 import { Link } from 'react-router-dom';
 import { DailyIndependenceChallenges } from '@/components/health/DailyIndependenceChallenges';
 import { BMICalculator } from '@/components/health/BMICalculator';
-import { useRTL } from '@/contexts/RTLContext';
-import { useUserHealth } from '@/hooks/useUserHealth';
+import { useRTL } from '@/contexts/RTLContext'; // Assuming this provides a `t` function for translation
+
+// --- MOCKING HOOKS AND DATA FOR DEMONSTRATION ---
+// In a real app, these would come from global state (Redux, Zustand, React Query) or an API.
+
+// Mock for useUserHealth hook
+const useUserHealthMock = () => {
+  const [isHealthGoalsOpen, setIsHealthGoalsOpen] = useState(false);
+  const [userWeight, setUserWeight] = useState(75); // Initial weight
+  const [userHeight, setUserHeight] = useState(170); // Initial height in cm
+  const [userTargetWeight, setUserTargetWeight] = useState(65); // Initial target weight
+
+  // Simulate updating health goals
+  const updateHealthGoals = useCallback(({ weight, height, targetWeight }) => {
+    if (weight !== undefined) setUserWeight(weight);
+    if (height !== undefined) setUserHeight(height);
+    if (targetWeight !== undefined) setUserTargetWeight(targetWeight);
+  }, []);
+
+  return {
+    isHealthGoalsOpen,
+    setIsHealthGoalsOpen,
+    userWeight,
+    userHeight,
+    userTargetWeight,
+    updateHealthGoals, // Expose update function
+  };
+};
+
+// --- END MOCKING ---
+
+// IngredientSwapCard and ActionButton remain the same, they are presentational.
 
 const IngredientSwapCard = ({ swap, t }) => (
   <Card className="border border-gray-200 dark:border-gray-700">
@@ -37,7 +67,7 @@ const IngredientSwapCard = ({ swap, t }) => (
   </Card>
 );
 
-const ActionButton = ({ to, children, variant = "default", icon }: { to: string; children: React.ReactNode; variant?: string; icon?: React.ReactNode }) => (
+const ActionButton = ({ to, children, variant = "default", icon }: { to: string; children: React.ReactNode; variant?: "default" | "outline"; icon?: React.ReactNode }) => (
   <Link to={to}>
     <Button className={`w-full ${variant === "outline" ? "border-wasfah-bright-teal text-wasfah-bright-teal" : "bg-wasfah-bright-teal hover:bg-wasfah-teal"}`}>
       {icon && <span className="mr-2">{icon}</span>}
@@ -46,18 +76,128 @@ const ActionButton = ({ to, children, variant = "default", icon }: { to: string;
   </Link>
 );
 
+
 export default function HealthTrackingHomePage() {
   const { t } = useRTL();
+  // Using our mock hook instead of the actual useUserHealth
   const {
     isHealthGoalsOpen,
     setIsHealthGoalsOpen,
     userWeight,
     userHeight,
     userTargetWeight,
-  } = useUserHealth();
+    updateHealthGoals, // Get the update function from the mock
+  } = useUserHealthMock(); // Changed to useUserHealthMock
 
-  const handleApplyTip = (tip) => console.log('Applied tip:', tip);
-  const handleNutritionSubmit = (data) => console.log('Nutrition data submitted:', data);
+  // --- State for Nutrition Tracking ---
+  const [dailyNutritionData, setDailyNutritionData] = useState([]); // To store actual daily entries
+  const [currentNutritionSummary, setCurrentNutritionSummary] = useState({
+    calories: { consumed: 0, target: 2000 },
+    protein: { consumed: 0, target: 120 },
+    carbs: { consumed: 0, target: 240 },
+    fat: { consumed: 0, target: 65 },
+  });
+  const [recentMeals, setRecentMeals] = useState([]);
+
+  // Mock initial nutrition data for chart and summary (will be updated by user input)
+  // We'll update currentNutritionSummary when a new entry is submitted
+  const mockWeeklyNutritionChartData = useMemo(() => ([
+    { date: 'Mon', calories: 1800, protein: 85, carbs: 210, fat: 55 },
+    { date: 'Tue', calories: 2100, protein: 95, carbs: 240, fat: 60 },
+    { date: 'Wed', calories: 1950, protein: 90, carbs: 225, fat: 58 },
+    { date: 'Thu', calories: 2000, protein: 92, carbs: 230, fat: 59 },
+    { date: 'Fri', calories: 1900, protein: 88, carbs: 220, fat: 57 },
+    { date: 'Sat', calories: 2200, protein: 100, carbs: 250, fat: 62 },
+    { date: 'Sun', calories: 1850, protein: 86, carbs: 215, fat: 56 },
+  ]), []);
+
+  // Initialize currentNutritionSummary based on mock data (or real data if available)
+  useEffect(() => {
+    // For a real app, you'd fetch today's data or calculate based on recent entries
+    const initialCalories = mockWeeklyNutritionChartData.reduce((sum, d) => sum + d.calories, 0) / mockWeeklyNutritionChartData.length;
+    const initialProtein = mockWeeklyNutritionChartData.reduce((sum, d) => sum + d.protein, 0) / mockWeeklyNutritionChartData.length;
+    const initialCarbs = mockWeeklyNutritionChartData.reduce((sum, d) => sum + d.carbs, 0) / mockWeeklyNutritionChartData.length;
+    const initialFat = mockWeeklyNutritionChartData.reduce((sum, d) => sum + d.fat, 0) / mockWeeklyNutritionChartData.length;
+
+    setCurrentNutritionSummary(prev => ({
+      calories: { ...prev.calories, consumed: Math.round(initialCalories * 0.7) }, // Simulate some consumed value
+      protein: { ...prev.protein, consumed: Math.round(initialProtein * 0.7) },
+      carbs: { ...prev.carbs, consumed: Math.round(initialCarbs * 0.7) },
+      fat: { ...prev.fat, consumed: Math.round(initialFat * 0.7) },
+    }));
+
+     // Initialize recent meals
+     setRecentMeals([
+      { id: 1, type: t('Breakfast', 'إفطار'), time: t('Yesterday, 8:30 AM', 'الأمس، 8:30 صباحًا'), calories: 450, macros: { protein: 25, carbs: 45, fat: 15 } },
+      { id: 2, type: t('Lunch', 'غداء'), time: t('Yesterday, 1:00 PM', 'الأمس، 1:00 مساءً'), calories: 600, macros: { protein: 35, carbs: 60, fat: 20 } },
+      { id: 3, type: t('Dinner', 'عشاء'), time: t('Yesterday, 7:00 PM', 'الأمس، 7:00 مساءً'), calories: 500, macros: { protein: 30, carbs: 50, fat: 18 } },
+    ]);
+  }, [mockWeeklyNutritionChartData, t]);
+
+
+  const handleApplyTip = useCallback((tip) => {
+    console.log('Applied tip:', tip);
+    // In a real app, this would trigger state updates based on the tip
+    // E.g., if tip is about increasing protein, you might adjust target protein
+    // or suggest a specific meal plan change.
+    alert(t('Tip applied! (In a real app, this would update your goals/plan)', 'تم تطبيق النصيحة! (في تطبيق حقيقي، سيتم تحديث أهدافك/خطتك)'));
+  }, [t]);
+
+  const handleNutritionSubmit = useCallback((data) => {
+    console.log('Nutrition data submitted:', data);
+
+    // Update daily nutrition summary
+    setCurrentNutritionSummary(prev => ({
+      calories: { ...prev.calories, consumed: prev.calories.consumed + data.calories },
+      protein: { ...prev.protein, consumed: prev.protein.consumed + data.protein },
+      carbs: { ...prev.carbs, consumed: prev.carbs.consumed + data.carbs },
+      fat: { ...prev.fat, consumed: prev.fat.consumed + data.fat },
+    }));
+
+    // Add to daily entries for history/chart
+    setDailyNutritionData(prev => {
+      // Find today's entry (for simplicity, assuming one entry per day for chart)
+      const today = new Date().toDateString();
+      const existingEntryIndex = prev.findIndex(entry => entry.date === today);
+
+      if (existingEntryIndex > -1) {
+        // Update existing entry
+        const updatedEntries = [...prev];
+        updatedEntries[existingEntryIndex] = {
+          ...updatedEntries[existingEntryIndex],
+          calories: updatedEntries[existingEntryIndex].calories + data.calories,
+          protein: updatedEntries[existingEntryIndex].protein + data.protein,
+          carbs: updatedEntries[existingEntryIndex].carbs + data.carbs,
+          fat: updatedEntries[existingEntryIndex].fat + data.fat,
+        };
+        return updatedEntries;
+      } else {
+        // Add new entry for today
+        return [...prev, {
+          date: today, // Or a formatted date string for chart
+          calories: data.calories,
+          protein: data.protein,
+          carbs: data.carbs,
+          fat: data.fat,
+        }];
+      }
+    });
+
+    // Add to recent meals (for display)
+    setRecentMeals(prev => [
+      {
+        id: prev.length + 1, // Simple ID generation
+        type: data.mealType || t('Meal', 'وجبة'),
+        time: t('Just now', 'الآن') + ' ' + new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }),
+        calories: data.calories,
+        macros: { protein: data.protein, carbs: data.carbs, fat: data.fat },
+      },
+      ...prev.slice(0, 2), // Keep only the latest 3 meals
+    ]);
+
+    alert(t('Nutrition data added successfully!', 'تمت إضافة بيانات التغذية بنجاح!'));
+  }, [t]);
+
 
   const ingredientSwaps = useMemo(() => ([
     {
@@ -86,21 +226,33 @@ export default function HealthTrackingHomePage() {
     },
   ]), []);
 
-  const mockNutritionData = useMemo(() => ([
-    { date: 'Mon', calories: 1800, protein: 85, carbs: 210, fat: 55 },
-    { date: 'Tue', calories: 2100, protein: 95, carbs: 240, fat: 60 },
-    { date: 'Wed', calories: 1950, protein: 90, carbs: 225, fat: 58 },
-    { date: 'Thu', calories: 2000, protein: 92, carbs: 230, fat: 59 },
-    { date: 'Fri', calories: 1900, protein: 88, carbs: 220, fat: 57 },
-    { date: 'Sat', calories: 2200, protein: 100, carbs: 250, fat: 62 },
-    { date: 'Sun', calories: 1850, protein: 86, carbs: 215, fat: 56 },
-  ]), []);
+  // Combine initial mock data with any new daily entries for the chart
+  const combinedChartData = useMemo(() => {
+    // For a real app, you'd fetch actual historical data.
+    // Here, we're simply illustrating how new data could be integrated.
+    const today = new Date().toDateString();
+    const todayData = dailyNutritionData.find(d => d.date === today);
 
-  const recentMeals = useMemo(() => ([
-    { id: 1, type: t('Breakfast', 'إفطار'), time: t('Yesterday, 8:30 AM', 'الأمس، 8:30 صباحًا'), calories: 450, macros: { protein: 25, carbs: 45, fat: 15 } },
-    { id: 2, type: t('Lunch', 'غداء'), time: t('Yesterday, 1:00 PM', 'الأمس، 1:00 مساءً'), calories: 600, macros: { protein: 35, carbs: 60, fat: 20 } },
-    { id: 3, type: t('Dinner', 'عشاء'), time: t('Yesterday, 7:00 PM', 'الأمس، 7:00 مساءً'), calories: 500, macros: { protein: 30, carbs: 50, fat: 18 } },
-  ]), [t]);
+    // Map mock data to match structure of dailyNutritionData
+    const mappedMockData = mockWeeklyNutritionChartData.map(d => ({
+      ...d,
+      date: new Date(new Date().setDate(new Date().getDate() - (new Date().getDay() - ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(d.date)))).toDateString(), // Simple date mapping for chart
+    }));
+
+    // Replace or add today's data
+    const chartData = mappedMockData.filter(d => d.date !== today);
+    if (todayData) {
+      chartData.push({ ...todayData, date: today }); // Ensure today's date is correct
+    } else {
+        // If no entry for today, use average of mock for today
+        const averageToday = mockWeeklyNutritionChartData[new Date().getDay() % 7]; // Simple approximation
+        chartData.push({...averageToday, date: today})
+    }
+
+    // Sort by date for the chart
+    return chartData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  }, [mockWeeklyNutritionChartData, dailyNutritionData]);
+
 
   return (
     <PageContainer header={{ title: t('Health & Tracking', 'الصحة والتتبع'), showBackButton: true }}>
@@ -119,7 +271,12 @@ export default function HealthTrackingHomePage() {
           userWeight={userWeight}
           userHeight={userHeight}
           userTargetWeight={userTargetWeight}
-          initialWeight={75}
+          // Assuming BMICalculator has a way to update these via props or internal state
+          // For a real app, you'd pass updateHealthGoals or a setter from useUserHealth
+          // For now, it will display the initial values from useUserHealthMock.
+          onUpdateGoals={updateHealthGoals} // Pass the update function for BMICalculator to use
+          initialWeight={userWeight} // Use actual state values for initial props
+          initialHeight={userHeight}
           isHealthGoalsOpen={isHealthGoalsOpen}
           setIsHealthGoalsOpen={setIsHealthGoalsOpen}
         />
@@ -150,10 +307,10 @@ export default function HealthTrackingHomePage() {
             <Card className="border border-gray-200 dark:border-gray-700">
               <CardContent className="pt-6">
                 <NutritionSummary
-                  calories={{ consumed: 1450, target: 2000 }}
-                  protein={{ consumed: 75, target: 120 }}
-                  carbs={{ consumed: 180, target: 240 }}
-                  fat={{ consumed: 48, target: 65 }}
+                  calories={currentNutritionSummary.calories}
+                  protein={currentNutritionSummary.protein}
+                  carbs={currentNutritionSummary.carbs}
+                  fat={currentNutritionSummary.fat}
                 />
               </CardContent>
             </Card>
@@ -166,7 +323,8 @@ export default function HealthTrackingHomePage() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <ActionButton to="/health-tracking" icon={<Activity className="mr-2 h-4 w-4" />}>
+              {/* These links assume actual routes are implemented */}
+              <ActionButton to="/health-tracking-detail" icon={<Activity className="mr-2 h-4 w-4" />}>
                 {t('Detailed Tracking', 'التتبع التفصيلي')}
               </ActionButton>
               <ActionButton to="/body-information" variant="outline">
@@ -176,8 +334,18 @@ export default function HealthTrackingHomePage() {
           </TabsContent>
 
           <TabsContent value="goals" className="space-y-4 mt-4">
-            <Card><CardContent className="pt-6"><NutritionGoals /></CardContent></Card>
-            <ActionButton to="/nutrition-goals">
+            <Card>
+              <CardContent className="pt-6">
+                <NutritionGoals
+                  userTargetWeight={userTargetWeight}
+                  userWeight={userWeight}
+                  userHeight={userHeight}
+                  // Pass the update function for NutritionGoals to potentially use
+                  onUpdateGoals={updateHealthGoals}
+                />
+              </CardContent>
+            </Card>
+            <ActionButton to="/nutrition-goals-settings"> {/* Changed route name for clarity */}
               {t('Update Nutrition Goals', 'تحديث أهداف التغذية')}
             </ActionButton>
             <ActionButton to="/dietary-preferences" variant="outline">
@@ -194,7 +362,7 @@ export default function HealthTrackingHomePage() {
                 <IngredientSwapCard key={index} swap={swap} t={t} />
               ))}
             </div>
-            <ActionButton to="/ingredient-swap" icon={<ArrowLeftRight className="mr-2 h-4 w-4" />}>
+            <ActionButton to="/ingredient-swap-list" icon={<ArrowLeftRight className="mr-2 h-4 w-4" />}> {/* Changed route name */}
               {t('View All Ingredient Swaps', 'عرض جميع بدائل المكونات')}
             </ActionButton>
           </TabsContent>
@@ -205,8 +373,8 @@ export default function HealthTrackingHomePage() {
                 <h3 className="text-lg font-semibold text-wasfah-deep-teal dark:text-wasfah-bright-teal mb-2">
                   {t('Weekly Progress', 'التقدم الأسبوعي')}
                 </h3>
-                {mockNutritionData.length > 0 ? (
-                  <NutritionProgressChart data={mockNutritionData} type="weekly" />
+                {combinedChartData.length > 0 ? (
+                  <NutritionProgressChart data={combinedChartData} type="weekly" />
                 ) : (
                   <p className="text-sm text-gray-500">{t('No data available', 'لا توجد بيانات متاحة')}</p>
                 )}
@@ -216,22 +384,26 @@ export default function HealthTrackingHomePage() {
               <h3 className="text-lg font-semibold text-wasfah-deep-teal dark:text-wasfah-bright-teal">
                 {t('Recent Meals', 'الوجبات الأخيرة')}
               </h3>
-              {recentMeals.map((meal) => (
-                <Card key={meal.id} className="border border-gray-200 dark:border-gray-700">
-                  <CardContent className="p-3 flex justify-between items-center">
-                    <div>
-                      <p className="font-medium">{meal.type}</p>
-                      <p className="text-xs text-gray-500">{meal.time}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-wasfah-bright-teal">{meal.calories} kcal</p>
-                      <p className="text-xs text-gray-500">P: {meal.macros.protein}g | C: {meal.macros.carbs}g | F: {meal.macros.fat}g</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+              {recentMeals.length > 0 ? (
+                recentMeals.map((meal) => (
+                  <Card key={meal.id} className="border border-gray-200 dark:border-gray-700">
+                    <CardContent className="p-3 flex justify-between items-center">
+                      <div>
+                        <p className="font-medium">{meal.type}</p>
+                        <p className="text-xs text-gray-500">{meal.time}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium text-wasfah-bright-teal">{meal.calories} kcal</p>
+                        <p className="text-xs text-gray-500">P: {meal.macros.protein}g | C: {meal.macros.carbs}g | F: {meal.macros.fat}g</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <p className="text-sm text-gray-500">{t('No recent meals added yet.', 'لم يتم إضافة وجبات حديثة بعد.')}</p>
+              )}
             </div>
-            <ActionButton to="/health-tracking">
+            <ActionButton to="/full-history"> {/* Changed route name */}
               {t('View Complete History', 'عرض السجل الكامل')}
             </ActionButton>
           </TabsContent>
