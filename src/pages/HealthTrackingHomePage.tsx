@@ -1,3 +1,4 @@
+
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,9 +14,6 @@ import { Link } from 'react-router-dom';
 import { DailyIndependenceChallenges } from '@/components/health/DailyIndependenceChallenges';
 import { BMICalculator } from '@/components/health/BMICalculator';
 import { useRTL } from '@/contexts/RTLContext'; // Assuming this provides a `t` function for translation
-
-// --- MOCKING HOOKS AND DATA FOR DEMONSTRATION ---
-// In a real app, these would come from global state (Redux, Zustand, React Query) or an API.
 
 // Mock for useUserHealth hook
 const useUserHealthMock = () => {
@@ -40,10 +38,6 @@ const useUserHealthMock = () => {
     updateHealthGoals, // Expose update function
   };
 };
-
-// --- END MOCKING ---
-
-// IngredientSwapCard and ActionButton remain the same, they are presentational.
 
 const IngredientSwapCard = ({ swap, t }) => (
   <Card className="border border-gray-200 dark:border-gray-700">
@@ -75,7 +69,6 @@ const ActionButton = ({ to, children, variant = "default", icon }: { to: string;
     </Button>
   </Link>
 );
-
 
 export default function HealthTrackingHomePage() {
   const { t } = useRTL();
@@ -133,7 +126,6 @@ export default function HealthTrackingHomePage() {
       { id: 3, type: t('Dinner', 'عشاء'), time: t('Yesterday, 7:00 PM', 'الأمس، 7:00 مساءً'), calories: 500, macros: { protein: 30, carbs: 50, fat: 18 } },
     ]);
   }, [mockWeeklyNutritionChartData, t]);
-
 
   const handleApplyTip = useCallback((tip) => {
     console.log('Applied tip:', tip);
@@ -198,7 +190,6 @@ export default function HealthTrackingHomePage() {
     alert(t('Nutrition data added successfully!', 'تمت إضافة بيانات التغذية بنجاح!'));
   }, [t]);
 
-
   const ingredientSwaps = useMemo(() => ([
     {
       original: 'Butter',
@@ -253,7 +244,6 @@ export default function HealthTrackingHomePage() {
     return chartData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }, [mockWeeklyNutritionChartData, dailyNutritionData]);
 
-
   return (
     <PageContainer header={{ title: t('Health & Tracking', 'الصحة والتتبع'), showBackButton: true }}>
       <div className="space-y-6 pb-20">
@@ -271,14 +261,11 @@ export default function HealthTrackingHomePage() {
           userWeight={userWeight}
           userHeight={userHeight}
           userTargetWeight={userTargetWeight}
-          // Assuming BMICalculator has a way to update these via props or internal state
-          // For a real app, you'd pass updateHealthGoals or a setter from useUserHealth
-          // For now, it will display the initial values from useUserHealthMock.
-          onUpdateGoals={updateHealthGoals} // Pass the update function for BMICalculator to use
-          initialWeight={userWeight} // Use actual state values for initial props
+          initialWeight={userWeight}
           initialHeight={userHeight}
           isHealthGoalsOpen={isHealthGoalsOpen}
           setIsHealthGoalsOpen={setIsHealthGoalsOpen}
+          onUpdateGoals={updateHealthGoals}
         />
 
         <DailyIndependenceChallenges />
@@ -324,7 +311,7 @@ export default function HealthTrackingHomePage() {
 
             <div className="flex flex-col gap-2">
               {/* These links assume actual routes are implemented */}
-              <ActionButton to="/health-tracking-detail" icon={<Activity className="mr-2 h-4 w-4" />}>
+              <ActionButton to="/health-tracking" icon={<Activity className="mr-2 h-4 w-4" />}>
                 {t('Detailed Tracking', 'التتبع التفصيلي')}
               </ActionButton>
               <ActionButton to="/body-information" variant="outline">
@@ -337,15 +324,18 @@ export default function HealthTrackingHomePage() {
             <Card>
               <CardContent className="pt-6">
                 <NutritionGoals
-                  userTargetWeight={userTargetWeight}
-                  userWeight={userWeight}
-                  userHeight={userHeight}
-                  // Pass the update function for NutritionGoals to potentially use
-                  onUpdateGoals={updateHealthGoals}
+                  initialGoals={{
+                    calories: 2000,
+                    protein: 100,
+                    carbs: 250,
+                    fat: 65,
+                    activityLevel: 'moderate',
+                    dietaryType: 'balanced'
+                  }}
                 />
               </CardContent>
             </Card>
-            <ActionButton to="/nutrition-goals-settings"> {/* Changed route name for clarity */}
+            <ActionButton to="/nutrition-goals">
               {t('Update Nutrition Goals', 'تحديث أهداف التغذية')}
             </ActionButton>
             <ActionButton to="/dietary-preferences" variant="outline">
@@ -362,7 +352,7 @@ export default function HealthTrackingHomePage() {
                 <IngredientSwapCard key={index} swap={swap} t={t} />
               ))}
             </div>
-            <ActionButton to="/ingredient-swap-list" icon={<ArrowLeftRight className="mr-2 h-4 w-4" />}> {/* Changed route name */}
+            <ActionButton to="/ingredient-swap" icon={<ArrowLeftRight className="mr-2 h-4 w-4" />}>
               {t('View All Ingredient Swaps', 'عرض جميع بدائل المكونات')}
             </ActionButton>
           </TabsContent>
@@ -403,7 +393,7 @@ export default function HealthTrackingHomePage() {
                 <p className="text-sm text-gray-500">{t('No recent meals added yet.', 'لم يتم إضافة وجبات حديثة بعد.')}</p>
               )}
             </div>
-            <ActionButton to="/full-history"> {/* Changed route name */}
+            <ActionButton to="/health-tracking">
               {t('View Complete History', 'عرض السجل الكامل')}
             </ActionButton>
           </TabsContent>
