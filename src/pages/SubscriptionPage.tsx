@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Check, Crown, Zap, Star, ArrowLeft, Gift, Shield, Clock, Users, ChefHat, Sparkles, TrendingUp, CreditCard, X, ChevronDown, ChevronUp, Percent } from "lucide-react";
+import { AnimationWrapper, ResponsiveButton } from "@/components/ui/animation";
+import { PaymentModal } from "@/components/ui/payment-modal";
 
 const Subscription = () => {
   const [currentPlan, setCurrentPlan] = useState("free");
@@ -15,6 +17,8 @@ const Subscription = () => {
   const [promoApplied, setPromoApplied] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ hours: 23, minutes: 59, seconds: 59 });
   const [showComparison, setShowComparison] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
 
   // Countdown timer for limited offer
   useEffect(() => {
@@ -165,13 +169,15 @@ const Subscription = () => {
       return;
     }
 
-    // Show payment modal simulation
-    showNotification("Redirecting to secure checkout...");
-
-    setTimeout(() => {
+    const plan = plans.find(p => p.id === planId);
+    if (plan && plan.id !== 'free') {
+      setSelectedPlan(plan);
+      setShowPaymentModal(true);
+    } else {
+      // Handle free plan
       setCurrentPlan(planId);
-      showNotification(`Successfully subscribed to ${plans.find(p => p.id === planId)?.name} plan!`);
-    }, 2000);
+      showNotification("Switched to free plan");
+    }
   };
 
   const handlePromoCode = () => {
@@ -329,106 +335,106 @@ const Subscription = () => {
 
         {/* Subscription Plans */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          {plans.map((plan) => (
-            <Card
+          {plans.map((plan, index) => (
+            <AnimationWrapper
               key={plan.id}
+              type="scale"
+              delay={index * 200}
               className={`relative transform transition-all duration-300 hover:scale-105 ${
                 plan.popular ? "ring-2 ring-wasfah-orange shadow-xl" : ""
               } ${
                 currentPlan === plan.id ? "border-green-500 bg-green-50" : ""
               }`}
             >
-              {plan.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <Badge className="bg-wasfah-orange px-4 py-1">
-                    <Sparkles size={12} className="mr-1" />
-                    {plan.savings}
-                  </Badge>
-                </div>
-              )}
-
-              {plan.yearlyDiscount && billingCycle === "yearly" && (
-                <div className="absolute -top-4 right-4">
-                  <Badge className="bg-green-500">{plan.yearlyDiscount}</Badge>
-                </div>
-              )}
-
-              <CardHeader className="text-center pb-4">
-                <div className="mx-auto mb-4">{plan.icon}</div>
-
-                <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>
-
-                {currentPlan === plan.id && (
-                  <Badge className="bg-green-500 mb-2">Current Plan</Badge>
-                )}
-
-                <div className="mb-2">
-                  <span className="text-4xl font-bold">{getPriceDisplay(plan)}</span>
-                  <span className="text-gray-600">/{plan.period}</span>
-                </div>
-
-                {billingCycle === "yearly" && plan.price.yearly > 0 && (
-                  <p className="text-sm text-gray-500 line-through">
-                    ${(plan.price.monthly * 12).toFixed(2)}/year
-                  </p>
-                )}
-
-                <p className="text-sm text-gray-600 mt-2">{plan.description}</p>
-              </CardHeader>
-
-              <CardContent>
-                <ul className="space-y-3 mb-6">
-                  {plan.features.slice(0, 6).map((feature, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <Check size={16} className="text-green-500 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
-                  {plan.features.length > 6 && (
-                    <li className="text-sm text-gray-600 font-medium">
-                      + {plan.features.length - 6} more features
-                    </li>
-                  )}
-                </ul>
-
-                {plan.limitations && (
-                  <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                    <p className="text-xs font-medium text-gray-600 mb-2">Limitations:</p>
-                    <ul className="space-y-1">
-                      {plan.limitations.map((limitation, index) => (
-                        <li key={index} className="text-xs text-gray-500 flex items-start gap-1">
-                          <X size={12} className="text-red-400 mt-0.5" />
-                          {limitation}
-                        </li>
-                      ))}
-                    </ul>
+              <Card>
+                {plan.popular && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <Badge className="bg-wasfah-orange px-4 py-1">
+                      <Sparkles size={12} className="mr-1" />
+                      {plan.savings}
+                    </Badge>
                   </div>
                 )}
 
-                <Button
-                  className={`w-full ${
-                    plan.popular && currentPlan !== plan.id
-                      ? "bg-gradient-to-r from-wasfah-orange to-orange-500 hover:from-orange-500 hover:to-wasfah-orange"
-                      : ""
-                  }`}
-                  variant={currentPlan === plan.id ? "outline" : "default"}
-                  disabled={currentPlan === plan.id}
-                  onClick={() => handleSubscribe(plan.id)}
-                >
-                  {currentPlan === plan.id
-                    ? "Current Plan"
-                    : plan.id === "free"
-                    ? "Downgrade to Free"
-                    : "Start Free Trial"}
-                </Button>
-
-                {plan.id !== "free" && currentPlan !== plan.id && (
-                  <p className="text-xs text-center text-gray-500 mt-2">
-                    7-day free trial • Cancel anytime
-                  </p>
+                {plan.yearlyDiscount && billingCycle === "yearly" && (
+                  <div className="absolute -top-4 right-4">
+                    <Badge className="bg-green-500">{plan.yearlyDiscount}</Badge>
+                  </div>
                 )}
-              </CardContent>
-            </Card>
+
+                <CardHeader className="text-center pb-4">
+                  <div className="mx-auto mb-4">{plan.icon}</div>
+
+                  <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>
+
+                  {currentPlan === plan.id && (
+                    <Badge className="bg-green-500 mb-2">Current Plan</Badge>
+                  )}
+
+                  <div className="mb-2">
+                    <span className="text-4xl font-bold">{getPriceDisplay(plan)}</span>
+                    <span className="text-gray-600">/{plan.period}</span>
+                  </div>
+
+                  {billingCycle === "yearly" && plan.price.yearly > 0 && (
+                    <p className="text-sm text-gray-500 line-through">
+                      ${(plan.price.monthly * 12).toFixed(2)}/year
+                    </p>
+                  )}
+
+                  <p className="text-sm text-gray-600 mt-2">{plan.description}</p>
+                </CardHeader>
+
+                <CardContent>
+                  <ul className="space-y-3 mb-6">
+                    {plan.features.slice(0, 6).map((feature, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <Check size={16} className="text-green-500 mt-0.5 flex-shrink-0" />
+                        <span className="text-sm">{feature}</span>
+                      </li>
+                    ))}
+                    {plan.features.length > 6 && (
+                      <li className="text-sm text-gray-600 font-medium">
+                        + {plan.features.length - 6} more features
+                      </li>
+                    )}
+                  </ul>
+
+                  {plan.limitations && (
+                    <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                      <p className="text-xs font-medium text-gray-600 mb-2">Limitations:</p>
+                      <ul className="space-y-1">
+                        {plan.limitations.map((limitation, index) => (
+                          <li key={index} className="text-xs text-gray-500 flex items-start gap-1">
+                            <X size={12} className="text-red-400 mt-0.5" />
+                            {limitation}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  <ResponsiveButton
+                    variant={plan.popular && currentPlan !== plan.id ? "primary" : "secondary"}
+                    disabled={currentPlan === plan.id}
+                    onClick={() => handleSubscribe(plan.id)}
+                    className="w-full"
+                  >
+                    {currentPlan === plan.id
+                      ? "Current Plan"
+                      : plan.id === "free"
+                      ? "Downgrade to Free"
+                      : "Start Free Trial"}
+                  </ResponsiveButton>
+
+                  {plan.id !== "free" && currentPlan !== plan.id && (
+                    <p className="text-xs text-center text-gray-500 mt-2">
+                      7-day free trial • Cancel anytime
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </AnimationWrapper>
           ))}
         </div>
 
@@ -568,6 +574,16 @@ const Subscription = () => {
           </CardContent>
         </Card>
       </div>
+
+      {selectedPlan && (
+        <PaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          planName={selectedPlan.name}
+          amount={billingCycle === 'monthly' ? selectedPlan.price.monthly : selectedPlan.price.yearly}
+          features={selectedPlan.features}
+        />
+      )}
     </div>
   );
 };
