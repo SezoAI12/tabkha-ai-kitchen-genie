@@ -1,3 +1,4 @@
+
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -144,12 +145,12 @@ export default function HealthTrackingPage() {
     const todayEntry = dailyNutritionEntries.find(entry => entry.date === today) || { protein: 0, carbs: 0, fat: 0, fiber: 0 };
 
     return [
-      { name: t('Protein', 'بروتين'), consumed: todayEntry.protein, goal: healthGoals.proteinTarget || 120 }, // Assuming goal exists in healthGoals
-      { name: t('Carbs', 'كربوهيدرات'), consumed: todayEntry.carbs, goal: healthGoals.carbsTarget || 250 },
-      { name: t('Fat', 'دهون'), consumed: todayEntry.fat, goal: healthGoals.fatTarget || 70 },
-      { name: t('Fiber', 'ألياف'), consumed: todayEntry.fiber, goal: healthGoals.fiberTarget || 25 },
+      { name: t('Protein', 'بروتين'), consumed: todayEntry.protein, goal: healthGoals.proteinTarget },
+      { name: t('Carbs', 'كربوهيدرات'), consumed: todayEntry.carbs, goal: healthGoals.carbsTarget },
+      { name: t('Fat', 'دهون'), consumed: todayEntry.fat, goal: healthGoals.fatTarget },
+      { name: t('Fiber', 'ألياف'), consumed: todayEntry.fiber, goal: healthGoals.fiberTarget },
     ];
-  }, [dailyNutritionEntries, healthGoals, t]); // Add healthGoals to dependency array
+  }, [dailyNutritionEntries, healthGoals, t]);
 
 
   // Update currentSummary on nutrition entry submission

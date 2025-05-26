@@ -12,10 +12,10 @@ interface BMICalculatorProps {
   userHeight: number;
   userTargetWeight: number;
   initialWeight: number;
+  initialHeight?: number;
   isHealthGoalsOpen: boolean;
   setIsHealthGoalsOpen: (isOpen: boolean) => void;
   onUpdateGoals?: ({ weight, height, targetWeight }: { weight: any; height: any; targetWeight: any; }) => void;
-  initialHeight?: number;
 }
 
 export const BMICalculator: React.FC<BMICalculatorProps> = ({
