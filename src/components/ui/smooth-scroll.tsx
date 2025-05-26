@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface SmoothScrollContainerProps {
   children: React.ReactNode;
@@ -23,8 +23,8 @@ export const SmoothScrollContainer: React.FC<SmoothScrollContainerProps> = ({
     element.style.willChange = 'scroll-position';
     element.style.contain = 'layout style paint';
 
-    // Add momentum scrolling for iOS
-    element.style.webkitOverflowScrolling = 'touch';
+    // Add momentum scrolling for iOS - using style property with proper typing
+    (element.style as any).webkitOverflowScrolling = 'touch';
 
     return () => {
       if (element) {

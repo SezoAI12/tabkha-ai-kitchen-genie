@@ -1,10 +1,11 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Check, Crown, Zap, Star, ArrowLeft, Gift, Shield, Clock, Users, ChefHat, Sparkles, TrendingUp, CreditCard, X, ChevronDown, ChevronUp, Percent } from "lucide-react";
-import { AnimationWrapper, ResponsiveButton } from "@/components/ui/animation";
+import { Check, Crown, Star, ArrowLeft, Gift, Shield, Clock, Users, ChefHat, Sparkles, CreditCard, X, ChevronDown, ChevronUp, Percent } from "lucide-react";
+import { AnimationWrapper, ResponsiveButton } from "@/components/ui/enhanced-animations";
 import { PaymentModal } from "@/components/ui/payment-modal";
 
 const Subscription = () => {
