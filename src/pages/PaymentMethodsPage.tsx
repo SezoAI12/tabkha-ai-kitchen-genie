@@ -3,7 +3,7 @@ import { PageContainer } from '@/components/layout/PageContainer';
 import { Card, CardContent } from '@/components/ui/card'; // Removed CardHeader, CardTitle as they weren't used in the map
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CreditCard, Plus, Trash2, CheckCircle, Paypal, Visa, Mastercard, Amex, Discover } from 'lucide-react'; // Added card brand icons
+import { CreditCard, Plus, Trash2, CheckCircle } from 'lucide-react'; // Removed non-existent card brand icons
 import { useToast } from '@/hooks/use-toast';
 import {
   Dialog,
@@ -29,22 +29,13 @@ interface PaymentMethod {
   isDefault: boolean;
 }
 
-// Helper to get card brand icon
+// Helper to get card brand icon - using only available Lucide icons
 const getCardBrandIcon = (brand?: string) => {
-  switch (brand?.toLowerCase()) {
-    case 'visa':
-      return <Visa className="h-8 w-8 text-gray-600 dark:text-gray-300" />;
-    case 'mastercard':
-      return <Mastercard className="h-8 w-8 text-gray-600 dark:text-gray-300" />;
-    case 'amex':
-      return <Amex className="h-8 w-8 text-gray-600 dark:text-gray-300" />;
-    case 'discover':
-      return <Discover className="h-8 w-8 text-gray-600 dark:text-gray-300" />;
-    case 'paypal':
-      return <Paypal className="h-8 w-8 text-blue-700 dark:text-blue-400" />;
-    default:
-      return <CreditCard className="h-8 w-8 text-gray-600 dark:text-gray-300" />;
+  // For now, use CreditCard icon for all types since specific brand icons aren't available in lucide-react
+  if (brand === 'paypal') {
+    return <CreditCard className="h-8 w-8 text-blue-700 dark:text-blue-400" />;
   }
+  return <CreditCard className="h-8 w-8 text-gray-600 dark:text-gray-300" />;
 };
 
 export default function PaymentMethodsPage() {
@@ -226,7 +217,7 @@ export default function PaymentMethodsPage() {
                     onClick={() => setNewMethodType('paypal')}
                     className="flex-1"
                   >
-                    <Paypal className="mr-2 h-4 w-4" /> PayPal
+                    <CreditCard className="mr-2 h-4 w-4" /> PayPal
                   </Button>
                 </div>
 
@@ -403,7 +394,7 @@ export default function PaymentMethodsPage() {
                           onClick={() => setNewMethodType('paypal')}
                           className="flex-1"
                         >
-                          <Paypal className="mr-2 h-4 w-4" /> PayPal
+                          <CreditCard className="mr-2 h-4 w-4" /> PayPal
                         </Button>
                       </div>
 
