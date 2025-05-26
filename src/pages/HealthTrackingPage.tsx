@@ -33,6 +33,10 @@ let _sharedHealthData = {
     weeklyExerciseTarget: 5, // hours
     waterIntakeTarget: 2.5, // liters
     sleepHoursTarget: 8, // hours
+    proteinTarget: 120, // grams
+    carbsTarget: 250, // grams
+    fatTarget: 70, // grams
+    fiberTarget: 25, // grams
     // Current values should come from consumed data, not hardcoded
     currentWeeklyExercise: 4,
     currentWaterIntake: 2.1,

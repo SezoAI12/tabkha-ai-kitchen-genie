@@ -23,6 +23,10 @@ interface NutritionGoalsProps {
     activityLevel: string;
     dietaryType: string;
   };
+  userTargetWeight?: number;
+  userWeight?: number;
+  userHeight?: number;
+  onUpdateGoals?: ({ weight, height, targetWeight }: { weight: any; height: any; targetWeight: any; }) => void;
 }
 
 export const NutritionGoals: React.FC<NutritionGoalsProps> = ({
@@ -34,7 +38,11 @@ export const NutritionGoals: React.FC<NutritionGoalsProps> = ({
     fat: 65,
     activityLevel: 'moderate',
     dietaryType: 'balanced'
-  }
+  },
+  userTargetWeight,
+  userWeight,
+  userHeight,
+  onUpdateGoals
 }) => {
   const [calories, setCalories] = useState(initialGoals.calories.toString());
   const [protein, setProtein] = useState(initialGoals.protein.toString());

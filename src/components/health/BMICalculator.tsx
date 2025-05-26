@@ -14,6 +14,8 @@ interface BMICalculatorProps {
   initialWeight: number;
   isHealthGoalsOpen: boolean;
   setIsHealthGoalsOpen: (isOpen: boolean) => void;
+  onUpdateGoals?: ({ weight, height, targetWeight }: { weight: any; height: any; targetWeight: any; }) => void;
+  initialHeight?: number;
 }
 
 export const BMICalculator: React.FC<BMICalculatorProps> = ({
@@ -22,7 +24,9 @@ export const BMICalculator: React.FC<BMICalculatorProps> = ({
   userTargetWeight,
   initialWeight,
   isHealthGoalsOpen,
-  setIsHealthGoalsOpen
+  setIsHealthGoalsOpen,
+  onUpdateGoals,
+  initialHeight
 }) => {
   const { t, direction } = useRTL();
   
