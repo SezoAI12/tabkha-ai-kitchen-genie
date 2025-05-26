@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,7 +8,6 @@ import { Link } from 'react-router-dom';
 import { TodayMealPlan } from '@/components/home/TodayMealPlan';
 import { ExpiringIngredients } from '@/components/home/ExpiringIngredients';
 import { motion } from 'framer-motion';
-// import { NutritionTip } from '@/components/nutrition/NutritionTip'; // Removed import
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTheme } from 'next-themes';
 
@@ -89,7 +89,7 @@ const HomePage = () => {
   };
 
   return (
-    <PageContainer header={header}>
+    <PageContainer header={header} className="min-h-screen">
       <div className="space-y-6 pb-24">
         {/* AI Scan Card - Highlighted Feature */}
         <motion.div
@@ -97,7 +97,7 @@ const HomePage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <Link to="/scan-ingredients">
+          <Link to="/scan-dish">
             <Card className="relative overflow-hidden border-2 border-wasfah-bright-teal/30 dark:border-wasfah-bright-teal/20 shadow-lg hover:shadow-xl transition-all duration-300">
               <div className={`absolute top-0 left-0 w-full h-full ${isDark ? 'bg-gradient-to-br from-wasfah-bright-teal/10 to-wasfah-deep-teal/20' : 'bg-gradient-to-br from-wasfah-bright-teal/20 to-wasfah-deep-teal/30'} z-0`}></div>
               <CardContent className="p-6 relative z-10">
@@ -125,8 +125,6 @@ const HomePage = () => {
             </Card>
           </Link>
         </motion.div>
-
-        {/* Nutrition Tip section has been removed */}
 
         {/* Main Features Grid with Icons only */}
         <div>

@@ -27,10 +27,10 @@ export const PageContainer: React.FC<PageContainerProps> = ({
   noPadding = false,
 }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-wasfah-light-gray dark:bg-gray-900">
+    <div className="min-h-screen flex flex-col bg-wasfah-light-gray dark:bg-gray-900 overflow-x-hidden">
       {header && <MobileHeader {...header} />}
-      <main className={`flex-grow pb-20 ${className}`}>
-        <div className={`${fullWidth ? '' : 'container'} ${noPadding ? '' : 'px-4 py-4'}`}>
+      <main className={`flex-grow ${hideNavbar ? 'pb-4' : 'pb-20'} ${className}`}>
+        <div className={`${fullWidth ? 'w-full' : 'container mx-auto max-w-lg'} ${noPadding ? '' : 'px-4 py-4'} min-h-full`}>
           {children}
         </div>
       </main>

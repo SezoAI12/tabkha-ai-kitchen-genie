@@ -3,7 +3,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { LanguageSelector } from '../language/LanguageSelector';
-import { HungerButton } from '../ui/hunger-button';
 
 interface HeaderProps {
   title?: string;
@@ -11,7 +10,6 @@ interface HeaderProps {
   onBackClick?: () => void;
   actions?: React.ReactNode;
   className?: string;
-  showHungerButton?: boolean;
 }
 
 export const MobileHeader: React.FC<HeaderProps> = ({
@@ -20,7 +18,6 @@ export const MobileHeader: React.FC<HeaderProps> = ({
   onBackClick,
   actions,
   className = '',
-  showHungerButton = true,
 }) => {
   const navigate = useNavigate();
   
@@ -47,7 +44,6 @@ export const MobileHeader: React.FC<HeaderProps> = ({
       </div>
       <div className="flex items-center space-x-2">
         <LanguageSelector />
-        {showHungerButton && <HungerButton />}
         {actions}
       </div>
     </header>

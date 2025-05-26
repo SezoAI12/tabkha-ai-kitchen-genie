@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +7,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Trash2, Plus, ChevronLeft, ChevronRight, Calendar, Search, Zap, Utensils } from 'lucide-react';
 import { PageContainer } from '@/components/layout/PageContainer';
-import { HungerButton } from '@/components/ui/hunger-button';
 
 // Helper Functions
 const getWeekDays = (startDate: Date) => {
@@ -160,7 +158,6 @@ export default function MealPlanPage() {
       header={{
         title: 'Meal Plan',
         showBackButton: true,
-        actions: <HungerButton />
       }}
       className="bg-gradient-to-br from-wasfah-light-gray to-white"
     >
