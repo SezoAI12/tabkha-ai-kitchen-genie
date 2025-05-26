@@ -57,7 +57,7 @@ export const CategorySelector: React.FC<CategorySelectorProps> = ({
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center text-white">
                       <div className="p-2 rounded-lg bg-white/20 backdrop-blur-sm inline-block mb-2">
-                        <IconComponent className="h-6 w-6" />
+                        <IconComponent />
                       </div>
                       <p className="font-bold text-xl">{category.name}</p>
                       <p className="text-sm opacity-90">
