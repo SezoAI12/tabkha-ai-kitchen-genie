@@ -1,3 +1,4 @@
+
 // src/components/onboarding/SplashScreenEnhanced.tsx
 
 import React, { useEffect, useState, useRef, useCallback } from 'react';
@@ -10,7 +11,7 @@ import Confetti from 'react-confetti'; // We'll add this for the final screen ef
 
 // Placeholder for useRTL if it's not actually defined yet for translation
 const useRTL = () => ({
-  t: (english, arabic) => (Math.random() > 0.5 ? english : arabic) // Simple mock for demonstration
+  t: (english: string, arabic?: string) => english // Simple mock for demonstration, defaulting to English
 });
 
 
@@ -106,7 +107,7 @@ export default function SplashScreenEnhanced() {
   const [progress, setProgress] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false); // State for confetti
   const [isMuted, setIsMuted] = useState(true); // Audio mute state
-  const audioRef = useRef(new Audio('/audio/ambient_music.mp3')); // Path to your ambient audio
+  const audioRef = useRef<HTMLAudioElement>(new Audio('/audio/ambient_music.mp3')); // Path to your ambient audio
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const navigate = useNavigate(); // Hook for navigation
   const { t } = useRTL(); // Use the RTL context for translation
