@@ -1,12 +1,11 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Check, Crown, Star, ArrowLeft, Gift, Shield, Clock, Users, ChefHat, Sparkles, CreditCard, X, ChevronDown, ChevronUp, Percent } from "lucide-react";
-import { AnimationWrapper, ResponsiveButton } from "@/components/ui/enhanced-animations";
-import { PaymentModal } from "@/components/ui/payment-modal";
+import { AnimationWrapper, ResponsiveButton } from "@/components/ui/animation";
+import { PaymentModal } from "@/components/payment/PaymentModal";
 
 const Subscription = () => {
   const [currentPlan, setCurrentPlan] = useState("free");

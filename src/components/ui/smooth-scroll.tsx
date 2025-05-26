@@ -23,7 +23,7 @@ export const SmoothScrollContainer: React.FC<SmoothScrollContainerProps> = ({
     element.style.willChange = 'scroll-position';
     element.style.contain = 'layout style paint';
 
-    // Add momentum scrolling for iOS - using style property with proper typing
+    // Add momentum scrolling for iOS - properly typed
     (element.style as any).webkitOverflowScrolling = 'touch';
 
     return () => {
