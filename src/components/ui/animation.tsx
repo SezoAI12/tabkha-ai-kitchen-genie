@@ -52,8 +52,15 @@ export const ResponsiveButton: React.FC<ResponsiveButtonProps> = ({
     ghost: 'hover:bg-gray-100 text-gray-700'
   };
 
-  // Map our size prop to valid Button sizes
-  const buttonSize = size === 'md' ? 'default' : size;
+  // Map our size prop to valid Button sizes - fix the mapping
+  const getButtonSize = (): "sm" | "lg" | "default" | "icon" => {
+    switch (size) {
+      case 'sm': return 'sm';
+      case 'lg': return 'lg';
+      case 'md':
+      default: return 'default';
+    }
+  };
 
   return (
     <Button
@@ -62,7 +69,7 @@ export const ResponsiveButton: React.FC<ResponsiveButtonProps> = ({
         variantClasses[variant],
         className
       )}
-      size={buttonSize}
+      size={getButtonSize()}
       {...props}
     >
       {children}
