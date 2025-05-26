@@ -38,6 +38,7 @@ import MainSettingsPage from "./pages/MainSettingsPage";
 import CommunityPage from "./pages/CommunityPage";
 import ScanDishPage from "./pages/ScanDishPage";
 import MenuPage from "./pages/MenuPage";
+import BodyInformationPage from "./pages/BodyInformationPage";
 
 // Admin Panel Routes
 import AdminPage from "./pages/AdminPage";
@@ -98,6 +99,7 @@ const App = () => (
               <Route path="/nutrition-goals" element={<NutritionGoalsPage />} />
               <Route path="/health-tracking" element={<HealthTrackingPage />} />
               <Route path="/health-information" element={<HealthInformationPage />} />
+              <Route path="/body-information" element={<BodyInformationPage />} />
               <Route path="/dietary-preferences" element={<DietaryPreferencesPage />} />
               <Route path="/ingredient-swap" element={<IngredientSwapPage />} />
               <Route path="/shopping-list" element={<ShoppingListPage />} />
