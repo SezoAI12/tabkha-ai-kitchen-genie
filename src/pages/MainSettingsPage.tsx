@@ -4,7 +4,7 @@ import { PageContainer } from '@/components/layout/PageContainer';
 import { Card, CardContent } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { User, CreditCard, Bell, Moon, Settings, Languages, 
-  ShoppingCart, Heart, Camera, Activity, UserCog, Shield, Globe } from 'lucide-react';
+  ShoppingCart, Heart, Camera, Activity, UserCog, Shield, Globe, HelpCircle, Smartphone } from 'lucide-react';
 import { SignOut } from '@/components/auth/SignOut';
 import { useRTL } from '@/contexts/RTLContext';
 import { LanguageSelector } from '@/components/language/LanguageSelector';
@@ -24,9 +24,9 @@ const MainSettingsPage = () => {
     {
       title: "App Settings",
       items: [
-        { icon: <Bell className="h-6 w-6 text-wasfah-bright-teal" />, label: "Notifications", path: "/settings" },
+        { icon: <Bell className="h-6 w-6 text-wasfah-bright-teal" />, label: "Notifications", path: "/notifications" },
         { icon: <Languages className="h-6 w-6 text-blue-500" />, label: "Language", path: "/language-settings" },
-        { icon: <Moon className="h-6 w-6 text-purple-600" />, label: "Appearance", path: "/settings" },
+        { icon: <Moon className="h-6 w-6 text-purple-600" />, label: "Appearance", path: "/appearance" },
       ]
     },
     {
@@ -35,13 +35,15 @@ const MainSettingsPage = () => {
         { icon: <ShoppingCart className="h-6 w-6 text-wasfah-deep-teal" />, label: "Shopping List", path: "/shopping-list" },
         { icon: <Camera className="h-6 w-6 text-amber-500" />, label: "Scan Dish", path: "/scan-ingredients" },
         { icon: <Activity className="h-6 w-6 text-red-500" />, label: "Health Tracking", path: "/health-tracking-home" },
+        { icon: <Smartphone className="h-6 w-6 text-green-600" />, label: "Connected Devices", path: "/connected-devices" },
       ]
     },
     {
       title: "Account & Payment",
       items: [
         { icon: <Shield className="h-6 w-6 text-green-600" />, label: "Privacy & Data", path: "/privacy" },
-        { icon: <CreditCard className="h-6 w-6 text-wasfah-bright-teal" />, label: "Payment Methods", path: "/subscription" },
+        { icon: <CreditCard className="h-6 w-6 text-wasfah-bright-teal" />, label: "Payment Methods", path: "/payment-methods" },
+        { icon: <HelpCircle className="h-6 w-6 text-orange-500" />, label: "Help & Support", path: "/help" },
       ]
     }
   ];
