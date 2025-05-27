@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -44,6 +43,8 @@ import SharedRecipesTrackingPage from "./pages/SharedRecipesTrackingPage";
 import SplashScreen from "./pages/SplashScreen";
 import ShoppingListPage from "./pages/ShoppingListPage";
 import NotFound from "./pages/NotFound";
+// Import the new EditProfilePage
+import EditProfilePage from "./pages/EditProfilePage"; // Make sure this path is correct
 
 // Admin pages
 import AdminPage from "./pages/AdminPage";
@@ -75,7 +76,7 @@ const App = () => (
           <Routes>
             {/* Redirect root to new home page */}
             <Route path="/" element={<Navigate to="/home" replace />} />
-            
+
             {/* Main app routes */}
             <Route path="/home" element={<NewHomePage />} />
             <Route path="/menu" element={<MenuPage />} />
@@ -90,6 +91,8 @@ const App = () => (
             <Route path="/community" element={<CommunityPage />} />
             <Route path="/settings" element={<MainSettingsPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            {/* Add the route for EditProfilePage */}
+            <Route path="/profile/edit" element={<EditProfilePage />} />
             <Route path="/dietary-preferences" element={<DietaryPreferencesPage />} />
             <Route path="/language-settings" element={<LanguageSettingsPage />} />
             <Route path="/notifications" element={<NotificationsPage />} />
