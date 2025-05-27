@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { Recipe } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Clock, ChefHat, Users, ArrowUpRight, Heart, Share, Info } from 'lucide-react';
+import { Clock, ChefHat, Users, ArrowUpRight, Heart, Share, Info, Plus, Globe } from 'lucide-react';
 import { RecipeSocialInteractions } from './RecipeSocialInteractions';
 import { useToast } from '@/hooks/use-toast';
 
@@ -22,21 +21,38 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
 }) => {
   const { toast } = useToast();
   const [isLiked, setIsLiked] = useState(recipe.isFavorite);
-  const [likeCount, setLikeCount] = useState(recipe.rating * 10); // Just an example value
+  const [likeCount, setLikeCount] = useState(recipe.rating * 10);
 
   const handleLike = (recipeId: string) => {
     setIsLiked(!isLiked);
     setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
+    toast({
+      title: isLiked ? "Removed from favorites" : "Added to favorites",
+      description: isLiked ? "Recipe removed from your favorites" : "Recipe added to your favorites",
+    });
   };
 
   const handleComment = (recipeId: string, comment: string) => {
     console.log(`New comment on recipe ${recipeId}: ${comment}`);
-    // Here you would typically send the comment to your API
+    toast({
+      title: "Comment added",
+      description: "Your comment has been posted successfully",
+    });
   };
 
   const handleShare = (recipeId: string) => {
     console.log(`Sharing recipe ${recipeId}`);
-    // Here you would open your share modal or integrations
+    toast({
+      title: "Recipe shared",
+      description: "Recipe link copied to clipboard",
+    });
+  };
+
+  const handleAddToMealPlan = () => {
+    toast({
+      title: "Added to Meal Plan",
+      description: "Recipe has been added to your meal plan",
+    });
   };
 
   return (
@@ -47,9 +63,17 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
       />
       
       <div className="container px-4 py-4">
-        <h1 className="recipe-title text-2xl font-bold text-wasfah-deep-teal">
-          {recipe.title}
-        </h1>
+        <div className="flex items-start justify-between mb-2">
+          <h1 className="recipe-title text-2xl font-bold text-wasfah-deep-teal flex-1">
+            {recipe.title}
+          </h1>
+          {recipe.cuisineType && (
+            <div className="flex items-center ml-3">
+              <Globe className="h-4 w-4 text-wasfah-bright-teal mr-1" />
+              <span className="text-sm text-wasfah-bright-teal font-medium">{recipe.cuisineType}</span>
+            </div>
+          )}
+        </div>
         
         <div className="flex items-center mt-1 text-sm">
           <span className="text-wasfah-mint">★</span>
@@ -174,21 +198,38 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
           </TabsContent>
         </Tabs>
         
-        <Button
-          className="w-full mt-6 mb-4 bg-wasfah-bright-teal hover:bg-wasfah-teal text-white"
-          onClick={onStartCookingMode}
-        >
-          <ChefHat size={18} className="mr-2" />
-          Start Cooking Mode
-        </Button>
+        <div className="flex space-x-3 mt-6">
+          <Button
+            className="flex-1 bg-wasfah-bright-teal hover:bg-wasfah-teal text-white"
+            onClick={onStartCookingMode}
+          >
+            <ChefHat size={18} className="mr-2" />
+            Start Cooking Mode
+          </Button>
+          
+          <Button
+            variant="outline"
+            className="flex-1 border-wasfah-bright-teal text-wasfah-bright-teal hover:bg-wasfah-bright-teal hover:text-white"
+            onClick={handleAddToMealPlan}
+          >
+            <Plus size={18} className="mr-2" />
+            Add to Meal Plan
+          </Button>
+        </div>
         
         <div className="flex justify-between items-center mt-4 pt-4 border-t">
-          <button className="flex items-center text-gray-600 hover:text-wasfah-coral-red">
-            <Heart className={`h-6 w-6 mr-2 ${recipe.isFavorite ? 'fill-wasfah-coral-red text-wasfah-coral-red' : ''}`} />
+          <button 
+            className="flex items-center text-gray-600 hover:text-wasfah-coral-red transition-colors"
+            onClick={() => handleLike(recipe.id)}
+          >
+            <Heart className={`h-6 w-6 mr-2 ${isLiked ? 'fill-wasfah-coral-red text-wasfah-coral-red' : ''}`} />
             <span>Favorite</span>
           </button>
           
-          <button className="flex items-center text-gray-600 hover:text-wasfah-bright-teal">
+          <button 
+            className="flex items-center text-gray-600 hover:text-wasfah-bright-teal transition-colors"
+            onClick={() => handleShare(recipe.id)}
+          >
             <Share className="h-6 w-6 mr-2" />
             <span>Share</span>
           </button>

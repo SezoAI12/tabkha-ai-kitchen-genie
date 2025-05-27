@@ -95,11 +95,16 @@ export default function PantryPage() {
   const filteredAndSortedItems = getFilteredAndSortedItems();
 
   return (
-    <PageContainer header={{ title: 'My Pantry', showSearch: true, actions: (
-      <Button variant="ghost" size="icon" className="text-wasfah-deep-teal" onClick={() => setIsAddDialogOpen(true)}>
-        <Plus size={20} />
-      </Button>
-    )}}>
+    <PageContainer header={{ 
+      title: 'My Pantry', 
+      showSearch: true, 
+      showBackButton: true,
+      actions: (
+        <Button variant="ghost" size="icon" className="text-wasfah-deep-teal" onClick={() => setIsAddDialogOpen(true)}>
+          <Plus size={20} />
+        </Button>
+      )
+    }}>
       <div className="container px-4 py-4">
         <div className="flex justify-between items-center mb-4">
           <div className="flex space-x-4">

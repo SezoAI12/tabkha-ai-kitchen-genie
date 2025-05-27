@@ -6,9 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Search, Activity, Heart, Globe, Calendar, ShoppingCart, Users, Camera, ArrowRight, Sparkles, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { TodayMealPlan } from '@/components/home/TodayMealPlan';
-import { ExpiringIngredients } from '@/components/home/ExpiringIngredients';
 import { motion } from 'framer-motion';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTheme } from 'next-themes';
 
 const HomePage = () => {
@@ -88,6 +86,58 @@ const HomePage = () => {
     show: { opacity: 1, y: 0 }
   };
 
+  // Mock meal plan data
+  const mockMealPlan = {
+    id: '1',
+    date: new Date().toISOString().split('T')[0],
+    meals: [
+      {
+        id: '1',
+        type: 'breakfast' as const,
+        recipe: {
+          id: '1',
+          title: 'Avocado Toast',
+          description: 'Healthy breakfast with avocado',
+          image: '/placeholder.svg',
+          prepTime: 5,
+          cookTime: 5,
+          servings: 1,
+          difficulty: 'Easy' as const,
+          calories: 300,
+          rating: 4.5,
+          ratingCount: 120,
+          ingredients: [],
+          instructions: [],
+          categories: ['Breakfast'],
+          tags: ['healthy'],
+          isFavorite: false
+        }
+      },
+      {
+        id: '2',
+        type: 'lunch' as const,
+        recipe: {
+          id: '2',
+          title: 'Mediterranean Salad',
+          description: 'Fresh and healthy salad',
+          image: '/placeholder.svg',
+          prepTime: 10,
+          cookTime: 0,
+          servings: 2,
+          difficulty: 'Easy' as const,
+          calories: 250,
+          rating: 4.3,
+          ratingCount: 85,
+          ingredients: [],
+          instructions: [],
+          categories: ['Lunch'],
+          tags: ['healthy'],
+          isFavorite: true
+        }
+      }
+    ]
+  };
+
   return (
     <PageContainer header={header} className="min-h-screen">
       <div className="space-y-6 pb-24">
@@ -154,13 +204,7 @@ const HomePage = () => {
         <h2 className="font-bold text-lg text-wasfah-deep-teal dark:text-wasfah-bright-teal mt-6">Recent Activity</h2>
 
         {/* Today's meal plan */}
-        <TodayMealPlan mealPlan={null} />
-
-        {/* Expiring ingredients */}
-        <ExpiringIngredients
-          expiringItems={[]}
-          onAddIngredient={() => {}}
-        />
+        <TodayMealPlan mealPlan={mockMealPlan} />
       </div>
     </PageContainer>
   );

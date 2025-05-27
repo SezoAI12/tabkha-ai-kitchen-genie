@@ -37,26 +37,27 @@ interface SidebarItemProps {
 
 const SidebarItem = ({ icon: Icon, label, href, isActive, requireSuperAdmin = false }: SidebarItemProps) => {
   const isSuperAdmin = isSuperAdminAuthenticated();
+  const adminRole = getAdminRole();
   
-  // Hide super admin only items for regular admins
-  if (requireSuperAdmin && !isSuperAdmin) {
-    return null;
+  // Show basic items to all authenticated admins
+  if (!requireSuperAdmin || isSuperAdmin) {
+    return (
+      <Link
+        to={href}
+        className={cn(
+          'flex items-center gap-3 px-3 py-2 rounded-md transition-colors hover:bg-slate-700/50 text-white/90 hover:text-white',
+          isActive && 'bg-slate-700/70 text-white',
+          requireSuperAdmin && 'border-l-2 border-yellow-400'
+        )}
+      >
+        <Icon className="h-5 w-5" />
+        <span className="text-sm font-medium">{label}</span>
+        {requireSuperAdmin && <Crown className="h-4 w-4 text-yellow-400 ml-auto" />}
+      </Link>
+    );
   }
-
-  return (
-    <Link
-      to={href}
-      className={cn(
-        'flex items-center gap-3 px-3 py-2 rounded-md transition-colors hover:bg-slate-700/50 text-white/90 hover:text-white',
-        isActive && 'bg-slate-700/70 text-white',
-        requireSuperAdmin && 'border-l-2 border-yellow-400'
-      )}
-    >
-      <Icon className="h-5 w-5" />
-      <span className="text-sm font-medium">{label}</span>
-      {requireSuperAdmin && <Crown className="h-4 w-4 text-yellow-400 ml-auto" />}
-    </Link>
-  );
+  
+  return null;
 };
 
 export const AdminSidebar = () => {
@@ -65,22 +66,28 @@ export const AdminSidebar = () => {
   const adminRole = getAdminRole();
   const isSuperAdmin = isSuperAdminAuthenticated();
 
+  // Show sidebar for all authenticated admins
+  if (!adminRole) {
+    return null;
+  }
+
   const mainItems = [
     { icon: LayoutDashboard, label: 'Dashboard', href: '/admin' },
     { icon: Users, label: 'Users', href: '/admin/users' },
-    { icon: UserCog, label: 'User Types', href: '/admin/user-types', requireSuperAdmin: true },
     { icon: ChefHat, label: 'Recipes', href: '/admin/recipes' },
     { icon: ShoppingBag, label: 'Ingredients', href: '/admin/ingredients' },
     { icon: Image, label: 'Ingredient Images', href: '/admin/ingredient-images' },
     { icon: Globe, label: 'Translations', href: '/admin/translations' },
     { icon: CreditCard, label: 'Subscriptions', href: '/admin/subscriptions' },
-    { icon: DollarSign, label: 'Accounting', href: '/admin/accounting', requireSuperAdmin: true },
     { icon: Award, label: 'Rewards', href: '/admin/rewards' },
     { icon: Languages, label: 'Languages', href: '/admin/languages' },
-    { icon: Cpu, label: 'Integrations', href: '/admin/integrations', requireSuperAdmin: true },
-    { icon: Server, label: 'System', href: '/admin/system', requireSuperAdmin: true },
     { icon: BarChart, label: 'Analytics', href: '/admin/analytics' },
     { icon: Bell, label: 'Communications', href: '/admin/communications' },
+    // Super admin only items
+    { icon: UserCog, label: 'User Types', href: '/admin/user-types', requireSuperAdmin: true },
+    { icon: DollarSign, label: 'Accounting', href: '/admin/accounting', requireSuperAdmin: true },
+    { icon: Cpu, label: 'Integrations', href: '/admin/integrations', requireSuperAdmin: true },
+    { icon: Server, label: 'System', href: '/admin/system', requireSuperAdmin: true },
     { icon: Shield, label: 'Security', href: '/admin/security', requireSuperAdmin: true },
     { icon: Wrench, label: 'Maintenance', href: '/admin/maintenance', requireSuperAdmin: true },
     { icon: Settings, label: 'Settings', href: '/admin/settings', requireSuperAdmin: true },

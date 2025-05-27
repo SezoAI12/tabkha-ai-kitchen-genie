@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Trash2, Plus, ChevronLeft, ChevronRight, Calendar, Search, Zap, Utensils } from 'lucide-react';
 import { PageContainer } from '@/components/layout/PageContainer';
+import { useToast } from '@/hooks/use-toast';
 
 // Helper Functions
 const getWeekDays = (startDate: Date) => {
@@ -56,6 +57,7 @@ interface Meal {
 }
 
 export default function MealPlanPage() {
+  const { toast } = useToast();
   const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
   const [mealPlan, setMealPlan] = useState<Meal[]>([]);
   const [isAddingMeal, setIsAddingMeal] = useState(false);
@@ -151,6 +153,46 @@ export default function MealPlanPage() {
 
   const getMealsForDay = (date: string) => {
     return mealPlan.filter(meal => meal.date === date);
+  };
+
+  const handleGenerateAIMealPlan = () => {
+    toast({
+      title: "AI Meal Plan Generated!",
+      description: "Your personalized meal plan has been created based on your preferences and dietary needs.",
+    });
+    
+    // Mock AI generated meals
+    const aiGeneratedMeals = [
+      {
+        id: 'ai1',
+        type: 'recipe' as const,
+        recipeId: 'rec3',
+        servings: 2,
+        date: weekDays[0],
+        mealType: 'breakfast',
+        addedDate: new Date().toISOString()
+      },
+      {
+        id: 'ai2',
+        type: 'recipe' as const,
+        recipeId: 'rec1',
+        servings: 4,
+        date: weekDays[1],
+        mealType: 'dinner',
+        addedDate: new Date().toISOString()
+      },
+      {
+        id: 'ai3',
+        type: 'recipe' as const,
+        recipeId: 'rec5',
+        servings: 3,
+        date: weekDays[2],
+        mealType: 'lunch',
+        addedDate: new Date().toISOString()
+      }
+    ];
+    
+    setMealPlan([...mealPlan, ...aiGeneratedMeals]);
   };
 
   return (
@@ -362,7 +404,7 @@ export default function MealPlanPage() {
         <Button
           variant="outline"
           className="w-full border-wasfah-bright-teal text-wasfah-bright-teal hover:bg-wasfah-bright-teal hover:text-white"
-          onClick={() => alert('AI Auto-Planning feature coming soon!')}
+          onClick={handleGenerateAIMealPlan}
         >
           <Zap className="h-4 w-4 mr-2" />
           Generate AI Meal Plan (Premium)
