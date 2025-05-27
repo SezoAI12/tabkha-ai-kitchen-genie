@@ -18,7 +18,9 @@ import {
   DollarSign,
   Cpu,
   UserCog,
-  Crown
+  Crown,
+  Image,
+  Globe
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { WasfahLogo } from '../icons/WasfahLogo';
@@ -61,6 +63,7 @@ export const AdminSidebar = () => {
   const location = useLocation();
   const pathname = location.pathname;
   const adminRole = getAdminRole();
+  const isSuperAdmin = isSuperAdminAuthenticated();
 
   const mainItems = [
     { icon: LayoutDashboard, label: 'Dashboard', href: '/admin' },
@@ -68,6 +71,8 @@ export const AdminSidebar = () => {
     { icon: UserCog, label: 'User Types', href: '/admin/user-types', requireSuperAdmin: true },
     { icon: ChefHat, label: 'Recipes', href: '/admin/recipes' },
     { icon: ShoppingBag, label: 'Ingredients', href: '/admin/ingredients' },
+    { icon: Image, label: 'Ingredient Images', href: '/admin/ingredient-images' },
+    { icon: Globe, label: 'Translations', href: '/admin/translations' },
     { icon: CreditCard, label: 'Subscriptions', href: '/admin/subscriptions' },
     { icon: DollarSign, label: 'Accounting', href: '/admin/accounting', requireSuperAdmin: true },
     { icon: Award, label: 'Rewards', href: '/admin/rewards' },
@@ -80,6 +85,11 @@ export const AdminSidebar = () => {
     { icon: Wrench, label: 'Maintenance', href: '/admin/maintenance', requireSuperAdmin: true },
     { icon: Settings, label: 'Settings', href: '/admin/settings', requireSuperAdmin: true },
   ];
+
+  // If not super admin, hide admin panel access completely
+  if (!isSuperAdmin) {
+    return null;
+  }
 
   return (
     <div className="w-64 hidden md:flex flex-col h-screen bg-gray-900 border-r dark:border-gray-700 sticky top-0">

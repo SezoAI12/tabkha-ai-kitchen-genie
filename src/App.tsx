@@ -3,55 +3,52 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { RTLProvider } from "@/contexts/RTLContext";
 import Index from "./pages/Index";
 import HomePage from "./pages/HomePage";
 import NewHomePage from "./pages/NewHomePage";
-import AuthPage from "./pages/AuthPage";
+import MenuPage from "./pages/MenuPage";
 import RecipesPage from "./pages/RecipesPage";
 import RecipeDetailPage from "./pages/RecipeDetailPage";
 import CreateRecipePage from "./pages/CreateRecipePage";
-import SearchPage from "./pages/SearchPage";
-import ProfilePage from "./pages/ProfilePage";
 import FavoritesPage from "./pages/FavoritesPage";
-import ShoppingListPage from "./pages/ShoppingListPage";
-import SubscriptionPage from "./pages/SubscriptionPage";
-import ScanIngredientsPage from "./pages/ScanIngredientsPage";
-import ScanDishPage from "./pages/ScanDishPage";
+import FindByIngredientsPage from "./pages/FindByIngredientsPage";
 import PantryPage from "./pages/PantryPage";
 import MealPlanPage from "./pages/MealPlanPage";
-import FindByIngredientsPage from "./pages/FindByIngredientsPage";
-import GlobalCuisinePage from "./pages/GlobalCuisinePage";
-import IngredientSwapPage from "./pages/IngredientSwapPage";
+import SearchPage from "./pages/SearchPage";
 import CommunityPage from "./pages/CommunityPage";
-import SharedRecipesPage from "./pages/SharedRecipesPage";
-import SharedRecipesTrackingPage from "./pages/SharedRecipesTrackingPage";
+import SettingsPage from "./pages/SettingsPage";
+import MainSettingsPage from "./pages/MainSettingsPage";
+import ProfilePage from "./pages/ProfilePage";
 import DietaryPreferencesPage from "./pages/DietaryPreferencesPage";
+import LanguageSettingsPage from "./pages/LanguageSettingsPage";
+import NotificationsPage from "./pages/NotificationsPage";
+import AppearancePage from "./pages/AppearancePage";
+import ConnectedDevicesPage from "./pages/ConnectedDevicesPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import HelpPage from "./pages/HelpPage";
+import AuthPage from "./pages/AuthPage";
+import SubscriptionPage from "./pages/SubscriptionPage";
+import PaymentMethodsPage from "./pages/PaymentMethodsPage";
+import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+import NutritionGoalsPage from "./pages/NutritionGoalsPage";
+import BodyInformationPage from "./pages/BodyInformationPage";
+import HealthInformationPage from "./pages/HealthInformationPage";
 import HealthTrackingPage from "./pages/HealthTrackingPage";
 import HealthTrackingHomePage from "./pages/HealthTrackingHomePage";
-import HealthInformationPage from "./pages/HealthInformationPage";
-import BodyInformationPage from "./pages/BodyInformationPage";
-import NutritionGoalsPage from "./pages/NutritionGoalsPage";
+import ScanDishPage from "./pages/ScanDishPage";
+import ScanIngredientsPage from "./pages/ScanIngredientsPage";
 import LoyaltyProgramPage from "./pages/LoyaltyProgramPage";
-import PrivacyPage from "./pages/PrivacyPage";
-import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+import GlobalCuisinePage from "./pages/GlobalCuisinePage";
+import IngredientSwapPage from "./pages/IngredientSwapPage";
+import SharedRecipesPage from "./pages/SharedRecipesPage";
+import SharedRecipesTrackingPage from "./pages/SharedRecipesTrackingPage";
 import SplashScreen from "./pages/SplashScreen";
+import ShoppingListPage from "./pages/ShoppingListPage";
 import NotFound from "./pages/NotFound";
-import MainSettingsPage from "./pages/MainSettingsPage";
-import SettingsPage from "./pages/SettingsPage";
-import LanguageSettingsPage from "./pages/LanguageSettingsPage";
-import MenuPage from "./pages/MenuPage";
-
-// New pages
-import PaymentMethodsPage from "./pages/PaymentMethodsPage";
-import ConnectedDevicesPage from "./pages/ConnectedDevicesPage";
-import HelpPage from "./pages/HelpPage";
-import AppearancePage from "./pages/AppearancePage";
-import NotificationsPage from "./pages/NotificationsPage";
 
 // Admin pages
-import AdminAuthGuard from "./components/admin/AdminAuthGuard";
 import AdminPage from "./pages/AdminPage";
 import AdminLoginPage from "./pages/admin/AdminLoginPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -60,11 +57,15 @@ import AdminRecipes from "./pages/admin/AdminRecipes";
 import AdminSubscriptionManager from "./pages/admin/AdminSubscriptionManager";
 import AdminRewardsManager from "./pages/admin/AdminRewardsManager";
 import AdminLanguageManager from "./pages/admin/AdminLanguageManager";
-import AdminContentLibrary from "./pages/admin/AdminContentLibrary";
-import AdminUserTypesManager from "./pages/admin/AdminUserTypesManager";
-import AdminIntegrationsManager from "./pages/admin/AdminIntegrationsManager";
-import AdminAccountingManager from "./pages/admin/AdminAccountingManager";
 import AdminSystemMonitoring from "./pages/admin/AdminSystemMonitoring";
+import AdminUserTypesManager from "./pages/admin/AdminUserTypesManager";
+import AdminAccountingManager from "./pages/admin/AdminAccountingManager";
+import AdminIntegrationsManager from "./pages/admin/AdminIntegrationsManager";
+import AdminIngredientImagesManager from "./pages/admin/AdminIngredientImagesManager";
+import AdminTranslationsManager from "./pages/admin/AdminTranslationsManager";
+import AdminContentLibrary from "./pages/admin/AdminContentLibrary";
+import { AdminAuthGuard } from "./components/admin/AdminAuthGuard";
+import { SuperAdminGuard } from "./components/admin/SuperAdminGuard";
 
 const queryClient = new QueryClient();
 
@@ -76,113 +77,80 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* Public routes */}
             <Route path="/" element={<Index />} />
-            <Route path="/splash" element={<SplashScreen />} />
             <Route path="/home" element={<HomePage />} />
             <Route path="/new-home" element={<NewHomePage />} />
-            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/menu" element={<MenuPage />} />
             <Route path="/recipes" element={<RecipesPage />} />
             <Route path="/recipe/:id" element={<RecipeDetailPage />} />
             <Route path="/create-recipe" element={<CreateRecipePage />} />
-            <Route path="/search" element={<SearchPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
             <Route path="/favorites" element={<FavoritesPage />} />
-            <Route path="/shopping-list" element={<ShoppingListPage />} />
-            <Route path="/subscription" element={<SubscriptionPage />} />
-            <Route path="/scan-ingredients" element={<ScanIngredientsPage />} />
-            <Route path="/scan-dish" element={<ScanDishPage />} />
+            <Route path="/find-by-ingredients" element={<FindByIngredientsPage />} />
             <Route path="/pantry" element={<PantryPage />} />
             <Route path="/meal-plan" element={<MealPlanPage />} />
-            <Route path="/find-by-ingredients" element={<FindByIngredientsPage />} />
-            <Route path="/global-cuisine" element={<GlobalCuisinePage />} />
-            <Route path="/ingredient-swap" element={<IngredientSwapPage />} />
+            <Route path="/search" element={<SearchPage />} />
             <Route path="/community" element={<CommunityPage />} />
-            <Route path="/shared-recipes" element={<SharedRecipesPage />} />
-            <Route path="/shared-recipes-tracking" element={<SharedRecipesTrackingPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/main-settings" element={<MainSettingsPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
             <Route path="/dietary-preferences" element={<DietaryPreferencesPage />} />
+            <Route path="/language-settings" element={<LanguageSettingsPage />} />
+            <Route path="/notifications" element={<NotificationsPage />} />
+            <Route path="/appearance" element={<AppearancePage />} />
+            <Route path="/connected-devices" element={<ConnectedDevicesPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/help" element={<HelpPage />} />
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/subscription" element={<SubscriptionPage />} />
+            <Route path="/payment-methods" element={<PaymentMethodsPage />} />
+            <Route path="/payment-success" element={<PaymentSuccessPage />} />
+            <Route path="/nutrition-goals" element={<NutritionGoalsPage />} />
+            <Route path="/body-information" element={<BodyInformationPage />} />
+            <Route path="/health-information" element={<HealthInformationPage />} />
             <Route path="/health-tracking" element={<HealthTrackingPage />} />
             <Route path="/health-tracking-home" element={<HealthTrackingHomePage />} />
-            <Route path="/health-information" element={<HealthInformationPage />} />
-            <Route path="/body-information" element={<BodyInformationPage />} />
-            <Route path="/nutrition-goals" element={<NutritionGoalsPage />} />
-            <Route path="/loyalty" element={<LoyaltyProgramPage />} />
-            <Route path="/privacy" element={<PrivacyPage />} />
-            <Route path="/payment-success" element={<PaymentSuccessPage />} />
-            <Route path="/settings" element={<MainSettingsPage />} />
-            <Route path="/settings-old" element={<SettingsPage />} />
-            <Route path="/language-settings" element={<LanguageSettingsPage />} />
-            <Route path="/menu" element={<MenuPage />} />
-            
-            {/* New pages */}
-            <Route path="/payment-methods" element={<PaymentMethodsPage />} />
-            <Route path="/connected-devices" element={<ConnectedDevicesPage />} />
-            <Route path="/help" element={<HelpPage />} />
-            <Route path="/appearance" element={<AppearancePage />} />
-            <Route path="/notifications" element={<NotificationsPage />} />
+            <Route path="/scan-dish" element={<ScanDishPage />} />
+            <Route path="/scan-ingredients" element={<ScanIngredientsPage />} />
+            <Route path="/loyalty-program" element={<LoyaltyProgramPage />} />
+            <Route path="/global-cuisine" element={<GlobalCuisinePage />} />
+            <Route path="/ingredient-swap" element={<IngredientSwapPage />} />
+            <Route path="/shared-recipes" element={<SharedRecipesPage />} />
+            <Route path="/shared-recipes-tracking" element={<SharedRecipesTrackingPage />} />
+            <Route path="/splash" element={<SplashScreen />} />
+            <Route path="/shopping-list" element={<ShoppingListPage />} />
 
-            {/* Admin routes */}
+            {/* Admin routes - only accessible to super admins */}
             <Route path="/admin/login" element={<AdminLoginPage />} />
-            <Route path="/admin" element={
-              <AdminAuthGuard>
-                <AdminPage />
-              </AdminAuthGuard>
+            <Route path="/admin/*" element={
+              <SuperAdminGuard>
+                <AdminAuthGuard>
+                  <Routes>
+                    <Route index element={<AdminDashboard />} />
+                    <Route path="users" element={<AdminUsers />} />
+                    <Route path="user-types" element={<AdminUserTypesManager />} />
+                    <Route path="recipes" element={<AdminRecipes />} />
+                    <Route path="ingredients" element={<div>Admin Ingredients</div>} />
+                    <Route path="ingredient-images" element={<AdminIngredientImagesManager />} />
+                    <Route path="translations" element={<AdminTranslationsManager />} />
+                    <Route path="subscriptions" element={<AdminSubscriptionManager />} />
+                    <Route path="accounting" element={<AdminAccountingManager />} />
+                    <Route path="rewards" element={<AdminRewardsManager />} />
+                    <Route path="languages" element={<AdminLanguageManager />} />
+                    <Route path="integrations" element={<AdminIntegrationsManager />} />
+                    <Route path="system" element={<AdminSystemMonitoring />} />
+                    <Route path="analytics" element={<div>Admin Analytics</div>} />
+                    <Route path="communications" element={<div>Admin Communications</div>} />
+                    <Route path="security" element={<div>Admin Security</div>} />
+                    <Route path="maintenance" element={<div>Admin Maintenance</div>} />
+                    <Route path="settings" element={<div>Admin Settings</div>} />
+                    <Route path="content-library" element={<AdminContentLibrary />} />
+                  </Routes>
+                </AdminAuthGuard>
+              </SuperAdminGuard>
             } />
-            <Route path="/admin/dashboard" element={
-              <AdminAuthGuard>
-                <AdminDashboard />
-              </AdminAuthGuard>
-            } />
-            <Route path="/admin/users" element={
-              <AdminAuthGuard>
-                <AdminUsers />
-              </AdminAuthGuard>
-            } />
-            <Route path="/admin/recipes" element={
-              <AdminAuthGuard>
-                <AdminRecipes />
-              </AdminAuthGuard>
-            } />
-            <Route path="/admin/subscriptions" element={
-              <AdminAuthGuard>
-                <AdminSubscriptionManager />
-              </AdminAuthGuard>
-            } />
-            <Route path="/admin/rewards" element={
-              <AdminAuthGuard>
-                <AdminRewardsManager />
-              </AdminAuthGuard>
-            } />
-            <Route path="/admin/languages" element={
-              <AdminAuthGuard>
-                <AdminLanguageManager />
-              </AdminAuthGuard>
-            } />
-            <Route path="/admin/content" element={
-              <AdminAuthGuard>
-                <AdminContentLibrary />
-              </AdminAuthGuard>
-            } />
-            <Route path="/admin/user-types" element={
-              <AdminAuthGuard>
-                <AdminUserTypesManager />
-              </AdminAuthGuard>
-            } />
-            <Route path="/admin/integrations" element={
-              <AdminAuthGuard>
-                <AdminIntegrationsManager />
-              </AdminAuthGuard>
-            } />
-            <Route path="/admin/accounting" element={
-              <AdminAuthGuard>
-                <AdminAccountingManager />
-              </AdminAuthGuard>
-            } />
-            <Route path="/admin/monitoring" element={
-              <AdminAuthGuard>
-                <AdminSystemMonitoring />
-              </AdminAuthGuard>
-            } />
-            
+
+            {/* Fallback */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
