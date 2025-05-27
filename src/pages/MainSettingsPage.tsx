@@ -10,50 +10,51 @@ import { useRTL } from '@/contexts/RTLContext';
 import { LanguageSelector } from '@/components/language/LanguageSelector';
 
 const MainSettingsPage = () => {
-  const { isRTL, language } = useRTL();
+  const { direction, language, t } = useRTL();
+  const isRTL = direction === 'rtl';
   
   const settingGroups = [
     {
-      title: "User Settings",
+      title: t("User Settings", "إعدادات المستخدم"),
       items: [
-        { icon: <User className="h-6 w-6 text-wasfah-deep-teal" />, label: "Profile", path: "/profile" },
-        { icon: <UserCog className="h-6 w-6 text-gray-600" />, label: "Preferences", path: "/dietary-preferences" },
-        { icon: <Heart className="h-6 w-6 text-pink-500" />, label: "Favorites", path: "/favorites" },
+        { icon: <User className="h-6 w-6 text-wasfah-deep-teal" />, label: t("Profile", "الملف الشخصي"), path: "/profile" },
+        { icon: <UserCog className="h-6 w-6 text-gray-600" />, label: t("Preferences", "التفضيلات"), path: "/dietary-preferences" },
+        { icon: <Heart className="h-6 w-6 text-pink-500" />, label: t("Favorites", "المفضلة"), path: "/favorites" },
       ]
     },
     {
-      title: "App Settings",
+      title: t("App Settings", "إعدادات التطبيق"),
       items: [
-        { icon: <Bell className="h-6 w-6 text-wasfah-bright-teal" />, label: "Notifications", path: "/notifications" },
-        { icon: <Languages className="h-6 w-6 text-blue-500" />, label: "Language", path: "/language-settings" },
-        { icon: <Moon className="h-6 w-6 text-purple-600" />, label: "Appearance", path: "/appearance" },
+        { icon: <Bell className="h-6 w-6 text-wasfah-bright-teal" />, label: t("Notifications", "الإشعارات"), path: "/notifications" },
+        { icon: <Languages className="h-6 w-6 text-blue-500" />, label: t("Language", "اللغة"), path: "/language-settings" },
+        { icon: <Moon className="h-6 w-6 text-purple-600" />, label: t("Appearance", "المظهر"), path: "/appearance" },
       ]
     },
     {
-      title: "Features",
+      title: t("Features", "الميزات"),
       items: [
-        { icon: <ShoppingCart className="h-6 w-6 text-wasfah-deep-teal" />, label: "Shopping List", path: "/shopping-list" },
-        { icon: <Camera className="h-6 w-6 text-amber-500" />, label: "Scan Dish", path: "/scan-ingredients" },
-        { icon: <Activity className="h-6 w-6 text-red-500" />, label: "Health Tracking", path: "/health-tracking-home" },
-        { icon: <Smartphone className="h-6 w-6 text-green-600" />, label: "Connected Devices", path: "/connected-devices" },
+        { icon: <ShoppingCart className="h-6 w-6 text-wasfah-deep-teal" />, label: t("Shopping List", "قائمة التسوق"), path: "/shopping-list" },
+        { icon: <Camera className="h-6 w-6 text-amber-500" />, label: t("Scan Dish", "مسح الطبق"), path: "/scan-ingredients" },
+        { icon: <Activity className="h-6 w-6 text-red-500" />, label: t("Health Tracking", "تتبع الصحة"), path: "/health-tracking-home" },
+        { icon: <Smartphone className="h-6 w-6 text-green-600" />, label: t("Connected Devices", "الأجهزة المتصلة"), path: "/connected-devices" },
       ]
     },
     {
-      title: "Account & Payment",
+      title: t("Account & Payment", "الحساب والدفع"),
       items: [
-        { icon: <Shield className="h-6 w-6 text-green-600" />, label: "Privacy & Data", path: "/privacy" },
-        { icon: <CreditCard className="h-6 w-6 text-wasfah-bright-teal" />, label: "Payment Methods", path: "/payment-methods" },
-        { icon: <HelpCircle className="h-6 w-6 text-orange-500" />, label: "Help & Support", path: "/help" },
+        { icon: <Shield className="h-6 w-6 text-green-600" />, label: t("Privacy & Data", "الخصوصية والبيانات"), path: "/privacy" },
+        { icon: <CreditCard className="h-6 w-6 text-wasfah-bright-teal" />, label: t("Payment Methods", "طرق الدفع"), path: "/payment-methods" },
+        { icon: <HelpCircle className="h-6 w-6 text-orange-500" />, label: t("Help & Support", "المساعدة والدعم"), path: "/help" },
       ]
     }
   ];
 
   return (
-    <PageContainer header={{ title: "Settings", showBackButton: true }}>
+    <PageContainer header={{ title: t("Settings", "الإعدادات"), showBackButton: true }}>
       <div className="p-4 pb-24 space-y-6">
         <div className="bg-gradient-to-br from-wasfah-bright-teal to-wasfah-deep-teal p-6 rounded-lg text-white text-center mb-6">
-          <h1 className="text-2xl font-bold mb-2">Settings</h1>
-          <p className="opacity-90">Customize your WasfahAI experience</p>
+          <h1 className="text-2xl font-bold mb-2">{t("Settings", "الإعدادات")}</h1>
+          <p className="opacity-90">{t("Customize your WasfahAI experience", "خصص تجربتك مع وصفة الذكية")}</p>
         </div>
         
         {/* Active Language */}
@@ -63,7 +64,7 @@ const MainSettingsPage = () => {
               <div className="flex items-center">
                 <Globe className="h-6 w-6 text-wasfah-bright-teal mr-3" />
                 <div>
-                  <h3 className="font-medium">{isRTL ? "اللغة" : "Language"}</h3>
+                  <h3 className="font-medium">{t("Language", "اللغة")}</h3>
                   <p className="text-xs text-gray-500">
                     {language === 'ar' ? 'العربية' : language === 'en' ? 'English' : language}
                   </p>
@@ -93,18 +94,6 @@ const MainSettingsPage = () => {
             </div>
           </div>
         ))}
-
-        {/* Admin Panel Link */}
-        <div className="pt-4">
-          <Link to="/admin/login">
-            <Card className="bg-gray-50 hover:bg-gray-100 transition-colors card-3d">
-              <CardContent className="p-4 flex items-center justify-center space-x-2">
-                <Settings className="h-5 w-5 text-gray-700" />
-                <span className="font-medium text-gray-700">Admin Panel</span>
-              </CardContent>
-            </Card>
-          </Link>
-        </div>
         
         {/* Sign Out Button */}
         <div className="pt-4">
