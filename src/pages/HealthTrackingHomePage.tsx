@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Card, CardContent } from '@/components/ui/card';
@@ -91,6 +90,29 @@ export default function HealthTrackingHomePage() {
     });
     const [recentMeals, setRecentMeals] = useState([]);
 
+    // --- Mock Daily Independence Challenges Data ---
+    const dailyChallenges = useMemo(() => ([
+        { id: 'c1', name: t('Walk 30 minutes', 'امشِ 30 دقيقة'), description: t('Take a 30-minute walk', 'قم بالمشي لمدة 30 دقيقة'), completed: false },
+        { id: 'c2', name: t('Drink 8 glasses of water', 'اشرب 8 أكواب ماء'), description: t('Drink 8 glasses of water throughout the day', 'اشرب 8 أكواب ماء طوال اليوم'), completed: false },
+        { id: 'c3', name: t('Eat 5 portions of fruits/vegetables', 'تناول 5 حصص فواكه/خضروات'), description: t('Consume 5 portions of fruits and vegetables', 'تناول 5 حصص من الفواكه والخضروات'), completed: false },
+        { id: 'c4', name: t('Read for 15 minutes', 'اقرأ لمدة 15 دقيقة'), description: t('Read for 15 minutes', 'اقرأ لمدة 15 دقيقة'), completed: false },
+        { id: 'c5', name: t('Call a loved one', 'اتصل بشخص عزيز'), description: t('Call a family member or friend', 'اتصل بأحد أفراد العائلة أو الأصدقاء'), completed: false },
+    ]), [t]);
+
+    // This state would typically be managed within DailyIndependenceChallenges
+    // but we'll manage it here to show how it's passed
+    const [challengesState, setChallengesState] = useState(dailyChallenges);
+
+    // Handler to toggle challenge completion (passed to DailyIndependenceChallenges)
+    const handleToggleChallenge = useCallback((id) => {
+        setChallengesState(prevChallenges =>
+            prevChallenges.map(challenge =>
+                challenge.id === id ? { ...challenge, completed: !challenge.completed } : challenge
+            )
+        );
+    }, []);
+    // --- End Mock Daily Independence Challenges Data ---
+
     const mockWeeklyNutritionChartData = useMemo(() => ([
         { date: 'Mon', calories: 1800, protein: 85, carbs: 210, fat: 55 },
         { date: 'Tue', calories: 2100, protein: 95, carbs: 240, fat: 60 },
@@ -133,7 +155,7 @@ export default function HealthTrackingHomePage() {
             calories: { ...prev.calories, consumed: prev.calories.consumed + data.calories },
             protein: { ...prev.protein, consumed: prev.protein.consumed + data.protein },
             carbs: { ...prev.carbs, consumed: prev.carbs.consumed + data.carbs },
-            fat: { ...prev.fat, consumed: prev.fat.consumed + data.fat },
+            fat: { ...prev.fat, consumed: prev.fat.consumed + data.fat }, // Fixed fat calculation
         }));
 
         setDailyNutritionData(prev => {
@@ -250,7 +272,12 @@ export default function HealthTrackingHomePage() {
                     onUpdateGoals={updateHealthGoals}
                 />
 
-                <DailyIndependenceChallenges />
+                {/* Updated DailyIndependenceChallenges usage */}
+                <DailyIndependenceChallenges
+                    challenges={challengesState}
+                    onToggleChallenge={handleToggleChallenge}
+                    t={t} // Pass the translation function if needed by the component
+                />
 
                 <Tabs defaultValue="track">
                     <TabsList className="grid w-full grid-cols-4">

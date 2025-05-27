@@ -6,6 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Award, Trophy, Target } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRTL } from '@/contexts/RTLContext';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Challenge {
   id: string;
@@ -23,94 +24,109 @@ interface UserProgress {
   date: string;
 }
 
-// Mock challenges data for demo purposes
-const MOCK_CHALLENGES: Challenge[] = [
-  {
-    id: '1',
-    name: 'Cook without recipe suggestions',
-    description: 'Try cooking a meal using only your intuition and basic ingredients',
-    category: 'independence',
-    is_active: true
-  },
-  {
-    id: '2',
-    name: 'Substitute ingredients creatively',
-    description: 'Replace at least 2 ingredients in a recipe with your own choices',
-    category: 'independence',
-    is_active: true
-  },
-  {
-    id: '3',
-    name: 'Plan meals for the week',
-    description: 'Create a meal plan without AI assistance',
-    category: 'independence',
-    is_active: true
-  },
-  {
-    id: '4',
-    name: 'Shop without a generated list',
-    description: 'Go grocery shopping using your own handwritten list',
-    category: 'independence',
-    is_active: true
-  },
-  {
-    id: '5',
-    name: 'Cook with seasonal ingredients',
-    description: 'Prepare a dish using only seasonal, local ingredients',
-    category: 'independence',
-    is_active: true
-  }
-];
-
 export const DailyChallengesManager: React.FC = () => {
   const { toast } = useToast();
   const { t } = useRTL();
-  const [challenges] = useState<Challenge[]>(MOCK_CHALLENGES);
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [userProgress, setUserProgress] = useState<UserProgress[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load progress from localStorage
-    const today = new Date().toISOString().split('T')[0];
-    const savedProgress = localStorage.getItem(`challenges_${today}`);
-    if (savedProgress) {
-      setUserProgress(JSON.parse(savedProgress));
-    }
-    setLoading(false);
+    fetchChallenges();
+    fetchUserProgress();
   }, []);
 
-  const toggleChallengeCompletion = (challengeId: string, completed: boolean) => {
-    const today = new Date().toISOString().split('T')[0];
-    const existingProgress = userProgress.find(p => p.challenge_id === challengeId);
+  const fetchChallenges = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('daily_challenges')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at');
 
-    let newProgress: UserProgress[];
-
-    if (existingProgress) {
-      newProgress = userProgress.map(p => 
-        p.id === existingProgress.id 
-          ? { ...p, completed, completed_at: completed ? new Date().toISOString() : null }
-          : p
-      );
-    } else {
-      const newEntry: UserProgress = {
-        id: Date.now().toString(),
-        challenge_id: challengeId,
-        completed,
-        completed_at: completed ? new Date().toISOString() : null,
-        date: today
-      };
-      newProgress = [...userProgress, newEntry];
+      if (error) throw error;
+      setChallenges(data || []);
+    } catch (error) {
+      console.error('Error fetching challenges:', error);
     }
+  };
 
-    setUserProgress(newProgress);
-    
-    // Save to localStorage
-    localStorage.setItem(`challenges_${today}`, JSON.stringify(newProgress));
+  const fetchUserProgress = async () => {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const { data, error } = await supabase
+        .from('user_challenge_progress')
+        .select('*')
+        .eq('date', today);
 
-    toast({
-      title: completed ? t('Challenge Completed!', 'تم إكمال التحدي!') : t('Challenge Unchecked', 'تم إلغاء التحدي'),
-      description: completed ? t('Great job on completing this challenge!', 'عمل رائع في إكمال هذا التحدي!') : '',
-    });
+      if (error) throw error;
+      setUserProgress(data || []);
+    } catch (error) {
+      console.error('Error fetching user progress:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleChallengeCompletion = async (challengeId: string, completed: boolean) => {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const existingProgress = userProgress.find(p => p.challenge_id === challengeId);
+
+      if (existingProgress) {
+        const { error } = await supabase
+          .from('user_challenge_progress')
+          .update({
+            completed,
+            completed_at: completed ? new Date().toISOString() : null
+          })
+          .eq('id', existingProgress.id);
+
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('user_challenge_progress')
+          .insert({
+            challenge_id: challengeId,
+            completed,
+            completed_at: completed ? new Date().toISOString() : null,
+            date: today
+          });
+
+        if (error) throw error;
+      }
+
+      // Update local state
+      setUserProgress(prev => {
+        if (existingProgress) {
+          return prev.map(p => 
+            p.id === existingProgress.id 
+              ? { ...p, completed, completed_at: completed ? new Date().toISOString() : null }
+              : p
+          );
+        } else {
+          return [...prev, {
+            id: Date.now().toString(),
+            challenge_id: challengeId,
+            completed,
+            completed_at: completed ? new Date().toISOString() : null,
+            date: today
+          }];
+        }
+      });
+
+      toast({
+        title: completed ? t('Challenge Completed!', 'تم إكمال التحدي!') : t('Challenge Unchecked', 'تم إلغاء التحدي'),
+        description: completed ? t('Great job on completing this challenge!', 'عمل رائع في إكمال هذا التحدي!') : '',
+      });
+    } catch (error) {
+      console.error('Error updating challenge progress:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update challenge progress",
+        variant: "destructive",
+      });
+    }
   };
 
   const isChallengeCompleted = (challengeId: string) => {

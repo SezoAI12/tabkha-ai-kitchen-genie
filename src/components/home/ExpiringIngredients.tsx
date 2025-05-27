@@ -11,13 +11,10 @@ interface ExpiringIngredientsProps {
 }
 
 export const ExpiringIngredients: React.FC<ExpiringIngredientsProps> = ({ 
-  expiringItems = [],
+  expiringItems,
   onAddIngredient 
 }) => {
-  // Ensure expiringItems is always an array
-  const safeExpiringItems = Array.isArray(expiringItems) ? expiringItems : [];
-  
-  if (safeExpiringItems.length === 0) return null;
+  if (expiringItems.length === 0) return null;
   
   const handleAddIngredient = (itemName: string) => {
     if (onAddIngredient) {
@@ -37,10 +34,10 @@ export const ExpiringIngredients: React.FC<ExpiringIngredientsProps> = ({
       </div>
       <div className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-300">
         <p className="text-sm text-gray-600 mb-3">
-          You have {safeExpiringItems.length} items expiring soon. Let's use them!
+          You have {expiringItems.length} items expiring soon. Let's use them!
         </p>
         <div className="flex space-x-2 overflow-x-auto pb-2">
-          {safeExpiringItems.map((item, index) => (
+          {expiringItems.map((item, index) => (
             <div
               key={item.id}
               className="px-3 py-2 bg-wasfah-light-gray rounded-md text-wasfah-deep-teal text-sm whitespace-nowrap flex-shrink-0 border border-gray-200 transform transition-all duration-300 hover:scale-105 hover:border-wasfah-bright-teal"

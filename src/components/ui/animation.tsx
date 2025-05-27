@@ -34,13 +34,13 @@ export const AnimationWrapper: React.FC<AnimationWrapperProps> = ({
 
 interface ResponsiveButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
-  size?: 'sm' | 'default' | 'lg';
+  size?: 'sm' | 'md' | 'lg';
   children: React.ReactNode;
 }
 
 export const ResponsiveButton: React.FC<ResponsiveButtonProps> = ({
   variant = 'primary',
-  size = 'default',
+  size = 'md',
   className = '',
   children,
   ...props
@@ -52,6 +52,16 @@ export const ResponsiveButton: React.FC<ResponsiveButtonProps> = ({
     ghost: 'hover:bg-gray-100 text-gray-700'
   };
 
+  // Map our size prop to valid Button sizes
+  const getButtonSize = () => {
+    switch (size) {
+      case 'sm': return 'sm' as const;
+      case 'lg': return 'lg' as const;
+      case 'md':
+      default: return 'default' as const;
+    }
+  };
+
   return (
     <Button
       className={cn(
@@ -59,7 +69,7 @@ export const ResponsiveButton: React.FC<ResponsiveButtonProps> = ({
         variantClasses[variant],
         className
       )}
-      size={size}
+      size={getButtonSize()}
       {...props}
     >
       {children}

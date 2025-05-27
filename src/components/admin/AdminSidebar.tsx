@@ -86,6 +86,11 @@ export const AdminSidebar = () => {
     { icon: Settings, label: 'Settings', href: '/admin/settings', requireSuperAdmin: true },
   ];
 
+  // If not super admin, hide admin panel access completely
+  if (!isSuperAdmin) {
+    return null;
+  }
+
   return (
     <div className="w-64 hidden md:flex flex-col h-screen bg-gray-900 border-r dark:border-gray-700 sticky top-0">
       <div className="p-4 flex items-center">
