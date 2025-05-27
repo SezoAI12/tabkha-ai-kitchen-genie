@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Recipe } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -41,10 +42,19 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
   };
 
   const handleShare = (recipeId: string) => {
-    console.log(`Sharing recipe ${recipeId}`);
-    toast({
-      title: "Recipe shared",
-      description: "Recipe link copied to clipboard",
+    // Copy recipe URL to clipboard
+    const recipeUrl = `${window.location.origin}/recipes/${recipeId}`;
+    navigator.clipboard.writeText(recipeUrl).then(() => {
+      toast({
+        title: "Recipe shared",
+        description: "Recipe link copied to clipboard",
+      });
+    }).catch(() => {
+      toast({
+        title: "Share failed",
+        description: "Unable to copy link to clipboard",
+        variant: "destructive",
+      });
     });
   };
 
@@ -53,6 +63,18 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
       title: "Added to Meal Plan",
       description: "Recipe has been added to your meal plan",
     });
+  };
+
+  const handleToggleFavorite = () => {
+    setIsLiked(!isLiked);
+    toast({
+      title: isLiked ? "Removed from favorites" : "Added to favorites",
+      description: isLiked ? "Recipe removed from your favorites" : "Recipe added to your favorites",
+    });
+  };
+
+  const handleShareClick = () => {
+    handleShare(recipe.id);
   };
 
   return (
@@ -220,15 +242,15 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
         <div className="flex justify-between items-center mt-4 pt-4 border-t">
           <button 
             className="flex items-center text-gray-600 hover:text-wasfah-coral-red transition-colors"
-            onClick={() => handleLike(recipe.id)}
+            onClick={handleToggleFavorite}
           >
             <Heart className={`h-6 w-6 mr-2 ${isLiked ? 'fill-wasfah-coral-red text-wasfah-coral-red' : ''}`} />
-            <span>Favorite</span>
+            <span>{isLiked ? 'Favorited' : 'Favorite'}</span>
           </button>
           
           <button 
             className="flex items-center text-gray-600 hover:text-wasfah-bright-teal transition-colors"
-            onClick={() => handleShare(recipe.id)}
+            onClick={handleShareClick}
           >
             <Share className="h-6 w-6 mr-2" />
             <span>Share</span>
