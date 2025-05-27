@@ -4,14 +4,15 @@ import { WasfahLogo } from '@/components/icons/WasfahLogo';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-// Import Phone icon for mobile number
-import { Mail, Lock, User, ArrowRight, Languages, Loader2, Phone } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, Languages, Loader2 } from 'lucide-react'; // Added Loader2 for loading state
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion'; // For smooth transitions
 
 // Mock useRTL for demonstration if it's not available
 const useRTL = () => {
+  // In a real app, this would get the current language and provide a translation function
+  // For this example, we'll just return a passthrough function.
   return { t: (text: string, _arabicText?: string) => text };
 };
 
@@ -23,13 +24,10 @@ export default function AuthPage() {
   const [language, setLanguage] = useState('en'); // Default to English for now
 
   // Form states
-  const [loginIdentifier, setLoginIdentifier] = useState(''); // Can be email or phone
+  const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
-
   const [registerFullName, setRegisterFullName] = useState('');
-  const [registerMethod, setRegisterMethod] = useState('email'); // 'email' or 'phone'
   const [registerEmail, setRegisterEmail] = useState('');
-  const [registerPhoneNumber, setRegisterPhoneNumber] = useState(''); // New state for phone number
   const [registerPassword, setRegisterPassword] = useState('');
   const [registerLanguage, setRegisterLanguage] = useState('en');
 
@@ -39,9 +37,9 @@ export default function AuthPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // In a real application, you'd send loginIdentifier (which could be email or phone) and loginPassword to your backend.
-    // Your backend would then need to verify if it's an email or phone number and authenticate accordingly.
-    // Example: const response = await loginApi({ identifier: loginIdentifier, password: loginPassword });
+    // In a real application, you'd send loginEmail and loginPassword to your backend.
+    // Example: const response = await loginApi(loginEmail, loginPassword);
+    // Handle success/failure based on response.
 
     await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
 
@@ -58,19 +56,8 @@ export default function AuthPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Collect data based on selected registration method
-    const registrationData = {
-      fullName: registerFullName,
-      password: registerPassword,
-      language: registerLanguage,
-      method: registerMethod,
-      email: registerMethod === 'email' ? registerEmail : undefined,
-      phoneNumber: registerMethod === 'phone' ? registerPhoneNumber : undefined,
-    };
-
-    // In a real application, you'd send registrationData to your backend.
-    // Your backend would then validate the chosen method and handle registration.
-    // Example: const response = await registerApi(registrationData);
+    // In a real application, you'd send registerFullName, registerEmail, registerPassword, registerLanguage to your backend.
+    // Example: const response = await registerApi({ fullName, email, password, language });
 
     await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
 
@@ -105,8 +92,8 @@ export default function AuthPage() {
     <div className="min-h-screen flex flex-col md:flex-row bg-wasfah-light-gray dark:bg-gray-900">
       {/* Left Section: Logo & Background (Responsive) */}
       <div className="relative w-full md:w-1/2 lg:w-2/5 xl:w-1/3 min-h-[30vh] md:min-h-screen
-                   bg-gradient-to-br from-wasfah-deep-teal to-wasfah-teal flex flex-col items-center justify-center
-                   p-6 text-white overflow-hidden shadow-xl md:shadow-none">
+                  bg-gradient-to-br from-wasfah-deep-teal to-wasfah-teal flex flex-col items-center justify-center
+                  p-6 text-white overflow-hidden shadow-xl md:shadow-none">
         {/* Background animation elements */}
         <motion.div
           initial={{ rotate: 0 }}
@@ -180,15 +167,14 @@ export default function AuthPage() {
                   <TabsContent value="login" className="mt-4">
                     <form onSubmit={handleLogin} className="space-y-6">
                       <div className="relative">
-                        {/* Changed type to 'text' and placeholder to allow either email or phone */}
                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
                         <Input
-                          type="text" // Can be 'email' or 'tel' on mobile, but 'text' is flexible for a single login field
-                          placeholder={t("Email or Phone Number", "البريد الإلكتروني أو رقم الهاتف")}
+                          type="email"
+                          placeholder={t("Email", "البريد الإلكتروني")}
                           className="pl-10 h-12 text-base dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
                           required
-                          value={loginIdentifier}
-                          onChange={(e) => setLoginIdentifier(e.target.value)}
+                          value={loginEmail}
+                          onChange={(e) => setLoginEmail(e.target.value)}
                         />
                       </div>
                       <div className="relative">
@@ -248,73 +234,17 @@ export default function AuthPage() {
                           onChange={(e) => setRegisterFullName(e.target.value)}
                         />
                       </div>
-
-                      {/* NEW: Registration Method Selector */}
-                      <div className="w-full">
-                        <Tabs value={registerMethod} onValueChange={setRegisterMethod} className="w-full">
-                          <TabsList className="grid w-full grid-cols-2 mb-4 bg-gray-100 dark:bg-gray-700">
-                            <TabsTrigger
-                              value="email"
-                              className={`text-sm font-medium data-[state=active]:bg-wasfah-teal data-[state=active]:text-white dark:data-[state=active]:bg-wasfah-teal dark:data-[state=active]:text-white dark:text-gray-300`}
-                            >
-                              <Mail size={16} className="mr-1" /> {t('Email', 'البريد الإلكتروني')}
-                            </TabsTrigger>
-                            <TabsTrigger
-                              value="phone"
-                              className={`text-sm font-medium data-[state=active]:bg-wasfah-teal data-[state=active]:text-white dark:data-[state=active]:bg-wasfah-teal dark:data-[state=active]:text-white dark:text-gray-300`}
-                            >
-                              <Phone size={16} className="mr-1" /> {t('Phone', 'الهاتف')}
-                            </TabsTrigger>
-                          </TabsList>
-                        </Tabs>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
+                        <Input
+                          type="email"
+                          placeholder={t("Email", "البريد الإلكتروني")}
+                          className="pl-10 h-12 text-base dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
+                          required
+                          value={registerEmail}
+                          onChange={(e) => setRegisterEmail(e.target.value)}
+                        />
                       </div>
-
-                      {/* Conditional Input based on registerMethod */}
-                      <AnimatePresence mode="wait">
-                        {registerMethod === 'email' && (
-                          <motion.div
-                            key="registerEmailInput"
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.3 }}
-                          >
-                            <div className="relative">
-                              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
-                              <Input
-                                type="email"
-                                placeholder={t("Email", "البريد الإلكتروني")}
-                                className="pl-10 h-12 text-base dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
-                                required={registerMethod === 'email'} // Required only if email is selected
-                                value={registerEmail}
-                                onChange={(e) => setRegisterEmail(e.target.value)}
-                              />
-                            </div>
-                          </motion.div>
-                        )}
-                        {registerMethod === 'phone' && (
-                          <motion.div
-                            key="registerPhoneInput"
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.3 }}
-                          >
-                            <div className="relative">
-                              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
-                              <Input
-                                type="tel" // Use 'tel' for mobile number input
-                                placeholder={t("Phone Number (e.g., +1234567890)", "رقم الهاتف (مثال: +9665xxxxxxxx)")}
-                                className="pl-10 h-12 text-base dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
-                                required={registerMethod === 'phone'} // Required only if phone is selected
-                                value={registerPhoneNumber}
-                                onChange={(e) => setRegisterPhoneNumber(e.target.value)}
-                              />
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-
                       <div className="relative">
                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
                         <Input

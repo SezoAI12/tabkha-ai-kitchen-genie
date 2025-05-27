@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { verifyAdminCredentials, setAdminAuth } from '@/lib/adminAuth';
+import { verifyAdminCredentials } from '@/lib/adminAuth';
 import { WasfahLogo } from '@/components/icons/WasfahLogo';
 
 const AdminLoginPage = () => {
@@ -23,10 +23,9 @@ const AdminLoginPage = () => {
 
     // Simulate network delay
     setTimeout(() => {
-      const result = verifyAdminCredentials(email, password);
-      if (result.success && result.role) {
-        // Set admin authentication with role
-        setAdminAuth(result.role);
+      if (verifyAdminCredentials(email, password)) {
+        // Set admin authentication
+        localStorage.setItem('adminAuth', 'true');
         navigate('/admin');
       } else {
         setError('Invalid email or password');
@@ -97,10 +96,8 @@ const AdminLoginPage = () => {
             </Button>
             <div className="text-center text-sm text-gray-500">
               <p>Demo credentials:</p>
-              <p><strong>Regular Admin:</strong></p>
-              <p>Email: admin@wasfahai.com | Password: admin123</p>
-              <p><strong>Super Admin:</strong></p>
-              <p>Email: superadmin@wasfahai.com | Password: superadmin123</p>
+              <p><strong>Email:</strong> admin@wasfahai.com</p>
+              <p><strong>Password:</strong> admin123</p>
             </div>
             <div className="text-center text-sm text-muted-foreground">
               <p>

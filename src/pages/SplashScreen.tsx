@@ -1,12 +1,13 @@
+
 // src/components/onboarding/SplashScreenEnhanced.tsx
 
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { ChevronRight, Camera, ChefHat, Sparkles, Users, Heart, ArrowRight, Play, Pause, Volume2, VolumeX } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import Confetti from 'react-confetti';
+import { motion, AnimatePresence } from 'framer-motion'; // Import motion and AnimatePresence
+import { useNavigate } from 'react-router-dom'; // Assuming react-router-dom for navigation
+import Confetti from 'react-confetti'; // We'll add this for the final screen effect if desired
 
 // Placeholder for useRTL if it's not actually defined yet for translation
 const useRTL = () => ({
@@ -131,8 +132,7 @@ export default function SplashScreenEnhanced() {
             setShowConfetti(true);
             setTimeout(() => {
               if (audioRef.current) audioRef.current.pause(); // Pause audio on complete
-              // *** CHANGE 1: Navigate to AuthPage after confetti for the last slide ***
-              navigate('/auth');
+              navigate('/home'); // Navigate to the main app page
             }, 3000); // Confetti duration
           }
           return 100;
@@ -173,16 +173,14 @@ export default function SplashScreenEnhanced() {
       setShowConfetti(true);
       setTimeout(() => {
         if (audioRef.current) audioRef.current.pause();
-        // *** CHANGE 2: Navigate to AuthPage after confetti for 'Get Started' button ***
-        navigate('/auth');
+        navigate('/home');
       }, 3000);
     }
   };
 
   const handleSkip = () => {
     if (audioRef.current) audioRef.current.pause();
-    // *** CHANGE 3: Navigate to AuthPage when 'Skip' is clicked ***
-    navigate('/auth');
+    navigate('/home');
   };
 
   const handleAudioToggle = () => {

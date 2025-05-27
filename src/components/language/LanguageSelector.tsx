@@ -20,7 +20,6 @@ interface LanguageSelectorProps {
 const languages = [
   { code: 'en', name: 'English', flag: '🇺🇸', rtl: false },
   { code: 'ar', name: 'العربية', flag: '🇸🇦', rtl: true },
-  { code: 'tr', name: 'Türkçe', flag: '🇹🇷', rtl: false },
   { code: 'es', name: 'Español', flag: '🇪🇸', rtl: false },
   { code: 'fr', name: 'Français', flag: '🇫🇷', rtl: false },
   { code: 'zh', name: '中文', flag: '🇨🇳', rtl: false },
@@ -38,13 +37,9 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     const selectedLanguage = languages.find(l => l.code === lang);
     
     toast({
-      title: lang === 'ar' ? "تم تغيير اللغة" : 
-             lang === 'tr' ? "Dil Değiştirildi" : 
-             "Language Changed",
+      title: lang === 'ar' ? "تم تغيير اللغة" : "Language Changed",
       description: lang === 'ar' 
         ? "تم تغيير لغة التطبيق إلى العربية" 
-        : lang === 'tr'
-        ? "Uygulama dili Türkçe olarak değiştirildi"
         : `The app language has been changed to ${selectedLanguage?.name}`,
     });
   };

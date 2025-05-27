@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Link } from 'react-router-dom';
@@ -7,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import {
   Settings, User, Heart, Book, ShoppingCart, CreditCard,
   Bell, Languages, Moon, HelpCircle, Globe, Award, LogOut,
-  Gift, Camera, Scale, Smartphone, SquareUser, Shield
+  Gift, Camera, Scale, Smartphone, SquareUser
 } from 'lucide-react';
 import { useRTL } from '@/contexts/RTLContext';
 
@@ -18,49 +17,49 @@ export default function MenuPage() {
     {
       id: 'profile',
       icon: <User className="h-6 w-6 text-indigo-500" />,
-      title: t('Profile', 'الملف الشخصي', 'Profil'),
+      title: t('Profile', 'الملف الشخصي'),
       link: '/profile',
     },
     {
       id: 'favorites',
       icon: <Heart className="h-6 w-6 text-red-500" />,
-      title: t('Favorites', 'المفضلة', 'Favoriler'),
+      title: t('Favorites', 'المفضلة'),
       link: '/favorites',
     },
     {
       id: 'recipes',
       icon: <Book className="h-6 w-6 text-wasfah-deep-teal" />,
-      title: t('My Recipes', 'وصفاتي', 'Tariflerim'),
+      title: t('My Recipes', 'وصفاتي'),
       link: '/recipes',
     },
     {
       id: 'shopping',
       icon: <ShoppingCart className="h-6 w-6 text-wasfah-bright-teal" />,
-      title: t('Shopping List', 'قائمة التسوق', 'Alışveriş Listesi'),
+      title: t('Shopping List', 'قائمة التسوق'),
       link: '/shopping-list',
     },
     {
       id: 'loyalty',
       icon: <Award className="h-6 w-6 text-amber-500" />,
-      title: t('Loyalty Program', 'برنامج الولاء', 'Sadakat Programı'),
+      title: t('Loyalty Program', 'برنامج الولاء'),
       link: '/loyalty',
     },
     {
       id: 'scan-dish',
       icon: <Camera className="h-6 w-6 text-green-500" />,
-      title: t('Scan Dish', 'مسح طبق', 'Yemek Tara'),
+      title: t('Scan Dish', 'مسح طبق'),
       link: '/scan-dish',
     },
     {
       id: 'body-information',
       icon: <Scale className="h-6 w-6 text-blue-500" />,
-      title: t('Body Information', 'معلومات الجسم', 'Vücut Bilgisi'),
+      title: t('Body Information', 'معلومات الجسم'),
       link: '/body-information',
     },
     {
       id: 'subscription',
       icon: <CreditCard className="h-6 w-6 text-purple-500" />,
-      title: t('Subscription', 'الاشتراك', 'Abonelik'),
+      title: t('Subscription', 'الاشتراك'),
       link: '/subscription',
     },
   ];
@@ -69,54 +68,48 @@ export default function MenuPage() {
     {
       id: 'general',
       icon: <Settings className="h-6 w-6 text-gray-500" />,
-      title: t('Settings', 'الإعدادات', 'Ayarlar'),
+      title: t('Settings', 'الإعدادات'),
       link: '/settings',
     },
     {
       id: 'notifications',
       icon: <Bell className="h-6 w-6 text-orange-500" />,
-      title: t('Notifications', 'الإشعارات', 'Bildirimler'),
+      title: t('Notifications', 'الإشعارات'),
       link: '/notifications',
     },
     {
       id: 'language',
       icon: <Globe className="h-6 w-6 text-green-500" />,
-      title: t('Language', 'اللغة', 'Dil'),
+      title: t('Language', 'اللغة'),
       link: '/language-settings',
     },
     {
       id: 'appearance',
       icon: <Moon className="h-6 w-6 text-indigo-500" />,
-      title: t('Appearance', 'المظهر', 'Görünüm'),
+      title: t('Appearance', 'المظهر'),
       link: '/appearance',
     },
     {
       id: 'connected-devices',
       icon: <Smartphone className="h-6 w-6 text-blue-500" />,
-      title: t('Connected Devices', 'الأجهزة المتصلة', 'Bağlı Cihazlar'),
+      title: t('Connected Devices', 'الأجهزة المتصلة'),
       link: '/connected-devices',
     },
     {
       id: 'help',
       icon: <HelpCircle className="h-6 w-6 text-wasfah-deep-teal" />,
-      title: t('Help & Support', 'المساعدة والدعم', 'Yardım ve Destek'),
+      title: t('Help & Support', 'المساعدة والدعم'),
       link: '/help',
-    },
-    {
-      id: 'admin',
-      icon: <Shield className="h-6 w-6 text-purple-600" />,
-      title: t('Admin Panel', 'لوحة الإدارة', 'Yönetici Paneli'),
-      link: '/admin/login',
     },
   ];
 
   return (
-    <PageContainer header={{ title: t('Menu', 'القائمة', 'Menü') }}>
+    <PageContainer header={{ title: t('Menu', 'القائمة') }}>
       <div className="space-y-6 pb-20">
         <Tabs defaultValue="menu" className="w-full">
           <TabsList className="grid grid-cols-2 mb-4">
-            <TabsTrigger value="menu">{t('Menu', 'القائمة', 'Menü')}</TabsTrigger>
-            <TabsTrigger value="settings">{t('Settings', 'الإعدادات', 'Ayarlar')}</TabsTrigger>
+            <TabsTrigger value="menu">{t('Menu', 'القائمة')}</TabsTrigger>
+            <TabsTrigger value="settings">{t('Settings', 'الإعدادات')}</TabsTrigger>
           </TabsList>
           <TabsContent value="menu" className="mt-0">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -155,7 +148,7 @@ export default function MenuPage() {
                       <LogOut className="h-6 w-6 text-red-500" />
                     </div>
                     <span className="text-base font-medium text-red-600 dark:text-red-400">
-                      {t('Log Out', 'تسجيل الخروج', 'Çıkış Yap')}
+                      {t('Log Out', 'تسجيل الخروج')}
                     </span>
                   </CardContent>
                 </Card>
