@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { AdminSidebar } from '../components/admin/AdminSidebar';
 import { AdminHeader } from '../components/admin/AdminHeader';
-import { Loader2, Settings, Shield, MessageSquare, Globe, Zap, AlertTriangle } from 'lucide-react';
+import { Loader2, Settings, Shield, MessageSquare, Globe, Zap, AlertTriangle, XCircle } from 'lucide-react'; // Added XCircle for Clear Logs
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,20 +13,40 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 const AdminPage = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isViewingLogs, setIsViewingLogs] = useState(false);
-  const [logs, setLogs] = useState<string[]>([]);
+  const [logs, setLogs] = useState([]);
   const [activeTab, setActiveTab] = useState("dashboard");
   const { toast } = useToast();
+
+  // State for settings
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [debugMode, setDebugMode] = useState(true);
+  const [cacheDuration, setCacheDuration] = useState("1h");
+
+  const [twoFactorAuth, setTwoFactorAuth] = useState(true);
+  const [sessionTimeout, setSessionTimeout] = useState("30m");
+  const [ipRestriction, setIpRestriction] = useState(false);
+
+  const [systemNotifications, setSystemNotifications] = useState(true);
+  const [emailService, setEmailService] = useState("ses");
+
+  const [openAIIntegration, setOpenAIIntegration] = useState(true);
+  const [recipeAIModel, setRecipeAIModel] = useState("gpt-4o");
+  const [visualRecognition, setVisualRecognition] = useState(true);
+  const [defaultLanguage, setDefaultLanguage] = useState("en");
+  const [translationService, setTranslationService] = useState("google");
+  const [autoTranslateNewContent, setAutoTranslateNewContent] = useState(false);
+
 
   // Mock function to refresh data
   const handleRefreshData = () => {
     setIsRefreshing(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       setIsRefreshing(false);
       toast({
         title: "Data Refreshed",
-        description: "All admin data has been successfully refreshed.",
+        description: `All admin data has been successfully refreshed at ${new Date().toLocaleTimeString()}.`,
         duration: 3000,
       });
     }, 1500);
@@ -36,7 +55,7 @@ const AdminPage = () => {
   // Mock function to view logs
   const handleViewLogs = () => {
     setIsViewingLogs(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       setIsViewingLogs(false);
@@ -47,13 +66,23 @@ const AdminPage = () => {
         "[2025-05-21 10:22:45] INFO: System maintenance completed",
         "[2025-05-21 11:05:18] ERROR: Database connection timeout",
       ]);
-      
+
       toast({
         title: "System Logs",
         description: "System logs have been loaded successfully.",
         duration: 3000,
       });
     }, 1000);
+  };
+
+  // Function to clear logs
+  const handleClearLogs = () => {
+    setLogs([]);
+    toast({
+      title: "Logs Cleared",
+      description: "System logs have been cleared from display.",
+      duration: 2000,
+    });
   };
 
   return (
@@ -64,8 +93,8 @@ const AdminPage = () => {
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           {/* Admin Actions */}
           <div className="mb-6 flex flex-wrap gap-3">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="border-indigo-300 text-indigo-700 hover:bg-indigo-50 dark:border-indigo-800 dark:text-indigo-400 dark:hover:bg-indigo-900/30"
               onClick={handleRefreshData}
               disabled={isRefreshing}
@@ -79,9 +108,9 @@ const AdminPage = () => {
                 'Refresh Data'
               )}
             </Button>
-            
-            <Button 
-              variant="outline" 
+
+            <Button
+              variant="outline"
               className="border-emerald-300 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-400 dark:hover:bg-emerald-900/30"
               onClick={handleViewLogs}
               disabled={isViewingLogs}
@@ -95,19 +124,30 @@ const AdminPage = () => {
                 'View Logs'
               )}
             </Button>
+
+            {logs.length > 0 && (
+              <Button
+                variant="outline"
+                className="border-red-300 text-red-700 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/30"
+                onClick={handleClearLogs}
+              >
+                <XCircle className="mr-2 h-4 w-4" />
+                Clear Logs
+              </Button>
+            )}
           </div>
-          
+
           {/* System Logs */}
           {logs.length > 0 && (
             <div className="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
               <h3 className="text-lg font-semibold mb-2 dark:text-white">System Logs</h3>
               <div className="bg-gray-100 dark:bg-gray-900 rounded p-3 font-mono text-xs overflow-x-auto max-h-40 overflow-y-auto">
                 {logs.map((log, index) => (
-                  <div 
-                    key={index} 
+                  <div
+                    key={index}
                     className={`py-1 ${
-                      log.includes("ERROR") ? "text-red-600 dark:text-red-400" : 
-                      log.includes("WARNING") ? "text-amber-600 dark:text-amber-400" : 
+                      log.includes("ERROR") ? "text-red-600 dark:text-red-400" :
+                      log.includes("WARNING") ? "text-amber-600 dark:text-amber-400" :
                       "text-gray-700 dark:text-gray-300"
                     }`}
                   >
@@ -117,11 +157,11 @@ const AdminPage = () => {
               </div>
             </div>
           )}
-          
-          <Tabs 
-            defaultValue="dashboard" 
-            className="w-full" 
-            value={activeTab} 
+
+          <Tabs
+            defaultValue="dashboard"
+            className="w-full"
+            value={activeTab}
             onValueChange={setActiveTab}
           >
             <TabsList className="grid grid-cols-3 md:grid-cols-6 w-full">
@@ -147,11 +187,11 @@ const AdminPage = () => {
                 Integrations
               </TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="dashboard">
               <Outlet />
             </TabsContent>
-            
+
             <TabsContent value="settings">
               <Card className="mb-4">
                 <CardHeader>
@@ -163,21 +203,27 @@ const AdminPage = () => {
                       <p className="font-medium">Maintenance Mode</p>
                       <p className="text-sm text-gray-500">Put the application into maintenance mode</p>
                     </div>
-                    <Switch />
+                    <Switch
+                      checked={maintenanceMode}
+                      onCheckedChange={setMaintenanceMode}
+                    />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Debug Mode</p>
                       <p className="text-sm text-gray-500">Enable debug information in logs</p>
                     </div>
-                    <Switch defaultChecked />
+                    <Switch
+                      checked={debugMode}
+                      onCheckedChange={setDebugMode}
+                    />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Cache Duration</p>
                       <p className="text-sm text-gray-500">Set default cache duration</p>
                     </div>
-                    <Select defaultValue="1h">
+                    <Select value={cacheDuration} onValueChange={setCacheDuration}>
                       <SelectTrigger className="w-32">
                         <SelectValue placeholder="Select duration" />
                       </SelectTrigger>
@@ -193,7 +239,7 @@ const AdminPage = () => {
                 </CardContent>
               </Card>
             </TabsContent>
-            
+
             <TabsContent value="security">
               <Card className="mb-4">
                 <CardHeader>
@@ -205,14 +251,17 @@ const AdminPage = () => {
                       <p className="font-medium">Two-Factor Authentication</p>
                       <p className="text-sm text-gray-500">Require 2FA for all admin users</p>
                     </div>
-                    <Switch defaultChecked />
+                    <Switch
+                      checked={twoFactorAuth}
+                      onCheckedChange={setTwoFactorAuth}
+                    />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Session Timeout</p>
                       <p className="text-sm text-gray-500">Automatically log out inactive admin sessions</p>
                     </div>
-                    <Select defaultValue="30m">
+                    <Select value={sessionTimeout} onValueChange={setSessionTimeout}>
                       <SelectTrigger className="w-32">
                         <SelectValue placeholder="Select time" />
                       </SelectTrigger>
@@ -229,12 +278,15 @@ const AdminPage = () => {
                       <p className="font-medium">IP Restriction</p>
                       <p className="text-sm text-gray-500">Limit admin access to approved IP addresses</p>
                     </div>
-                    <Switch />
+                    <Switch
+                      checked={ipRestriction}
+                      onCheckedChange={setIpRestriction}
+                    />
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
-            
+
             <TabsContent value="maintenance">
               <Card className="mb-4">
                 <CardHeader>
@@ -251,7 +303,7 @@ const AdminPage = () => {
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="grid gap-4">
                     <Button variant="outline">Run Database Optimization</Button>
                     <Button variant="outline">Clear System Cache</Button>
@@ -261,7 +313,7 @@ const AdminPage = () => {
                 </CardContent>
               </Card>
             </TabsContent>
-            
+
             <TabsContent value="communications">
               <Card className="mb-4">
                 <CardHeader>
@@ -273,14 +325,17 @@ const AdminPage = () => {
                       <p className="font-medium">System Notifications</p>
                       <p className="text-sm text-gray-500">Send automated notifications about system events</p>
                     </div>
-                    <Switch defaultChecked />
+                    <Switch
+                      checked={systemNotifications}
+                      onCheckedChange={setSystemNotifications}
+                    />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Email Service</p>
                       <p className="text-sm text-gray-500">Select email provider for system emails</p>
                     </div>
-                    <Select defaultValue="ses">
+                    <Select value={emailService} onValueChange={setEmailService}>
                       <SelectTrigger className="w-40">
                         <SelectValue placeholder="Select provider" />
                       </SelectTrigger>
@@ -302,7 +357,7 @@ const AdminPage = () => {
                 </CardContent>
               </Card>
             </TabsContent>
-            
+
             <TabsContent value="integrations">
               <Card className="mb-4">
                 <CardHeader>
@@ -317,14 +372,17 @@ const AdminPage = () => {
                           <p className="font-medium">OpenAI Integration</p>
                           <p className="text-sm text-gray-500">Enable GPT models for recipe generation</p>
                         </div>
-                        <Switch defaultChecked />
+                        <Switch
+                          checked={openAIIntegration}
+                          onCheckedChange={setOpenAIIntegration}
+                        />
                       </div>
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="font-medium">Recipe AI Model</p>
                           <p className="text-sm text-gray-500">Select the AI model for recipe generation</p>
                         </div>
-                        <Select defaultValue="gpt-4o">
+                        <Select value={recipeAIModel} onValueChange={setRecipeAIModel}>
                           <SelectTrigger className="w-40">
                             <SelectValue placeholder="Select model" />
                           </SelectTrigger>
@@ -341,11 +399,14 @@ const AdminPage = () => {
                           <p className="font-medium">Visual Recognition</p>
                           <p className="text-sm text-gray-500">Enable dish and ingredient recognition</p>
                         </div>
-                        <Switch defaultChecked />
+                        <Switch
+                          checked={visualRecognition}
+                          onCheckedChange={setVisualRecognition}
+                        />
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-4 pt-2">
                     <h3 className="text-lg font-medium">Language Settings</h3>
                     <div className="space-y-3">
@@ -354,7 +415,7 @@ const AdminPage = () => {
                           <p className="font-medium">Default Language</p>
                           <p className="text-sm text-gray-500">Set default system language</p>
                         </div>
-                        <Select defaultValue="en">
+                        <Select value={defaultLanguage} onValueChange={setDefaultLanguage}>
                           <SelectTrigger className="w-40">
                             <SelectValue placeholder="Select language" />
                           </SelectTrigger>
@@ -371,7 +432,7 @@ const AdminPage = () => {
                           <p className="font-medium">Translation Service</p>
                           <p className="text-sm text-gray-500">API for translating content</p>
                         </div>
-                        <Select defaultValue="google">
+                        <Select value={translationService} onValueChange={setTranslationService}>
                           <SelectTrigger className="w-40">
                             <SelectValue placeholder="Select service" />
                           </SelectTrigger>
@@ -388,7 +449,10 @@ const AdminPage = () => {
                           <p className="font-medium">Auto-Translate New Content</p>
                           <p className="text-sm text-gray-500">Automatically translate new content to all languages</p>
                         </div>
-                        <Switch />
+                        <Switch
+                          checked={autoTranslateNewContent}
+                          onCheckedChange={setAutoTranslateNewContent}
+                        />
                       </div>
                     </div>
                   </div>
