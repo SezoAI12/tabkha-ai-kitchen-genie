@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,138 +9,263 @@ import { useTheme } from 'next-themes';
 import { useToast } from '@/hooks/use-toast'; // Ensure you have this hook setup
 
 export default function AppearancePage() {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme(); // 'light', 'dark', or 'system'
   const { toast } = useToast();
   const [mounted, setMounted] = useState(false);
 
-  // --- Theme Definitions (Centralized HSL values for each scheme) ---
-  // In a larger project, these would ideally be in a global CSS file,
-  // but for a single-file solution, we define them here.
-  const themeDefinitions = {
+  // --- Theme Definitions (Centralized HSL values for each scheme, with light/dark variants) ---
+  const colorSchemeDefinitions = {
     'wasfah-default': {
-      '--background': '0 0% 100%', // White
-      '--foreground': '222.2 47.4% 11.2%', // Nearly black
-      '--card': '0 0% 100%',
-      '--card-foreground': '222.2 47.4% 11.2%',
-      '--popover': '0 0% 100%',
-      '--popover-foreground': '222.2 47.4% 11.2%',
-      '--primary': '200 80% 22%', // wasfah-deep-teal
-      '--primary-foreground': '0 0% 100%',
-      '--secondary': '170 90% 40%', // wasfah-bright-teal
-      '--secondary-foreground': '222.2 47.4% 11.2%',
-      '--muted': '210 40% 96.1%',
-      '--muted-foreground': '215.4 16.3% 46.9%',
-      '--accent': '0 100% 70%', // coral-red
-      '--accent-foreground': '222.2 47.4% 11.2%',
-      '--destructive': '0 84.2% 60.2%',
-      '--destructive-foreground': '0 0% 98%',
-      '--border': '214.3 31.8% 91.4%',
-      '--input': '214.3 31.8% 91.4%',
-      '--ring': '222.2 84% 4.9%',
-      // Define sidebar vars if they need to change per scheme
-      '--sidebar-background': '210 40% 96.1%',
-      '--sidebar-foreground': '215.4 16.3% 46.9%',
-      '--sidebar-primary': '200 80% 22%',
-      '--sidebar-primary-foreground': '0 0% 100%',
-      '--sidebar-accent': '170 90% 40%',
-      '--sidebar-accent-foreground': '222.2 47.4% 11.2%',
-      '--sidebar-border': '214.3 31.8% 91.4%',
-      '--sidebar-ring': '222.2 84% 4.9%',
+      light: {
+        '--background': '0 0% 100%', // White
+        '--foreground': '222.2 47.4% 11.2%', // Nearly black
+        '--card': '0 0% 100%',
+        '--card-foreground': '222.2 47.4% 11.2%',
+        '--popover': '0 0% 100%',
+        '--popover-foreground': '222.2 47.4% 11.2%',
+        '--primary': '200 80% 22%', // wasfah-deep-teal
+        '--primary-foreground': '0 0% 100%',
+        '--secondary': '170 90% 40%', // wasfah-bright-teal
+        '--secondary-foreground': '222.2 47.4% 11.2%',
+        '--muted': '210 40% 96.1%',
+        '--muted-foreground': '215.4 16.3% 46.9%',
+        '--accent': '0 100% 70%', // coral-red
+        '--accent-foreground': '222.2 47.4% 11.2%',
+        '--destructive': '0 84.2% 60.2%',
+        '--destructive-foreground': '0 0% 98%',
+        '--border': '214.3 31.8% 91.4%',
+        '--input': '214.3 31.8% 91.4%',
+        '--ring': '222.2 84% 4.9%',
+        '--radius': '0.5rem',
+        '--sidebar-background': '210 40% 96.1%',
+        '--sidebar-foreground': '215.4 16.3% 46.9%',
+        '--sidebar-primary': '200 80% 22%',
+        '--sidebar-primary-foreground': '0 0% 100%',
+        '--sidebar-accent': '170 90% 40%',
+        '--sidebar-accent-foreground': '222.2 47.4% 11.2%',
+        '--sidebar-border': '214.3 31.8% 91.4%',
+        '--sidebar-ring': '222.2 84% 4.9%',
+      },
+      dark: {
+        '--background': '222.2 47.4% 11.2%',
+        '--foreground': '210 40% 98%',
+        '--card': '217.2 32.6% 17.5%',
+        '--card-foreground': '210 40% 98%',
+        '--popover': '217.2 32.6% 17.5%',
+        '--popover-foreground': '210 40% 98%',
+        '--primary': '170 90% 40%', // wasfah-bright-teal for dark primary
+        '--primary-foreground': '222.2 47.4% 11.2%',
+        '--secondary': '200 80% 22%', // wasfah-deep-teal for dark secondary
+        '--secondary-foreground': '210 40% 98%',
+        '--muted': '217.2 32.6% 17.5%',
+        '--muted-foreground': '215 20.2% 65.1%',
+        '--accent': '0 100% 70%', // coral-red
+        '--accent-foreground': '210 40% 98%',
+        '--destructive': '0 62.8% 30.6%',
+        '--destructive-foreground': '0 0% 98%',
+        '--border': '217.2 32.6% 17.5%',
+        '--input': '217.2 32.6% 17.5%',
+        '--ring': '212.7 26.8% 83.9%',
+        '--radius': '0.5rem',
+        '--sidebar-background': '217.2 32.6% 17.5%',
+        '--sidebar-foreground': '215 20.2% 65.1%',
+        '--sidebar-primary': '170 90% 40%',
+        '--sidebar-primary-foreground': '222.2 47.4% 11.2%',
+        '--sidebar-accent': '200 80% 22%',
+        '--sidebar-accent-foreground': '210 40% 98%',
+        '--sidebar-border': '217.2 32.6% 17.5%',
+        '--sidebar-ring': '212.7 26.8% 83.9%',
+      },
     },
     'ocean-blue': {
-      '--background': '210 20% 98%', // Light grey-blue background
-      '--foreground': '220 30% 15%', // Dark text
-      '--card': '210 20% 95%',
-      '--card-foreground': '220 30% 15%',
-      '--popover': '210 20% 95%',
-      '--popover-foreground': '220 30% 15%',
-      '--primary': '220 50% 20%', // Darker Blue
-      '--primary-foreground': '0 0% 100%',
-      '--secondary': '215 70% 55%', // Brighter Blue
-      '--secondary-foreground': '220 30% 15%',
-      '--muted': '210 15% 90%',
-      '--muted-foreground': '210 10% 40%',
-      '--accent': '200 90% 60%', // Cyan
-      '--accent-foreground': '220 30% 15%',
-      '--destructive': '0 84.2% 60.2%',
-      '--destructive-foreground': '0 0% 98%',
-      '--border': '210 15% 85%',
-      '--input': '210 15% 85%',
-      '--ring': '215 70% 55%', // Ring color matches secondary
-      // Define sidebar vars for this scheme
-      '--sidebar-background': '210 15% 90%',
-      '--sidebar-foreground': '210 10% 40%',
-      '--sidebar-primary': '220 50% 20%',
-      '--sidebar-primary-foreground': '0 0% 100%',
-      '--sidebar-accent': '215 70% 55%',
-      '--sidebar-accent-foreground': '220 30% 15%',
-      '--sidebar-border': '210 15% 85%',
-      '--sidebar-ring': '215 70% 55%',
+      light: {
+        '--background': '210 20% 98%', // Light grey-blue background
+        '--foreground': '220 30% 15%', // Dark text
+        '--card': '210 20% 95%',
+        '--card-foreground': '220 30% 15%',
+        '--popover': '210 20% 95%',
+        '--popover-foreground': '220 30% 15%',
+        '--primary': '220 50% 20%', // Darker Blue
+        '--primary-foreground': '0 0% 100%',
+        '--secondary': '215 70% 55%', // Brighter Blue
+        '--secondary-foreground': '220 30% 15%',
+        '--muted': '210 15% 90%',
+        '--muted-foreground': '210 10% 40%',
+        '--accent': '200 90% 60%', // Cyan
+        '--accent-foreground': '220 30% 15%',
+        '--destructive': '0 84.2% 60.2%',
+        '--destructive-foreground': '0 0% 98%',
+        '--border': '210 15% 85%',
+        '--input': '210 15% 85%',
+        '--ring': '215 70% 55%',
+        '--radius': '0.5rem',
+        '--sidebar-background': '210 15% 90%',
+        '--sidebar-foreground': '210 10% 40%',
+        '--sidebar-primary': '220 50% 20%',
+        '--sidebar-primary-foreground': '0 0% 100%',
+        '--sidebar-accent': '215 70% 55%',
+        '--sidebar-accent-foreground': '220 30% 15%',
+        '--sidebar-border': '210 15% 85%',
+        '--sidebar-ring': '215 70% 55%',
+      },
+      dark: {
+        '--background': '220 20% 15%',
+        '--foreground': '210 20% 90%',
+        '--card': '220 20% 18%',
+        '--card-foreground': '210 20% 90%',
+        '--popover': '220 20% 18%',
+        '--popover-foreground': '210 20% 90%',
+        '--primary': '215 70% 55%',
+        '--primary-foreground': '220 30% 15%',
+        '--secondary': '220 50% 20%',
+        '--secondary-foreground': '210 20% 90%',
+        '--muted': '220 20% 25%',
+        '--muted-foreground': '210 10% 60%',
+        '--accent': '200 90% 60%',
+        '--accent-foreground': '210 20% 90%',
+        '--destructive': '0 62.8% 30.6%',
+        '--destructive-foreground': '0 0% 98%',
+        '--border': '220 20% 25%',
+        '--input': '220 20% 25%',
+        '--ring': '200 90% 60%',
+        '--radius': '0.5rem',
+        '--sidebar-background': '220 20% 25%',
+        '--sidebar-foreground': '210 10% 60%',
+        '--sidebar-primary': '215 70% 55%',
+        '--sidebar-primary-foreground': '220 30% 15%',
+        '--sidebar-accent': '220 50% 20%',
+        '--sidebar-accent-foreground': '210 20% 90%',
+        '--sidebar-border': '220 20% 25%',
+        '--sidebar-ring': '200 90% 60%',
+      },
     },
     'forest-green': {
-      '--background': '120 10% 97%', // Very light green-grey background
-      '--foreground': '160 30% 15%', // Dark text
-      '--card': '120 10% 95%',
-      '--card-foreground': '160 30% 15%',
-      '--popover': '120 10% 95%',
-      '--popover-foreground': '160 30% 15%',
-      '--primary': '160 50% 20%', // Darker Green
-      '--primary-foreground': '0 0% 100%',
-      '--secondary': '150 70% 40%', // Brighter Green
-      '--secondary-foreground': '160 30% 15%',
-      '--muted': '140 10% 90%',
-      '--muted-foreground': '140 5% 40%',
-      '--accent': '140 80% 50%', // Lighter Green
-      '--accent-foreground': '160 30% 15%',
-      '--destructive': '0 84.2% 60.2%',
-      '--destructive-foreground': '0 0% 98%',
-      '--border': '140 10% 85%',
-      '--input': '140 10% 85%',
-      '--ring': '150 70% 40%', // Ring color matches secondary
-      // Define sidebar vars for this scheme
-      '--sidebar-background': '140 10% 90%',
-      '--sidebar-foreground': '140 5% 40%',
-      '--sidebar-primary': '160 50% 20%',
-      '--sidebar-primary-foreground': '0 0% 100%',
-      '--sidebar-accent': '150 70% 40%',
-      '--sidebar-accent-foreground': '160 30% 15%',
-      '--sidebar-border': '140 10% 85%',
-      '--sidebar-ring': '150 70% 40%',
+      light: {
+        '--background': '120 10% 97%', // Very light green-grey background
+        '--foreground': '160 30% 15%', // Dark text
+        '--card': '120 10% 95%',
+        '--card-foreground': '160 30% 15%',
+        '--popover': '120 10% 95%',
+        '--popover-foreground': '160 30% 15%',
+        '--primary': '160 50% 20%', // Darker Green
+        '--primary-foreground': '0 0% 100%',
+        '--secondary': '150 70% 40%', // Brighter Green
+        '--secondary-foreground': '160 30% 15%',
+        '--muted': '140 10% 90%',
+        '--muted-foreground': '140 5% 40%',
+        '--accent': '140 80% 50%', // Lighter Green
+        '--accent-foreground': '160 30% 15%',
+        '--destructive': '0 84.2% 60.2%',
+        '--destructive-foreground': '0 0% 98%',
+        '--border': '140 10% 85%',
+        '--input': '140 10% 85%',
+        '--ring': '150 70% 40%',
+        '--radius': '0.5rem',
+        '--sidebar-background': '140 10% 90%',
+        '--sidebar-foreground': '140 5% 40%',
+        '--sidebar-primary': '160 50% 20%',
+        '--sidebar-primary-foreground': '0 0% 100%',
+        '--sidebar-accent': '150 70% 40%',
+        '--sidebar-accent-foreground': '160 30% 15%',
+        '--sidebar-border': '140 10% 85%',
+        '--sidebar-ring': '150 70% 40%',
+      },
+      dark: {
+        '--background': '160 20% 15%',
+        '--foreground': '140 20% 90%',
+        '--card': '160 20% 18%',
+        '--card-foreground': '140 20% 90%',
+        '--popover': '160 20% 18%',
+        '--popover-foreground': '140 20% 90%',
+        '--primary': '150 70% 40%',
+        '--primary-foreground': '160 30% 15%',
+        '--secondary': '160 50% 20%',
+        '--secondary-foreground': '140 20% 90%',
+        '--muted': '160 20% 25%',
+        '--muted-foreground': '140 10% 60%',
+        '--accent': '140 80% 50%',
+        '--accent-foreground': '140 20% 90%',
+        '--destructive': '0 62.8% 30.6%',
+        '--destructive-foreground': '0 0% 98%',
+        '--border': '160 20% 25%',
+        '--input': '160 20% 25%',
+        '--ring': '140 80% 50%',
+        '--radius': '0.5rem',
+        '--sidebar-background': '160 20% 25%',
+        '--sidebar-foreground': '140 10% 60%',
+        '--sidebar-primary': '150 70% 40%',
+        '--sidebar-primary-foreground': '160 30% 15%',
+        '--sidebar-accent': '160 50% 20%',
+        '--sidebar-accent-foreground': '140 20% 90%',
+        '--sidebar-border': '160 20% 25%',
+        '--sidebar-ring': '140 80% 50%',
+      },
     },
     'sunset-orange': {
-      '--background': '30 40% 98%', // Light peach background
-      '--foreground': '20 60% 20%', // Dark brown-orange text
-      '--card': '30 40% 95%',
-      '--card-foreground': '20 60% 20%',
-      '--popover': '30 40% 95%',
-      '--popover-foreground': '20 60% 20%',
-      '--primary': '25 80% 40%', // Darker Orange
-      '--primary-foreground': '0 0% 100%',
-      '--secondary': '30 90% 55%', // Brighter Orange
-      '--secondary-foreground': '20 60% 20%',
-      '--muted': '30 30% 90%',
-      '--muted-foreground': '30 20% 50%',
-      '--accent': '40 95% 65%', // Yellow
-      '--accent-foreground': '20 60% 20%',
-      '--destructive': '0 84.2% 60.2%',
-      '--destructive-foreground': '0 0% 98%',
-      '--border': '30 30% 85%',
-      '--input': '30 30% 85%',
-      '--ring': '30 90% 55%', // Ring color matches secondary
-      // Define sidebar vars for this scheme
-      '--sidebar-background': '30 30% 90%',
-      '--sidebar-foreground': '30 20% 50%',
-      '--sidebar-primary': '25 80% 40%',
-      '--sidebar-primary-foreground': '0 0% 100%',
-      '--sidebar-accent': '30 90% 55%',
-      '--sidebar-accent-foreground': '20 60% 20%',
-      '--sidebar-border': '30 30% 85%',
-      '--sidebar-ring': '30 90% 55%',
+      light: {
+        '--background': '30 40% 98%', // Light peach background
+        '--foreground': '20 60% 20%', // Dark brown-orange text
+        '--card': '30 40% 95%',
+        '--card-foreground': '20 60% 20%',
+        '--popover': '30 40% 95%',
+        '--popover-foreground': '20 60% 20%',
+        '--primary': '25 80% 40%', // Darker Orange
+        '--primary-foreground': '0 0% 100%',
+        '--secondary': '30 90% 55%', // Brighter Orange
+        '--secondary-foreground': '20 60% 20%',
+        '--muted': '30 30% 90%',
+        '--muted-foreground': '30 20% 50%',
+        '--accent': '40 95% 65%', // Yellow
+        '--accent-foreground': '20 60% 20%',
+        '--destructive': '0 84.2% 60.2%',
+        '--destructive-foreground': '0 0% 98%',
+        '--border': '30 30% 85%',
+        '--input': '30 30% 85%',
+        '--ring': '30 90% 55%',
+        '--radius': '0.5rem',
+        '--sidebar-background': '30 30% 90%',
+        '--sidebar-foreground': '30 20% 50%',
+        '--sidebar-primary': '25 80% 40%',
+        '--sidebar-primary-foreground': '0 0% 100%',
+        '--sidebar-accent': '30 90% 55%',
+        '--sidebar-accent-foreground': '20 60% 20%',
+        '--sidebar-border': '30 30% 85%',
+        '--sidebar-ring': '30 90% 55%',
+      },
+      dark: {
+        '--background': '25 30% 15%',
+        '--foreground': '30 20% 90%',
+        '--card': '25 30% 18%',
+        '--card-foreground': '30 20% 90%',
+        '--popover': '25 30% 18%',
+        '--popover-foreground': '30 20% 90%',
+        '--primary': '30 90% 55%',
+        '--primary-foreground': '25 80% 40%',
+        '--secondary': '25 80% 40%',
+        '--secondary-foreground': '30 20% 90%',
+        '--muted': '25 30% 25%',
+        '--muted-foreground': '30 20% 60%',
+        '--accent': '40 95% 65%',
+        '--accent-foreground': '30 20% 90%',
+        '--destructive': '0 62.8% 30.6%',
+        '--destructive-foreground': '0 0% 98%',
+        '--border': '25 30% 25%',
+        '--input': '25 30% 25%',
+        '--ring': '40 95% 65%',
+        '--radius': '0.5rem',
+        '--sidebar-background': '25 30% 25%',
+        '--sidebar-foreground': '30 20% 60%',
+        '--sidebar-primary': '30 90% 55%',
+        '--sidebar-primary-foreground': '25 80% 40%',
+        '--sidebar-accent': '25 80% 40%',
+        '--sidebar-accent-foreground': '30 20% 90%',
+        '--sidebar-border': '25 30% 25%',
+        '--sidebar-ring': '40 95% 65%',
+      },
     },
   };
 
   // State to manage the active color scheme ID.
-  // Initialize from localStorage or a default.
   const [activeColorSchemeId, setActiveColorSchemeId] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('selectedColorScheme') || 'wasfah-default';
@@ -176,59 +301,45 @@ export default function AppearancePage() {
     }
   ];
 
-  // Ensure component is mounted for safe DOM access (for next-themes and localStorage)
+  // Ensure component is mounted for safe DOM access
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Effect to apply the selected color scheme's CSS variables to the <html> tag
-  useEffect(() => {
-    if (!mounted) return;
+  // Function to apply CSS variables to the <html> element
+  // This is wrapped in useCallback to prevent unnecessary re-creations
+  const applyColorSchemeVars = useCallback(() => {
+    if (!mounted || !document.documentElement) return;
 
-    // Apply the CSS variables for the active color scheme
-    const currentSchemeVars = themeDefinitions[activeColorSchemeId];
-    if (currentSchemeVars) {
-      for (const [prop, value] of Object.entries(currentSchemeVars)) {
+    // Determine the current effective theme (light or dark)
+    const currentMode = (theme === 'system'
+      ? window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
+      : theme) as 'light' | 'dark'; // Explicitly cast to 'light' or 'dark'
+
+    const schemeVars = colorSchemeDefinitions[activeColorSchemeId]?.[currentMode];
+
+    if (schemeVars) {
+      for (const [prop, value] of Object.entries(schemeVars)) {
         document.documentElement.style.setProperty(prop, value);
       }
       localStorage.setItem('selectedColorScheme', activeColorSchemeId);
     }
+  }, [activeColorSchemeId, mounted, theme]); // Dependencies for useCallback
 
-    // Handle light/dark mode interaction for specific variables if needed
-    // The next-themes library will add/remove the 'dark' class on <html>.
-    // If you have different HSL values for --primary, --secondary etc. within
-    // your global CSS's .dark selector, those will take precedence.
-    // If your theme definitions above are comprehensive (like these are),
-    // they will override the light/dark values for the common variables.
-    // Ensure your base globals.css still contains the :root and .dark definitions
-    // for all HSL variables as a fallback/initial state.
-    // This example relies on the 'themeDefinitions' directly setting the variables
-    // so it implicitly handles the combination.
-  }, [activeColorSchemeId, mounted]);
-
-  // Handle the light/dark mode changes from next-themes
+  // Effect to apply colors on initial mount and when activeColorSchemeId or theme changes
   useEffect(() => {
-    if (!mounted) return;
-    // When theme changes (light/dark/system), re-apply the current color scheme
-    // to ensure its variables are the dominant ones after next-themes might
-    // change the base HSL values on the <html> tag.
-    // This makes sure our selected color scheme is always applied correctly
-    // after a theme switch.
-    const currentSchemeVars = themeDefinitions[activeColorSchemeId];
-    if (currentSchemeVars) {
-      for (const [prop, value] of Object.entries(currentSchemeVars)) {
-        document.documentElement.style.setProperty(prop, value);
-      }
-    }
-  }, [theme, mounted, activeColorSchemeId]); // Depend on 'theme' here
+    applyColorSchemeVars();
+  }, [applyColorSchemeVars]); // Only re-run when applyColorSchemeVars changes
 
   if (!mounted) {
     return null;
   }
 
-  // Function to apply a selected color scheme
-  const applyColorScheme = (schemeId: string) => {
-    setActiveColorSchemeId(schemeId); // This will trigger the useEffect to apply styles
+  // Function to handle clicking an "Apply" button for a color scheme
+  const handleApplyColorScheme = (schemeId: string) => {
+    setActiveColorSchemeId(schemeId); // This will trigger the effect to re-apply vars
     toast({
       title: "Color Scheme Applied!",
       description: `"${displayColorSchemes.find(s => s.id === schemeId)?.name}" color scheme has been set.`,
@@ -246,7 +357,6 @@ export default function AppearancePage() {
         {/* Theme Selection (Light/Dark/System) */}
         <Card>
           <CardHeader>
-            {/* These should now use your semantic colors defined in tailwind.config.js */}
             <CardTitle className="text-primary flex items-center">
               <Palette className="h-5 w-5 mr-2" />
               Theme
@@ -294,7 +404,6 @@ export default function AppearancePage() {
               >
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    {/* Using semantic text colors that adapt with light/dark mode */}
                     <h3 className="font-medium text-foreground">{scheme.name}</h3>
                     <p className="text-sm text-muted-foreground">{scheme.description}</p>
                   </div>
@@ -302,7 +411,7 @@ export default function AppearancePage() {
                     variant={activeColorSchemeId === scheme.id ? 'default' : 'outline'}
                     size="sm"
                     className={activeColorSchemeId === scheme.id ? 'bg-secondary hover:bg-primary text-secondary-foreground' : ''}
-                    onClick={() => applyColorScheme(scheme.id)}
+                    onClick={() => handleApplyColorScheme(scheme.id)}
                     disabled={activeColorSchemeId === scheme.id}
                   >
                     {activeColorSchemeId === scheme.id ? 'Active' : 'Apply'}
@@ -310,7 +419,6 @@ export default function AppearancePage() {
                 </div>
                 <div className="flex space-x-2">
                   {scheme.colors.map((color, index) => (
-                    // These preview circles use the direct Tailwind classes defined with hex codes
                     <div key={index} className={`w-8 h-8 rounded-full ${color}`} />
                   ))}
                 </div>
