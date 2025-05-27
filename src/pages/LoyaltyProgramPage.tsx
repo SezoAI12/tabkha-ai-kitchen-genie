@@ -1,12 +1,22 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Award, Star, Gift, Medal, Trophy, Target, Clock, Sparkles } from 'lucide-react';
+import { Award, Star, Gift, Medal, Trophy, Target, Clock, Sparkles, CheckCircle } from 'lucide-react'; // Added CheckCircle for completed achievements
 import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"; // Import AlertDialog components
 
 // Sample rewards data
 const rewards = [
@@ -82,14 +92,29 @@ const achievements = [
 
 export default function LoyaltyProgramPage() {
   const { toast } = useToast();
-  
-  const handleRedeemReward = (reward: typeof rewards[0]) => {
-    toast({
-      title: "Reward Redeemed",
-      description: `You've redeemed "${reward.title}" for ${reward.pointsCost} points.`
-    });
+  // Simulate user data
+  const [userPoints, setUserPoints] = useState(850);
+  const [userLevel, setUserLevel] = useState('Gold Level');
+  const pointsToNextLevel = 1500 - userPoints;
+  const progressToNextLevel = (userPoints / 1500) * 100;
+
+  const handleRedeemReward = (reward) => {
+    if (userPoints >= reward.pointsCost) {
+      // In a real app, you'd send this to your backend
+      setUserPoints(prevPoints => prevPoints - reward.pointsCost);
+      toast({
+        title: "Reward Redeemed!",
+        description: `You've successfully redeemed "${reward.title}" for ${reward.pointsCost} points.`,
+      });
+    } else {
+      toast({
+        title: "Not enough points",
+        description: `You need ${reward.pointsCost - userPoints} more points to redeem "${reward.title}".`,
+        variant: "destructive",
+      });
+    }
   };
-  
+
   return (
     <PageContainer header={{ title: 'Loyalty Program', showBackButton: true }}>
       <div className="space-y-6 pb-6">
@@ -102,28 +127,30 @@ export default function LoyaltyProgramPage() {
                     <Award className="h-8 w-8 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-wasfah-deep-teal">Gold Level</h2>
+                    <h2 className="text-xl font-bold text-wasfah-deep-teal">{userLevel}</h2>
                     <p className="text-sm text-gray-600">Member since April 2023</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-wasfah-bright-teal">850</div>
+                  <div className="text-2xl font-bold text-wasfah-bright-teal">{userPoints}</div>
                   <p className="text-sm text-gray-600">points</p>
                 </div>
               </div>
-              
+
               <div className="mt-6">
                 <div className="flex justify-between text-sm mb-2">
-                  <span>Gold Level</span>
+                  <span>{userLevel}</span>
                   <span>Platinum Level (1,500 pts)</span>
                 </div>
-                <Progress value={56.6} className="h-2" />
-                <p className="text-xs text-center mt-1 text-gray-600">650 more points to reach Platinum</p>
+                <Progress value={progressToNextLevel} className="h-2" />
+                <p className="text-xs text-center mt-1 text-gray-600">
+                  {pointsToNextLevel > 0 ? `${pointsToNextLevel} more points to reach Platinum` : "You've reached Platinum Level!"}
+                </p>
               </div>
             </CardContent>
           </Card>
         </section>
-        
+
         <section>
           <Tabs defaultValue="rewards">
             <TabsList className="grid w-full grid-cols-2">
@@ -136,21 +163,21 @@ export default function LoyaltyProgramPage() {
                 Achievements
               </TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="rewards" className="mt-4 space-y-4">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-bold text-wasfah-deep-teal">Available Rewards</h3>
-                <span className="text-sm font-medium text-wasfah-bright-teal">850 points available</span>
+                <span className="text-sm font-medium text-wasfah-bright-teal">{userPoints} points available</span>
               </div>
-              
+
               <div className="grid gap-4">
                 {rewards.map((reward) => (
-                  <Card key={reward.id} className={!reward.isAvailable ? 'opacity-60' : ''}>
+                  <Card key={reward.id} className={!reward.isAvailable || userPoints < reward.pointsCost ? 'opacity-60' : ''}>
                     <div className="flex">
                       <div className="w-24 h-full">
-                        <img 
-                          src={reward.image} 
-                          alt={reward.title} 
+                        <img
+                          src={reward.image}
+                          alt={reward.title}
                           className="w-full h-full object-cover rounded-l-lg"
                         />
                       </div>
@@ -166,13 +193,30 @@ export default function LoyaltyProgramPage() {
                             <Star className="h-4 w-4 text-yellow-500 mr-1" />
                             <span className="font-medium">{reward.pointsCost} points</span>
                           </div>
-                          <Button 
-                            className="bg-wasfah-bright-teal hover:bg-wasfah-teal"
-                            disabled={!reward.isAvailable || reward.pointsCost > 850}
-                            onClick={() => handleRedeemReward(reward)}
-                          >
-                            Redeem
-                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                className="bg-wasfah-bright-teal hover:bg-wasfah-teal"
+                                disabled={!reward.isAvailable || userPoints < reward.pointsCost}
+                              >
+                                Redeem
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Confirm Reward Redemption</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to redeem "{reward.title}" for {reward.pointsCost} points? This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleRedeemReward(reward)}>
+                                  Redeem Now
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </CardFooter>
                       </div>
                     </div>
@@ -180,17 +224,17 @@ export default function LoyaltyProgramPage() {
                 ))}
               </div>
             </TabsContent>
-            
+
             <TabsContent value="achievements" className="mt-4 space-y-4">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-bold text-wasfah-deep-teal">Your Achievements</h3>
                 <span className="text-sm font-medium text-gray-600">Earn points with achievements</span>
               </div>
-              
+
               <div className="grid gap-3">
                 {achievements.map((achievement) => {
                   const isCompleted = achievement.progress === 100;
-                  
+
                   // Choose icon based on achievement type
                   let AchievementIcon;
                   switch (achievement.icon) {
@@ -200,19 +244,21 @@ export default function LoyaltyProgramPage() {
                     case 'swap': AchievementIcon = Sparkles; break;
                     default: AchievementIcon = Target;
                   }
-                  
+
                   return (
                     <Card key={achievement.id}>
                       <CardContent className="p-4">
                         <div className="flex items-start">
                           <div className={`p-3 rounded-full mr-4 ${
-                            isCompleted 
-                              ? 'bg-gradient-to-br from-wasfah-deep-teal to-wasfah-bright-teal' 
+                            isCompleted
+                              ? 'bg-gradient-to-br from-wasfah-deep-teal to-wasfah-bright-teal'
                               : 'bg-gray-100'
                           }`}>
-                            <AchievementIcon className={`h-5 w-5 ${
-                              isCompleted ? 'text-white' : 'text-gray-400'
-                            }`} />
+                            {isCompleted ? (
+                              <CheckCircle className="h-5 w-5 text-white" />
+                            ) : (
+                              <AchievementIcon className="h-5 w-5 text-gray-400" />
+                            )}
                           </div>
                           <div className="flex-1">
                             <div className="flex justify-between items-center mb-1">
@@ -222,7 +268,7 @@ export default function LoyaltyProgramPage() {
                               </div>
                             </div>
                             <p className="text-sm text-gray-600 mb-2">{achievement.description}</p>
-                            
+
                             <div className="space-y-1">
                               <div className="flex justify-between text-xs">
                                 <span>{Math.floor(achievement.progress / 100 * achievement.total)} of {achievement.total}</span>
@@ -230,7 +276,7 @@ export default function LoyaltyProgramPage() {
                               </div>
                               <Progress value={achievement.progress} className="h-1.5" />
                             </div>
-                            
+
                             {achievement.dateEarned && (
                               <div className="mt-1 text-xs text-gray-500">
                                 Completed on {new Date(achievement.dateEarned).toLocaleDateString()}
