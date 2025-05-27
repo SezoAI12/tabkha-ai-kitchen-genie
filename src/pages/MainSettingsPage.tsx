@@ -11,7 +11,6 @@ import { LanguageSelector } from '@/components/language/LanguageSelector';
 
 const MainSettingsPage = () => {
   const { direction, language, t } = useRTL();
-  const isRTL = direction === 'rtl';
   
   const settingGroups = [
     {
