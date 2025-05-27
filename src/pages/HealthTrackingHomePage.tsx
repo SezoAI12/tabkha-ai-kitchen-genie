@@ -8,11 +8,11 @@ import { NutritionProgressChart } from '@/components/nutrition/NutritionProgress
 import { NutritionSummary } from '@/components/nutrition/NutritionSummary';
 import { NutritionEntryForm } from '@/components/nutrition/NutritionEntryForm';
 import { NutritionTip } from '@/components/nutrition/NutritionTip';
-import { Activity, Scale, CalendarDays, ArrowLeftRight, Tag } from 'lucide-react';
+import { Activity, Scale, CalendarDays, ArrowLeftRight, Tag, Target, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { DailyIndependenceChallenges } from '@/components/health/DailyIndependenceChallenges';
 import { BMICalculator } from '@/components/health/BMICalculator';
-import { useRTL } from '@/contexts/RTLContext'; // Assuming this provides a `t` function for translation
+import { useRTL } from '@/contexts/RTLContext';
 
 // Mock for useUserHealth hook
 const useUserHealthMock = () => {
@@ -92,11 +92,11 @@ export default function HealthTrackingHomePage() {
 
     // --- Mock Daily Independence Challenges Data ---
     const dailyChallenges = useMemo(() => ([
-        { id: 'c1', name: t('Walk 30 minutes', 'امشِ 30 دقيقة'), completed: false },
-        { id: 'c2', name: t('Drink 8 glasses of water', 'اشرب 8 أكواب ماء'), completed: false },
-        { id: 'c3', name: t('Eat 5 portions of fruits/vegetables', 'تناول 5 حصص فواكه/خضروات'), completed: false },
-        { id: 'c4', name: t('Read for 15 minutes', 'اقرأ لمدة 15 دقيقة'), completed: false },
-        { id: 'c5', name: t('Call a loved one', 'اتصل بشخص عزيز'), completed: false },
+        { id: 'c1', name: t('Walk 30 minutes', 'امشِ 30 دقيقة'), description: t('Take a 30-minute walk', 'قم بالمشي لمدة 30 دقيقة'), completed: false },
+        { id: 'c2', name: t('Drink 8 glasses of water', 'اشرب 8 أكواب ماء'), description: t('Drink 8 glasses of water throughout the day', 'اشرب 8 أكواب ماء طوال اليوم'), completed: false },
+        { id: 'c3', name: t('Eat 5 portions of fruits/vegetables', 'تناول 5 حصص فواكه/خضروات'), description: t('Consume 5 portions of fruits and vegetables', 'تناول 5 حصص من الفواكه والخضروات'), completed: false },
+        { id: 'c4', name: t('Read for 15 minutes', 'اقرأ لمدة 15 دقيقة'), description: t('Read for 15 minutes', 'اقرأ لمدة 15 دقيقة'), completed: false },
+        { id: 'c5', name: t('Call a loved one', 'اتصل بشخص عزيز'), description: t('Call a family member or friend', 'اتصل بأحد أفراد العائلة أو الأصدقاء'), completed: false },
     ]), [t]);
 
     // This state would typically be managed within DailyIndependenceChallenges
@@ -155,7 +155,7 @@ export default function HealthTrackingHomePage() {
             calories: { ...prev.calories, consumed: prev.calories.consumed + data.calories },
             protein: { ...prev.protein, consumed: prev.protein.consumed + data.protein },
             carbs: { ...prev.carbs, consumed: prev.carbs.consumed + data.carbs },
-            fat: { ...prev.fat, consumed: prev.fat.fat + data.fat }, // Fixed fat calculation
+            fat: { ...prev.fat, consumed: prev.fat.consumed + data.fat }, // Fixed fat calculation
         }));
 
         setDailyNutritionData(prev => {
@@ -319,10 +319,10 @@ export default function HealthTrackingHomePage() {
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <ActionButton to="/health-tracking" icon={<Activity className="mr-2 h-4 w-4" />}>
+                            <ActionButton to="/health-tracking" icon={<Activity className="h-4 w-4" />}>
                                 {t('Detailed Tracking', 'التتبع التفصيلي')}
                             </ActionButton>
-                            <ActionButton to="/body-information" variant="outline">
+                            <ActionButton to="/body-information" variant="outline" icon={<Target className="h-4 w-4" />}>
                                 {t('Body Information', 'معلومات الجسم')}
                             </ActionButton>
                         </div>
@@ -343,10 +343,10 @@ export default function HealthTrackingHomePage() {
                                 />
                             </CardContent>
                         </Card>
-                        <ActionButton to="/nutrition-goals">
+                        <ActionButton to="/nutrition-goals" icon={<Target className="h-4 w-4" />}>
                             {t('Update Nutrition Goals', 'تحديث أهداف التغذية')}
                         </ActionButton>
-                        <ActionButton to="/dietary-preferences" variant="outline">
+                        <ActionButton to="/dietary-preferences" variant="outline" icon={<Settings className="h-4 w-4" />}>
                             {t('Manage Dietary Preferences', 'إدارة التفضيلات الغذائية')}
                         </ActionButton>
                     </TabsContent>
@@ -360,7 +360,7 @@ export default function HealthTrackingHomePage() {
                                 <IngredientSwapCard key={index} swap={swap} t={t} />
                             ))}
                         </div>
-                        <ActionButton to="/ingredient-swap" icon={<ArrowLeftRight className="mr-2 h-4 w-4" />}>
+                        <ActionButton to="/ingredient-swap" icon={<ArrowLeftRight className="h-4 w-4" />}>
                             {t('View All Ingredient Swaps', 'عرض جميع بدائل المكونات')}
                         </ActionButton>
                     </TabsContent>
@@ -401,7 +401,7 @@ export default function HealthTrackingHomePage() {
                                 <p className="text-sm text-gray-500">{t('No recent meals added yet.', 'لم يتم إضافة وجبات حديثة بعد.')}</p>
                             )}
                         </div>
-                        <ActionButton to="/health-tracking">
+                        <ActionButton to="/health-tracking" icon={<CalendarDays className="h-4 w-4" />}>
                             {t('View Complete History', 'عرض السجل الكامل')}
                         </ActionButton>
                     </TabsContent>
