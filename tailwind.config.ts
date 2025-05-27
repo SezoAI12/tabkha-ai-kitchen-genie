@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -20,6 +19,8 @@ export default {
 		},
 		extend: {
 			colors: {
+				// Base colors pulled from CSS variables
+				// These are what your components will use (e.g., text-primary, bg-secondary)
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -63,6 +64,9 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
+				// Define your original fixed `wasfah` colors here.
+				// These are good for things like the color preview circles,
+				// or if you have elements that should *never* change with the theme.
 				wasfah: {
 					'deep-teal': '#0A4D68',
 					'teal': '#088395',
@@ -72,7 +76,24 @@ export default {
 					'dark-gray': '#333333',
 					'light-mint': '#E0FFFA',
 					'coral-red': '#FF6B6B'
-				}
+				},
+                // Add specific hex values for default Tailwind colors that might be used
+                // in your preview squares if they're not part of your HSL theme variables
+                // Example for ocean-blue preview:
+                'blue-500': '#3b82f6',
+                'blue-600': '#2563eb',
+                'blue-400': '#60a5fa',
+                'cyan-300': '#67e8f9',
+                // Example for forest-green preview:
+                'green-500': '#22c55e',
+                'green-600': '#16a34a',
+                'emerald-400': '#34d399',
+                'lime-300': '#a7f3d0',
+                // Example for sunset-orange preview:
+                'orange-500': '#f97316',
+                'red-500': '#ef4444',
+                'yellow-400': '#facc15',
+                'pink-300': '#fbcfe8',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
