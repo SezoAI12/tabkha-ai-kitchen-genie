@@ -4,10 +4,9 @@ import { PageContainer } from '@/components/layout/PageContainer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
-import { Moon, Sun, Palette, Type, Eye, Monitor } from 'lucide-react';
+import { Moon, Sun, Palette, Type, Eye, Monitor, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AppearancePage() {
@@ -54,11 +53,25 @@ export default function AppearancePage() {
     });
   };
 
+  const handleColorSchemeChange = (schemeId: string) => {
+    setColorScheme(schemeId);
+    const scheme = colorSchemes.find(s => s.id === schemeId);
+    if (scheme) {
+      // Apply color scheme to CSS variables
+      document.documentElement.style.setProperty('--primary', scheme.primary);
+      document.documentElement.style.setProperty('--secondary', scheme.secondary);
+      toast({
+        title: "Color Scheme Updated",
+        description: `Applied ${scheme.name} color scheme`,
+      });
+    }
+  };
+
   const colorSchemes = [
-    { id: 'default', name: 'Default', primary: '#0EA5E9', secondary: '#10B981' },
-    { id: 'warm', name: 'Warm', primary: '#F59E0B', secondary: '#EF4444' },
-    { id: 'cool', name: 'Cool', primary: '#8B5CF6', secondary: '#06B6D4' },
-    { id: 'nature', name: 'Nature', primary: '#059669', secondary: '#84CC16' }
+    { id: 'default', name: 'WasfahAI Default', primary: '#0EA5E9', secondary: '#10B981' },
+    { id: 'warm', name: 'Warm Sunset', primary: '#F59E0B', secondary: '#EF4444' },
+    { id: 'cool', name: 'Cool Ocean', primary: '#8B5CF6', secondary: '#06B6D4' },
+    { id: 'nature', name: 'Fresh Nature', primary: '#059669', secondary: '#84CC16' }
   ];
 
   const previewText = "The quick brown fox jumps over the lazy dog. This is a preview of how your text will look with the current settings.";
@@ -88,6 +101,7 @@ export default function AppearancePage() {
               >
                 <Sun size={24} />
                 <span>Light</span>
+                {theme === 'light' && <Check size={16} className="text-green-500" />}
               </Button>
               <Button
                 variant={theme === 'dark' ? 'default' : 'outline'}
@@ -96,6 +110,7 @@ export default function AppearancePage() {
               >
                 <Moon size={24} />
                 <span>Dark</span>
+                {theme === 'dark' && <Check size={16} className="text-green-500" />}
               </Button>
               <Button
                 variant={theme === 'system' ? 'default' : 'outline'}
@@ -104,6 +119,7 @@ export default function AppearancePage() {
               >
                 <Monitor size={24} />
                 <span>System</span>
+                {theme === 'system' && <Check size={16} className="text-green-500" />}
               </Button>
             </div>
           </CardContent>
@@ -115,25 +131,30 @@ export default function AppearancePage() {
             <CardTitle>Color Scheme</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-3">
               {colorSchemes.map((scheme) => (
                 <Button
                   key={scheme.id}
                   variant={colorScheme === scheme.id ? 'default' : 'outline'}
-                  onClick={() => setColorScheme(scheme.id)}
-                  className="flex items-center justify-between p-4 h-auto"
+                  onClick={() => handleColorSchemeChange(scheme.id)}
+                  className="flex items-center justify-between p-4 h-auto w-full"
                 >
-                  <span>{scheme.name}</span>
-                  <div className="flex gap-1">
-                    <div 
-                      className="w-4 h-4 rounded-full" 
-                      style={{ backgroundColor: scheme.primary }}
-                    />
-                    <div 
-                      className="w-4 h-4 rounded-full" 
-                      style={{ backgroundColor: scheme.secondary }}
-                    />
+                  <div className="flex items-center space-x-3">
+                    <div className="flex gap-1">
+                      <div 
+                        className="w-6 h-6 rounded-full border-2 border-white shadow-sm" 
+                        style={{ backgroundColor: scheme.primary }}
+                      />
+                      <div 
+                        className="w-6 h-6 rounded-full border-2 border-white shadow-sm" 
+                        style={{ backgroundColor: scheme.secondary }}
+                      />
+                    </div>
+                    <span className="font-medium">{scheme.name}</span>
                   </div>
+                  {colorScheme === scheme.id && (
+                    <Check size={20} className="text-green-500" />
+                  )}
                 </Button>
               ))}
             </div>
