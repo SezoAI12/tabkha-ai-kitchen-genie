@@ -1,279 +1,252 @@
 
 import React, { useState } from 'react';
+import { Utensils, Cake, Coffee, Camera, Mic } from 'lucide-react';
 import { PageContainer } from '@/components/layout/PageContainer';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { RecipeGrid } from '@/components/recipe/RecipeGrid';
-import { IngredientManager } from '@/components/ingredients/IngredientManager';
 import { CategorySelector } from '@/components/ingredients/CategorySelector';
+import { IngredientManager } from '@/components/ingredients/IngredientManager';
 import { FilterPanel } from '@/components/ingredients/FilterPanel';
 import { SearchSummary } from '@/components/ingredients/SearchSummary';
-import { mockRecipes } from '@/data/mockData';
-import { Search, Plus, X, ChefHat, Beef, Fish, Salad, Coffee, Apple } from 'lucide-react';
-import { MobileNavbar } from '@/components/layout/MobileNavbar';
+import { useToast } from '@/hooks/use-toast';
 
-// Define category data structure to match CategorySelector expectations
-const categories = [
-  {
-    id: 'meat',
-    name: 'Meat & Poultry',
-    icon: Beef,
-    image: '/placeholder.svg',
-    subcategories: [
-      { name: 'Chicken', image: '/placeholder.svg' },
-      { name: 'Beef', image: '/placeholder.svg' },
-      { name: 'Lamb', image: '/placeholder.svg' },
-      { name: 'Turkey', image: '/placeholder.svg' }
-    ]
-  },
-  {
-    id: 'seafood',
-    name: 'Seafood',
-    icon: Fish,
-    image: '/placeholder.svg',
-    subcategories: [
-      { name: 'Fish', image: '/placeholder.svg' },
-      { name: 'Shrimp', image: '/placeholder.svg' },
-      { name: 'Crab', image: '/placeholder.svg' },
-      { name: 'Lobster', image: '/placeholder.svg' }
-    ]
-  },
-  {
-    id: 'vegetables',
-    name: 'Vegetables',
-    icon: Salad,
-    image: '/placeholder.svg',
-    subcategories: [
-      { name: 'Leafy Greens', image: '/placeholder.svg' },
-      { name: 'Root Vegetables', image: '/placeholder.svg' },
-      { name: 'Peppers', image: '/placeholder.svg' },
-      { name: 'Onions', image: '/placeholder.svg' }
-    ]
-  }
-];
+interface Ingredient {
+  id: string;
+  name: string;
+  quantity: string;
+  unit: string;
+  source: 'manual' | 'pantry';
+}
 
-const filterOptions = {
-  dietary: ['Vegetarian', 'Vegan', 'Gluten-Free', 'Keto', 'Paleo'],
-  cookingTime: ['Quick (under 30 min)', 'Medium (30-60 min)', 'Long (60+ min)'],
-  difficulty: ['Easy', 'Medium', 'Hard'],
-  cuisine: ['Italian', 'Chinese', 'Mexican', 'Indian', 'Mediterranean']
-};
+interface PantryItem {
+  id: string;
+  name: string;
+  quantity: string;
+  unit: string;
+}
+
+interface Filters {
+  dietary: string;
+  cookingTime: string;
+  difficulty: string;
+  cuisine: string;
+}
 
 export default function FindByIngredientsPage() {
-  const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<typeof categories[0] | null>(null);
-  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [showFilters, setShowFilters] = useState(false);
+  const { toast } = useToast();
   
-  const [filters, setFilters] = useState({
+  const mainCategories = [
+    {
+      id: 'food',
+      name: 'Food',
+      icon: Utensils,
+      image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop&crop=center',
+      subcategories: [
+        { name: 'Main Dishes', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=200&fit=crop&crop=center' },
+        { name: 'Appetizers', image: 'https://images.unsplash.com/photo-1541014741259-de529411b96a?w=300&h=200&fit=crop&crop=center' },
+        { name: 'Pickles', image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=300&h=200&fit=crop&crop=center' },
+        { name: 'Soups', image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=300&h=200&fit=crop&crop=center' },
+        { name: 'Sauces', image: 'https://images.unsplash.com/photo-1472476443507-c7a5948772fc?w=300&h=200&fit=crop&crop=center' },
+        { name: 'Others', image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300&h=200&fit=crop&crop=center' }
+      ]
+    },
+    {
+      id: 'desserts',
+      name: 'Desserts',
+      icon: Cake,
+      image: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&h=300&fit=crop&crop=center',
+      subcategories: [
+        { name: 'Traditional', image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=300&h=200&fit=crop&crop=center' },
+        { name: 'Western', image: 'https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=300&h=200&fit=crop&crop=center' },
+        { name: 'Pastries', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300&h=200&fit=crop&crop=center' },
+        { name: 'Ice Cream', image: 'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=300&h=200&fit=crop&crop=center' },
+        { name: 'Others', image: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=300&h=200&fit=crop&crop=center' }
+      ]
+    },
+    {
+      id: 'drinks',
+      name: 'Drinks',
+      icon: Coffee,
+      image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&h=300&fit=crop&crop=center',
+      subcategories: [
+        { name: 'Detox', image: 'https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=300&h=200&fit=crop&crop=center' },
+        { name: 'Cocktails', image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=300&h=200&fit=crop&crop=center' },
+        { name: 'Alcoholic', image: 'https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=300&h=200&fit=crop&crop=center' },
+        { name: 'Hot Drinks', image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=300&h=200&fit=crop&crop=center' },
+        { name: 'Others', image: 'https://images.unsplash.com/photo-1506619216599-9d16d0903dfd?w=300&h=200&fit=crop&crop=center' }
+      ]
+    },
+  ];
+
+  const FILTER_OPTIONS = {
+    dietary: ['Normal', 'Healthy', 'Vegetarian', 'Vegan', 'Gluten-Free'],
+    cookingTime: ['Under 30 mins', '30-60 mins', '1-2 hours', 'Over 2 hours'],
+    difficulty: ['Beginner', 'Intermediate', 'Expert'],
+    cuisine: ['Levant', 'Italian', 'Mexican', 'Chinese', 'Indian', 'American'],
+  };
+
+  const PANTRY_ITEMS: PantryItem[] = [
+    { id: '1', name: 'Flour', quantity: '1', unit: 'kg' },
+    { id: '2', name: 'Sugar', quantity: '500', unit: 'g' },
+    { id: '3', name: 'Eggs', quantity: '6', unit: 'pcs' },
+    { id: '4', name: 'Milk', quantity: '1', unit: 'liter' },
+    { id: '5', name: 'Chicken Breast', quantity: '500', unit: 'g' },
+    { id: '6', name: 'Spinach', quantity: '200', unit: 'g' },
+  ];
+
+  // State
+  const [currentStep, setCurrentStep] = useState(1);
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
+  const [filters, setFilters] = useState<Filters>({
     dietary: '',
     cookingTime: '',
     difficulty: '',
-    cuisine: ''
+    cuisine: '',
   });
+  const [addedIngredients, setAddedIngredients] = useState<Ingredient[]>([]);
 
-  const handleAddIngredient = (ingredient: string) => {
-    if (!selectedIngredients.includes(ingredient)) {
-      setSelectedIngredients([...selectedIngredients, ingredient]);
-    }
-  };
-
-  const handleRemoveIngredient = (ingredient: string) => {
-    setSelectedIngredients(selectedIngredients.filter(i => i !== ingredient));
-  };
-
-  const handleCategorySelect = (category: typeof categories[0]) => {
+  // Handlers
+  const handleCategorySelect = (category: any) => {
     setSelectedCategory(category);
     setCurrentStep(2);
   };
 
-  const handleSubcategorySelect = (subcategory: string) => {
-    setSelectedSubcategory(subcategory);
+  const handleSubcategorySelect = (subcategoryName: string) => {
+    setSelectedSubcategory(subcategoryName);
     setCurrentStep(3);
   };
 
-  const handleBack = () => {
-    if (currentStep === 2) {
-      setCurrentStep(1);
-      setSelectedCategory(null);
-    } else if (currentStep === 3) {
-      setCurrentStep(2);
-      setSelectedSubcategory(null);
-    } else {
-      setCurrentStep(0);
-    }
+  const handleFilterChange = (filterType: keyof Filters, value: string) => {
+    setFilters(prev => ({ ...prev, [filterType]: value }));
   };
 
-  const handleFilterChange = (filterType: keyof typeof filters, value: string) => {
-    setFilters(prev => ({
-      ...prev,
-      [filterType]: value
-    }));
+  const handleAddIngredient = (ingredient: Ingredient) => {
+    setAddedIngredients(prev => [...prev, ingredient]);
   };
 
-  const handleSearch = () => {
-    console.log('Searching with:', {
-      ingredients: selectedIngredients,
-      category: selectedCategory,
-      subcategory: selectedSubcategory,
-      filters
+  const handleAddPantryItem = (item: PantryItem) => {
+    const isAlreadyAdded = addedIngredients.some(ing => ing.name === item.name);
+    if (isAlreadyAdded) return;
+    setAddedIngredients(prev => [...prev, { ...item, source: 'pantry' as const }]);
+  };
+
+  const handleRemoveIngredient = (id: string) => {
+    setAddedIngredients(prev => prev.filter(ing => ing.id !== id));
+  };
+
+  const handleScanIngredients = () => {
+    toast({
+      title: "Scan Feature",
+      description: "Camera scanning feature will be implemented soon!",
     });
   };
 
-  const filteredRecipes = mockRecipes.filter(recipe => {
-    const matchesIngredients = selectedIngredients.length === 0 || 
-      selectedIngredients.some(ingredient => 
-        recipe.ingredients.some(recipeIngredient => 
-          recipeIngredient.name.toLowerCase().includes(ingredient.toLowerCase())
-        )
-      );
-    
-    const matchesDietary = filters.dietary === '' || recipe.categories.includes(filters.dietary);
-    const matchesDifficulty = filters.difficulty === '' || recipe.difficulty === filters.difficulty;
-    const matchesTime = filters.cookingTime === '' || 
-      (filters.cookingTime === 'Quick (under 30 min)' && recipe.prepTime + recipe.cookTime <= 30) ||
-      (filters.cookingTime === 'Medium (30-60 min)' && recipe.prepTime + recipe.cookTime > 30 && recipe.prepTime + recipe.cookTime <= 60) ||
-      (filters.cookingTime === 'Long (60+ min)' && recipe.prepTime + recipe.cookTime > 60);
+  const handleVoiceInput = () => {
+    toast({
+      title: "Voice Feature",
+      description: "Voice input feature will be implemented soon!",
+    });
+  };
 
-    return matchesIngredients && matchesDietary && matchesDifficulty && matchesTime;
-  });
+  const handleSearchRecipes = () => {
+    const searchData = {
+      category: selectedCategory?.name,
+      subcategory: selectedSubcategory,
+      filters,
+      ingredients: addedIngredients.map(ing => ({ name: ing.name, quantity: ing.quantity, unit: ing.unit })),
+    };
+    console.log('Searching recipes with:', searchData);
+    toast({
+      title: "Search Started",
+      description: "Looking for recipes with your criteria...",
+    });
+  };
 
-  const filterCount = Object.values(filters).filter(v => v !== '').length;
+  const renderStepIndicator = () => (
+    <div className="flex justify-center mb-6">
+      <div className="flex space-x-2">
+        {[1, 2, 3, 4].map((step) => (
+          <div
+            key={step}
+            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors ${
+              step <= currentStep
+                ? 'bg-wasfah-bright-teal text-white'
+                : 'bg-gray-200 text-gray-500'
+            }`}
+          >
+            {step}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
   return (
-    <>
-      <PageContainer
-        header={{
-          title: 'Find by Ingredients',
-          showBackButton: true,
-        }}
-        className="pb-20"
-      >
-        <div className="container px-4 py-4 space-y-6">
-          {currentStep === 0 && (
-            <>
-              {/* Ingredient Input */}
-              <Card className="border-wasfah-mint/20">
-                <CardContent className="p-4">
-                  <div className="flex space-x-2 mb-4">
-                    <div className="relative flex-1">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                      <Input
-                        placeholder="Add ingredients you have..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10"
-                        onKeyPress={(e) => {
-                          if (e.key === 'Enter' && searchQuery.trim()) {
-                            handleAddIngredient(searchQuery.trim());
-                            setSearchQuery('');
-                          }
-                        }}
-                      />
-                    </div>
-                    <Button
-                      onClick={() => {
-                        if (searchQuery.trim()) {
-                          handleAddIngredient(searchQuery.trim());
-                          setSearchQuery('');
-                        }
-                      }}
-                      className="bg-wasfah-bright-teal hover:bg-wasfah-teal"
-                      disabled={!searchQuery.trim()}
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
+    <PageContainer
+      header={{
+        title: 'Find Recipe',
+        showBackButton: true,
+      }}
+      className="bg-gradient-to-br from-wasfah-light-gray to-white min-h-screen"
+    >
+      <div className="space-y-6 pb-6">
+        {renderStepIndicator()}
 
-                  {/* Selected Ingredients */}
-                  {selectedIngredients.length > 0 && (
-                    <div className="space-y-2">
-                      <h3 className="text-sm font-medium text-gray-700">Selected Ingredients:</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedIngredients.map((ingredient) => (
-                          <Badge
-                            key={ingredient}
-                            variant="secondary"
-                            className="bg-wasfah-mint/20 text-wasfah-deep-teal hover:bg-wasfah-mint/30 cursor-pointer"
-                            onClick={() => handleRemoveIngredient(ingredient)}
-                          >
-                            {ingredient}
-                            <X className="h-3 w-3 ml-1" />
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+        <FilterPanel
+          filters={filters}
+          filterOptions={FILTER_OPTIONS}
+          showFilters={showFilters}
+          onFilterChange={handleFilterChange}
+          onToggleFilters={() => setShowFilters(!showFilters)}
+          onCloseFilters={() => setShowFilters(false)}
+        />
 
-                  <Button
-                    onClick={() => setCurrentStep(1)}
-                    className="w-full mt-4 bg-wasfah-bright-teal hover:bg-wasfah-teal"
-                  >
-                    Choose Category
-                  </Button>
-                </CardContent>
-              </Card>
-            </>
-          )}
+        {(currentStep === 1 || currentStep === 2) && (
+          <CategorySelector
+            categories={mainCategories}
+            selectedCategory={selectedCategory}
+            selectedSubcategory={selectedSubcategory}
+            currentStep={currentStep}
+            onCategorySelect={handleCategorySelect}
+            onSubcategorySelect={handleSubcategorySelect}
+            onBack={() => setCurrentStep(1)}
+          />
+        )}
 
-          {/* Category Selection Steps */}
-          {(currentStep === 1 || currentStep === 2) && (
-            <CategorySelector
-              categories={categories}
-              selectedCategory={selectedCategory}
-              selectedSubcategory={selectedSubcategory}
-              currentStep={currentStep}
-              onCategorySelect={handleCategorySelect}
-              onSubcategorySelect={handleSubcategorySelect}
-              onBack={handleBack}
+        {currentStep === 3 && (
+          <>
+            <IngredientManager
+              addedIngredients={addedIngredients}
+              pantryItems={PANTRY_ITEMS}
+              onAddIngredient={handleAddIngredient}
+              onRemoveIngredient={handleRemoveIngredient}
+              onAddPantryItem={handleAddPantryItem}
+              onScanIngredients={handleScanIngredients}
+              onVoiceInput={handleVoiceInput}
             />
-          )}
+            
+            <div className="pt-4">
+              <button
+                onClick={() => setCurrentStep(4)}
+                disabled={addedIngredients.length === 0}
+                className="w-full h-12 mt-6 bg-wasfah-bright-teal hover:bg-wasfah-teal text-white disabled:bg-gray-300 rounded-lg font-medium transition-colors"
+              >
+                Continue to Search
+              </button>
+            </div>
+          </>
+        )}
 
-          {/* Final Step - Filters and Search */}
-          {currentStep === 3 && (
-            <>
-              {/* Filter Panel */}
-              <FilterPanel
-                filters={filters}
-                filterOptions={filterOptions}
-                showFilters={showFilters}
-                onFilterChange={handleFilterChange}
-                onToggleFilters={() => setShowFilters(!showFilters)}
-                onCloseFilters={() => setShowFilters(false)}
-              />
-
-              {/* Search Summary */}
-              <SearchSummary
-                selectedCategory={selectedCategory}
-                selectedSubcategory={selectedSubcategory}
-                ingredientCount={selectedIngredients.length}
-                filterCount={filterCount}
-                onSearch={handleSearch}
-              />
-
-              {/* Recipe Results */}
-              {filteredRecipes.length > 0 ? (
-                <RecipeGrid recipes={filteredRecipes} />
-              ) : (
-                <Card className="p-8 text-center">
-                  <ChefHat className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No recipes found</h3>
-                  <p className="text-gray-600">
-                    Try adjusting your ingredients or filters to find more recipes.
-                  </p>
-                </Card>
-              )}
-            </>
-          )}
-        </div>
-      </PageContainer>
-      
-      {/* Mobile Bottom Navigation */}
-      <MobileNavbar />
-    </>
+        {currentStep === 4 && (
+          <SearchSummary
+            selectedCategory={selectedCategory}
+            selectedSubcategory={selectedSubcategory}
+            ingredientCount={addedIngredients.length}
+            filterCount={Object.values(filters).filter(v => v).length}
+            onSearch={handleSearchRecipes}
+          />
+        )}
+      </div>
+    </PageContainer>
   );
 }
