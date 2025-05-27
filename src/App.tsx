@@ -5,8 +5,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { RTLProvider } from "@/contexts/RTLContext";
-import Index from "./pages/Index";
-import HomePage from "./pages/HomePage";
 import NewHomePage from "./pages/NewHomePage";
 import MenuPage from "./pages/MenuPage";
 import RecipesPage from "./pages/RecipesPage";
@@ -18,7 +16,6 @@ import PantryPage from "./pages/PantryPage";
 import MealPlanPage from "./pages/MealPlanPage";
 import SearchPage from "./pages/SearchPage";
 import CommunityPage from "./pages/CommunityPage";
-import SettingsPage from "./pages/SettingsPage";
 import MainSettingsPage from "./pages/MainSettingsPage";
 import ProfilePage from "./pages/ProfilePage";
 import DietaryPreferencesPage from "./pages/DietaryPreferencesPage";
@@ -65,7 +62,6 @@ import AdminIngredientImagesManager from "./pages/admin/AdminIngredientImagesMan
 import AdminTranslationsManager from "./pages/admin/AdminTranslationsManager";
 import AdminContentLibrary from "./pages/admin/AdminContentLibrary";
 import { AdminAuthGuard } from "./components/admin/AdminAuthGuard";
-import { SuperAdminGuard } from "./components/admin/SuperAdminGuard";
 
 const queryClient = new QueryClient();
 
@@ -77,10 +73,11 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<Index />} />
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/new-home" element={<NewHomePage />} />
+            {/* Redirect root to new home page */}
+            <Route path="/" element={<Navigate to="/home" replace />} />
+            
+            {/* Main app routes */}
+            <Route path="/home" element={<NewHomePage />} />
             <Route path="/menu" element={<MenuPage />} />
             <Route path="/recipes" element={<RecipesPage />} />
             <Route path="/recipe/:id" element={<RecipeDetailPage />} />
@@ -91,8 +88,7 @@ const App = () => (
             <Route path="/meal-plan" element={<MealPlanPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/community" element={<CommunityPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/main-settings" element={<MainSettingsPage />} />
+            <Route path="/settings" element={<MainSettingsPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/dietary-preferences" element={<DietaryPreferencesPage />} />
             <Route path="/language-settings" element={<LanguageSettingsPage />} />
@@ -120,34 +116,60 @@ const App = () => (
             <Route path="/splash" element={<SplashScreen />} />
             <Route path="/shopping-list" element={<ShoppingListPage />} />
 
-            {/* Admin routes - only accessible to super admins */}
+            {/* Admin routes - accessible to both admin and super admin */}
             <Route path="/admin/login" element={<AdminLoginPage />} />
             <Route path="/admin/*" element={
-              <SuperAdminGuard>
-                <AdminAuthGuard>
-                  <Routes>
-                    <Route index element={<AdminDashboard />} />
-                    <Route path="users" element={<AdminUsers />} />
-                    <Route path="user-types" element={<AdminUserTypesManager />} />
-                    <Route path="recipes" element={<AdminRecipes />} />
-                    <Route path="ingredients" element={<div>Admin Ingredients</div>} />
-                    <Route path="ingredient-images" element={<AdminIngredientImagesManager />} />
-                    <Route path="translations" element={<AdminTranslationsManager />} />
-                    <Route path="subscriptions" element={<AdminSubscriptionManager />} />
-                    <Route path="accounting" element={<AdminAccountingManager />} />
-                    <Route path="rewards" element={<AdminRewardsManager />} />
-                    <Route path="languages" element={<AdminLanguageManager />} />
-                    <Route path="integrations" element={<AdminIntegrationsManager />} />
-                    <Route path="system" element={<AdminSystemMonitoring />} />
-                    <Route path="analytics" element={<div>Admin Analytics</div>} />
-                    <Route path="communications" element={<div>Admin Communications</div>} />
-                    <Route path="security" element={<div>Admin Security</div>} />
-                    <Route path="maintenance" element={<div>Admin Maintenance</div>} />
-                    <Route path="settings" element={<div>Admin Settings</div>} />
-                    <Route path="content-library" element={<AdminContentLibrary />} />
-                  </Routes>
-                </AdminAuthGuard>
-              </SuperAdminGuard>
+              <AdminAuthGuard>
+                <Routes>
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="users" element={<AdminUsers />} />
+                  <Route path="user-types" element={
+                    <AdminAuthGuard requireSuperAdmin={true}>
+                      <AdminUserTypesManager />
+                    </AdminAuthGuard>
+                  } />
+                  <Route path="recipes" element={<AdminRecipes />} />
+                  <Route path="ingredients" element={<div>Admin Ingredients</div>} />
+                  <Route path="ingredient-images" element={<AdminIngredientImagesManager />} />
+                  <Route path="translations" element={<AdminTranslationsManager />} />
+                  <Route path="subscriptions" element={<AdminSubscriptionManager />} />
+                  <Route path="accounting" element={
+                    <AdminAuthGuard requireSuperAdmin={true}>
+                      <AdminAccountingManager />
+                    </AdminAuthGuard>
+                  } />
+                  <Route path="rewards" element={<AdminRewardsManager />} />
+                  <Route path="languages" element={<AdminLanguageManager />} />
+                  <Route path="integrations" element={
+                    <AdminAuthGuard requireSuperAdmin={true}>
+                      <AdminIntegrationsManager />
+                    </AdminAuthGuard>
+                  } />
+                  <Route path="system" element={
+                    <AdminAuthGuard requireSuperAdmin={true}>
+                      <AdminSystemMonitoring />
+                    </AdminAuthGuard>
+                  } />
+                  <Route path="analytics" element={<div>Admin Analytics</div>} />
+                  <Route path="communications" element={<div>Admin Communications</div>} />
+                  <Route path="security" element={
+                    <AdminAuthGuard requireSuperAdmin={true}>
+                      <div>Admin Security</div>
+                    </AdminAuthGuard>
+                  } />
+                  <Route path="maintenance" element={
+                    <AdminAuthGuard requireSuperAdmin={true}>
+                      <div>Admin Maintenance</div>
+                    </AdminAuthGuard>
+                  } />
+                  <Route path="settings" element={
+                    <AdminAuthGuard requireSuperAdmin={true}>
+                      <div>Admin Settings</div>
+                    </AdminAuthGuard>
+                  } />
+                  <Route path="content-library" element={<AdminContentLibrary />} />
+                </Routes>
+              </AdminAuthGuard>
             } />
 
             {/* Fallback */}

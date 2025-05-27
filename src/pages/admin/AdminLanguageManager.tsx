@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -204,34 +205,34 @@ const AdminLanguageManager: React.FC = () => {
                 <CardHeader className="space-y-4">
                   <CardTitle>Manage Translations</CardTitle>
                   <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
-                      <div className="relative w-full md:w-auto md:flex-1">
-                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="Search translation keys..."
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          className="pl-8 border-gray-300 dark:border-gray-700 dark:bg-gray-800"
-                        />
-                      </div>
-                      <div className="flex-shrink-0">
-                        <Select 
-                          value={selectedLanguage}
-                          onValueChange={(value) => setSelectedLanguage(value)}
-                        >
-                          <SelectTrigger className="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800">
-                            <SelectValue placeholder="Select language" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
-                            {languages.filter(l => l.code !== 'en').map((lang) => (
-                              <SelectItem key={lang.id} value={lang.code}>
-                                {lang.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                    <div className="relative w-full md:w-auto md:flex-1">
+                      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search translation keys..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-8 border-gray-300 dark:border-gray-700 dark:bg-gray-800"
+                      />
                     </div>
-                  </CardHeader>
+                    <div className="flex-shrink-0">
+                      <Select 
+                        value={selectedLanguage}
+                        onValueChange={(value) => setSelectedLanguage(value)}
+                      >
+                        <SelectTrigger className="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800">
+                          <SelectValue placeholder="Select language" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
+                          {languages.filter(l => l.code !== 'en').map((lang) => (
+                            <SelectItem key={lang.id} value={lang.code}>
+                              {lang.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </CardHeader>
                 <CardContent>
                   <div className="overflow-x-auto">
                     <Table>
@@ -630,45 +631,22 @@ const AdminLanguageManager: React.FC = () => {
       {/* Admin Content */}
       <div className="col-span-1 md:col-span-4">
         <div className="space-y-6">
-          {/* Mobile Navigation for Admin Sections */}
+          {/* Mobile Tab Navigation for Admin Sections */}
           <div className="md:hidden">
-            <div className="grid grid-cols-4 gap-2 mb-4">
-              <Button 
-                variant={activeAdminTab === 'languages' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setActiveAdminTab('languages')}
-                className="flex flex-col items-center py-2"
-              >
-                <Globe className="h-4 w-4 mb-1" />
-                <span className="text-xs">Languages</span>
-              </Button>
-              <Button 
-                variant={activeAdminTab === 'settings' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setActiveAdminTab('settings')}
-                className="flex flex-col items-center py-2"
-              >
-                <Settings className="h-4 w-4 mb-1" />
-                <span className="text-xs">Settings</span>
-              </Button>
-              <Button 
-                variant={activeAdminTab === 'security' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setActiveAdminTab('security')}
-                className="flex flex-col items-center py-2"
-              >
-                <Shield className="h-4 w-4 mb-1" />
-                <span className="text-xs">Security</span>
-              </Button>
-              <Button 
-                variant="outline"
-                size="sm"
-                onClick={() => setActiveAdminTab('integrations')}
-                className="flex flex-col items-center py-2"
-              >
+            <TabsList className="w-full grid grid-cols-4 mb-4">
+              <TabsTrigger value="languages" onClick={() => setActiveAdminTab('languages')}>
+                <Globe className="h-4 w-4" />
+              </TabsTrigger>
+              <TabsTrigger value="settings" onClick={() => setActiveAdminTab('settings')}>
+                <Settings className="h-4 w-4" />
+              </TabsTrigger>
+              <TabsTrigger value="security" onClick={() => setActiveAdminTab('security')}>
+                <Shield className="h-4 w-4" />
+              </TabsTrigger>
+              <TabsTrigger value="more">
                 <span className="text-xs">More...</span>
-              </Button>
-            </div>
+              </TabsTrigger>
+            </TabsList>
           </div>
           
           {/* Page header */}
