@@ -14,11 +14,14 @@ interface RecommendedRecipesProps {
 }
 
 export const RecommendedRecipes: React.FC<RecommendedRecipesProps> = ({
-  recipes,
-  categories,
-  selectedCategory,
+  recipes = [],
+  categories = [],
+  selectedCategory = 'All',
   onSelectCategory
 }) => {
+  // Ensure categories is always an array
+  const safeCategories = Array.isArray(categories) ? categories : [];
+  
   return (
     <div className="mb-6 animate-fade-in">
       <div className="flex justify-between items-center mb-3">
@@ -31,7 +34,7 @@ export const RecommendedRecipes: React.FC<RecommendedRecipesProps> = ({
       </div>
       
       <CategoryFilters
-        categories={['All', ...categories]}
+        categories={['All', ...safeCategories]}
         selectedCategory={selectedCategory}
         onSelectCategory={onSelectCategory}
       />
