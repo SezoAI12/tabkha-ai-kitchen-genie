@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Award, Star, Gift, Medal, Trophy, Target, Clock, Sparkles, CheckCircle } from 'lucide-react'; // Added CheckCircle for completed achievements
+import { Award, Star, Gift, Medal, Trophy, Target, Clock, Sparkles, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
@@ -16,7 +16,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"; // Import AlertDialog components
+} from "@/components/ui/alert-dialog";
 
 // Sample rewards data
 const rewards = [
@@ -25,7 +25,7 @@ const rewards = [
     title: 'Premium Recipe Collection',
     description: 'Unlock 25 premium recipes from world-class chefs.',
     pointsCost: 500,
-    image: '/placeholder.svg',
+    image: '/placeholder.svg', // Ensure this image path is valid!
     isAvailable: true,
   },
   {
@@ -33,7 +33,7 @@ const rewards = [
     title: 'Ad-Free Experience',
     description: 'Enjoy WasfahAI without any advertisements for 30 days.',
     pointsCost: 750,
-    image: '/placeholder.svg',
+    image: '/placeholder.svg', // Ensure this image path is valid!
     isAvailable: true,
   },
   {
@@ -41,7 +41,7 @@ const rewards = [
     title: 'Chef consultation',
     description: '15-minute video call with a professional chef.',
     pointsCost: 2000,
-    image: '/placeholder.svg',
+    image: '/placeholder.svg', // Ensure this image path is valid!
     isAvailable: false,
   },
 ];
@@ -94,13 +94,13 @@ export default function LoyaltyProgramPage() {
   const { toast } = useToast();
   // Simulate user data
   const [userPoints, setUserPoints] = useState(850);
-  const [userLevel, setUserLevel] = useState('Gold Level');
-  const pointsToNextLevel = 1500 - userPoints;
+  const [userLevel, setUserLevel] = useState('Gold Level'); // Can be updated dynamically later
+  const pointsToNextLevel = 1500 - userPoints; // Assuming Platinum is 1500 for calculation
   const progressToNextLevel = (userPoints / 1500) * 100;
 
-  const handleRedeemReward = (reward) => {
+  const handleRedeemReward = (reward: typeof rewards[0]) => {
     if (userPoints >= reward.pointsCost) {
-      // In a real app, you'd send this to your backend
+      // In a real app, you'd send this to your backend to deduct points
       setUserPoints(prevPoints => prevPoints - reward.pointsCost);
       toast({
         title: "Reward Redeemed!",
@@ -119,31 +119,35 @@ export default function LoyaltyProgramPage() {
     <PageContainer header={{ title: 'Loyalty Program', showBackButton: true }}>
       <div className="space-y-6 pb-6">
         <section>
-          <Card className="border-wasfah-bright-teal">
+          {/* Changed border-wasfah-bright-teal to border-secondary for themeability */}
+          <Card className="border-secondary">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <div className="bg-gradient-to-br from-wasfah-deep-teal to-wasfah-bright-teal p-3 rounded-full mr-4">
+                  {/* Changed gradient colors to semantic ones */}
+                  <div className="bg-gradient-to-br from-primary to-secondary p-3 rounded-full mr-4">
                     <Award className="h-8 w-8 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-wasfah-deep-teal">{userLevel}</h2>
-                    <p className="text-sm text-gray-600">Member since April 2023</p>
+                    {/* Changed text-wasfah-deep-teal to text-primary */}
+                    <h2 className="text-xl font-bold text-primary">{userLevel}</h2>
+                    <p className="text-sm text-muted-foreground">Member since April 2023</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-wasfah-bright-teal">{userPoints}</div>
-                  <p className="text-sm text-gray-600">points</p>
+                  {/* Changed text-wasfah-bright-teal to text-secondary */}
+                  <div className="text-2xl font-bold text-secondary">{userPoints}</div>
+                  <p className="text-sm text-muted-foreground">points</p>
                 </div>
               </div>
 
               <div className="mt-6">
                 <div className="flex justify-between text-sm mb-2">
-                  <span>{userLevel}</span>
-                  <span>Platinum Level (1,500 pts)</span>
+                  <span className="text-foreground">{userLevel}</span> {/* Added text-foreground */}
+                  <span className="text-foreground">Platinum Level (1,500 pts)</span> {/* Added text-foreground */}
                 </div>
                 <Progress value={progressToNextLevel} className="h-2" />
-                <p className="text-xs text-center mt-1 text-gray-600">
+                <p className="text-xs text-center mt-1 text-muted-foreground">
                   {pointsToNextLevel > 0 ? `${pointsToNextLevel} more points to reach Platinum` : "You've reached Platinum Level!"}
                 </p>
               </div>
@@ -166,8 +170,10 @@ export default function LoyaltyProgramPage() {
 
             <TabsContent value="rewards" className="mt-4 space-y-4">
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-bold text-wasfah-deep-teal">Available Rewards</h3>
-                <span className="text-sm font-medium text-wasfah-bright-teal">{userPoints} points available</span>
+                {/* Changed text-wasfah-deep-teal to text-primary */}
+                <h3 className="text-lg font-bold text-primary">Available Rewards</h3>
+                {/* Changed text-wasfah-bright-teal to text-secondary */}
+                <span className="text-sm font-medium text-secondary">{userPoints} points available</span>
               </div>
 
               <div className="grid gap-4">
@@ -183,20 +189,21 @@ export default function LoyaltyProgramPage() {
                       </div>
                       <div className="flex-1 flex flex-col p-4">
                         <CardHeader className="p-0 pb-2">
-                          <CardTitle className="text-base">{reward.title}</CardTitle>
+                          <CardTitle className="text-base text-foreground">{reward.title}</CardTitle> {/* Added text-foreground */}
                         </CardHeader>
                         <CardContent className="p-0 pb-2 flex-1">
-                          <p className="text-sm text-gray-600">{reward.description}</p>
+                          <p className="text-sm text-muted-foreground">{reward.description}</p> {/* Added text-muted-foreground */}
                         </CardContent>
                         <CardFooter className="p-0 flex justify-between items-center">
                           <div className="flex items-center">
                             <Star className="h-4 w-4 text-yellow-500 mr-1" />
-                            <span className="font-medium">{reward.pointsCost} points</span>
+                            <span className="font-medium text-foreground">{reward.pointsCost} points</span> {/* Added text-foreground */}
                           </div>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button
-                                className="bg-wasfah-bright-teal hover:bg-wasfah-teal"
+                                {/* Changed bg-wasfah-bright-teal hover:bg-wasfah-teal to semantic colors */}
+                                className="bg-secondary hover:bg-primary"
                                 disabled={!reward.isAvailable || userPoints < reward.pointsCost}
                               >
                                 Redeem
@@ -227,15 +234,15 @@ export default function LoyaltyProgramPage() {
 
             <TabsContent value="achievements" className="mt-4 space-y-4">
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-bold text-wasfah-deep-teal">Your Achievements</h3>
-                <span className="text-sm font-medium text-gray-600">Earn points with achievements</span>
+                {/* Changed text-wasfah-deep-teal to text-primary */}
+                <h3 className="text-lg font-bold text-primary">Your Achievements</h3>
+                <span className="text-sm font-medium text-muted-foreground">Earn points with achievements</span> {/* Added text-muted-foreground */}
               </div>
 
               <div className="grid gap-3">
                 {achievements.map((achievement) => {
                   const isCompleted = achievement.progress === 100;
 
-                  // Choose icon based on achievement type
                   let AchievementIcon;
                   switch (achievement.icon) {
                     case 'chef': AchievementIcon = Medal; break;
@@ -251,26 +258,26 @@ export default function LoyaltyProgramPage() {
                         <div className="flex items-start">
                           <div className={`p-3 rounded-full mr-4 ${
                             isCompleted
-                              ? 'bg-gradient-to-br from-wasfah-deep-teal to-wasfah-bright-teal'
-                              : 'bg-gray-100'
+                              ? 'bg-gradient-to-br from-primary to-secondary' // Changed gradient colors
+                              : 'bg-muted' // Changed bg-gray-100 to bg-muted
                           }`}>
                             {isCompleted ? (
                               <CheckCircle className="h-5 w-5 text-white" />
                             ) : (
-                              <AchievementIcon className="h-5 w-5 text-gray-400" />
+                              <AchievementIcon className="h-5 w-5 text-muted-foreground" /> // Changed text-gray-400 to text-muted-foreground
                             )}
                           </div>
                           <div className="flex-1">
                             <div className="flex justify-between items-center mb-1">
-                              <h4 className="font-semibold">{achievement.title}</h4>
-                              <div className="text-sm font-medium text-wasfah-bright-teal">
+                              <h4 className="font-semibold text-foreground">{achievement.title}</h4> {/* Added text-foreground */}
+                              <div className="text-sm font-medium text-secondary"> {/* Changed text-wasfah-bright-teal to text-secondary */}
                                 {achievement.pointsAwarded} pts
                               </div>
                             </div>
-                            <p className="text-sm text-gray-600 mb-2">{achievement.description}</p>
+                            <p className="text-sm text-muted-foreground mb-2">{achievement.description}</p> {/* Added text-muted-foreground */}
 
                             <div className="space-y-1">
-                              <div className="flex justify-between text-xs">
+                              <div className="flex justify-between text-xs text-muted-foreground"> {/* Added text-muted-foreground */}
                                 <span>{Math.floor(achievement.progress / 100 * achievement.total)} of {achievement.total}</span>
                                 <span>{achievement.progress}%</span>
                               </div>
@@ -278,7 +285,7 @@ export default function LoyaltyProgramPage() {
                             </div>
 
                             {achievement.dateEarned && (
-                              <div className="mt-1 text-xs text-gray-500">
+                              <div className="mt-1 text-xs text-muted-foreground"> {/* Changed text-gray-500 to text-muted-foreground */}
                                 Completed on {new Date(achievement.dateEarned).toLocaleDateString()}
                               </div>
                             )}
