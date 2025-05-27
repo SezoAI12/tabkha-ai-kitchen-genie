@@ -1,208 +1,455 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Search, X, ChefHat } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  ShoppingBag, Plus, Trash2, FileText, Share2, Search, Copy, Filter,
+  Apple, Carrot, Fish, Bread, Milk, Egg, Cheese, Wine, Coffee, Leaf, Droplet, Candy, Cake, Utensils
+} from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useRTL } from '@/contexts/RTLContext';
-import { supabase } from '@/integrations/supabase/client';
+import { motion, AnimatePresence } from 'framer-motion';
 
-interface IngredientImage {
-  id: string;
-  name: string;
-  image_url: string;
-  category: string;
-}
+// Sample shopping list data
+const initialItems = [
+  { id: '1', name: 'Chicken breast', quantity: 500, unit: 'g', category: 'Meat', checked: false, dateAdded: new Date() },
+  { id: '2', name: 'Olive oil', quantity: 1, unit: 'bottle', category: 'Oils', checked: false, dateAdded: new Date() },
+  { id: '3', name: 'Garlic', quantity: 5, unit: 'cloves', category: 'Vegetables', checked: false, dateAdded: new Date() },
+  { id: '4', name: 'Onions', quantity: 2, unit: '', category: 'Vegetables', checked: true, dateAdded: new Date() },
+  { id: '5', name: 'Rice', quantity: 1, unit: 'kg', category: 'Grains', checked: false, dateAdded: new Date() },
+  { id: '6', name: 'Tomatoes', quantity: 4, unit: '', category: 'Vegetables', checked: false, dateAdded: new Date() },
+  { id: '7', name: 'Greek yogurt', quantity: 500, unit: 'g', category: 'Dairy', checked: true, dateAdded: new Date() },
+  { id: '8', name: 'Lemons', quantity: 3, unit: '', category: 'Fruits', checked: false, dateAdded: new Date() },
+];
 
-interface SelectedIngredient {
-  id: string;
-  name: string;
-}
+// Mapping of categories to icons
+const categoryIcons = {
+  'Meat': <Utensils className="h-4 w-4" />,
+  'Oils': <Droplet className="h-4 w-4" />,
+  'Vegetables': <Carrot className="h-4 w-4" />,
+  'Grains': <Bread className="h-4 w-4" />,
+  'Dairy': <Milk className="h-4 w-4" />,
+  'Fruits': <Apple className="h-4 w-4" />,
+  'Other': <Leaf className="h-4 w-4" />,
+};
 
-export default function FindByIngredientsPage() {
+export default function ShoppingListPage() {
   const { toast } = useToast();
-  const { t } = useRTL();
-  const [availableIngredients, setAvailableIngredients] = useState<IngredientImage[]>([]);
-  const [selectedIngredients, setSelectedIngredients] = useState<SelectedIngredient[]>([]);
+  const [items, setItems] = useState(initialItems);
+  const [newItemName, setNewItemName] = useState('');
+  const [newItemQuantity, setNewItemQuantity] = useState('');
+  const [newItemUnit, setNewItemUnit] = useState('');
+  const [newItemCategory, setNewItemCategory] = useState('Other');
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [editingItemId, setEditingItemId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [sortOption, setSortOption] = useState('name');
 
-  useEffect(() => {
-    fetchIngredients();
-  }, []);
+  const categories = [...new Set(items.map(item => item.category))].sort();
 
-  const fetchIngredients = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('ingredient_images')
-        .select('*')
-        .order('name');
+  const handleCheck = (id) => {
+    setItems(items.map(item =>
+      item.id === id ? { ...item, checked: !item.checked } : item
+    ));
+  };
 
-      if (error) throw error;
-      setAvailableIngredients(data || []);
-    } catch (error) {
-      console.error('Error fetching ingredients:', error);
+  const handleAddItem = (e) => {
+    e.preventDefault();
+
+    if (!newItemName.trim()) {
       toast({
         title: "Error",
-        description: "Failed to load ingredients",
+        description: "Please enter an item name",
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
+      return;
     }
-  };
 
-  const addIngredient = (ingredient: IngredientImage) => {
-    if (!selectedIngredients.find(item => item.id === ingredient.id)) {
-      setSelectedIngredients([...selectedIngredients, {
-        id: ingredient.id,
-        name: ingredient.name
-      }]);
-    }
-  };
+    const newItem = {
+      id: Date.now().toString(),
+      name: newItemName.trim(),
+      quantity: Number(newItemQuantity) || 1,
+      unit: newItemUnit.trim(),
+      category: newItemCategory,
+      checked: false,
+      dateAdded: new Date(),
+    };
 
-  const removeIngredient = (id: string) => {
-    setSelectedIngredients(selectedIngredients.filter(item => item.id !== id));
-  };
+    setItems([newItem, ...items]);
+    setNewItemName('');
+    setNewItemQuantity('');
+    setNewItemUnit('');
+    setNewItemCategory('Other');
+    setShowAddForm(false);
 
-  const findRecipes = () => {
     toast({
-      title: t("Searching Recipes", "البحث عن الوصفات"),
-      description: t(
-        `Found recipes using ${selectedIngredients.length} ingredients`, 
-        `تم العثور على وصفات باستخدام ${selectedIngredients.length} مكونات`
-      ),
+      title: "Item added",
+      description: `${newItem.name} added to your shopping list.`,
     });
   };
 
-  const filteredIngredients = availableIngredients.filter(ingredient =>
-    ingredient.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-    !selectedIngredients.find(selected => selected.id === ingredient.id)
+  const handleRemoveChecked = () => {
+    const checkedItems = items.filter(item => item.checked);
+    if (checkedItems.length === 0) {
+      toast({
+        title: "No items selected",
+        description: "Please check items to remove.",
+      });
+      return;
+    }
+
+    setItems(items.filter(item => !item.checked));
+    toast({
+      title: "Items removed",
+      description: `${checkedItems.length} item(s) removed from your list.`,
+    });
+  };
+
+  const handleClearAll = () => {
+    setItems([]);
+    toast({
+      title: "List cleared",
+      description: "All items have been removed from your list.",
+    });
+  };
+
+  const handleDuplicateList = () => {
+    const duplicatedItems = items.map(item => ({
+      ...item,
+      id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
+    }));
+    setItems([...items, ...duplicatedItems]);
+    toast({
+      title: "List duplicated",
+      description: "Your shopping list has been duplicated.",
+    });
+  };
+
+  const handleEditItem = (id) => {
+    const itemToEdit = items.find(item => item.id === id);
+    if (itemToEdit) {
+      setEditingItemId(id);
+      setNewItemName(itemToEdit.name);
+      setNewItemQuantity(itemToEdit.quantity);
+      setNewItemUnit(itemToEdit.unit);
+      setNewItemCategory(itemToEdit.category);
+    }
+  };
+
+  const handleUpdateItem = (e) => {
+    e.preventDefault();
+
+    if (!newItemName.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter an item name",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setItems(items.map(item =>
+      item.id === editingItemId
+        ? {
+            ...item,
+            name: newItemName.trim(),
+            quantity: Number(newItemQuantity) || 1,
+            unit: newItemUnit.trim(),
+            category: newItemCategory,
+          }
+        : item
+    ));
+
+    setEditingItemId(null);
+    setNewItemName('');
+    setNewItemQuantity('');
+    setNewItemUnit('');
+    setNewItemCategory('Other');
+    setShowAddForm(false);
+
+    toast({
+      title: "Item updated",
+      description: "Your item has been updated.",
+    });
+  };
+
+  const handleSortChange = (option) => {
+    setSortOption(option);
+  };
+
+  const sortedItems = [...items].sort((a, b) => {
+    if (sortOption === 'name') {
+      return a.name.localeCompare(b.name);
+    } else if (sortOption === 'category') {
+      return a.category.localeCompare(b.category);
+    } else if (sortOption === 'checked') {
+      return a.checked === b.checked ? 0 : a.checked ? 1 : -1;
+    }
+    return 0;
+  });
+
+  const filteredItems = sortedItems.filter(item =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const groupedIngredients = filteredIngredients.reduce((acc, ingredient) => {
-    const category = ingredient.category || 'other';
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(ingredient);
-    return acc;
-  }, {} as Record<string, IngredientImage[]>);
-
-  if (loading) {
-    return (
-      <PageContainer header={{ title: t('Find by Ingredients', 'البحث بالمكونات'), showBackButton: true }}>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-wasfah-bright-teal mx-auto"></div>
-            <p className="mt-2 text-gray-500">Loading ingredients...</p>
+  return (
+    <PageContainer header={{ title: 'Shopping List', showBackButton: true }}>
+      <div className="space-y-4 pb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <ShoppingBag className="h-5 w-5 text-wasfah-bright-teal mr-2" />
+            <h2 className="text-lg font-bold text-wasfah-deep-teal">My Shopping List</h2>
+          </div>
+          <div className="flex space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center"
+            >
+              <Share2 className="h-4 w-4 mr-1" />
+              Share
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center"
+            >
+              <FileText className="h-4 w-4 mr-1" />
+              Lists
+            </Button>
           </div>
         </div>
-      </PageContainer>
-    );
-  }
 
-  return (
-    <PageContainer header={{ title: t('Find by Ingredients', 'البحث بالمكونات'), showBackButton: true }}>
-      <div className="space-y-6 pb-6">
-        <Card className="bg-gradient-to-r from-wasfah-light-mint to-wasfah-light-gray/30">
-          <CardContent className="p-6 text-center">
-            <ChefHat className="h-12 w-12 mx-auto mb-4 text-wasfah-bright-teal" />
-            <h2 className="text-xl font-bold mb-2 text-wasfah-deep-teal">
-              {t('Find by Ingredients', 'البحث بالمكونات')}
-            </h2>
-            <p className="text-gray-600">
-              {t('Select ingredients to find recipes', 'اختر المكونات للعثور على الوصفات')}
-            </p>
-          </CardContent>
-        </Card>
-
-        {selectedIngredients.length > 0 && (
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-semibold mb-3 text-wasfah-deep-teal">
-                {t('Selected Ingredients', 'المكونات المختارة')} ({selectedIngredients.length})
-              </h3>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {selectedIngredients.map((ingredient) => (
-                  <Badge
-                    key={ingredient.id}
-                    variant="secondary"
-                    className="bg-wasfah-bright-teal text-white hover:bg-wasfah-teal cursor-pointer"
-                    onClick={() => removeIngredient(ingredient.id)}
-                  >
-                    {ingredient.name}
-                    <X className="h-3 w-3 ml-1" />
-                  </Badge>
-                ))}
-              </div>
+        <Card className="p-4">
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm text-gray-600">{items.length} items ({items.filter(i => i.checked).length} checked)</p>
+            <div className="flex space-x-2">
               <Button
-                onClick={findRecipes}
-                className="w-full bg-wasfah-bright-teal hover:bg-wasfah-teal"
-                disabled={selectedIngredients.length === 0}
+                variant="outline"
+                size="sm"
+                className="text-red-500 border-red-200 hover:bg-red-50"
+                onClick={handleRemoveChecked}
               >
-                <Search className="h-4 w-4 mr-2" />
-                {t('Find Recipes', 'البحث عن الوصفات')}
+                <Trash2 className="h-4 w-4 mr-1" />
+                Clear Checked
               </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        <div className="relative">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder={t('Search ingredients...', 'البحث عن المكونات...')}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="font-semibold text-wasfah-deep-teal">
-            {t('Available Ingredients', 'المكونات المتاحة')}
-          </h3>
-          
-          {Object.entries(groupedIngredients).map(([category, ingredients]) => (
-            <div key={category}>
-              <h4 className="font-medium text-gray-700 mb-2 capitalize">{category}</h4>
-              <div className="grid grid-cols-2 gap-3">
-                {ingredients.map((ingredient) => (
-                  <Card
-                    key={ingredient.id}
-                    className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
-                    onClick={() => addIngredient(ingredient)}
-                  >
-                    <div className="aspect-square bg-gray-100">
-                      <img
-                        src={ingredient.image_url}
-                        alt={ingredient.name}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </div>
-                    <CardContent className="p-2">
-                      <p className="font-medium text-sm text-center">{ingredient.name}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-red-500 border-red-200 hover:bg-red-50"
+                onClick={handleClearAll}
+              >
+                <Trash2 className="h-4 w-4 mr-1" />
+                Clear All
+              </Button>
+              <Button
+                size="sm"
+                className="bg-wasfah-bright-teal hover:bg-wasfah-teal"
+                onClick={() => setShowAddForm(!showAddForm)}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add Item
+              </Button>
+              <Button
+                size="sm"
+                className="bg-wasfah-bright-teal hover:bg-wasfah-teal"
+                onClick={handleDuplicateList}
+              >
+                <Copy className="h-4 w-4 mr-1" />
+                Duplicate List
+              </Button>
             </div>
-          ))}
-        </div>
+          </div>
 
-        {filteredIngredients.length === 0 && !loading && (
-          <Card>
-            <CardContent className="p-8 text-center">
-              <p className="text-gray-500">
-                {t('No ingredients found', 'لم يتم العثور على مكونات')}
-              </p>
-            </CardContent>
-          </Card>
-        )}
+          {showAddForm && (
+            <form onSubmit={editingItemId ? handleUpdateItem : handleAddItem} className="mb-4 p-3 bg-wasfah-light-gray rounded-md">
+              <div className="grid grid-cols-12 gap-2">
+                <div className="col-span-6">
+                  <Input
+                    placeholder="Item name"
+                    value={newItemName}
+                    onChange={(e) => setNewItemName(e.target.value)}
+                    className="h-9"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <Input
+                    placeholder="Quantity"
+                    type="number"
+                    value={newItemQuantity}
+                    onChange={(e) => setNewItemQuantity(e.target.value)}
+                    className="h-9"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <Input
+                    placeholder="Unit"
+                    value={newItemUnit}
+                    onChange={(e) => setNewItemUnit(e.target.value)}
+                    className="h-9"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <Select value={newItemCategory} onValueChange={setNewItemCategory}>
+                    <SelectTrigger className="h-9">
+                      <SelectValue placeholder="Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map(category => (
+                        <SelectItem key={category} value={category}>{category}</SelectItem>
+                      ))}
+                      <SelectItem value="Other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="flex justify-end mt-2 space-x-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setShowAddForm(false);
+                    setEditingItemId(null);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  size="sm"
+                  className="bg-wasfah-bright-teal hover:bg-wasfah-teal"
+                >
+                  {editingItemId ? 'Update' : 'Add'}
+                </Button>
+              </div>
+            </form>
+          )}
+
+          <div className="flex items-center space-x-2 mb-4">
+            <div className="relative flex-grow">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+              <Input
+                placeholder="Search items..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+            <Select value={sortOption} onValueChange={handleSortChange}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="name">Name</SelectItem>
+                <SelectItem value="category">Category</SelectItem>
+                <SelectItem value="checked">Checked Status</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Tabs defaultValue="all">
+            <TabsList className="grid grid-cols-2 mb-4">
+              <TabsTrigger value="all">All Items</TabsTrigger>
+              <TabsTrigger value="byCategory">By Category</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="all" className="space-y-1">
+              <AnimatePresence>
+                {filteredItems.map(item => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className={`flex items-center justify-between p-3 rounded-md ${
+                      item.checked ? 'bg-gray-50 text-gray-500' : 'bg-white'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <Checkbox
+                        checked={item.checked}
+                        onCheckedChange={() => handleCheck(item.id)}
+                        className="h-5 w-5"
+                      />
+                      <div className="flex items-center">
+                        <div className="mr-2">
+                          {categoryIcons[item.category] || <Leaf className="h-4 w-4" />}
+                        </div>
+                        <div className={item.checked ? 'line-through' : ''}>
+                          <div className="font-medium">{item.name}</div>
+                          <div className="text-xs text-gray-500">
+                            {item.quantity} {item.unit} • {item.category} • Added: {item.dateAdded.toLocaleDateString()}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEditItem(item.id)}
+                    >
+                      Edit
+                    </Button>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </TabsContent>
+
+            <TabsContent value="byCategory" className="space-y-4">
+              {categories.map(category => {
+                const categoryItems = filteredItems.filter(item => item.category === category);
+                return (
+                  <div key={category}>
+                    <h3 className="font-semibold text-wasfah-deep-teal mb-2 flex items-center">
+                      {categoryIcons[category] || <Leaf className="h-4 w-4 mr-1" />}
+                      {category}
+                    </h3>
+                    <div className="space-y-1">
+                      <AnimatePresence>
+                        {categoryItems.map(item => (
+                          <motion.div
+                            key={item.id}
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            className={`flex items-center justify-between p-3 rounded-md ${
+                              item.checked ? 'bg-gray-50 text-gray-500' : 'bg-white'
+                            }`}
+                          >
+                            <div className="flex items-center space-x-3">
+                              <Checkbox
+                                checked={item.checked}
+                                onCheckedChange={() => handleCheck(item.id)}
+                                className="h-5 w-5"
+                              />
+                              <div className={item.checked ? 'line-through' : ''}>
+                                <div className="font-medium">{item.name}</div>
+                                <div className="text-xs text-gray-500">
+                                  {item.quantity} {item.unit} • Added: {item.dateAdded.toLocaleDateString()}
+                                </div>
+                              </div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEditItem(item.id)}
+                            >
+                              Edit
+                            </Button>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                  </div>
+                );
+              })}
+            </TabsContent>
+          </Tabs>
+        </Card>
       </div>
     </PageContainer>
   );
