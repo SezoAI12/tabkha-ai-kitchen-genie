@@ -1,18 +1,20 @@
-// src/components/layout/PageContainer.tsx
+
 import React from 'react';
-import { Button } from '@/components/ui/button'; // Assuming you have this button component
-import { ArrowLeft } from 'lucide-react'; // For the back button icon
-import { useNavigate } from 'react-router-dom'; // For navigation
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface PageContainerHeaderProps {
   title: string;
   showBackButton?: boolean;
-  // You can add more header-related props here if needed, e.g., actions, search, etc.
+  actions?: React.ReactNode;
+  showLogo?: boolean;
+  showSearch?: boolean;
 }
 
 interface PageContainerProps {
   children: React.ReactNode;
-  header?: PageContainerHeaderProps; // Making header optional
+  header?: PageContainerHeaderProps;
   className?: string;
 }
 
@@ -20,7 +22,7 @@ export function PageContainer({ children, header, className }: PageContainerProp
   const navigate = useNavigate();
 
   const handleGoBack = () => {
-    navigate(-1); // Navigates back one step in browser history
+    navigate(-1);
   };
 
   return (
@@ -39,7 +41,11 @@ export function PageContainer({ children, header, className }: PageContainerProp
               </Button>
             )}
             <h1 className="text-lg font-semibold">{header.title}</h1>
-            {/* Add more header elements here if needed, e.g., search or other actions */}
+            {header.actions && (
+              <div className="ml-auto">
+                {header.actions}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -49,3 +55,5 @@ export function PageContainer({ children, header, className }: PageContainerProp
     </div>
   );
 }
+
+export default PageContainer;
