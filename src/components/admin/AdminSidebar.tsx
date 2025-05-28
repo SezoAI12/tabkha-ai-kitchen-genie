@@ -25,7 +25,7 @@ import {
 import { cn } from '@/lib/utils';
 import { WasfahLogo } from '../icons/WasfahLogo';
 import { AdminLogoutLink } from './AdminLogoutLink';
-import { getAdminRole, isSuperAdminAuthenticated } from '@/lib/adminAuth';
+import { getAdminRole, isAdminAuthenticated } from '@/lib/adminAuth';
 
 interface SidebarItemProps {
   icon: React.ElementType;
@@ -36,40 +36,42 @@ interface SidebarItemProps {
 }
 
 const SidebarItem = ({ icon: Icon, label, href, isActive, requireSuperAdmin = false }: SidebarItemProps) => {
-  const isSuperAdmin = isSuperAdminAuthenticated();
   const adminRole = getAdminRole();
+  const isSuperAdmin = adminRole === 'superadmin';
   
-  // Show basic items to all authenticated admins
-  if (!requireSuperAdmin || isSuperAdmin) {
-    return (
-      <Link
-        to={href}
-        className={cn(
-          'flex items-center gap-3 px-3 py-2 rounded-md transition-colors hover:bg-slate-700/50 text-white/90 hover:text-white',
-          isActive && 'bg-slate-700/70 text-white',
-          requireSuperAdmin && 'border-l-2 border-yellow-400'
-        )}
-      >
-        <Icon className="h-5 w-5" />
-        <span className="text-sm font-medium">{label}</span>
-        {requireSuperAdmin && <Crown className="h-4 w-4 text-yellow-400 ml-auto" />}
-      </Link>
-    );
+  // Show basic items to all authenticated admins, super admin items only to super admins
+  if (requireSuperAdmin && !isSuperAdmin) {
+    return null;
   }
   
-  return null;
+  return (
+    <Link
+      to={href}
+      className={cn(
+        'flex items-center gap-3 px-3 py-2 rounded-md transition-colors hover:bg-slate-700/50 text-white/90 hover:text-white',
+        isActive && 'bg-slate-700/70 text-white',
+        requireSuperAdmin && 'border-l-2 border-yellow-400'
+      )}
+    >
+      <Icon className="h-5 w-5" />
+      <span className="text-sm font-medium">{label}</span>
+      {requireSuperAdmin && <Crown className="h-4 w-4 text-yellow-400 ml-auto" />}
+    </Link>
+  );
 };
 
 export const AdminSidebar = () => {
   const location = useLocation();
   const pathname = location.pathname;
   const adminRole = getAdminRole();
-  const isSuperAdmin = isSuperAdminAuthenticated();
+  const isAuthenticated = isAdminAuthenticated();
 
   // Show sidebar for all authenticated admins
-  if (!adminRole) {
+  if (!isAuthenticated || !adminRole) {
     return null;
   }
+
+  const isSuperAdmin = adminRole === 'superadmin';
 
   const mainItems = [
     { icon: LayoutDashboard, label: 'Dashboard', href: '/admin' },
@@ -78,6 +80,7 @@ export const AdminSidebar = () => {
     { icon: ShoppingBag, label: 'Ingredients', href: '/admin/ingredients' },
     { icon: Image, label: 'Ingredient Images', href: '/admin/ingredient-images' },
     { icon: Globe, label: 'Translations', href: '/admin/translations' },
+    { icon: Languages, label: 'String Manager', href: '/admin/strings' },
     { icon: CreditCard, label: 'Subscriptions', href: '/admin/subscriptions' },
     { icon: Award, label: 'Rewards', href: '/admin/rewards' },
     { icon: Languages, label: 'Languages', href: '/admin/languages' },
@@ -94,11 +97,11 @@ export const AdminSidebar = () => {
   ];
 
   return (
-    <div className="w-64 hidden md:flex flex-col h-screen bg-gray-900 border-r dark:border-gray-700 sticky top-0">
+    <div className="w-64 flex flex-col h-screen bg-gray-900 border-r dark:border-gray-700 sticky top-0">
       <div className="p-4 flex items-center">
         <WasfahLogo className="h-8 w-8" />
         <span className="ml-2 font-bold text-xl text-white">Wasfah Admin</span>
-        {adminRole === 'superadmin' && (
+        {isSuperAdmin && (
           <Crown className="h-5 w-5 text-yellow-400 ml-2" />
         )}
       </div>
@@ -121,17 +124,17 @@ export const AdminSidebar = () => {
           <div className="flex items-center">
             <div className={cn(
               "w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold",
-              adminRole === 'superadmin' ? 'bg-yellow-500' : 'bg-wasfah-bright-teal'
+              isSuperAdmin ? 'bg-yellow-500' : 'bg-wasfah-bright-teal'
             )}>
-              {adminRole === 'superadmin' ? 'SA' : 'A'}
+              {isSuperAdmin ? 'SA' : 'A'}
             </div>
             <div className="ml-3">
               <p className="text-sm font-medium text-white flex items-center">
-                {adminRole === 'superadmin' ? 'Super Admin' : 'Admin User'}
-                {adminRole === 'superadmin' && <Crown className="h-4 w-4 text-yellow-400 ml-1" />}
+                {isSuperAdmin ? 'Super Admin' : 'Admin User'}
+                {isSuperAdmin && <Crown className="h-4 w-4 text-yellow-400 ml-1" />}
               </p>
               <p className="text-xs text-gray-300">
-                {adminRole === 'superadmin' ? 'superadmin@wasfahai.com' : 'admin@wasfahai.com'}
+                {isSuperAdmin ? 'superadmin@wasfahai.com' : 'admin@wasfahai.com'}
               </p>
             </div>
           </div>

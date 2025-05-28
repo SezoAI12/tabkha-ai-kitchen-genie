@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import BottomToolbar from './BottomToolbar';
 
 interface PageContainerHeaderProps {
   title?: string;
@@ -19,9 +20,18 @@ interface PageContainerProps {
   hideNavbar?: boolean;
   fullWidth?: boolean;
   noPadding?: boolean;
+  hideBottomToolbar?: boolean;
 }
 
-export function PageContainer({ children, header, className, hideNavbar, fullWidth, noPadding }: PageContainerProps) {
+export function PageContainer({ 
+  children, 
+  header, 
+  className, 
+  hideNavbar, 
+  fullWidth, 
+  noPadding,
+  hideBottomToolbar = false
+}: PageContainerProps) {
   const navigate = useNavigate();
 
   const handleGoBack = () => {
@@ -57,6 +67,7 @@ export function PageContainer({ children, header, className, hideNavbar, fullWid
       <div className={`${fullWidth ? '' : 'container mx-auto'} ${noPadding ? '' : 'px-4 py-6'} ${className || ''}`}>
         {children}
       </div>
+      {!hideBottomToolbar && <BottomToolbar />}
     </div>
   );
 }
