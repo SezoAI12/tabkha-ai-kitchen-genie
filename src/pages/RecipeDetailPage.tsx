@@ -56,6 +56,7 @@ export default function RecipeDetailPage() {
   return (
     <PageContainer
       header={{
+        title: recipe.title,
         showBackButton: true,
         actions: (
           <div className="flex space-x-2">

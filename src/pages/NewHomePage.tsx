@@ -15,6 +15,7 @@ const HomePage = () => {
   const isDark = theme === 'dark';
 
   const header = {
+    title: 'WasfahAI',
     showLogo: true,
     showSearch: true,
     actions: null,

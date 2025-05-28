@@ -74,6 +74,7 @@ export default function SearchPage() {
   return (
     <PageContainer
       header={{
+        title: 'Search Recipes',
         showBackButton: true,
       }}
     >
