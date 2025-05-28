@@ -37,41 +37,41 @@ export default function FindByIngredientsPage() {
       id: 'food',
       name: 'Food',
       icon: Utensils,
-      // More general food image
-      image: 'https://images.unsplash.com/photo-1482049016555-53e2fdcd6c3f?q=80&w=400&h=300&fit=crop&crop=center',
+      // Path to your locally hosted image for Food
+      image: '/images/food/main-food.jpg', // Example: a general appealing food spread
       subcategories: [
-        { name: 'Main Dishes', image: 'https://images.unsplash.com/photo-1593922709277-2afcf55ae3b7?q=80&w=300&h=200&fit=crop&crop=center' }, // Updated main dish
-        { name: 'Appetizers', image: 'https://images.unsplash.com/photo-1512403666568-d069b1837e40?q=80&w=300&h=200&fit=crop&crop=center' }, // Updated appetizer
-        { name: 'Pickles', image: 'https://images.unsplash.com/photo-1627993356611-3e5f206536b5?q=80&w=300&h=200&fit=crop&crop=center' }, // Corrected pickles image
-        { name: 'Soups', image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=300&h=200&fit=crop&crop=center' },
-        { name: 'Sauces', image: 'https://images.unsplash.com/photo-1472476443507-c7a5948772fc?w=300&h=200&fit=crop&crop=center' },
-        { name: 'Others', image: 'https://images.unsplash.com/photo-1519708227418-ffb32a1a02d4?q=80&w=300&h=200&fit=crop&crop=center' } // Generic food item
+        { name: 'Main Dishes', image: '/images/food/main-dishes.jpg' }, // Example: a plated entree
+        { name: 'Appetizers', image: '/images/food/appetizers.jpg' }, // Example: small bites, spring rolls etc.
+        { name: 'Pickles', image: '/images/food/pickles.jpg' }, // Example: jar of pickled cucumbers/vegetables
+        { name: 'Soups', image: '/images/food/soups.jpg' },
+        { name: 'Sauces', image: '/images/food/sauces.jpg' },
+        { name: 'Others', image: '/images/food/other-food.jpg' } // General food item
       ]
     },
     {
       id: 'desserts',
       name: 'Desserts',
       icon: Cake,
-      image: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?q=80&w=400&h=300&fit=crop&crop=center',
+      image: '/images/desserts/main-dessert.jpg', // Example: a selection of pastries/cakes
       subcategories: [
-        { name: 'Traditional', image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=300&h=200&fit=crop&crop=center' },
-        { name: 'Western', image: 'https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?q=80&w=300&h=200&fit=crop&crop=center' },
-        { name: 'Pastries', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=300&h=200&fit=crop&crop=center' },
-        { name: 'Ice Cream', image: 'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?q=80&w=300&h=200&fit=crop&crop=center' },
-        { name: 'Others', image: 'https://images.unsplash.com/photo-1558961363-fa1fdf82fad3?q=80&w=300&h=200&fit=crop&crop=center' } // Generic dessert
+        { name: 'Traditional', image: '/images/desserts/traditional.jpg' },
+        { name: 'Western', image: '/images/desserts/western.jpg' },
+        { name: 'Pastries', image: '/images/desserts/pastries.jpg' },
+        { name: 'Ice Cream', image: '/images/desserts/ice-cream.jpg' },
+        { name: 'Others', image: '/images/desserts/other-desserts.jpg' } // General dessert
       ]
     },
     {
       id: 'drinks',
       name: 'Drinks',
       icon: Coffee,
-      image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?q=80&w=400&h=300&fit=crop&crop=center',
+      image: '/images/drinks/main-drinks.jpg', // Example: various beverages
       subcategories: [
-        { name: 'Detox', image: 'https://images.unsplash.com/photo-1622597467836-f3285f2131b8?q=80&w=300&h=200&fit=crop&crop=center' },
-        { name: 'Cocktails', image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=300&h=200&fit=crop&crop=center' },
-        { name: 'Alcoholic', image: 'https://images.unsplash.com/photo-1569529465841-dfecdab7503b?q=80&w=300&h=200&fit=crop&crop=center' },
-        { name: 'Hot Drinks', image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?q=80&w=300&h=200&fit=crop&crop=center' },
-        { name: 'Others', image: 'https://images.unsplash.com/photo-1506619216599-9d16d0903dfd?q=80&w=300&h=200&fit=crop&crop=center' } // Generic drink
+        { name: 'Detox', image: '/images/drinks/detox.jpg' },
+        { name: 'Cocktails', image: '/images/drinks/cocktails.jpg' },
+        { name: 'Alcoholic', image: '/images/drinks/alcoholic.jpg' },
+        { name: 'Hot Drinks', image: '/images/drinks/hot-drinks.jpg' },
+        { name: 'Others', image: '/images/drinks/other-drinks.jpg' } // General drink
       ]
     },
   ];
@@ -95,7 +95,7 @@ export default function FindByIngredientsPage() {
   // State
   const [currentStep, setCurrentStep] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<any>(null); // Use 'any' or define a more specific type if needed
+  const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
   const [filters, setFilters] = useState<Filters>({
     dietary: '',
