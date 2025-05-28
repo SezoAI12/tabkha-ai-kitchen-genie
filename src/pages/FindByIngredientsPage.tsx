@@ -1,3 +1,5 @@
+// src/pages/FindByIngredientsPage.tsx
+
 import React, { useState } from 'react';
 import { Utensils, Cake, Coffee, Camera, Mic } from 'lucide-react';
 import { PageContainer } from '@/components/layout/PageContainer';
@@ -6,6 +8,32 @@ import { IngredientManager } from '@/components/ingredients/IngredientManager';
 import { FilterPanel } from '@/components/ingredients/FilterPanel';
 import { SearchSummary } from '@/components/ingredients/SearchSummary';
 import { useToast } from '@/hooks/use-toast';
+
+// --- IMPORT YOUR IMAGES HERE ---
+// Food Category
+import mainFoodImg from '@/assets/images/food/main-food.jpg'; // Path to your downloaded general food image
+import mainDishesImg from '@/assets/images/food/main-dishes.jpg';
+import appetizersImg from '@/assets/images/food/appetizers.jpg';
+import picklesImg from '@/assets/images/food/pickles.jpg';
+import soupsImg from '@/assets/images/food/soups.jpg';
+import saucesImg from '@/assets/images/food/sauces.jpg';
+import otherFoodImg from '@/assets/images/food/other-food.jpg';
+
+// Desserts Category
+import mainDessertImg from '@/assets/images/desserts/main-dessert.jpg';
+import traditionalDessertImg from '@/assets/images/desserts/traditional-dessert.jpg';
+import westernDessertImg from '@/assets/images/desserts/western-dessert.jpg';
+import pastriesImg from '@/assets/images/desserts/pastries.jpg';
+import iceCreamImg from '@/assets/images/desserts/ice-cream.jpg';
+import otherDessertsImg from '@/assets/images/desserts/other-desserts.jpg';
+
+// Drinks Category
+import mainDrinksImg from '@/assets/images/drinks/main-drinks.jpg';
+import detoxImg from '@/assets/images/drinks/detox.jpg';
+import cocktailsImg from '@/assets/images/drinks/cocktails.jpg';
+import alcoholicDrinksImg from '@/assets/images/drinks/alcoholic-drinks.jpg';
+import hotDrinksImg from '@/assets/images/drinks/hot-drinks.jpg';
+import otherDrinksImg from '@/assets/images/drinks/other-drinks.jpg';
 
 interface Ingredient {
   id: string;
@@ -37,41 +65,40 @@ export default function FindByIngredientsPage() {
       id: 'food',
       name: 'Food',
       icon: Utensils,
-      // Path to your locally hosted image for Food
-      image: '/images/food/main-food.jpg', // Example: a general appealing food spread
+      image: mainFoodImg, // Use the imported image variable
       subcategories: [
-        { name: 'Main Dishes', image: '/images/food/main-dishes.jpg' }, // Example: a plated entree
-        { name: 'Appetizers', image: '/images/food/appetizers.jpg' }, // Example: small bites, spring rolls etc.
-        { name: 'Pickles', image: '/images/food/pickles.jpg' }, // Example: jar of pickled cucumbers/vegetables
-        { name: 'Soups', image: '/images/food/soups.jpg' },
-        { name: 'Sauces', image: '/images/food/sauces.jpg' },
-        { name: 'Others', image: '/images/food/other-food.jpg' } // General food item
+        { name: 'Main Dishes', image: mainDishesImg },
+        { name: 'Appetizers', image: appetizersImg },
+        { name: 'Pickles', image: picklesImg },
+        { name: 'Soups', image: soupsImg },
+        { name: 'Sauces', image: saucesImg },
+        { name: 'Others', image: otherFoodImg }
       ]
     },
     {
       id: 'desserts',
       name: 'Desserts',
       icon: Cake,
-      image: '/images/desserts/main-dessert.jpg', // Example: a selection of pastries/cakes
+      image: mainDessertImg,
       subcategories: [
-        { name: 'Traditional', image: '/images/desserts/traditional.jpg' },
-        { name: 'Western', image: '/images/desserts/western.jpg' },
-        { name: 'Pastries', image: '/images/desserts/pastries.jpg' },
-        { name: 'Ice Cream', image: '/images/desserts/ice-cream.jpg' },
-        { name: 'Others', image: '/images/desserts/other-desserts.jpg' } // General dessert
+        { name: 'Traditional', image: traditionalDessertImg },
+        { name: 'Western', image: westernDessertImg },
+        { name: 'Pastries', image: pastriesImg },
+        { name: 'Ice Cream', image: iceCreamImg },
+        { name: 'Others', image: otherDessertsImg }
       ]
     },
     {
       id: 'drinks',
       name: 'Drinks',
       icon: Coffee,
-      image: '/images/drinks/main-drinks.jpg', // Example: various beverages
+      image: mainDrinksImg,
       subcategories: [
-        { name: 'Detox', image: '/images/drinks/detox.jpg' },
-        { name: 'Cocktails', image: '/images/drinks/cocktails.jpg' },
-        { name: 'Alcoholic', image: '/images/drinks/alcoholic.jpg' },
-        { name: 'Hot Drinks', image: '/images/drinks/hot-drinks.jpg' },
-        { name: 'Others', image: '/images/drinks/other-drinks.jpg' } // General drink
+        { name: 'Detox', image: detoxImg },
+        { name: 'Cocktails', image: cocktailsImg },
+        { name: 'Alcoholic', image: alcoholicDrinksImg },
+        { name: 'Hot Drinks', image: hotDrinksImg },
+        { name: 'Others', image: otherDrinksImg }
       ]
     },
   ];
