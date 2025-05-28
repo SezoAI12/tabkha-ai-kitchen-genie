@@ -1,6 +1,6 @@
-
+// LoyaltyProgramPage.tsx
 import React, { useState } from 'react';
-import { PageContainer } from '@/components/layout/PageContainer';
+import { PageContainer } from '@/components/layout/PageContainer'; // This import is now correct
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
