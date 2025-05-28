@@ -17,7 +17,7 @@ interface StringEntry {
   key: string;
   language_code: string;
   value: string;
-  category: string;
+  category?: string; // Make category optional to match database schema
   created_at: string;
   updated_at: string;
 }
