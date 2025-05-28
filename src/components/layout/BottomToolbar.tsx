@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, Heart, User, ChefHat } from 'lucide-react';
+import { Home, Search, Heart, User, ChefHat, Wheat } from 'lucide-react'; // Import Wheat for 'Find by Ingredients'
 import { cn } from '@/lib/utils';
 
 const BottomToolbar = () => {
@@ -9,6 +8,8 @@ const BottomToolbar = () => {
   const pathname = location.pathname;
 
   // Don't show toolbar on admin pages or auth pages
+  // Also, add '/' (root) to the list where the toolbar should not be shown,
+  // as per your original logic: "pathname === '/'"
   if (pathname.startsWith('/admin') || pathname === '/auth' || pathname === '/') {
     return null;
   }
@@ -18,10 +19,16 @@ const BottomToolbar = () => {
       icon: Home,
       label: 'Home',
       href: '/home',
-      isActive: pathname === '/home'
+      isActive: pathname === '/home' // or pathname.startsWith('/home') if you have sub-routes
     },
     {
-      icon: Search,
+      icon: Wheat, // Changed to Wheat icon, suitable for ingredients
+      label: 'Find', // Changed label to 'Find'
+      href: '/find-by-ingredients', // This is the new path for 'Find by Ingredients'
+      isActive: pathname === '/find-by-ingredients' // Check active state for the new path
+    },
+    {
+      icon: Search, // Retaining Search for general search, if applicable, otherwise remove
       label: 'Search',
       href: '/search',
       isActive: pathname === '/search'
@@ -57,8 +64,8 @@ const BottomToolbar = () => {
               to={item.href}
               className={cn(
                 'flex flex-col items-center py-2 px-3 rounded-lg transition-colors',
-                item.isActive 
-                  ? 'text-wasfah-bright-teal bg-wasfah-bright-teal/10' 
+                item.isActive
+                  ? 'text-wasfah-bright-teal bg-wasfah-bright-teal/10'
                   : 'text-gray-600 dark:text-gray-400 hover:text-wasfah-bright-teal'
               )}
             >
