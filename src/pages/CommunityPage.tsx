@@ -6,10 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Heart, MessageSquare, Share2, Users, Award, ChefHat, Star } from 'lucide-react';
+import { Heart, MessageSquare, Share2, Users, Award, ChefHat, Star, TrendingUp, Clock, UserPlus } from 'lucide-react';
 import { mockRecipes } from '@/data/mockData';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { EnhancedCard, IconContainer, Typography, AnimatedBadge, LayoutContainer } from '@/components/ui/design-system';
+import { EnhancedButton } from '@/components/ui/enhanced-button';
 
 // Add social interaction data to recipes
 const communityRecipes = mockRecipes.slice(0, 10).map((recipe) => ({
@@ -63,7 +65,7 @@ const CommunityPage = () => {
 
   const formatTimeAgo = (date) => {
     const now = new Date();
-    const diff = (now.getTime() - date.getTime()) / 1000; // in seconds
+    const diff = (now.getTime() - date.getTime()) / 1000;
 
     if (diff < 60) return 'Just now';
     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
@@ -73,38 +75,61 @@ const CommunityPage = () => {
 
   return (
     <PageContainer header={{ title: "Community", showBackButton: true }}>
-      <div className="p-4 space-y-6 pb-24">
-        <div className="bg-gradient-to-r from-wasfah-deep-teal to-wasfah-bright-teal rounded-lg p-6 text-white">
-          <div className="flex items-center mb-3">
-            <Users className="h-6 w-6 mr-2" />
-            <h1 className="text-xl font-bold">WasfahAI Community</h1>
+      <LayoutContainer className="space-y-8 pb-24">
+        {/* Enhanced Hero Section */}
+        <EnhancedCard variant="gradient" className="bg-gradient-to-br from-wasfah-bright-teal via-wasfah-teal to-wasfah-deep-teal text-white overflow-hidden relative">
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="absolute top-0 right-0 opacity-20">
+            <Users className="h-32 w-32" />
           </div>
-          <p className="opacity-90">Connect with home chefs, share recipes, and discover culinary inspiration</p>
+          <CardContent className="p-8 relative z-10">
+            <div className="flex items-center mb-4">
+              <IconContainer size="lg" className="bg-white/20 text-white mr-4">
+                <Users className="h-8 w-8" />
+              </IconContainer>
+              <div>
+                <Typography.H1 className="text-white text-2xl mb-2">WasfahAI Community</Typography.H1>
+                <Typography.Body className="text-white/90 text-lg">
+                  Connect with home chefs, share recipes, and discover culinary inspiration
+                </Typography.Body>
+              </div>
+            </div>
 
-          <div className="flex flex-wrap mt-4 gap-3">
-            <div className="bg-white/20 rounded-full px-4 py-1 text-sm flex items-center">
-              <Users className="h-4 w-4 mr-1" />
-              <span>5,230 Members</span>
+            <div className="flex flex-wrap gap-4 mt-6">
+              <AnimatedBadge className="bg-white/20 text-white border-white/30">
+                <Users className="h-4 w-4 mr-2" />
+                5,230 Members
+              </AnimatedBadge>
+              <AnimatedBadge className="bg-white/20 text-white border-white/30">
+                <ChefHat className="h-4 w-4 mr-2" />
+                12,450 Recipes
+              </AnimatedBadge>
+              <AnimatedBadge className="bg-white/20 text-white border-white/30">
+                <TrendingUp className="h-4 w-4 mr-2" />
+                Active Community
+              </AnimatedBadge>
             </div>
-            <div className="bg-white/20 rounded-full px-4 py-1 text-sm flex items-center">
-              <ChefHat className="h-4 w-4 mr-1" />
-              <span>12,450 Recipes</span>
-            </div>
-            <div className="bg-white/20 rounded-full px-4 py-1 text-sm flex items-center">
-              <MessageSquare className="h-4 w-4 mr-1" />
-              <span>Active Community</span>
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </EnhancedCard>
 
+        {/* Enhanced Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-3 mb-4">
-            <TabsTrigger value="popular">Popular</TabsTrigger>
-            <TabsTrigger value="latest">Latest</TabsTrigger>
-            <TabsTrigger value="members">Members</TabsTrigger>
+          <TabsList className="grid grid-cols-3 mb-6 bg-gray-100 p-1 rounded-xl">
+            <TabsTrigger value="popular" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              <TrendingUp className="h-4 w-4 mr-2" />
+              Popular
+            </TabsTrigger>
+            <TabsTrigger value="latest" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              <Clock className="h-4 w-4 mr-2" />
+              Latest
+            </TabsTrigger>
+            <TabsTrigger value="members" className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">
+              <Award className="h-4 w-4 mr-2" />
+              Members
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="popular" className="space-y-4">
+          <TabsContent value="popular" className="space-y-6">
             {communityRecipes.slice(0, 5).sort((a, b) => b.likes - a.likes).map((recipe) => (
               <RecipePostCard
                 key={recipe.id}
@@ -115,7 +140,7 @@ const CommunityPage = () => {
             ))}
           </TabsContent>
 
-          <TabsContent value="latest" className="space-y-4">
+          <TabsContent value="latest" className="space-y-6">
             {communityRecipes.slice(0, 5).sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).map((recipe) => (
               <RecipePostCard
                 key={recipe.id}
@@ -126,52 +151,62 @@ const CommunityPage = () => {
             ))}
           </TabsContent>
 
-          <TabsContent value="members" className="space-y-4">
-            <h2 className="text-lg font-medium text-wasfah-deep-teal flex items-center">
-              <Award className="mr-2 h-5 w-5" /> Popular Members
-            </h2>
+          <TabsContent value="members" className="space-y-6">
+            <div className="flex items-center space-x-3 mb-6">
+              <IconContainer variant="primary" size="md">
+                <Award className="h-6 w-6" />
+              </IconContainer>
+              <Typography.H2>Popular Members</Typography.H2>
+            </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               {popularMembers.map((member) => (
-                <Card key={member.id}>
-                  <CardContent className="p-4 flex flex-col items-center text-center">
-                    <div className="relative">
-                      <Avatar className="h-16 w-16 mb-2">
+                <EnhancedCard key={member.id} variant="elevated">
+                  <CardContent className="p-6 flex flex-col items-center text-center">
+                    <div className="relative mb-4">
+                      <Avatar className="h-16 w-16">
                         <AvatarImage src={member.avatar} />
-                        <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
+                        <AvatarFallback className="bg-wasfah-bright-teal text-white text-lg">
+                          {member.name.charAt(0)}
+                        </AvatarFallback>
                       </Avatar>
-                      <div className="absolute -bottom-1 -right-1 bg-wasfah-bright-teal text-white text-xs font-bold h-6 w-6 rounded-full flex items-center justify-center">
+                      <AnimatedBadge className="absolute -bottom-2 -right-2 bg-wasfah-bright-teal text-white min-w-[24px] h-6 rounded-full flex items-center justify-center text-xs font-bold">
                         {member.level}
-                      </div>
+                      </AnimatedBadge>
                     </div>
 
-                    <h3 className="font-medium">{member.name}</h3>
+                    <Typography.H3 className="text-lg mb-3">{member.name}</Typography.H3>
 
-                    <div className="mt-2 text-sm text-gray-600 space-y-1">
+                    <div className="space-y-2 text-sm text-gray-600 mb-4 w-full">
                       <div className="flex items-center justify-center">
-                        <ChefHat className="h-3.5 w-3.5 mr-1" />
+                        <ChefHat className="h-4 w-4 mr-2 text-wasfah-bright-teal" />
                         <span>{member.recipes} Recipes</span>
                       </div>
                       <div className="flex items-center justify-center">
-                        <Users className="h-3.5 w-3.5 mr-1" />
+                        <Users className="h-4 w-4 mr-2 text-wasfah-bright-teal" />
                         <span>{member.followers} Followers</span>
                       </div>
                     </div>
 
-                    <Button variant="outline" size="sm" className="mt-3 w-full">
+                    <EnhancedButton 
+                      variant="outline" 
+                      size="sm" 
+                      fullWidth
+                      icon={<UserPlus className="h-4 w-4" />}
+                    >
                       Follow
-                    </Button>
+                    </EnhancedButton>
                   </CardContent>
-                </Card>
+                </EnhancedCard>
               ))}
             </div>
 
-            <Button variant="outline" className="w-full mt-2">
+            <EnhancedButton variant="outline" fullWidth className="mt-6">
               View All Members
-            </Button>
+            </EnhancedButton>
           </TabsContent>
         </Tabs>
-      </div>
+      </LayoutContainer>
     </PageContainer>
   );
 };
@@ -203,108 +238,118 @@ const RecipePostCard: React.FC<RecipePostCardProps> = ({ recipe, onLike, onShare
   }, [commentText, comments]);
 
   return (
-    <Card className="overflow-hidden">
+    <EnhancedCard variant="elevated" className="overflow-hidden">
       <CardContent className="p-0">
-        <div className="p-4">
-          <div className="flex items-center mb-3">
-            <Avatar className="h-10 w-10 mr-3">
+        <div className="p-6">
+          <div className="flex items-center mb-4">
+            <Avatar className="h-12 w-12 mr-4">
               <AvatarImage src={recipe.author.avatar} />
-              <AvatarFallback>{recipe.author.name.charAt(0)}</AvatarFallback>
+              <AvatarFallback className="bg-wasfah-bright-teal text-white">
+                {recipe.author.name.charAt(0)}
+              </AvatarFallback>
             </Avatar>
-            <div>
-              <div className="flex items-center">
-                <span className="font-medium">{recipe.author.name}</span>
-                <div className="ml-2 bg-gray-100 text-xs px-2 rounded-full flex items-center">
-                  <ChefHat className="h-3 w-3 mr-1 text-wasfah-bright-teal" />
-                  <span>Level {recipe.author.level}</span>
-                </div>
+            <div className="flex-1">
+              <div className="flex items-center space-x-2">
+                <Typography.H3 className="text-base">{recipe.author.name}</Typography.H3>
+                <AnimatedBadge variant="default" className="text-xs">
+                  <ChefHat className="h-3 w-3 mr-1" />
+                  Level {recipe.author.level}
+                </AnimatedBadge>
               </div>
-              <div className="text-xs text-gray-500">{new Date(recipe.timestamp).toLocaleDateString()}</div>
+              <Typography.Caption className="text-gray-500">
+                {new Date(recipe.timestamp).toLocaleDateString()}
+              </Typography.Caption>
             </div>
           </div>
 
           <Link to={`/recipe/${recipe.id}`}>
-            <h3 className="font-bold text-lg text-wasfah-deep-teal mb-1">{recipe.title}</h3>
+            <Typography.H3 className="text-wasfah-deep-teal mb-2 hover:text-wasfah-bright-teal transition-colors">
+              {recipe.title}
+            </Typography.H3>
           </Link>
-          <p className="text-gray-600 text-sm mb-3 line-clamp-2">{recipe.description}</p>
+          <Typography.Body className="text-gray-600 mb-4 line-clamp-2">
+            {recipe.description}
+          </Typography.Body>
         </div>
 
         <Link to={`/recipe/${recipe.id}`}>
           <div
-            className="w-full h-56 bg-cover bg-center"
+            className="w-full h-64 bg-cover bg-center hover:scale-105 transition-transform duration-300"
             style={{ backgroundImage: `url(${recipe.image})` }}
           />
         </Link>
 
-        <div className="p-4">
-          <div className="flex items-center text-sm text-gray-500 mb-4">
-            <div className="flex items-center mr-4">
-              <Heart className={`h-4 w-4 mr-1 ${recipe.isLiked ? 'fill-wasfah-coral-red text-wasfah-coral-red' : ''}`} />
+        <div className="p-6">
+          <div className="flex items-center text-sm text-gray-500 mb-4 space-x-6">
+            <div className="flex items-center">
+              <Heart className={`h-4 w-4 mr-2 ${recipe.isLiked ? 'fill-wasfah-coral-red text-wasfah-coral-red' : ''}`} />
               <span>{recipe.likes} likes</span>
             </div>
-            <div className="flex items-center mr-4">
-              <MessageSquare className="h-4 w-4 mr-1" />
+            <div className="flex items-center">
+              <MessageSquare className="h-4 w-4 mr-2" />
               <span>{recipe.comments} comments</span>
             </div>
             <div className="flex items-center">
-              <Share2 className="h-4 w-4 mr-1" />
+              <Share2 className="h-4 w-4 mr-2" />
               <span>{recipe.shares} shares</span>
             </div>
           </div>
 
-          <div className="flex space-x-2 border-t border-b py-2">
-            <Button
+          <div className="flex space-x-2 border-t border-b py-3 mb-4">
+            <EnhancedButton
               variant="ghost"
               size="sm"
               className={`flex-1 ${recipe.isLiked ? 'text-wasfah-coral-red' : ''}`}
               onClick={() => onLike(recipe.id)}
-              aria-label="Like"
+              icon={<Heart className={`h-4 w-4 ${recipe.isLiked ? 'fill-wasfah-coral-red' : ''}`} />}
             >
-              <Heart className={`h-4 w-4 mr-2 ${recipe.isLiked ? 'fill-wasfah-coral-red' : ''}`} />
               Like
-            </Button>
-            <Button
+            </EnhancedButton>
+            <EnhancedButton
               variant="ghost"
               size="sm"
               className="flex-1"
               onClick={() => setShowComments(!showComments)}
-              aria-label="Comment"
+              icon={<MessageSquare className="h-4 w-4" />}
             >
-              <MessageSquare className="h-4 w-4 mr-2" />
               Comment
-            </Button>
-            <Button
+            </EnhancedButton>
+            <EnhancedButton
               variant="ghost"
               size="sm"
               className="flex-1"
               onClick={() => onShare(recipe.id)}
-              aria-label="Share"
+              icon={<Share2 className="h-4 w-4" />}
             >
-              <Share2 className="h-4 w-4 mr-2" />
               Share
-            </Button>
+            </EnhancedButton>
           </div>
 
           {showComments && (
-            <div className="mt-4 space-y-4">
+            <div className="space-y-4">
               <ScrollArea className="h-48 pr-4">
                 <div className="space-y-4">
                   {comments.map(comment => (
-                    <div key={comment.id} className="flex">
-                      <Avatar className="h-8 w-8 mr-3 mt-1">
+                    <div key={comment.id} className="flex space-x-3">
+                      <Avatar className="h-8 w-8">
                         <AvatarImage src={comment.avatar} />
-                        <AvatarFallback>{comment.author.charAt(0)}</AvatarFallback>
+                        <AvatarFallback className="bg-gray-300 text-gray-600 text-xs">
+                          {comment.author.charAt(0)}
+                        </AvatarFallback>
                       </Avatar>
-                      <div>
+                      <div className="flex-1">
                         <div className="bg-gray-100 p-3 rounded-lg">
-                          <div className="font-medium text-sm">{comment.author}</div>
-                          <p className="text-sm">{comment.content}</p>
+                          <Typography.Caption className="font-medium">{comment.author}</Typography.Caption>
+                          <Typography.Body className="text-sm mt-1">{comment.content}</Typography.Body>
                         </div>
-                        <div className="flex items-center text-xs text-gray-500 mt-1">
-                          <span className="mr-2">{comment.timestamp}</span>
-                          <button className="hover:text-wasfah-coral-red">Like ({comment.likes})</button>
-                          <span className="mx-2">•</span>
-                          <button>Reply</button>
+                        <div className="flex items-center text-xs text-gray-500 mt-2 space-x-4">
+                          <span>{comment.timestamp}</span>
+                          <button className="hover:text-wasfah-coral-red transition-colors">
+                            Like ({comment.likes})
+                          </button>
+                          <button className="hover:text-wasfah-bright-teal transition-colors">
+                            Reply
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -312,33 +357,30 @@ const RecipePostCard: React.FC<RecipePostCardProps> = ({ recipe, onLike, onShare
                 </div>
               </ScrollArea>
 
-              <div className="flex items-center mt-3">
-                <Avatar className="h-8 w-8 mr-2">
+              <div className="flex items-center space-x-3">
+                <Avatar className="h-8 w-8">
                   <AvatarImage src="/placeholder.svg" />
-                  <AvatarFallback>U</AvatarFallback>
+                  <AvatarFallback className="bg-wasfah-bright-teal text-white text-xs">U</AvatarFallback>
                 </Avatar>
                 <Input
-                  className="flex-1 bg-gray-100 border-0"
+                  className="flex-1 bg-gray-100 border-0 rounded-full"
                   placeholder="Write a comment..."
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
-                  aria-label="Comment input"
                 />
-                <Button
+                <EnhancedButton
                   size="sm"
-                  className="ml-2"
                   onClick={handleComment}
                   disabled={!commentText.trim()}
-                  aria-label="Post comment"
                 >
                   Post
-                </Button>
+                </EnhancedButton>
               </div>
             </div>
           )}
         </div>
       </CardContent>
-    </Card>
+    </EnhancedCard>
   );
 };
 
