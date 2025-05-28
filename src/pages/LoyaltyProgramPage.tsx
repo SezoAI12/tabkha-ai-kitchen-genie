@@ -1,268 +1,261 @@
 
 import React, { useState } from 'react';
-import { PageContainer } from '@/components/layout/PageContainer';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Award, Star, Gift, Medal, Trophy, Target, Clock, Sparkles, CheckCircle } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { Star, Gift, Trophy, Crown, Zap, Check, ChefHat, Share2, Calendar, Users } from 'lucide-react';
+import { toast } from 'sonner';
+import { PageContainer } from '@/components/layout/PageContainer';
 
-// Sample rewards data
-const rewards = [
-  {
-    id: '1',
-    title: 'Premium Recipe Collection',
-    description: 'Unlock 25 premium recipes from world-class chefs.',
-    pointsCost: 500,
-    image: '/placeholder.svg',
-    isAvailable: true,
-  },
-  {
-    id: '2',
-    title: 'Ad-Free Experience',
-    description: 'Enjoy WasfahAI without any advertisements for 30 days.',
-    pointsCost: 750,
-    image: '/placeholder.svg',
-    isAvailable: true,
-  },
-  {
-    id: '3',
-    title: 'Chef consultation',
-    description: '15-minute video call with a professional chef.',
-    pointsCost: 2000,
-    image: '/placeholder.svg',
-    isAvailable: false,
-  },
-];
+const LoyaltyProgramPage = () => {
+  const [userPoints, setUserPoints] = useState(1250);
+  const [userTier, setUserTier] = useState('Gold');
+  const [claimedRewards, setClaimedRewards] = useState<number[]>([]);
 
-// Sample achievements data
-const achievements = [
-  {
-    id: '1',
-    title: 'Recipe Creator',
-    description: 'Create your first recipe',
-    icon: 'chef',
-    pointsAwarded: 50,
-    dateEarned: '2023-04-15',
-    progress: 100,
-    total: 1,
-  },
-  {
-    id: '2',
-    title: 'Recipe Master',
-    description: 'Create 5 recipes',
-    icon: 'star',
-    pointsAwarded: 150,
-    dateEarned: null,
-    progress: 60,
-    total: 5,
-  },
-  {
-    id: '3',
-    title: 'Healthy Eater',
-    description: 'Follow a meal plan for 7 consecutive days',
-    icon: 'calendar',
-    pointsAwarded: 200,
-    dateEarned: null,
-    progress: 30,
-    total: 7,
-  },
-  {
-    id: '4',
-    title: 'Ingredient Expert',
-    description: 'Use the ingredient swap feature 10 times',
-    icon: 'swap',
-    pointsAwarded: 100,
-    dateEarned: null,
-    progress: 40,
-    total: 10,
-  },
-];
+  const rewards = [
+    { 
+      id: 1, 
+      name: 'Free Premium Recipe', 
+      points: 500, 
+      icon: Star, 
+      available: true,
+      description: 'Unlock one premium recipe of your choice'
+    },
+    { 
+      id: 2, 
+      name: '10% Off Subscription', 
+      points: 1000, 
+      icon: Gift, 
+      available: true,
+      description: 'Get 10% discount on your next subscription'
+    },
+    { 
+      id: 3, 
+      name: 'Exclusive Recipe Collection', 
+      points: 1500, 
+      icon: Trophy, 
+      available: false,
+      description: 'Access to chef-curated recipe collections'
+    },
+    { 
+      id: 4, 
+      name: 'Personal Chef Consultation', 
+      points: 2500, 
+      icon: Crown, 
+      available: false,
+      description: '30-minute one-on-one session with a professional chef'
+    }
+  ];
 
-export default function LoyaltyProgramPage() {
-  const { toast } = useToast();
-  const [userPoints, setUserPoints] = useState(850);
-  const [userLevel, setUserLevel] = useState('Gold Level');
-  const pointsToNextLevel = 1500 - userPoints;
-  const progressToNextLevel = (userPoints / 1500) * 100;
+  const activities = [
+    { action: 'Daily Login', points: 10, description: 'Login to the app daily', icon: Calendar, color: 'bg-blue-100 text-blue-600' },
+    { action: 'Share Recipe', points: 50, description: 'Share a recipe with friends', icon: Share2, color: 'bg-green-100 text-green-600' },
+    { action: 'Create Recipe', points: 100, description: 'Create and publish a new recipe', icon: ChefHat, color: 'bg-purple-100 text-purple-600' },
+    { action: 'Join Community', points: 75, description: 'Participate in community discussions', icon: Users, color: 'bg-orange-100 text-orange-600' }
+  ];
 
-  const handleRedeemReward = (reward: typeof rewards[0]) => {
-    if (userPoints >= reward.pointsCost) {
-      setUserPoints(prevPoints => prevPoints - reward.pointsCost);
-      toast({
-        title: "Reward Redeemed!",
-        description: `You've successfully redeemed "${reward.title}" for ${reward.pointsCost} points.`,
-      });
-    } else {
-      toast({
-        title: "Not enough points",
-        description: `You need ${reward.pointsCost - userPoints} more points to redeem "${reward.title}".`,
-        variant: "destructive",
-      });
+  const tierRequirements = {
+    Bronze: 0,
+    Silver: 1000,
+    Gold: 2500,
+    Platinum: 5000
+  };
+
+  const getNextTier = () => {
+    if (userPoints < tierRequirements.Silver) return { name: 'Silver', points: tierRequirements.Silver };
+    if (userPoints < tierRequirements.Gold) return { name: 'Gold', points: tierRequirements.Gold };
+    if (userPoints < tierRequirements.Platinum) return { name: 'Platinum', points: tierRequirements.Platinum };
+    return null;
+  };
+
+  const nextTier = getNextTier();
+  const progressPercentage = nextTier ? (userPoints / nextTier.points) * 100 : 100;
+
+  const handleRedeemReward = (rewardId: number, pointsCost: number) => {
+    if (userPoints >= pointsCost && !claimedRewards.includes(rewardId)) {
+      setUserPoints(prev => prev - pointsCost);
+      setClaimedRewards(prev => [...prev, rewardId]);
+      toast.success('Reward redeemed successfully! 🎉');
+    }
+  };
+
+  const handleEarnPoints = (points: number, activity: string) => {
+    setUserPoints(prev => prev + points);
+    toast.success(`+${points} points earned for ${activity}! ⭐`);
+  };
+
+  const getTierColor = (tier: string) => {
+    switch (tier) {
+      case 'Bronze': return 'from-amber-600 to-amber-800';
+      case 'Silver': return 'from-gray-400 to-gray-600';
+      case 'Gold': return 'from-yellow-400 to-yellow-600';
+      case 'Platinum': return 'from-purple-400 to-purple-600';
+      default: return 'from-wasfah-bright-teal to-wasfah-teal';
     }
   };
 
   return (
-    <PageContainer header={{ title: 'Loyalty Program', showBackButton: true }}>
-      <div className="space-y-6 pb-6">
-        <section>
-          <Card className="border-secondary">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="bg-gradient-to-br from-wasfah-orange to-wasfah-green p-3 rounded-full mr-4">
-                    <Award className="h-8 w-8 text-white" />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-bold text-wasfah-orange">{userLevel}</h2>
-                    <p className="text-sm text-gray-600">Member since April 2023</p>
-                  </div>
+    <PageContainer
+      header={{
+        title: 'Loyalty Program',
+        showBackButton: true,
+      }}
+    >
+      <div className="container px-4 py-4 space-y-6 pb-24">
+        {/* User Status Card */}
+        <Card className={`bg-gradient-to-r ${getTierColor(userTier)} text-white overflow-hidden relative`}>
+          <div className="absolute top-0 right-0 opacity-10">
+            <Crown className="h-32 w-32" />
+          </div>
+          <CardContent className="p-6 relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                  <Crown className="h-6 w-6" />
                 </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-wasfah-green">{userPoints}</div>
-                  <p className="text-sm text-gray-600">points</p>
+                <div>
+                  <h2 className="text-xl font-bold">{userTier} Member</h2>
+                  <p className="opacity-90 text-sm">
+                    {nextTier ? `${nextTier.points - userPoints} points to ${nextTier.name}` : 'Maximum tier reached! 🏆'}
+                  </p>
                 </div>
               </div>
-
-              <div className="mt-6">
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-gray-700">{userLevel}</span>
-                  <span className="text-gray-700">Platinum Level (1,500 pts)</span>
+              <div className="text-right">
+                <div className="text-3xl font-bold">{userPoints.toLocaleString()}</div>
+                <div className="opacity-90 text-sm">Total Points</div>
+              </div>
+            </div>
+            
+            {nextTier && (
+              <div>
+                <div className="flex justify-between text-sm opacity-90 mb-2">
+                  <span>Progress to {nextTier.name}</span>
+                  <span>{userPoints}/{nextTier.points} pts</span>
                 </div>
-                <Progress value={progressToNextLevel} className="h-2" />
-                <p className="text-xs text-center mt-1 text-gray-600">
-                  {pointsToNextLevel > 0 ? `${pointsToNextLevel} more points to reach Platinum` : "You've reached Platinum Level!"}
-                </p>
+                <Progress value={progressPercentage} className="h-3 bg-white/20" />
               </div>
-            </CardContent>
-          </Card>
-        </section>
+            )}
+          </CardContent>
+        </Card>
 
-        <section>
-          <Tabs defaultValue="rewards">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="rewards">
-                <Gift className="h-4 w-4 mr-2" />
-                Rewards
-              </TabsTrigger>
-              <TabsTrigger value="achievements">
-                <Trophy className="h-4 w-4 mr-2" />
-                Achievements
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="rewards" className="mt-4 space-y-4">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-bold text-wasfah-orange">Available Rewards</h3>
-                <span className="text-sm font-medium text-wasfah-green">{userPoints} points available</span>
-              </div>
-
-              <div className="grid gap-4">
-                {rewards.map((reward) => (
-                  <Card key={reward.id} className={!reward.isAvailable || userPoints < reward.pointsCost ? 'opacity-60' : ''}>
-                    <div className="flex">
-                      <div className="w-24 h-full">
-                        <img
-                          src={reward.image}
-                          alt={reward.title}
-                          className="w-full h-full object-cover rounded-l-lg"
-                        />
-                      </div>
-                      <div className="flex-1 flex flex-col p-4">
-                        <CardHeader className="p-0 pb-2">
-                          <CardTitle className="text-base text-gray-900">{reward.title}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-0 pb-2 flex-1">
-                          <p className="text-sm text-gray-600">{reward.description}</p>
-                        </CardContent>
-                        <CardFooter className="p-0 flex justify-between items-center">
-                          <div className="flex items-center">
-                            <Star className="h-4 w-4 text-yellow-500 mr-1" />
-                            <span className="font-medium text-gray-900">{reward.pointsCost} points</span>
-                          </div>
-                          <Button
-                            className="bg-wasfah-green hover:bg-wasfah-orange"
-                            disabled={!reward.isAvailable || userPoints < reward.pointsCost}
-                            onClick={() => handleRedeemReward(reward)}
-                          >
-                            Redeem
-                          </Button>
-                        </CardFooter>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="achievements" className="mt-4 space-y-4">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-bold text-wasfah-orange">Your Achievements</h3>
-                <span className="text-sm font-medium text-gray-600">Earn points with achievements</span>
-              </div>
-
-              <div className="grid gap-3">
-                {achievements.map((achievement) => {
-                  const isCompleted = achievement.progress === 100;
-
-                  let AchievementIcon;
-                  switch (achievement.icon) {
-                    case 'chef': AchievementIcon = Medal; break;
-                    case 'star': AchievementIcon = Star; break;
-                    case 'calendar': AchievementIcon = Clock; break;
-                    case 'swap': AchievementIcon = Sparkles; break;
-                    default: AchievementIcon = Target;
-                  }
-
-                  return (
-                    <Card key={achievement.id}>
-                      <CardContent className="p-4">
-                        <div className="flex items-start">
-                          <div className={`p-3 rounded-full mr-4 ${
-                            isCompleted
-                              ? 'bg-gradient-to-br from-wasfah-orange to-wasfah-green'
-                              : 'bg-gray-200'
-                          }`}>
-                            {isCompleted ? (
-                              <CheckCircle className="h-5 w-5 text-white" />
-                            ) : (
-                              <AchievementIcon className="h-5 w-5 text-gray-600" />
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex justify-between items-center mb-1">
-                              <h4 className="font-semibold text-gray-900">{achievement.title}</h4>
-                              <div className="text-sm font-medium text-wasfah-green">
-                                {achievement.pointsAwarded} pts
-                              </div>
-                            </div>
-                            <p className="text-sm text-gray-600 mb-2">{achievement.description}</p>
-
-                            <div className="space-y-1">
-                              <div className="flex justify-between text-xs text-gray-600">
-                                <span>{Math.floor(achievement.progress / 100 * achievement.total)} of {achievement.total}</span>
-                                <span>{achievement.progress}%</span>
-                              </div>
-                              <Progress value={achievement.progress} className="h-1.5" />
-                            </div>
-
-                            {achievement.dateEarned && (
-                              <div className="mt-1 text-xs text-gray-600">
-                                Completed on {new Date(achievement.dateEarned).toLocaleDateString()}
-                              </div>
-                            )}
-                          </div>
+        {/* Available Rewards */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center text-lg">
+              <Gift className="h-5 w-5 mr-2 text-wasfah-bright-teal" />
+              Available Rewards
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4">
+              {rewards.map((reward) => {
+                const isAffordable = userPoints >= reward.points;
+                const isClaimed = claimedRewards.includes(reward.id);
+                
+                return (
+                  <Card
+                    key={reward.id}
+                    className={`transition-all border ${
+                      isClaimed
+                        ? 'border-green-200 bg-green-50'
+                        : isAffordable && reward.available
+                        ? 'border-wasfah-bright-teal bg-orange-50 hover:shadow-md'
+                        : 'border-gray-200 bg-gray-50 opacity-60'
+                    }`}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-start space-x-3">
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                          isClaimed ? 'bg-green-100' : 'bg-wasfah-bright-teal/10'
+                        }`}>
+                          <reward.icon className={`h-5 w-5 ${
+                            isClaimed ? 'text-green-600' : 'text-wasfah-bright-teal'
+                          }`} />
                         </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            </TabsContent>
-          </Tabs>
-        </section>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-1">
+                            <h3 className="font-semibold">{reward.name}</h3>
+                            <Badge 
+                              variant={isClaimed ? "default" : "outline"}
+                              className={isClaimed ? "bg-green-600" : ""}
+                            >
+                              {isClaimed ? <Check className="h-3 w-3" /> : `${reward.points} pts`}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-gray-600 mb-3">{reward.description}</p>
+                          
+                          {isClaimed ? (
+                            <Button size="sm" disabled className="w-full bg-green-600">
+                              <Check className="h-4 w-4 mr-2" />
+                              Claimed
+                            </Button>
+                          ) : isAffordable && reward.available ? (
+                            <Button 
+                              size="sm" 
+                              className="w-full bg-wasfah-bright-teal hover:bg-wasfah-teal"
+                              onClick={() => handleRedeemReward(reward.id, reward.points)}
+                            >
+                              Redeem Now
+                            </Button>
+                          ) : (
+                            <Button size="sm" variant="outline" disabled className="w-full">
+                              {userPoints < reward.points ? 'Not Enough Points' : 'Coming Soon'}
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Earn Points Activities */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center text-lg">
+              <Zap className="h-5 w-5 mr-2 text-wasfah-bright-teal" />
+              Earn Points
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4">
+              {activities.map((activity, index) => (
+                <Card key={index} className="border hover:shadow-md transition-all">
+                  <CardContent className="p-4">
+                    <div className="flex items-center space-x-4">
+                      <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${activity.color}`}>
+                        <activity.icon className="h-6 w-6" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold">{activity.action}</h4>
+                        <p className="text-sm text-gray-600">{activity.description}</p>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-lg font-bold text-wasfah-bright-teal">+{activity.points}</div>
+                        <div className="text-xs text-gray-600">points</div>
+                      </div>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        className="shrink-0"
+                        onClick={() => handleEarnPoints(activity.points, activity.action)}
+                      >
+                        Earn
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </PageContainer>
   );
-}
+};
+
+export default LoyaltyProgramPage;
