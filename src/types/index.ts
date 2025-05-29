@@ -52,7 +52,9 @@ export interface Recipe {
   author: string;
   createdAt: string;
   cuisine?: string;
+  cuisineType?: string;
   category?: string;
+  categories?: string[];
   featured?: boolean;
   premium?: boolean;
   isFavorite?: boolean;
@@ -61,13 +63,17 @@ export interface Recipe {
 export interface Ingredient {
   id: string;
   name: string;
-  amount: number;
-  unit: string;
+  amount?: number;
+  unit?: string;
+  category?: string;
   notes?: string;
 }
 
 // Alternative name for compatibility
-export interface IngredientItem extends Ingredient {}
+export interface IngredientItem extends Ingredient {
+  amount: number;
+  unit: string;
+}
 
 export interface NutritionInfo {
   calories: number;
@@ -86,8 +92,9 @@ export interface PantryItem {
   unit: string;
   expiryDate?: string;
   addedDate?: string;
-  category: string;
+  category?: string;
   image?: string;
+  ingredient?: Ingredient;
 }
 
 export interface MealPlan {
