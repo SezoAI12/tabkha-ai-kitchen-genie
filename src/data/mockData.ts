@@ -96,3 +96,48 @@ export const mockPantryItems: PantryItem[] = [
     addedDate: '2024-01-28'
   }
 ];
+
+// Missing exports that are needed by various pages
+export const categories = [
+  'Healthy',
+  'Quick & Easy',
+  'Vegetarian',
+  'Vegan',
+  'Gluten-Free',
+  'Low Carb',
+  'High Protein',
+  'Mediterranean',
+  'Asian',
+  'Italian',
+  'Mexican'
+];
+
+export const cuisines = [
+  'Mediterranean',
+  'Italian',
+  'Mexican',
+  'Asian',
+  'Indian',
+  'Middle Eastern',
+  'French',
+  'Thai',
+  'Japanese',
+  'Greek'
+];
+
+export const difficulties = [
+  'Easy',
+  'Medium',
+  'Hard'
+];
+
+export const dietaryOptions = [
+  'Vegetarian',
+  'Vegan',
+  'Gluten-Free',
+  'Dairy-Free',
+  'Nut-Free',
+  'Low Carb',
+  'Keto',
+  'Paleo'
+];
