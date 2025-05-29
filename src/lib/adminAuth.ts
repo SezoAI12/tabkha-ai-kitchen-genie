@@ -28,6 +28,39 @@ export const getCurrentAdminUser = (): AdminUser | null => {
   }
 };
 
+export const getAdminRole = (): string | null => {
+  const adminUser = getCurrentAdminUser();
+  return adminUser?.role || null;
+};
+
+export const verifyAdminCredentials = async (email: string, password: string): Promise<{ success: boolean; role?: string }> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      if (email === 'admin@wasfah.com' && password === 'admin123') {
+        resolve({ success: true, role: 'admin' });
+      } else if (email === 'super@wasfah.com' && password === 'super123') {
+        resolve({ success: true, role: 'superadmin' });
+      } else {
+        resolve({ success: false });
+      }
+    }, 1000);
+  });
+};
+
+export const setAdminAuth = (role: string): void => {
+  localStorage.setItem('adminRole', role);
+  localStorage.setItem('admin_token', 'mock-admin-token');
+  
+  const adminUser: AdminUser = {
+    id: role === 'superadmin' ? '2' : '1',
+    email: role === 'superadmin' ? 'super@wasfah.com' : 'admin@wasfah.com',
+    role: role === 'superadmin' ? 'super_admin' : 'admin',
+    name: role === 'superadmin' ? 'Super Admin' : 'Admin User'
+  };
+  
+  localStorage.setItem('admin_user', JSON.stringify(adminUser));
+};
+
 export const adminLogin = (email: string, password: string): Promise<boolean> => {
   return new Promise((resolve) => {
     // Mock authentication
@@ -62,4 +95,5 @@ export const adminLogin = (email: string, password: string): Promise<boolean> =>
 export const adminLogout = (): void => {
   localStorage.removeItem('admin_token');
   localStorage.removeItem('admin_user');
+  localStorage.removeItem('adminRole');
 };
