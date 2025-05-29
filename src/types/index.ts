@@ -73,6 +73,14 @@ export interface User {
   email: string;
   avatar?: string;
   preferences?: UserPreferences;
+  dietaryPreferences?: string[];
+  cuisinePreferences?: string[];
+  allergies?: string[];
+  chefAvatar?: string;
+  nutritionalGoals?: {
+    calories: number;
+    protein: number;
+  };
 }
 
 export interface UserPreferences {
