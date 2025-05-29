@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -36,14 +35,18 @@ const themeOptions = [
   'Chocolatey', 'Sweet', 'Sour', 'Bitter', 'Savory', 'Refreshing', 'Warm', 'Cold', 'Any Theme'
 ];
 
-export const DrinkCustomizationForm: React.FC<DrinkCustomizationFormProps> = ({ onGenerateDrink, onBack }) => {
+export const DrinkCustomizationForm: React.FC<DrinkCustomizationFormProps> = ({
+  onGenerateDrink,
+  onBack
+}) => {
   const [base, setBase] = useState<string>('');
   const [sournessSweetness, setSournessSweetness] = useState<number[]>([50]);
   const [dryRefreshing, setDryRefreshing] = useState<number[]>([50]);
   const [glassType, setGlassType] = useState<string>('');
   const [themes, setThemes] = useState<string[]>([]);
 
-  const handleThemeChange = (theme: string, isChecked: boolean) => {
+  const handleThemeChange = (theme: string, checked: boolean | string) => {
+    const isChecked = typeof checked === 'boolean' ? checked : checked === 'true';
     if (isChecked) {
       setThemes(prev => [...prev, theme]);
     } else {

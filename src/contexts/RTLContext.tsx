@@ -1,13 +1,11 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface RTLContextType {
   isRTL: boolean;
   toggleRTL: () => void;
   language: string;
   setLanguage: (lang: string) => void;
-  t: (englishText: string, arabicText?: string) => string;
-  direction: 'ltr' | 'rtl';
 }
 
 const RTLContext = createContext<RTLContextType | undefined>(undefined);
@@ -21,43 +19,33 @@ export const useRTL = () => {
 };
 
 interface RTLProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
-  const [isRTL, setIsRTL] = useState(false);
   const [language, setLanguage] = useState('en');
+  const [isRTL, setIsRTL] = useState(false);
+
+  useEffect(() => {
+    // Set RTL based on language
+    const rtlLanguages = ['ar', 'he', 'fa', 'ur'];
+    setIsRTL(rtlLanguages.includes(language));
+    
+    // Apply direction to document
+    document.documentElement.dir = rtlLanguages.includes(language) ? 'rtl' : 'ltr';
+    document.documentElement.lang = language;
+  }, [language]);
 
   const toggleRTL = () => {
     setIsRTL(!isRTL);
+    document.documentElement.dir = !isRTL ? 'rtl' : 'ltr';
   };
-
-  const t = (englishText: string, arabicText?: string) => {
-    if (isRTL && arabicText) {
-      return arabicText;
-    }
-    return englishText;
-  };
-
-  const direction: 'ltr' | 'rtl' = isRTL ? 'rtl' : 'ltr';
-
-  React.useEffect(() => {
-    if (isRTL) {
-      document.documentElement.dir = 'rtl';
-      document.documentElement.lang = 'ar';
-    } else {
-      document.documentElement.dir = 'ltr';
-      document.documentElement.lang = 'en';
-    }
-  }, [isRTL]);
 
   const value = {
     isRTL,
     toggleRTL,
     language,
     setLanguage,
-    t,
-    direction,
   };
 
   return (
