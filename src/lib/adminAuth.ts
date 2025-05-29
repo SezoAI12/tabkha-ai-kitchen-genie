@@ -1,3 +1,4 @@
+// src/lib/adminAuth.ts
 
 // Simple admin authentication utility
 export interface AdminUser {
@@ -66,5 +67,16 @@ export const adminAuth = {
   isSuperAdmin: (): boolean => {
     const user = adminAuth.getCurrentUser();
     return user?.role === 'super_admin';
+  },
+
+  // --- NEW: Added setAdminAuth as per error ---
+  setAdminAuth: (status: boolean, user?: AdminUser): void => {
+    if (status && user) {
+      localStorage.setItem('admin_token', 'mock_token'); // Or the actual token from login
+      localStorage.setItem('admin_user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('admin_token');
+      localStorage.removeItem('admin_user');
+    }
   }
 };
