@@ -62,6 +62,7 @@ export interface User {
   chefAvatar?: string;
   nutritionalGoals?: {
     dailyCalories?: number;
+    calories?: number;
     protein?: number;
     carbs?: number;
     fat?: number;
