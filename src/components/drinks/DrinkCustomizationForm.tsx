@@ -1,11 +1,12 @@
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Wine, GlassWater } from 'lucide-react';
 
 export interface DrinkOptions {
@@ -35,19 +36,16 @@ const themeOptions = [
   'Chocolatey', 'Sweet', 'Sour', 'Bitter', 'Savory', 'Refreshing', 'Warm', 'Cold', 'Any Theme'
 ];
 
-export const DrinkCustomizationForm: React.FC<DrinkCustomizationFormProps> = ({
-  onGenerateDrink,
-  onBack
-}) => {
+export const DrinkCustomizationForm: React.FC<DrinkCustomizationFormProps> = ({ onGenerateDrink, onBack }) => {
   const [base, setBase] = useState<string>('');
   const [sournessSweetness, setSournessSweetness] = useState<number[]>([50]);
   const [dryRefreshing, setDryRefreshing] = useState<number[]>([50]);
   const [glassType, setGlassType] = useState<string>('');
   const [themes, setThemes] = useState<string[]>([]);
 
-  const handleThemeChange = (theme: string, checked: boolean | string) => {
-    const isChecked = typeof checked === 'boolean' ? checked : checked === 'true';
-    if (isChecked) {
+  const handleThemeChange = (theme: string, isChecked: boolean | string) => {
+    const checked = typeof isChecked === 'boolean' ? isChecked : isChecked === 'true';
+    if (checked) {
       setThemes(prev => [...prev, theme]);
     } else {
       setThemes(prev => prev.filter(t => t !== theme));
@@ -174,7 +172,7 @@ export const DrinkCustomizationForm: React.FC<DrinkCustomizationFormProps> = ({
                   <Checkbox
                     id={`theme-${theme}`}
                     checked={themes.includes(theme)}
-                    onCheckedChange={(checked) => handleThemeChange(theme, checked as boolean)}
+                    onCheckedChange={(checked: boolean) => handleThemeChange(theme, checked)}
                   />
                   <Label htmlFor={`theme-${theme}`} className="text-sm">{theme}</Label>
                 </div>

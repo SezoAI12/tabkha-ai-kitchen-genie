@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -21,17 +20,21 @@ const mockSharedRecipes: Recipe[] = [
     description: 'My special homemade pasta recipe with fresh herbs.',
     prepTime: 30,
     cookTime: 15,
+    cookingTime: 45,
     servings: 4,
     difficulty: 'Medium', 
     calories: 450, 
     rating: 4.8, 
-    ratingCount: 32, 
+    ratingCount: 32,
+    reviews: 32,
     cuisineType: 'Italian',
     ingredients: [],
     instructions: [],
     categories: ['Italian', 'Main Course'],
     tags: ['Italian', 'Pasta', 'Homemade'],
-    isFavorite: true 
+    isFavorite: true,
+    author: 'Chef Maria',
+    createdAt: '2024-01-15'
   },
   { 
     id: 's2', 
@@ -40,17 +43,21 @@ const mockSharedRecipes: Recipe[] = [
     description: 'A flavorful curry with just the right amount of heat.',
     prepTime: 20,
     cookTime: 40,
+    cookingTime: 60,
     servings: 6,
     difficulty: 'Medium', 
     calories: 520, 
     rating: 4.6, 
     ratingCount: 18,
+    reviews: 18,
     cuisineType: 'Indian',
     ingredients: [],
     instructions: [],
     categories: ['Indian', 'Main Course'],
     tags: ['Indian', 'Spicy', 'Chicken'],
-    isFavorite: false 
+    isFavorite: false,
+    author: 'Chef Raj',
+    createdAt: '2024-01-10'
   },
   { 
     id: 's3', 
@@ -59,17 +66,21 @@ const mockSharedRecipes: Recipe[] = [
     description: 'Decadent chocolate cake with a molten center.',
     prepTime: 15,
     cookTime: 12,
+    cookingTime: 27,
     servings: 4,
     difficulty: 'Easy', 
     calories: 380, 
     rating: 4.9, 
     ratingCount: 45,
+    reviews: 45,
     cuisineType: 'International',
     ingredients: [],
     instructions: [],
     categories: ['Dessert'],
     tags: ['Dessert', 'Chocolate'],
-    isFavorite: true 
+    isFavorite: true,
+    author: 'Chef Anna',
+    createdAt: '2024-01-08'
   }
 ];
 
