@@ -1,115 +1,90 @@
 
-
-// Core application types
 export interface Recipe {
   id: string;
   title: string;
   description: string;
-  image: string;
-  cookingTime: number;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
-  rating: number;
-  cuisine: string;
   ingredients: string[];
   instructions: string[];
-  featured: boolean;
-  premium: boolean;
-  createdBy: string;
-  createdAt: string;
-  status: 'pending' | 'approved' | 'rejected';
-  cuisineType: string;
   prepTime: number;
   cookTime: number;
   servings: number;
-  calories: number;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  cuisine: string;
+  imageUrl: string;
   tags: string[];
-  ratingCount: number;
-  isFavorite: boolean;
-  nutritionalInfo: {
+  nutrition: {
+    calories: number;
     protein: number;
     carbs: number;
     fat: number;
-    fiber: number;
-    sugar: number;
   };
+  rating: number;
+  reviews: number;
+  createdAt: string;
+  authorId: string;
+  authorName: string;
 }
 
-export interface PantryItem {
+export interface Ingredient {
   id: string;
   name: string;
-  quantity: string;
+  quantity: number;
   unit: string;
-  expiryDate?: string;
   category: string;
+  expiryDate?: string;
+  imageUrl?: string;
 }
 
-export interface Meal {
+export interface PantryItem extends Ingredient {
+  addedDate: string;
+  location?: string;
+}
+
+export interface ShoppingListItem {
   id: string;
   name: string;
-  type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
-  image: string;
-  calories: number;
-  prepTime: number;
-  recipe: Recipe;
+  quantity: number;
+  unit: string;
+  category: string;
+  checked: boolean;
+  priority: 'low' | 'medium' | 'high';
+}
+
+export interface MealPlan {
+  id: string;
+  date: string;
+  meals: {
+    breakfast?: Recipe;
+    lunch?: Recipe;
+    dinner?: Recipe;
+    snacks?: Recipe[];
+  };
 }
 
 export interface User {
   id: string;
-  name: string;
   email: string;
+  name: string;
   avatar?: string;
-  role: 'admin' | 'user';
-  status: 'active' | 'inactive';
-  createdAt: string;
+  preferences: {
+    dietary: string[];
+    allergies: string[];
+    cuisines: string[];
+  };
+  healthProfile?: {
+    height: number;
+    weight: number;
+    age: number;
+    activityLevel: string;
+    goals: string[];
+  };
 }
 
-export interface Comment {
+export interface NutritionGoal {
   id: string;
-  content: string;
-  userId: string;
-  userName: string;
-  createdAt: string;
-  status: 'pending' | 'approved' | 'rejected';
-  reportCount: number;
+  name: string;
+  target: number;
+  current: number;
+  unit: string;
+  type: 'daily' | 'weekly' | 'monthly';
 }
-
-export interface Ticket {
-  id: string;
-  userId: string;
-  userName: string;
-  subject: string;
-  description: string;
-  status: 'open' | 'in-progress' | 'resolved' | 'closed';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  createdAt: string;
-  updatedAt: string;
-  assignedTo?: string;
-}
-
-export interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  type: 'info' | 'warning' | 'success' | 'error';
-  targetUsers: 'all' | 'premium' | 'specific';
-  userIds?: string[];
-  scheduled: boolean;
-  scheduledDate?: string;
-  createdAt: string;
-  status: 'draft' | 'sent';
-}
-
-export interface Advertisement {
-  id: string;
-  title: string;
-  content: string;
-  imageUrl?: string;
-  targetUrl?: string;
-  isActive: boolean;
-  displayDuration: number;
-  targetUsers: 'all' | 'premium' | 'free';
-  createdAt: string;
-  scheduledStart?: string;
-  scheduledEnd?: string;
-}
-
