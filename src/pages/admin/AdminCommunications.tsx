@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -59,17 +58,27 @@ export default function AdminCommunications() {
       return;
     }
 
-    const message = {
-      id: notifications.length + 1,
-      title: newMessage.subject,
-      content: newMessage.content,
-      type: 'announcement',
-      audience: newMessage.audience,
-      status: newMessage.scheduled ? 'scheduled' : 'sent',
-      sent_at: newMessage.scheduled ? undefined : new Date().toISOString(),
-      scheduled_at: newMessage.scheduled ? newMessage.scheduleTime : undefined,
-      open_rate: newMessage.scheduled ? null : Math.floor(Math.random() * 100)
-    };
+    const message = newMessage.scheduled 
+      ? {
+          id: notifications.length + 1,
+          title: newMessage.subject,
+          content: newMessage.content,
+          type: 'announcement',
+          audience: newMessage.audience,
+          status: 'scheduled',
+          scheduled_at: newMessage.scheduleTime,
+          open_rate: null
+        }
+      : {
+          id: notifications.length + 1,
+          title: newMessage.subject,
+          content: newMessage.content,
+          type: 'announcement',
+          audience: newMessage.audience,
+          status: 'sent',
+          sent_at: new Date().toISOString(),
+          open_rate: Math.floor(Math.random() * 100)
+        };
 
     setNotifications([message, ...notifications]);
     setNewMessage({
@@ -290,8 +299,8 @@ export default function AdminCommunications() {
                         {message.open_rate ? `${message.open_rate}%` : 'N/A'}
                       </TableCell>
                       <TableCell>
-                        {message.sent_at ? new Date(message.sent_at).toLocaleDateString() : 
-                         message.scheduled_at ? new Date(message.scheduled_at).toLocaleDateString() : 'N/A'}
+                        {'sent_at' in message ? new Date(message.sent_at).toLocaleDateString() : 
+                         'scheduled_at' in message ? new Date(message.scheduled_at).toLocaleDateString() : 'N/A'}
                       </TableCell>
                       <TableCell className="text-right space-x-1">
                         <Button variant="ghost" size="icon" className="h-8 w-8">
