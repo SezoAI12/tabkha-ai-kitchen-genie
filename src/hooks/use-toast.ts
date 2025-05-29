@@ -5,6 +5,7 @@ type ToastProps = {
   title?: string
   description?: string
   variant?: "default" | "destructive"
+  duration?: number
 }
 
 type ToastActionElement = React.ReactElement
@@ -14,6 +15,8 @@ type Toast = ToastProps & {
   title?: React.ReactNode
   description?: React.ReactNode
   action?: ToastActionElement
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 const TOAST_LIMIT = 1
@@ -141,9 +144,7 @@ function dispatch(action: Action) {
   })
 }
 
-type Toast = Omit<ToasterToast, "id">
-
-function toast({ ...props }: Toast) {
+function toast(props: ToastProps) {
   const id = genId()
 
   const update = (props: ToasterToast) =>
@@ -193,4 +194,3 @@ function useToast() {
 }
 
 export { useToast, toast }
-
