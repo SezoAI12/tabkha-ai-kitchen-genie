@@ -1,115 +1,54 @@
 
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.VITE_SUPABASE_URL || '',
-  process.env.VITE_SUPABASE_ANON_KEY || ''
-);
+import { supabase } from '@/integrations/supabase/client';
 
 export interface AdminUser {
   id: string;
   email: string;
-  role: 'admin' | 'super_admin';
-  name?: string;
+  user_type: string;
 }
 
-// Helper functions for admin authentication
-export const isAdminAuthenticated = (): boolean => {
-  return localStorage.getItem('adminAuth') === 'true';
-};
-
-export const getAdminRole = (): string | null => {
-  return localStorage.getItem('adminRole');
-};
-
-export const setAdminAuth = (role: string): void => {
-  localStorage.setItem('adminAuth', 'true');
-  localStorage.setItem('adminRole', role);
-};
-
-export const adminLogout = (): void => {
-  localStorage.removeItem('adminAuth');
-  localStorage.removeItem('adminRole');
-};
-
-export const verifyAdminCredentials = async (email: string, password: string): Promise<{ success: boolean; role?: string }> => {
-  // Demo credentials
-  if (email === 'admin@wasfahai.com' && password === 'admin123') {
-    return { success: true, role: 'admin' };
-  }
-  if (email === 'superadmin@wasfahai.com' && password === 'superadmin123') {
-    return { success: true, role: 'superadmin' };
-  }
-  return { success: false };
-};
-
-export const adminAuth = {
-  async signIn(email: string, password: string): Promise<{ user: AdminUser | null; error: string | null }> {
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        return { user: null, error: error.message };
-      }
-
-      // In a real app, you'd verify admin role from database
-      const user: AdminUser = {
-        id: data.user.id,
-        email: data.user.email || '',
-        role: 'admin',
-        name: data.user.user_metadata?.name,
-      };
-
-      return { user, error: null };
-    } catch (error) {
-      return { user: null, error: 'Failed to sign in' };
-    }
-  },
-
-  async signOut(): Promise<{ error: string | null }> {
-    try {
-      const { error } = await supabase.auth.signOut();
-      return { error: error?.message || null };
-    } catch (error) {
-      return { error: 'Failed to sign out' };
-    }
-  },
-
-  async getCurrentUser(): Promise<AdminUser | null> {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) return null;
-
-      return {
-        id: user.id,
-        email: user.email || '',
-        role: 'admin',
-        name: user.user_metadata?.name,
-      };
-    } catch (error) {
+export const checkAdminAuth = async (): Promise<AdminUser | null> => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
       return null;
     }
-  },
 
-  onAuthStateChange(callback: (user: AdminUser | null) => void) {
-    return supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session?.user) {
-        const user: AdminUser = {
-          id: session.user.id,
-          email: session.user.email || '',
-          role: 'admin',
-          name: session.user.user_metadata?.name,
-        };
-        callback(user);
-      } else {
-        callback(null);
-      }
-    });
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('user_type')
+      .eq('id', user.id)
+      .single();
+
+    if (!profile || !['admin', 'super_admin'].includes(profile.user_type)) {
+      return null;
+    }
+
+    return {
+      id: user.id,
+      email: user.email || '',
+      user_type: profile.user_type
+    };
+  } catch (error) {
+    console.error('Error checking admin auth:', error);
+    return null;
   }
 };
 
-export default adminAuth;
+export const adminLogout = async (): Promise<void> => {
+  try {
+    await supabase.auth.signOut();
+  } catch (error) {
+    console.error('Error logging out:', error);
+    throw error;
+  }
+};
+
+export const isAdmin = (userType: string): boolean => {
+  return ['admin', 'super_admin'].includes(userType);
+};
+
+export const isSuperAdmin = (userType: string): boolean => {
+  return userType === 'super_admin';
+};
