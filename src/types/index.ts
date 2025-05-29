@@ -13,7 +13,7 @@ export interface Recipe {
   ratingCount?: number
   tags: string[]
   cuisine?: string
-  ingredients?: string[]
+  ingredients?: string[] | DetailedIngredient[]
   instructions?: string[]
   isFavorite?: boolean
   featured?: boolean
@@ -25,6 +25,12 @@ export interface Recipe {
     fat: number
     fiber: number
   }
+}
+
+export interface DetailedIngredient {
+  amount: number
+  unit: string
+  name: string
 }
 
 export interface Ingredient {
@@ -50,6 +56,9 @@ export interface Meal {
   type: 'breakfast' | 'lunch' | 'dinner' | 'snack'
   recipe?: Recipe
   scheduledTime?: string
+  image?: string
+  prepTime?: number
+  calories?: number
 }
 
 export interface User {
@@ -60,4 +69,8 @@ export interface User {
     dietary: string[]
     allergies: string[]
   }
+  dietaryPreferences?: string[]
+  cuisinePreferences?: string[]
+  allergies?: string[]
+  chefAvatar?: string
 }
