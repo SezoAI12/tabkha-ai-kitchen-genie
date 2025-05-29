@@ -1,5 +1,5 @@
 
-import { Recipe, PantryItem, ShoppingListItem } from '../types/index';
+import { Recipe, PantryItem, ShoppingListItem, User } from '../types/index';
 
 export const mockRecipes: Recipe[] = [
   {
@@ -19,6 +19,7 @@ export const mockRecipes: Recipe[] = [
     difficulty: 'Medium',
     cuisine: 'Italian',
     imageUrl: '/placeholder.svg',
+    image: '/placeholder.svg',
     tags: ['pasta', 'quick', 'dinner'],
     nutrition: {
       calories: 520,
@@ -26,11 +27,21 @@ export const mockRecipes: Recipe[] = [
       carbs: 45,
       fat: 28
     },
+    nutritionalInfo: {
+      protein: 22,
+      carbs: 45,
+      fat: 28
+    },
+    calories: 520,
     rating: 4.8,
     reviews: 156,
+    ratingCount: 156,
     createdAt: '2024-01-15',
     authorId: '1',
-    authorName: 'Chef Mario'
+    authorName: 'Chef Mario',
+    featured: true,
+    premium: false,
+    isFavorite: false
   },
   {
     id: '2',
@@ -49,6 +60,7 @@ export const mockRecipes: Recipe[] = [
     difficulty: 'Medium',
     cuisine: 'Indian',
     imageUrl: '/placeholder.svg',
+    image: '/placeholder.svg',
     tags: ['curry', 'spicy', 'dinner'],
     nutrition: {
       calories: 450,
@@ -56,11 +68,21 @@ export const mockRecipes: Recipe[] = [
       carbs: 12,
       fat: 25
     },
+    nutritionalInfo: {
+      protein: 35,
+      carbs: 12,
+      fat: 25
+    },
+    calories: 450,
     rating: 4.6,
     reviews: 203,
+    ratingCount: 203,
     createdAt: '2024-01-20',
     authorId: '2',
-    authorName: 'Chef Priya'
+    authorName: 'Chef Priya',
+    featured: false,
+    premium: false,
+    isFavorite: true
   }
 ];
 
@@ -78,6 +100,55 @@ export const categories = [
   'Vegan',
   'Gluten-Free'
 ];
+
+export const cuisines = [
+  'Italian',
+  'Indian',
+  'Chinese',
+  'Mexican',
+  'Thai',
+  'Japanese',
+  'French',
+  'Mediterranean',
+  'American',
+  'Korean'
+];
+
+export const difficulties = [
+  'Easy',
+  'Medium',
+  'Hard'
+];
+
+export const dietaryOptions = [
+  'Vegetarian',
+  'Vegan',
+  'Gluten-Free',
+  'Dairy-Free',
+  'Nut-Free',
+  'Low-Carb',
+  'Keto',
+  'Paleo'
+];
+
+export const mockUser: User = {
+  id: '1',
+  email: 'user@example.com',
+  name: 'John Doe',
+  avatar: '/placeholder.svg',
+  preferences: {
+    dietary: ['Vegetarian'],
+    allergies: ['Nuts'],
+    cuisines: ['Italian', 'Mediterranean']
+  },
+  healthProfile: {
+    height: 175,
+    weight: 70,
+    age: 30,
+    activityLevel: 'moderate',
+    goals: ['maintain_weight', 'eat_healthy']
+  }
+};
 
 export const mockPantryItems: PantryItem[] = [
   {

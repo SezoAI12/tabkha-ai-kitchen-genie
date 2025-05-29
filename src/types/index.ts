@@ -11,6 +11,7 @@ export interface Recipe {
   difficulty: 'Easy' | 'Medium' | 'Hard';
   cuisine: string;
   imageUrl: string;
+  image?: string;
   tags: string[];
   nutrition: {
     calories: number;
@@ -18,11 +19,21 @@ export interface Recipe {
     carbs: number;
     fat: number;
   };
+  nutritionalInfo?: {
+    protein: number;
+    carbs: number;
+    fat: number;
+  };
+  calories?: number;
   rating: number;
   reviews: number;
+  ratingCount?: number;
   createdAt: string;
   authorId: string;
   authorName: string;
+  featured?: boolean;
+  premium?: boolean;
+  isFavorite?: boolean;
 }
 
 export interface Ingredient {
@@ -59,6 +70,14 @@ export interface MealPlan {
     dinner?: Recipe;
     snacks?: Recipe[];
   };
+}
+
+export interface Meal {
+  id: string;
+  type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  recipe: Recipe;
+  date: string;
+  completed: boolean;
 }
 
 export interface User {

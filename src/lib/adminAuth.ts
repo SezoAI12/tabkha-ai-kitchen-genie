@@ -47,3 +47,25 @@ export const adminAuth = {
     return user?.role === 'super_admin';
   }
 };
+
+// Additional exports for compatibility
+export const isAdminAuthenticated = (): boolean => {
+  return adminAuth.isAuthenticated();
+};
+
+export const adminLogout = () => {
+  adminAuth.logout();
+};
+
+export const getAdminRole = (): string | null => {
+  const user = adminAuth.getCurrentUser();
+  return user?.role || null;
+};
+
+export const verifyAdminCredentials = async (email: string, password: string): Promise<AdminUser | null> => {
+  return adminAuth.login(email, password);
+};
+
+export const setAdminAuth = (user: AdminUser) => {
+  localStorage.setItem('adminUser', JSON.stringify(user));
+};
