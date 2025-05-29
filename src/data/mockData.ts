@@ -1,75 +1,36 @@
 
-import { Recipe, PantryItem, User } from '@/types/index';
-
-export const mockUser: User = {
-  id: '1',
-  name: 'Ahmed Hassan',
-  email: 'ahmed.hassan@example.com',
-  avatar: '/avatars/ahmed.jpg',
-  chefAvatar: 'The Grill Master',
-  preferences: {
-    diet: ['Mediterranean'],
-    allergies: ['Nuts'],
-    cuisine: ['Middle Eastern', 'Italian']
-  },
-  dietaryPreferences: ['Mediterranean'],
-  cuisinePreferences: ['Middle Eastern', 'Italian'],
-  allergies: ['Nuts'],
-  nutritionalGoals: {
-    calories: 2000,
-    protein: 150
-  }
-};
+import { Recipe, PantryItem, User, Meal } from '@/types/index';
 
 export const mockRecipes: Recipe[] = [
   {
     id: '1',
-    name: 'Mediterranean Grilled Chicken',
-    title: 'Mediterranean Grilled Chicken',
-    description: 'Juicy grilled chicken with Mediterranean herbs and spices',
-    image: '/recipes/mediterranean-chicken.jpg',
-    cookTime: '25 min',
-    cookingTime: 25,
+    name: 'Chicken Tikka Masala',
+    title: 'Chicken Tikka Masala',
+    description: 'Creamy and flavorful Indian curry',
+    image: '/placeholder.svg',
+    cookTime: '45 min',
+    cookingTime: 45,
     prepTime: '15 min',
     difficulty: 'Medium',
     rating: 4.8,
-    ratingCount: 124,
-    cuisine: 'Mediterranean',
+    ratingCount: 120,
+    cuisine: 'Indian',
     ingredients: [
-      {
-        id: '1',
-        name: 'Chicken breast',
-        quantity: '4',
-        unit: 'pieces',
-        category: 'Protein',
-        amount: '4 pieces'
-      },
-      {
-        id: '2',
-        name: 'Olive oil',
-        quantity: '3',
-        unit: 'tbsp',
-        category: 'Oil',
-        amount: '3 tbsp'
-      }
+      { id: '1', name: 'Chicken breast', quantity: '500g', unit: 'g', category: 'protein', amount: '500g' },
+      { id: '2', name: 'Tomato sauce', quantity: '400ml', unit: 'ml', category: 'sauce', amount: '400ml' }
     ],
-    instructions: [
-      'Marinate chicken with olive oil and herbs',
-      'Preheat grill to medium-high heat',
-      'Grill chicken for 6-7 minutes per side',
-      'Let rest for 5 minutes before serving'
-    ],
-    calories: 320,
+    instructions: ['Marinate chicken', 'Cook in pan', 'Add sauce', 'Simmer'],
+    calories: 350,
     servings: 4,
-    tags: ['Healthy', 'Protein', 'Mediterranean'],
+    tags: ['dinner', 'curry', 'protein'],
     featured: true,
     isFavorite: false,
     premium: false,
     nutritionalInfo: {
-      calories: 320,
-      protein: 35,
-      carbs: 2,
-      fat: 18
+      calories: 350,
+      protein: 25,
+      carbs: 15,
+      fat: 20
     }
   }
 ];
@@ -77,67 +38,45 @@ export const mockRecipes: Recipe[] = [
 export const mockPantryItems: PantryItem[] = [
   {
     id: '1',
-    name: 'Milk',
-    quantity: '1',
-    unit: 'liter',
-    expiryDate: '2024-02-01',
-    category: 'Dairy',
-    daysUntilExpiry: 2,
-    addedDate: '2024-01-25'
-  },
-  {
-    id: '2',
-    name: 'Bread',
-    quantity: '1',
-    unit: 'loaf',
-    expiryDate: '2024-01-31',
-    category: 'Grains',
-    daysUntilExpiry: 1,
-    addedDate: '2024-01-28'
+    name: 'Chicken breast',
+    quantity: '500g',
+    unit: 'g',
+    expiryDate: '2024-01-15',
+    category: 'protein',
+    daysUntilExpiry: 3,
+    addedDate: '2024-01-10'
   }
 ];
 
-// Missing exports that are needed by various pages
-export const categories = [
-  'Healthy',
-  'Quick & Easy',
-  'Vegetarian',
-  'Vegan',
-  'Gluten-Free',
-  'Low Carb',
-  'High Protein',
-  'Mediterranean',
-  'Asian',
-  'Italian',
-  'Mexican'
-];
+export const mockUser: User = {
+  id: '1',
+  name: 'John Doe',
+  email: 'john@example.com',
+  avatar: '/placeholder.svg',
+  chefAvatar: '/placeholder.svg',
+  preferences: {
+    diet: ['vegetarian'],
+    allergies: ['nuts'],
+    cuisine: ['italian', 'indian']
+  },
+  dietaryPreferences: ['vegetarian'],
+  cuisinePreferences: ['italian', 'indian'],
+  allergies: ['nuts'],
+  nutritionalGoals: {
+    calories: 2000,
+    protein: 150
+  }
+};
 
-export const cuisines = [
-  'Mediterranean',
-  'Italian',
-  'Mexican',
-  'Asian',
-  'Indian',
-  'Middle Eastern',
-  'French',
-  'Thai',
-  'Japanese',
-  'Greek'
-];
-
-export const difficulties = [
-  'Easy',
-  'Medium',
-  'Hard'
-];
-
-export const dietaryOptions = [
-  'Vegetarian',
-  'Vegan',
-  'Gluten-Free',
-  'Dairy-Free',
-  'Nut-Free',
-  'Low Carb',
-  'Keto',
-  'Paleo'
+export const mockMeals: Meal[] = [
+  {
+    id: '1',
+    name: 'Breakfast Bowl',
+    type: 'breakfast',
+    recipe: mockRecipes[0],
+    time: '08:00',
+    image: '/placeholder.svg',
+    prepTime: '10 min',
+    calories: 300
+  }
 ];
