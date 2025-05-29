@@ -1,161 +1,90 @@
 
-import { Recipe, Ingredient, PantryItem, User } from '@/types/index'
+import { Recipe, PantryItem } from '@/types/index';
 
 export const mockRecipes: Recipe[] = [
   {
     id: '1',
-    title: 'Spaghetti Carbonara',
-    description: 'Classic Italian pasta dish',
-    image: '/images/carbonara.jpg',
-    cookTime: 20,
-    cookingTime: 20,
-    prepTime: 10,
-    servings: 4,
+    name: 'Pasta Carbonara',
+    description: 'Classic Italian pasta dish with eggs, cheese, and pancetta',
+    image: '/placeholder.svg',
+    cookTime: '25 min',
     difficulty: 'Medium',
-    rating: 4.5,
-    ratingCount: 128,
-    tags: ['Italian', 'Pasta', 'Quick'],
+    rating: 4.8,
     cuisine: 'Italian',
-    ingredients: ['Spaghetti', 'Eggs', 'Bacon', 'Parmesan cheese', 'Black pepper'],
-    instructions: [
-      'Boil pasta according to package directions',
-      'Cook bacon until crispy',
-      'Mix eggs and cheese in a bowl',
-      'Combine hot pasta with egg mixture',
-      'Add bacon and pepper, serve immediately'
-    ],
-    isFavorite: false,
-    featured: true,
-    premium: false,
+    ingredients: ['Spaghetti', 'Eggs', 'Parmesan cheese', 'Pancetta', 'Black pepper'],
+    instructions: ['Cook pasta', 'Prepare sauce', 'Combine and serve'],
     calories: 520,
-    nutritionalInfo: {
-      protein: 25,
-      carbs: 60,
-      fat: 18,
-      fiber: 3
-    }
+    servings: 4
   },
   {
     id: '2',
-    title: 'Chicken Tikka Masala',
-    description: 'Creamy Indian curry',
-    image: '/images/tikka.jpg',
-    cookTime: 45,
-    cookingTime: 45,
-    prepTime: 15,
-    servings: 6,
-    difficulty: 'Medium',
-    rating: 4.7,
-    ratingCount: 95,
-    tags: ['Indian', 'Curry', 'Spicy'],
-    cuisine: 'Indian',
-    ingredients: ['Chicken breast', 'Yogurt', 'Tomato sauce', 'Heavy cream', 'Spices'],
-    instructions: [
-      'Marinate chicken in yogurt and spices',
-      'Cook chicken until golden',
-      'Prepare tomato-based sauce',
-      'Simmer chicken in sauce',
-      'Finish with cream and serve with rice'
-    ],
-    isFavorite: true,
-    featured: false,
-    premium: false,
+    name: 'Chicken Stir Fry',
+    description: 'Quick and healthy stir fry with vegetables',
+    image: '/placeholder.svg',
+    cookTime: '15 min',
+    difficulty: 'Easy',
+    rating: 4.5,
+    cuisine: 'Asian',
+    ingredients: ['Chicken breast', 'Mixed vegetables', 'Soy sauce', 'Garlic', 'Ginger'],
+    instructions: ['Cut chicken', 'Stir fry vegetables', 'Add sauce and serve'],
     calories: 380,
-    nutritionalInfo: {
-      protein: 35,
-      carbs: 12,
-      fat: 22,
-      fiber: 2
-    }
-  }
-]
-
-export const mockIngredients: Ingredient[] = [
-  {
-    id: '1',
-    name: 'Tomatoes',
-    expiryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days from now
-    quantity: 5,
-    unit: 'pieces'
+    servings: 2
   },
   {
-    id: '2',
-    name: 'Milk',
-    expiryDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000), // 1 day from now
-    quantity: 1,
-    unit: 'liter'
+    id: '3',
+    name: 'Avocado Toast',
+    description: 'Simple and nutritious breakfast option',
+    image: '/placeholder.svg',
+    cookTime: '5 min',
+    difficulty: 'Easy',
+    rating: 4.2,
+    cuisine: 'Modern',
+    ingredients: ['Bread', 'Avocado', 'Salt', 'Lemon juice', 'Red pepper flakes'],
+    instructions: ['Toast bread', 'Mash avocado', 'Spread and season'],
+    calories: 250,
+    servings: 1
   }
-]
+];
 
 export const mockPantryItems: PantryItem[] = [
   {
     id: '1',
-    name: 'Rice',
-    quantity: 2,
-    unit: 'kg',
-    expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    category: 'Grains'
+    name: 'Milk',
+    quantity: '1',
+    unit: 'liter',
+    expiryDate: '2024-02-15',
+    category: 'Dairy',
+    daysUntilExpiry: 2
   },
   {
     id: '2',
-    name: 'Olive Oil',
-    quantity: 1,
-    unit: 'bottle',
-    expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    category: 'Oils'
-  }
-]
-
-export const mockUser: User = {
-  id: '1',
-  name: 'John Doe',
-  email: 'john@example.com',
-  preferences: {
-    dietary: ['Vegetarian'],
-    allergies: ['Nuts']
+    name: 'Eggs',
+    quantity: '12',
+    unit: 'pieces',
+    expiryDate: '2024-02-20',
+    category: 'Dairy',
+    daysUntilExpiry: 7
   },
-  dietaryPreferences: ['Vegetarian', 'Gluten-Free'],
-  cuisinePreferences: ['Italian', 'Mediterranean'],
-  allergies: ['Nuts'],
-  chefAvatar: 'The Grill Master',
-  nutritionalGoals: {
-    calories: 2000,
-    protein: 150
+  {
+    id: '3',
+    name: 'Bread',
+    quantity: '1',
+    unit: 'loaf',
+    expiryDate: '2024-02-18',
+    category: 'Bakery',
+    daysUntilExpiry: 5
+  },
+  {
+    id: '4',
+    name: 'Bananas',
+    quantity: '6',
+    unit: 'pieces',
+    expiryDate: '2024-02-16',
+    category: 'Fruits',
+    daysUntilExpiry: 3
   }
-}
+];
 
-export const categories = [
-  'Breakfast',
-  'Lunch', 
-  'Dinner',
-  'Dessert',
-  'Snacks',
-  'Beverages'
-]
+export const mockExpiringIngredients = mockPantryItems.filter(item => item.daysUntilExpiry <= 3);
 
-export const cuisines = [
-  'Italian',
-  'Indian',
-  'Chinese',
-  'Mexican',
-  'Mediterranean',
-  'American',
-  'Thai',
-  'Japanese'
-]
-
-export const difficulties = [
-  'Easy',
-  'Medium',
-  'Hard'
-]
-
-export const dietaryOptions = [
-  'Vegetarian',
-  'Vegan',
-  'Gluten-Free',
-  'Dairy-Free',
-  'Low-Carb',
-  'Keto',
-  'Paleo'
-]
+export const mockRecommendedRecipes = mockRecipes.slice(0, 3);
