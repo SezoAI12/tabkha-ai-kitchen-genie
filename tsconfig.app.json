@@ -1,30 +1,40 @@
 {
+  "extends": "./tsconfig.json", // This ensures it inherits baseUrl and paths from the main tsconfig.json
   "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "target": "ES2022",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"], // Essential for React (browser APIs)
     "module": "ESNext",
-    "skipLibCheck": true,
+    "skipLibCheck": true, // Recommended to skip type checking node_modules for speed
 
     /* Bundler mode */
-    "moduleResolution": "bundler",
+    "moduleResolution": "bundler", // Or "node" depending on your setup, "bundler" is common with Vite
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
-    "noEmit": true,
-    "jsx": "react-jsx",
+    "noEmit": true, // Vite handles emission
+    "jsx": "react-jsx", // Crucial for React components
 
-    /* Linting */
-    "strict": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noImplicitAny": false,
-    "noFallthroughCasesInSwitch": false,
-
-    "baseUrl": ".",
+    /* Path mapping - These must be correctly picked up */
+    "baseUrl": ".", // Relative to project root
     "paths": {
-      "@/*": ["./src/*"]
-    }
+      "@/*": ["./src/*"] // Maps @/ to your src folder
+    },
+
+    /* Linting/Strictness */
+    "strict": true, // Enables a wide range of type-checking, including noImplicitAny
+    "noUnusedLocals": false, // Set to 'true' for cleaner code after resolving errors
+    "noUnusedParameters": false, // Set to 'true' for cleaner code after resolving errors
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": [
+    "src",              // <--- THIS IS CRUCIAL: Include your entire src directory
+    "src/**/*.ts",      // Include all TypeScript files
+    "src/**/*.tsx",     // Include all TypeScript React files
+    "src/**/*.d.ts",    // Include all declaration files (like types.d.ts)
+    "vite.config.ts"    // Include Vite config for type-checking
+  ],
+  "exclude": [
+    "node_modules",     // Exclude node_modules from compilation
+    "dist"              // Exclude build output
+  ]
 }
