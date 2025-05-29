@@ -2,25 +2,25 @@
 export interface Recipe {
   id: string;
   name: string;
-  title: string; // Adding missing title property
+  title: string;
   description: string;
   image: string;
   cookTime: string;
-  cookingTime?: number; // Adding cookingTime as optional number
-  prepTime?: string; // Adding prepTime
-  difficulty: 'Easy' | 'Medium' | 'Hard';
+  cookingTime: number;
+  prepTime: string;
+  difficulty: string;
   rating: number;
-  ratingCount?: number; // Adding ratingCount
+  ratingCount: number;
   cuisine: string;
-  ingredients: Ingredient[]; // Changed from string[] to Ingredient[]
+  ingredients: Ingredient[];
   instructions: string[];
-  calories?: number;
-  servings?: number;
-  tags?: string[];
-  featured?: boolean; // Adding featured property
-  isFavorite?: boolean; // Adding isFavorite property
-  premium?: boolean; // Adding premium property
-  nutritionalInfo?: {
+  calories: number;
+  servings: number;
+  tags: string[];
+  featured: boolean;
+  isFavorite: boolean;
+  premium: boolean;
+  nutritionalInfo: {
     calories: number;
     protein: number;
     carbs: number;
@@ -33,10 +33,8 @@ export interface Ingredient {
   name: string;
   quantity: string;
   unit: string;
-  amount?: string; // Adding amount property
-  expiryDate?: string;
   category: string;
-  image?: string;
+  amount: string;
 }
 
 export interface PantryItem {
@@ -46,58 +44,26 @@ export interface PantryItem {
   unit: string;
   expiryDate: string;
   category: string;
-  image?: string;
   daysUntilExpiry: number;
-  addedDate?: string; // Adding addedDate property
+  addedDate: string;
 }
 
 export interface User {
   id: string;
   name: string;
   email: string;
-  avatar?: string;
-  chefAvatar?: string; // Adding chefAvatar property
-  preferences?: {
+  avatar: string;
+  chefAvatar: string;
+  preferences: {
     diet: string[];
     allergies: string[];
     cuisine: string[];
   };
-  dietaryPreferences?: string[]; // Adding dietaryPreferences
-  cuisinePreferences?: string[]; // Adding cuisinePreferences
-  allergies?: string[]; // Adding allergies
-  nutritionalGoals?: { // Adding nutritionalGoals
+  dietaryPreferences: string[];
+  cuisinePreferences: string[];
+  allergies: string[];
+  nutritionalGoals: {
     calories: number;
     protein: number;
   };
-}
-
-export interface Meal {
-  id: string;
-  name: string;
-  type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
-  recipe?: Recipe;
-  time?: string;
-  image?: string; // Adding image property
-  prepTime?: string; // Adding prepTime property
-  calories?: number; // Adding calories property
-}
-
-export interface MealPlan {
-  id: string;
-  date: string;
-  meals: {
-    breakfast: Recipe;
-    lunch: Recipe;
-    dinner: Recipe;
-    snacks?: Recipe[];
-  };
-}
-
-export interface NutritionInfo {
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-  fiber: number;
-  sugar: number;
 }
