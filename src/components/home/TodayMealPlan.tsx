@@ -1,41 +1,79 @@
+
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Clock, Users, ChefHat } from 'lucide-react';
-import { Meal } from '@/types/index';
-import { mockMeals } from '@/data/mockData';
+import { Clock, Users, Star } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-export const TodayMealPlan: React.FC = () => {
-  const todayMeals = mockMeals.slice(0, 3);
+interface MealPlanProps {
+  mealPlan: {
+    id: string;
+    date: string;
+    meals: Array<{
+      id: string;
+      type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+      recipe: {
+        id: string;
+        title: string;
+        description: string;
+        image: string;
+        prepTime: number;
+        cookTime: number;
+        servings: number;
+        difficulty: 'Easy' | 'Medium' | 'Hard';
+        calories: number;
+        rating: number;
+        ratingCount: number;
+        ingredients: string[];
+        instructions: string[];
+        categories: string[];
+        tags: string[];
+        isFavorite: boolean;
+      };
+    }>;
+  };
+}
 
+export const TodayMealPlan: React.FC<MealPlanProps> = ({ mealPlan }) => {
   return (
-    <Card className="mb-6">
-      <CardHeader>
-        <CardTitle className="text-lg font-bold text-wasfah-deep-teal">Today's Meal Plan</CardTitle>
-      </CardHeader>
+    <Card>
       <CardContent className="p-4">
-        <div className="space-y-4">
-          {todayMeals.map(meal => (
-            <div key={meal.id} className="flex items-center justify-between">
-              <div>
-                <h4 className="font-medium text-sm">{meal.name}</h4>
-                <div className="flex items-center space-x-2 text-xs text-gray-500">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-semibold text-lg">Today's Meal Plan</h3>
+          <Link to="/meal-plan">
+            <Button variant="outline" size="sm">
+              View All
+            </Button>
+          </Link>
+        </div>
+        
+        <div className="space-y-3">
+          {mealPlan.meals.map((meal) => (
+            <div key={meal.id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+              <img
+                src={meal.recipe.image}
+                alt={meal.recipe.title}
+                className="w-12 h-12 rounded-lg object-cover"
+              />
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-sm">{meal.recipe.title}</h4>
+                  <span className="text-xs text-gray-500 capitalize">{meal.type}</span>
+                </div>
+                <div className="flex items-center space-x-3 text-xs text-gray-500 mt-1">
                   <div className="flex items-center">
                     <Clock size={12} className="mr-1" />
-                    {meal.prepTime}m
+                    <span>{meal.recipe.prepTime + meal.recipe.cookTime}m</span>
                   </div>
                   <div className="flex items-center">
                     <Users size={12} className="mr-1" />
-                    {meal.calories} cal
+                    <span>{meal.recipe.servings}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Star size={12} className="mr-1 text-yellow-400" />
+                    <span>{meal.recipe.rating}</span>
                   </div>
                 </div>
-              </div>
-              <div className="flex items-center">
-                <Badge variant="secondary" className="mr-2">{meal.type}</Badge>
-                <Button size="sm" className="bg-wasfah-bright-teal hover:bg-wasfah-teal text-white">
-                  <ChefHat size={14} />
-                </Button>
               </div>
             </div>
           ))}

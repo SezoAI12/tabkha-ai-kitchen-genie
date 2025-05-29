@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { RecipeGrid } from '@/components/recipe/RecipeGrid';
@@ -6,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { 
   Filter, 
   SlidersHorizontal, 
@@ -16,7 +19,10 @@ import {
   Plus,
   ChefHat,
   Utensils,
-  Globe
+  Globe,
+  X,
+  GraduationCap,
+  AlertCircle
 } from 'lucide-react';
 import { 
   Select,
@@ -33,6 +39,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { mockRecipes, categories, cuisines, difficulties, dietaryOptions } from '@/data/mockData';
@@ -61,7 +83,7 @@ export default function RecipesPage() {
     // Apply cuisine filter
     if (filters.cuisines.length > 0) {
       result = result.filter(recipe => 
-        filters.cuisines.includes(recipe.cuisineType)
+        filters.cuisines.includes(recipe.cuisine)
       );
     }
     
@@ -75,7 +97,7 @@ export default function RecipesPage() {
     // Apply time filter
     if (filters.time > 0) {
       result = result.filter(recipe => 
-        recipe.prepTime + recipe.cookTime <= filters.time
+        recipe.cookingTime <= filters.time
       );
     }
     

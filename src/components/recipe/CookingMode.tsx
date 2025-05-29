@@ -1,214 +1,232 @@
+
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { Recipe } from '@/types/index';
 import { 
-  Timer, 
+  ArrowLeft, 
+  ArrowRight, 
   Play, 
   Pause, 
-  SkipForward, 
-  SkipBack, 
-  Check,
+  RotateCcw, 
+  X,
+  Clock,
+  Users,
   ChefHat
 } from 'lucide-react';
-import { Recipe } from '@/types/index';
+import { PageContainer } from '@/components/layout/PageContainer';
 
 interface CookingModeProps {
   recipe: Recipe;
+  onClose: () => void;
 }
 
-export const CookingMode: React.FC<CookingModeProps> = ({ recipe }) => {
+export const CookingMode: React.FC<CookingModeProps> = ({ recipe, onClose }) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [timer, setTimer] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [timeRemaining, setTimeRemaining] = useState(0); // Time remaining in seconds
-  const [stepTimer, setStepTimer] = useState<NodeJS.Timeout | null>(null);
+  const [completedSteps, setCompletedSteps] = useState<boolean[]>(
+    new Array(recipe.instructions.length).fill(false)
+  );
 
   useEffect(() => {
-    // Initialize timer for the first step if it has a time
-    if (recipe.instructions && recipe.instructions[currentStep]) {
-      const timeMatch = recipe.instructions[currentStep].match(/\[(\d+)m\]/);
-      if (timeMatch) {
-        setTimeRemaining(parseInt(timeMatch[1]) * 60);
-      }
-    }
-    return () => {
-      if (stepTimer) clearInterval(stepTimer);
-    };
-  }, [currentStep, recipe.instructions]);
-
-  useEffect(() => {
-    if (isTimerRunning && timeRemaining > 0) {
-      const timer = setInterval(() => {
-        setTimeRemaining(prevTime => prevTime - 1);
+    let interval: NodeJS.Timeout;
+    if (isTimerRunning && timer > 0) {
+      interval = setInterval(() => {
+        setTimer(timer => timer - 1);
       }, 1000);
-      setStepTimer(timer);
-      return () => clearInterval(timer);
-    } else if (timeRemaining === 0 && isTimerRunning) {
-      // Timer reached zero
+    } else if (timer === 0) {
       setIsTimerRunning(false);
-      if (stepTimer) clearInterval(stepTimer);
-      alert("Time's up for this step!"); // Or use a more sophisticated notification
-    } else {
-      if (stepTimer) clearInterval(stepTimer);
     }
-  }, [isTimerRunning, timeRemaining, stepTimer]);
+    return () => clearInterval(interval);
+  }, [isTimerRunning, timer]);
 
-  const startTimer = () => {
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const startTimer = (minutes: number) => {
+    setTimer(minutes * 60);
     setIsTimerRunning(true);
   };
 
-  const pauseTimer = () => {
-    setIsTimerRunning(false);
+  const toggleTimer = () => {
+    setIsTimerRunning(!isTimerRunning);
   };
 
   const resetTimer = () => {
+    setTimer(0);
     setIsTimerRunning(false);
-    if (recipe.instructions && recipe.instructions[currentStep]) {
-      const timeMatch = recipe.instructions[currentStep].match(/\[(\d+)m\]/);
-      if (timeMatch) {
-        setTimeRemaining(parseInt(timeMatch[1]) * 60);
-      }
-    }
   };
 
-  const goToNextStep = () => {
+  const nextStep = () => {
     if (currentStep < recipe.instructions.length - 1) {
       setCurrentStep(currentStep + 1);
-      setIsTimerRunning(false);
-      if (stepTimer) clearInterval(stepTimer);
-
-      // Initialize timer for the next step if it has a time
-      const nextStepIndex = currentStep + 1;
-      if (recipe.instructions && recipe.instructions[nextStepIndex]) {
-        const timeMatch = recipe.instructions[nextStepIndex].match(/\[(\d+)m\]/);
-        if (timeMatch) {
-          setTimeRemaining(parseInt(timeMatch[1]) * 60);
-        } else {
-          setTimeRemaining(0); // Reset timer if no time is specified
-        }
-      }
     }
   };
 
-  const goToPreviousStep = () => {
+  const prevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
-      setIsTimerRunning(false);
-      if (stepTimer) clearInterval(stepTimer);
-
-       // Initialize timer for the previous step if it has a time
-       const prevStepIndex = currentStep - 1;
-       if (recipe.instructions && recipe.instructions[prevStepIndex]) {
-         const timeMatch = recipe.instructions[prevStepIndex].match(/\[(\d+)m\]/);
-         if (timeMatch) {
-           setTimeRemaining(parseInt(timeMatch[1]) * 60);
-         } else {
-           setTimeRemaining(0); // Reset timer if no time is specified
-         }
-       }
     }
   };
 
-  const formatTime = (timeInSeconds: number): string => {
-    const minutes = Math.floor(timeInSeconds / 60);
-    const seconds = timeInSeconds % 60;
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  const toggleStepCompletion = (stepIndex: number) => {
+    const newCompletedSteps = [...completedSteps];
+    newCompletedSteps[stepIndex] = !newCompletedSteps[stepIndex];
+    setCompletedSteps(newCompletedSteps);
   };
 
-  const stepPercentage = recipe.instructions ? ((currentStep + 1) / recipe.instructions.length) * 100 : 0;
+  const progress = ((currentStep + 1) / recipe.instructions.length) * 100;
 
   return (
-    <Card className="lg:w-[800px] mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">{recipe.title}</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex items-center space-x-4">
-          <div className="w-32 h-32 rounded-full overflow-hidden">
-            <img src={recipe.image} alt={recipe.title} className="object-cover w-full h-full" />
+    <PageContainer
+      header={{
+        title: 'Cooking Mode',
+        showBackButton: false,
+        actions: (
+          <Button variant="ghost" size="icon" onClick={onClose}>
+            <X size={20} />
+          </Button>
+        ),
+      }}
+      fullWidth
+      noPadding
+    >
+      <div className="min-h-screen bg-gray-50">
+        {/* Progress Bar */}
+        <div className="bg-white p-4 shadow-sm">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium">
+              Step {currentStep + 1} of {recipe.instructions.length}
+            </span>
+            <span className="text-sm text-gray-500">
+              {Math.round(progress)}% Complete
+            </span>
           </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <Badge variant="secondary"><ChefHat size={16} className="mr-1" /> {recipe.difficulty}</Badge>
+          <Progress value={progress} className="h-2" />
+        </div>
+
+        {/* Recipe Info */}
+        <div className="bg-white p-4 border-b">
+          <h1 className="text-xl font-bold mb-2">{recipe.title}</h1>
+          <div className="flex items-center space-x-4 text-sm text-gray-600">
+            <div className="flex items-center">
+              <Clock size={16} className="mr-1" />
+              <span>{recipe.cookingTime} mins</span>
             </div>
-            <p className="text-sm text-gray-500 mt-1">{recipe.description}</p>
+            <div className="flex items-center">
+              <Users size={16} className="mr-1" />
+              <span>{recipe.servings} servings</span>
+            </div>
+            <div className="flex items-center">
+              <ChefHat size={16} className="mr-1" />
+              <span>{recipe.difficulty}</span>
+            </div>
           </div>
         </div>
 
-        <Separator />
-
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold">Ingredients:</h3>
-          <ul className="list-disc list-inside pl-4">
-            {recipe.ingredients.map((ingredient, index) => (
-              <li key={index}>{ingredient}</li>
-            ))}
-          </ul>
+        {/* Timer Section */}
+        <div className="bg-white p-4 border-b">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-medium">Timer</h3>
+              <div className="text-2xl font-mono font-bold text-wasfah-bright-teal">
+                {formatTime(timer)}
+              </div>
+            </div>
+            <div className="flex space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => startTimer(5)}
+                disabled={isTimerRunning}
+              >
+                5m
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => startTimer(10)}
+                disabled={isTimerRunning}
+              >
+                10m
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={toggleTimer}
+                disabled={timer === 0}
+              >
+                {isTimerRunning ? <Pause size={16} /> : <Play size={16} />}
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={resetTimer}
+              >
+                <RotateCcw size={16} />
+              </Button>
+            </div>
+          </div>
         </div>
 
-        <Separator />
-
-        <div>
-          <h3 className="text-lg font-semibold">Instructions:</h3>
-          <div className="space-y-2">
-            <Progress value={stepPercentage} />
-            <p className="text-sm text-gray-500">Step {currentStep + 1} of {recipe.instructions.length}</p>
-          </div>
-          <Card className="bg-gray-50 mt-2">
-            <CardContent className="p-4">
-              <p className="text-black">
-                {recipe.instructions[currentStep].replace(/\[(\d+)m\]/, '')}
-              </p>
-              {recipe.instructions[currentStep].match(/\[(\d+)m\]/) && (
-                <div className="flex items-center mt-4">
-                  <Timer size={20} className="mr-2" />
-                  <span>{formatTime(timeRemaining)}</span>
+        {/* Current Step */}
+        <div className="p-4 flex-1">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0 w-10 h-10 bg-wasfah-bright-teal text-white rounded-full flex items-center justify-center font-bold">
+                  {currentStep + 1}
                 </div>
-              )}
+                <div className="flex-1">
+                  <p className="text-lg leading-relaxed">
+                    {recipe.instructions[currentStep]}
+                  </p>
+                  <div className="mt-4">
+                    <Button
+                      variant={completedSteps[currentStep] ? "default" : "outline"}
+                      onClick={() => toggleStepCompletion(currentStep)}
+                      className={completedSteps[currentStep] ? "bg-green-600 hover:bg-green-700" : ""}
+                    >
+                      {completedSteps[currentStep] ? "Step Completed ✓" : "Mark as Complete"}
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
-
-          <div className="flex justify-between mt-4">
-            <Button 
-              variant="outline" 
-              onClick={goToPreviousStep} 
-              disabled={currentStep === 0}
-            >
-              <SkipBack size={16} className="mr-2" />
-              Previous
-            </Button>
-
-            {recipe.instructions[currentStep].match(/\[(\d+)m\]/) ? (
-              isTimerRunning ? (
-                <Button onClick={pauseTimer} variant="secondary">
-                  <Pause size={16} className="mr-2" />
-                  Pause Timer
-                </Button>
-              ) : (
-                <Button onClick={startTimer}>
-                  <Play size={16} className="mr-2" />
-                  Start Timer
-                </Button>
-              )
-            ) : (
-              <Button variant="secondary" disabled>
-                <Check size={16} className="mr-2" />
-                No Timer
-              </Button>
-            )}
-
-            <Button 
-              onClick={goToNextStep} 
-              disabled={currentStep === recipe.instructions.length - 1}
-            >
-              Next
-              <SkipForward size={16} className="ml-2" />
-            </Button>
-          </div>
         </div>
-      </CardContent>
-    </Card>
+
+        {/* Navigation */}
+        <div className="bg-white p-4 border-t flex justify-between">
+          <Button
+            variant="outline"
+            onClick={prevStep}
+            disabled={currentStep === 0}
+          >
+            <ArrowLeft size={18} className="mr-2" />
+            Previous
+          </Button>
+          
+          {currentStep === recipe.instructions.length - 1 ? (
+            <Button
+              onClick={onClose}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              Finish Cooking
+            </Button>
+          ) : (
+            <Button onClick={nextStep}>
+              Next
+              <ArrowRight size={18} className="ml-2" />
+            </Button>
+          )}
+        </div>
+      </div>
+    </PageContainer>
   );
 };
