@@ -1,54 +1,42 @@
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface RTLContextType {
   isRTL: boolean;
-  setIsRTL: (isRTL: boolean) => void;
   language: string;
-  setLanguage: (language: string) => void;
-  direction: 'ltr' | 'rtl';
-  t: (english: string, arabic?: string, turkish?: string) => string;
+  setLanguage: (lang: string) => void;
+  t: (key: string, defaultValue?: string) => string;
 }
 
 const RTLContext = createContext<RTLContextType | undefined>(undefined);
 
-export const RTLProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isRTL, setIsRTL] = useState(false);
+export const useRTL = () => {
+  const context = useContext(RTLContext);
+  if (!context) {
+    throw new Error('useRTL must be used within an RTLProvider');
+  }
+  return context;
+};
+
+interface RTLProviderProps {
+  children: ReactNode;
+}
+
+export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
   const [language, setLanguage] = useState('en');
+  const isRTL = language === 'ar' || language === 'he';
 
-  const direction = isRTL ? 'rtl' : 'ltr';
-
-  // Translation function - supports English, Arabic, and Turkish
-  const t = (english: string, arabic?: string, turkish?: string): string => {
-    if (language === 'ar' && arabic) {
-      return arabic;
-    }
-    if (language === 'tr' && turkish) {
-      return turkish;
-    }
-    return english;
+  // Simple translation function - returns the key if no translation found
+  const t = (key: string, defaultValue?: string) => {
+    // This is a basic implementation - in a real app you'd load translations from files
+    return defaultValue || key;
   };
 
   return (
-    <RTLContext.Provider value={{ 
-      isRTL, 
-      setIsRTL, 
-      language, 
-      setLanguage, 
-      direction,
-      t 
-    }}>
-      <div dir={isRTL ? 'rtl' : 'ltr'}>
+    <RTLContext.Provider value={{ isRTL, language, setLanguage, t }}>
+      <div dir={isRTL ? 'rtl' : 'ltr'} className={isRTL ? 'rtl' : 'ltr'}>
         {children}
       </div>
     </RTLContext.Provider>
   );
-};
-
-export const useRTL = () => {
-  const context = useContext(RTLContext);
-  if (context === undefined) {
-    throw new Error('useRTL must be used within a RTLProvider');
-  }
-  return context;
 };

@@ -1,68 +1,29 @@
 
 export interface Recipe {
   id: string;
-  name: string;
-  title?: string; // Some components use title instead of name
+  title: string;
   description: string;
-  image?: string;
+  image: string;
   prepTime: number;
   cookTime: number;
-  cookingTime?: number; // Some components use cookingTime instead of cookTime
   servings: number;
   difficulty: 'Easy' | 'Medium' | 'Hard';
-  cuisine: string;
+  calories: number;
   rating: number;
-  ratingCount?: number;
+  ratingCount: number;
   ingredients: Ingredient[];
   instructions: string[];
-  nutrition?: NutritionInfo;
-  nutritionalInfo?: NutritionInfo; // Alternative name for nutrition
+  categories: string[];
   tags: string[];
-  isFavorite?: boolean;
-  featured?: boolean;
-  premium?: boolean;
-  calories?: number;
+  isFavorite: boolean;
 }
 
 export interface Ingredient {
   id: string;
   name: string;
-  amount: number;
-  unit: string;
+  amount: string;
+  unit?: string;
   category?: string;
-}
-
-export interface NutritionInfo {
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-  fiber?: number;
-  sugar?: number;
-  sodium?: number;
-}
-
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  avatar?: string;
-  preferences?: UserPreferences;
-  dietaryPreferences?: string[];
-  cuisinePreferences?: string[];
-  allergies?: string[];
-  chefAvatar?: string;
-  nutritionalGoals?: {
-    calories: number;
-    protein: number;
-  };
-}
-
-export interface UserPreferences {
-  dietaryRestrictions: string[];
-  allergies: string[];
-  favoritesCuisines: string[];
-  cookingSkillLevel: 'Beginner' | 'Intermediate' | 'Advanced';
 }
 
 export interface PantryItem {
@@ -71,26 +32,62 @@ export interface PantryItem {
   category: string;
   quantity: number;
   unit: string;
-  expiryDate?: string; // Change to string for easier handling
-  purchaseDate?: string; // Change to string for easier handling
+  expiryDate: string;
+  addedDate: string;
+  image?: string;
 }
 
 export interface MealPlan {
   id: string;
-  date: Date;
-  breakfast?: Recipe;
-  lunch?: Recipe;
-  dinner?: Recipe;
-  snacks?: Recipe[];
+  date: string;
+  meals: Meal[];
 }
 
 export interface Meal {
   id: string;
-  name: string;
   type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
-  recipe?: Recipe;
-  calories?: number;
-  planned: boolean;
-  image?: string;
-  prepTime?: number;
+  recipe: Recipe;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  avatar?: string;
+  preferences: UserPreferences;
+}
+
+export interface UserPreferences {
+  dietaryRestrictions: string[];
+  allergies: string[];
+  cuisine: string[];
+  difficulty: string[];
+}
+
+export interface ShoppingListItem {
+  id: string;
+  name: string;
+  quantity: number;
+  unit: string;
+  category: string;
+  isCompleted: boolean;
+  recipeId?: string;
+}
+
+export interface NutritionInfo {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+  sugar: number;
+  sodium: number;
+}
+
+export interface HealthGoals {
+  dailyCalories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  water: number;
 }
