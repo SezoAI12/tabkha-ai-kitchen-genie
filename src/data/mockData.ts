@@ -1,119 +1,81 @@
 
-import { Recipe, User, PantryItem, MealPlan, Ingredient } from '@/types/index';
+import { Recipe, Ingredient } from '@/types/index';
 
-export const mockUser: User = {
-  id: '1',
-  email: 'john@example.com',
-  name: 'John Doe',
-  avatar: '/placeholder.svg',
-  chefAvatar: '/placeholder.svg',
-  preferences: {
-    dietaryRestrictions: ['vegetarian'],
-    allergies: ['nuts'],
-    cuisine: ['italian', 'mexican'],
-    difficulty: ['easy', 'medium'],
-    favoritesCuisines: ['italian', 'mexican']
+export const mockRecipes: Recipe[] = [
+  {
+    id: '1',
+    title: 'Pasta Carbonara',
+    description: 'Classic Italian pasta dish with eggs, cheese, and pancetta',
+    image: '/placeholder.svg',
+    cookTime: 25,
+    difficulty: 'Medium',
+    cuisine: 'Italian',
+    rating: 4.8,
+    ingredients: ['Spaghetti', 'Eggs', 'Parmesan cheese', 'Pancetta', 'Black pepper'],
+    instructions: [
+      'Cook pasta according to package instructions',
+      'Fry pancetta until crispy',
+      'Mix eggs with cheese',
+      'Combine everything while hot'
+    ],
+    nutrition: {
+      calories: 520,
+      protein: '22g',
+      carbs: '45g',
+      fat: '28g'
+    }
   },
-  dietaryPreferences: ['vegetarian'],
-  cuisinePreferences: ['italian', 'mexican'],
-  allergies: ['nuts'],
-  nutritionalGoals: {
-    calories: 2000,
-    protein: 150,
-    carbs: 250,
-    fat: 65,
-    fiber: 25,
-    sugar: 50,
-    sodium: 2300
+  {
+    id: '2',
+    title: 'Chicken Stir Fry',
+    description: 'Quick and healthy stir fry with fresh vegetables',
+    image: '/placeholder.svg',
+    cookTime: 15,
+    difficulty: 'Easy',
+    cuisine: 'Asian',
+    rating: 4.5,
+    ingredients: ['Chicken breast', 'Bell peppers', 'Broccoli', 'Soy sauce', 'Garlic'],
+    instructions: [
+      'Cut chicken into strips',
+      'Heat oil in wok',
+      'Stir fry chicken then vegetables',
+      'Add sauce and serve'
+    ],
+    nutrition: {
+      calories: 380,
+      protein: '28g',
+      carbs: '12g',
+      fat: '15g'
+    }
   }
-};
-
-export const mockIngredients: Ingredient[] = [
-  { id: '1', name: 'Tomatoes', amount: '2', unit: 'cups', category: 'vegetables' },
-  { id: '2', name: 'Onions', amount: '1', unit: 'medium', category: 'vegetables' },
-  { id: '3', name: 'Garlic', amount: '3', unit: 'cloves', category: 'vegetables' },
-  { id: '4', name: 'Olive Oil', amount: '2', unit: 'tbsp', category: 'oils' },
-  { id: '5', name: 'Salt', amount: '1', unit: 'tsp', category: 'seasonings' }
 ];
 
-export const mockPantryItems: PantryItem[] = [
+export const mockIngredients: Ingredient[] = [
   {
     id: '1',
     name: 'Tomatoes',
-    category: 'Vegetables',
-    quantity: 5,
+    quantity: 3,
     unit: 'pieces',
-    expiryDate: '2024-12-31',
-    addedDate: '2024-12-01',
-    purchaseDate: '2024-12-01',
+    expiryDate: '2024-02-05',
+    category: 'Vegetables',
     image: '/placeholder.svg'
   },
   {
     id: '2',
     name: 'Milk',
-    category: 'Dairy',
     quantity: 1,
     unit: 'liter',
-    expiryDate: '2024-12-25',
-    addedDate: '2024-12-01',
-    purchaseDate: '2024-12-01'
-  }
-];
-
-export const mockRecipes: Recipe[] = [
+    expiryDate: '2024-02-03',
+    category: 'Dairy',
+    image: '/placeholder.svg'
+  },
   {
-    id: '1',
-    title: 'Spaghetti Bolognese',
-    description: 'Classic Italian pasta dish',
-    image: '/placeholder.svg',
-    prepTime: 15,
-    cookTime: 30,
-    cookingTime: 30,
-    servings: 4,
-    difficulty: 'Medium',
-    calories: 520,
-    rating: 4.5,
-    ratingCount: 120,
-    ingredients: mockIngredients,
-    instructions: ['Cook pasta', 'Make sauce', 'Combine'],
-    categories: ['Italian', 'Pasta'],
-    tags: ['dinner', 'comfort-food'],
-    isFavorite: false,
-    featured: true,
-    cuisine: 'Italian',
-    premium: false,
-    nutritionalInfo: {
-      calories: 520,
-      protein: 25,
-      carbs: 65,
-      fat: 15,
-      fiber: 8,
-      sugar: 12,
-      sodium: 890
-    }
+    id: '3',
+    name: 'Chicken Breast',
+    quantity: 500,
+    unit: 'grams',
+    expiryDate: '2024-02-04',
+    category: 'Meat',
+    image: '/placeholder.svg'
   }
 ];
-
-export const mockMealPlans: MealPlan[] = [
-  {
-    id: '1',
-    date: '2024-12-01',
-    meals: [
-      {
-        id: '1',
-        type: 'breakfast',
-        recipe: mockRecipes[0],
-        image: '/placeholder.svg',
-        name: 'Spaghetti Bolognese',
-        prepTime: 15,
-        calories: 520
-      }
-    ]
-  }
-];
-
-// Filter options
-export const categories = ['breakfast', 'lunch', 'dinner', 'snack', 'dessert', 'appetizer'];
-export const cuisines = ['Italian', 'Mexican', 'Asian', 'Mediterranean', 'American'];
-export const difficulties = ['Easy', 'Medium', 'Hard'];
-export const dietaryOptions = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Keto', 'Paleo'];

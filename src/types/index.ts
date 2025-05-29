@@ -4,59 +4,28 @@ export interface Recipe {
   title: string;
   description: string;
   image: string;
-  prepTime: number;
   cookTime: number;
-  cookingTime?: number; // Legacy alias for cookTime
-  servings: number;
   difficulty: 'Easy' | 'Medium' | 'Hard';
-  calories: number;
+  cuisine: string;
   rating: number;
-  ratingCount: number;
-  ingredients: Ingredient[];
+  ingredients: string[];
   instructions: string[];
-  categories: string[];
-  tags: string[];
-  isFavorite: boolean;
-  featured?: boolean;
-  cuisine?: string;
-  premium?: boolean;
-  nutritionalInfo?: NutritionInfo;
+  nutrition: {
+    calories: number;
+    protein: string;
+    carbs: string;
+    fat: string;
+  };
 }
 
 export interface Ingredient {
   id: string;
   name: string;
-  amount: string;
-  unit?: string;
-  category?: string;
-}
-
-export interface PantryItem {
-  id: string;
-  name: string;
-  category: string;
   quantity: number;
   unit: string;
   expiryDate: string;
-  addedDate: string;
-  purchaseDate?: string;
+  category: string;
   image?: string;
-}
-
-export interface MealPlan {
-  id: string;
-  date: string;
-  meals: Meal[];
-}
-
-export interface Meal {
-  id: string;
-  type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
-  recipe: Recipe;
-  image?: string;
-  name?: string;
-  prepTime?: number;
-  calories?: number;
 }
 
 export interface User {
@@ -64,46 +33,18 @@ export interface User {
   email: string;
   name: string;
   avatar?: string;
-  chefAvatar?: string;
-  preferences: UserPreferences;
-  dietaryPreferences?: string[];
-  cuisinePreferences?: string[];
-  allergies?: string[];
-  nutritionalGoals?: NutritionInfo;
+  preferences: {
+    dietary: string[];
+    allergies: string[];
+    cuisine: string[];
+  };
 }
 
-export interface UserPreferences {
-  dietaryRestrictions: string[];
-  allergies: string[];
-  cuisine: string[];
-  difficulty: string[];
-  favoritesCuisines?: string[];
-}
-
-export interface ShoppingListItem {
+export interface MealPlan {
   id: string;
-  name: string;
-  quantity: number;
-  unit: string;
-  category: string;
-  isCompleted: boolean;
-  recipeId?: string;
-}
-
-export interface NutritionInfo {
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-  fiber: number;
-  sugar: number;
-  sodium: number;
-}
-
-export interface HealthGoals {
-  dailyCalories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-  water: number;
+  date: string;
+  breakfast?: Recipe;
+  lunch?: Recipe;
+  dinner?: Recipe;
+  snacks?: Recipe[];
 }
