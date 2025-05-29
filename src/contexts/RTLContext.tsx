@@ -6,7 +6,7 @@ interface RTLContextType {
   language: string;
   direction: 'ltr' | 'rtl';
   setLanguage: (lang: string) => void;
-  t: (key: string, defaultValue?: string) => string;
+  t: (key: string, defaultValue?: string, options?: any) => string;
 }
 
 const RTLContext = createContext<RTLContextType | undefined>(undefined);
@@ -29,7 +29,7 @@ export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
   const direction = isRTL ? 'rtl' : 'ltr';
 
   // Simple translation function - returns the key if no translation found
-  const t = (key: string, defaultValue?: string) => {
+  const t = (key: string, defaultValue?: string, options?: any) => {
     // This is a basic implementation - in a real app you'd load translations from files
     return defaultValue || key;
   };

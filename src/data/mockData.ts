@@ -113,6 +113,7 @@ export const mockMealPlans: MealPlan[] = [
 ];
 
 // Filter options
+export const categories = ['breakfast', 'lunch', 'dinner', 'snack', 'dessert', 'appetizer'];
 export const cuisines = ['Italian', 'Mexican', 'Asian', 'Mediterranean', 'American'];
 export const difficulties = ['Easy', 'Medium', 'Hard'];
 export const dietaryOptions = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Keto', 'Paleo'];
