@@ -1,4 +1,5 @@
 
+
 export interface Recipe {
   id: string;
   name: string;
@@ -67,3 +68,15 @@ export interface User {
     protein: number;
   };
 }
+
+export interface Meal {
+  id: string;
+  name: string;
+  type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  recipe?: Recipe;
+  time?: string;
+  image?: string;
+  prepTime?: string;
+  calories?: number;
+}
+
