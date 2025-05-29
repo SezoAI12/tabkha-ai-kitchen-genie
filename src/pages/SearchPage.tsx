@@ -19,7 +19,7 @@ export default function SearchPage() {
   useEffect(() => {
     const results = mockRecipes.filter(recipe =>
       recipe.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      recipe.ingredients.some(ingredient => ingredient.toLowerCase().includes(searchTerm.toLowerCase()))
+      recipe.ingredients.some(ingredient => ingredient.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
     setSearchResults(results);
   }, [searchTerm]);

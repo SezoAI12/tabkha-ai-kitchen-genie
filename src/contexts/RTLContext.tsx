@@ -1,66 +1,32 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 interface RTLContextType {
   isRTL: boolean;
+  setIsRTL: (isRTL: boolean) => void;
   language: string;
-  direction: string;
-  toggleLanguage: () => void;
-  setLanguage: (lang: string) => void;
-  t: (english: string, arabic?: string, turkish?: string) => string;
+  setLanguage: (language: string) => void;
 }
 
 const RTLContext = createContext<RTLContextType | undefined>(undefined);
 
-interface RTLProviderProps {
-  children: ReactNode;
-}
-
-export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
-  const [language, setLanguageState] = useState('en');
-  const isRTL = language === 'ar';
-  const direction = isRTL ? 'rtl' : 'ltr';
-
-  const toggleLanguage = () => {
-    setLanguageState(prev => prev === 'en' ? 'ar' : 'en');
-  };
-
-  const setLanguage = (lang: string) => {
-    setLanguageState(lang);
-  };
-
-  const t = (english: string, arabic?: string, turkish?: string) => {
-    if (language === 'ar' && arabic) {
-      return arabic;
-    }
-    if (language === 'tr' && turkish) {
-      return turkish;
-    }
-    return english;
-  };
-
-  const value: RTLContextType = {
-    isRTL,
-    language,
-    direction,
-    toggleLanguage,
-    setLanguage,
-    t
-  };
+export const RTLProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isRTL, setIsRTL] = useState(false);
+  const [language, setLanguage] = useState('en');
 
   return (
-    <RTLContext.Provider value={value}>
-      <div className={isRTL ? 'rtl' : 'ltr'}>
+    <RTLContext.Provider value={{ isRTL, setIsRTL, language, setLanguage }}>
+      <div dir={isRTL ? 'rtl' : 'ltr'}>
         {children}
       </div>
     </RTLContext.Provider>
   );
 };
 
-export const useRTL = (): RTLContextType => {
+export const useRTL = () => {
   const context = useContext(RTLContext);
-  if (!context) {
-    throw new Error('useRTL must be used within an RTLProvider');
+  if (context === undefined) {
+    throw new Error('useRTL must be used within a RTLProvider');
   }
   return context;
 };
