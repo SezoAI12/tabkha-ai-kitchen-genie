@@ -203,6 +203,10 @@ export interface User {
     allergies: string[];
     cuisine: string[];
   };
+  dietaryPreferences?: string[];
+  cuisinePreferences?: string[];
+  allergies?: string[];
+  chefAvatar?: string;
 }
 
 export const mockUser: User = {
@@ -214,7 +218,11 @@ export const mockUser: User = {
     dietary: ['Vegetarian'],
     allergies: ['Nuts'],
     cuisine: ['Italian', 'Mediterranean']
-  }
+  },
+  dietaryPreferences: ['Vegetarian'],
+  cuisinePreferences: ['Italian', 'Mediterranean'],
+  allergies: ['Nuts'],
+  chefAvatar: 'The Grill Master'
 };
 
 export interface Meal {

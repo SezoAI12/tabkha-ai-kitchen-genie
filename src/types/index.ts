@@ -56,6 +56,10 @@ export interface User {
     allergies: string[];
     cuisine: string[];
   };
+  dietaryPreferences?: string[];
+  cuisinePreferences?: string[];
+  allergies?: string[];
+  chefAvatar?: string;
 }
 
 export interface MealPlan {
@@ -83,4 +87,7 @@ export interface Meal {
   recipe: Recipe;
   scheduledFor: string;
   type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  image?: string;
+  prepTime?: number;
+  calories?: number;
 }
