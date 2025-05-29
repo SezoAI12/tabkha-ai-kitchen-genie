@@ -6,6 +6,8 @@ interface RTLContextType {
   toggleRTL: () => void;
   language: string;
   setLanguage: (lang: string) => void;
+  direction: 'ltr' | 'rtl';
+  t: (key: string) => string;
 }
 
 const RTLContext = createContext<RTLContextType | undefined>(undefined);
@@ -21,6 +23,38 @@ export const useRTL = () => {
 interface RTLProviderProps {
   children: React.ReactNode;
 }
+
+// Simple translation function - in a real app this would be more sophisticated
+const translations: Record<string, Record<string, string>> = {
+  en: {
+    // Add common translations here
+    'welcome': 'Welcome',
+    'settings': 'Settings',
+    'profile': 'Profile',
+    'recipes': 'Recipes',
+    'pantry': 'Pantry',
+    'meal_plan': 'Meal Plan',
+    'shopping_list': 'Shopping List',
+    'favorites': 'Favorites',
+    'search': 'Search',
+    'health': 'Health',
+    'community': 'Community',
+  },
+  ar: {
+    // Arabic translations would go here
+    'welcome': 'مرحبا',
+    'settings': 'الإعدادات',
+    'profile': 'الملف الشخصي',
+    'recipes': 'الوصفات',
+    'pantry': 'المخزن',
+    'meal_plan': 'خطة الوجبات',
+    'shopping_list': 'قائمة التسوق',
+    'favorites': 'المفضلة',
+    'search': 'البحث',
+    'health': 'الصحة',
+    'community': 'المجتمع',
+  }
+};
 
 export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
   const [language, setLanguage] = useState('en');
@@ -41,11 +75,19 @@ export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
     document.documentElement.dir = !isRTL ? 'rtl' : 'ltr';
   };
 
+  const t = (key: string): string => {
+    return translations[language]?.[key] || key;
+  };
+
+  const direction: 'ltr' | 'rtl' = isRTL ? 'rtl' : 'ltr';
+
   const value = {
     isRTL,
     toggleRTL,
     language,
     setLanguage,
+    direction,
+    t,
   };
 
   return (
