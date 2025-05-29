@@ -108,6 +108,8 @@ export interface Meal {
   recipe?: Recipe;
   calories?: number;
   time?: string;
+  image?: string;
+  prepTime?: number;
 }
 
 export interface ShoppingListItem {
@@ -119,3 +121,20 @@ export interface ShoppingListItem {
   purchased: boolean;
   notes?: string;
 }
+
+// Export additional data that components might need
+export const categories = [
+  'healthy', 'vegetarian', 'mediterranean', 'quick', 'dessert', 'breakfast', 'lunch', 'dinner'
+];
+
+export const cuisines = [
+  'Italian', 'Mediterranean', 'Asian', 'Mexican', 'Indian', 'French', 'American', 'Middle Eastern'
+];
+
+export const difficulties = [
+  'Easy', 'Medium', 'Hard'
+];
+
+export const dietaryOptions = [
+  'vegetarian', 'vegan', 'gluten-free', 'dairy-free', 'keto', 'paleo', 'low-carb'
+];

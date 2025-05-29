@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface RTLContextType {
@@ -7,7 +6,7 @@ interface RTLContextType {
   language: string;
   setLanguage: (lang: string) => void;
   direction: 'ltr' | 'rtl';
-  t: (key: string) => string;
+  t: (englishText: string, arabicText?: string) => string;
 }
 
 const RTLContext = createContext<RTLContextType | undefined>(undefined);
@@ -75,8 +74,14 @@ export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
     document.documentElement.dir = !isRTL ? 'rtl' : 'ltr';
   };
 
-  const t = (key: string): string => {
-    return translations[language]?.[key] || key;
+  const t = (englishText: string, arabicText?: string): string => {
+    // If Arabic text is provided and current language is Arabic, use it
+    if (arabicText && language === 'ar') {
+      return arabicText;
+    }
+    
+    // Otherwise, try to find translation in dictionary, fallback to English text
+    return translations[language]?.[englishText] || englishText;
   };
 
   const direction: 'ltr' | 'rtl' = isRTL ? 'rtl' : 'ltr';
