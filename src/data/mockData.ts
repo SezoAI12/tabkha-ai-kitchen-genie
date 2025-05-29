@@ -21,7 +21,10 @@ export const recipes: Recipe[] = [
     category: 'main-course',
     image: 'https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?w=300&h=200&fit=crop',
     calories: 520,
-    rating: 4.5
+    rating: 4.5,
+    featured: true,
+    isFavorite: false,
+    tags: ['pasta', 'italian', 'main-course']
   },
   {
     id: '2',
@@ -42,9 +45,15 @@ export const recipes: Recipe[] = [
     category: 'main-course',
     image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=300&h=200&fit=crop',
     calories: 380,
-    rating: 4.7
+    rating: 4.7,
+    featured: false,
+    isFavorite: true,
+    tags: ['curry', 'indian', 'main-course']
   }
 ];
+
+// Export with both names for compatibility
+export const mockRecipes = recipes;
 
 export const ingredients: Ingredient[] = [
   {
@@ -91,6 +100,9 @@ export const pantryItems: PantryItem[] = [
     addedDate: '2024-01-25'
   }
 ];
+
+// Export with both names for compatibility
+export const mockPantryItems = pantryItems;
 
 export const categories = [
   'appetizers',

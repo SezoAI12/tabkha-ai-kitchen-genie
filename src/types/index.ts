@@ -2,11 +2,13 @@
 export interface Recipe {
   id: string;
   name: string;
+  title?: string; // For backward compatibility
   description: string;
   ingredients: string[];
   instructions: string[];
   prepTime: number;
   cookTime: number;
+  cookingTime?: number; // For backward compatibility
   servings: number;
   difficulty: 'easy' | 'medium' | 'hard';
   cuisine: string;
@@ -15,6 +17,8 @@ export interface Recipe {
   calories?: number;
   rating?: number;
   tags?: string[];
+  featured?: boolean;
+  isFavorite?: boolean;
 }
 
 export interface Ingredient {
@@ -37,6 +41,8 @@ export interface PantryItem {
   unit: string;
   expiryDate: string;
   addedDate: string;
+  name?: string; // For backward compatibility
+  category?: string; // For backward compatibility
 }
 
 export interface MealPlan {
@@ -46,6 +52,15 @@ export interface MealPlan {
   lunch?: Recipe;
   dinner?: Recipe;
   snacks?: Recipe[];
+}
+
+export interface Meal {
+  id: string;
+  name: string;
+  type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  recipe?: Recipe;
+  calories?: number;
+  time?: string;
 }
 
 export interface User {
