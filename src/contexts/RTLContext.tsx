@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 interface RTLContextType {
   isRTL: boolean;
   language: string;
+  direction: 'ltr' | 'rtl';
   setLanguage: (lang: string) => void;
   t: (key: string, defaultValue?: string) => string;
 }
@@ -25,6 +26,7 @@ interface RTLProviderProps {
 export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
   const [language, setLanguage] = useState('en');
   const isRTL = language === 'ar' || language === 'he';
+  const direction = isRTL ? 'rtl' : 'ltr';
 
   // Simple translation function - returns the key if no translation found
   const t = (key: string, defaultValue?: string) => {
@@ -33,8 +35,8 @@ export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
   };
 
   return (
-    <RTLContext.Provider value={{ isRTL, language, setLanguage, t }}>
-      <div dir={isRTL ? 'rtl' : 'ltr'} className={isRTL ? 'rtl' : 'ltr'}>
+    <RTLContext.Provider value={{ isRTL, language, direction, setLanguage, t }}>
+      <div dir={direction} className={direction}>
         {children}
       </div>
     </RTLContext.Provider>

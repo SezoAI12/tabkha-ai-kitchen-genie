@@ -13,6 +13,36 @@ export interface AdminUser {
   name?: string;
 }
 
+// Helper functions for admin authentication
+export const isAdminAuthenticated = (): boolean => {
+  return localStorage.getItem('adminAuth') === 'true';
+};
+
+export const getAdminRole = (): string | null => {
+  return localStorage.getItem('adminRole');
+};
+
+export const setAdminAuth = (role: string): void => {
+  localStorage.setItem('adminAuth', 'true');
+  localStorage.setItem('adminRole', role);
+};
+
+export const adminLogout = (): void => {
+  localStorage.removeItem('adminAuth');
+  localStorage.removeItem('adminRole');
+};
+
+export const verifyAdminCredentials = async (email: string, password: string): Promise<{ success: boolean; role?: string }> => {
+  // Demo credentials
+  if (email === 'admin@wasfahai.com' && password === 'admin123') {
+    return { success: true, role: 'admin' };
+  }
+  if (email === 'superadmin@wasfahai.com' && password === 'superadmin123') {
+    return { success: true, role: 'superadmin' };
+  }
+  return { success: false };
+};
+
 export const adminAuth = {
   async signIn(email: string, password: string): Promise<{ user: AdminUser | null; error: string | null }> {
     try {

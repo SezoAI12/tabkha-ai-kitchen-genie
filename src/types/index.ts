@@ -6,6 +6,7 @@ export interface Recipe {
   image: string;
   prepTime: number;
   cookTime: number;
+  cookingTime?: number; // Legacy alias for cookTime
   servings: number;
   difficulty: 'Easy' | 'Medium' | 'Hard';
   calories: number;
@@ -16,6 +17,10 @@ export interface Recipe {
   categories: string[];
   tags: string[];
   isFavorite: boolean;
+  featured?: boolean;
+  cuisine?: string;
+  premium?: boolean;
+  nutritionalInfo?: NutritionInfo;
 }
 
 export interface Ingredient {
@@ -34,6 +39,7 @@ export interface PantryItem {
   unit: string;
   expiryDate: string;
   addedDate: string;
+  purchaseDate?: string;
   image?: string;
 }
 
@@ -47,6 +53,10 @@ export interface Meal {
   id: string;
   type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
   recipe: Recipe;
+  image?: string;
+  name?: string;
+  prepTime?: number;
+  calories?: number;
 }
 
 export interface User {
@@ -54,7 +64,12 @@ export interface User {
   email: string;
   name: string;
   avatar?: string;
+  chefAvatar?: string;
   preferences: UserPreferences;
+  dietaryPreferences?: string[];
+  cuisinePreferences?: string[];
+  allergies?: string[];
+  nutritionalGoals?: NutritionInfo;
 }
 
 export interface UserPreferences {
@@ -62,6 +77,7 @@ export interface UserPreferences {
   allergies: string[];
   cuisine: string[];
   difficulty: string[];
+  favoritesCuisines?: string[];
 }
 
 export interface ShoppingListItem {
