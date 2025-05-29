@@ -6,6 +6,8 @@ interface RTLContextType {
   setIsRTL: (isRTL: boolean) => void
   language: string
   setLanguage: (language: string) => void
+  direction: string
+  t: (key: string) => string
 }
 
 const RTLContext = createContext<RTLContextType | undefined>(undefined)
@@ -14,8 +16,13 @@ export const RTLProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isRTL, setIsRTL] = useState(false)
   const [language, setLanguage] = useState('en')
 
+  const direction = isRTL ? 'rtl' : 'ltr'
+  
+  // Simple translation function - returns the key for now
+  const t = (key: string) => key
+
   return (
-    <RTLContext.Provider value={{ isRTL, setIsRTL, language, setLanguage }}>
+    <RTLContext.Provider value={{ isRTL, setIsRTL, language, setLanguage, direction, t }}>
       {children}
     </RTLContext.Provider>
   )

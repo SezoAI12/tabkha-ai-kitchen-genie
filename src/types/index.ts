@@ -5,9 +5,26 @@ export interface Recipe {
   description: string
   image: string
   cookTime: number
+  cookingTime?: number // alias for cookTime
+  prepTime?: number
+  servings?: number
   difficulty: 'Easy' | 'Medium' | 'Hard'
   rating: number
+  ratingCount?: number
   tags: string[]
+  cuisine?: string
+  ingredients?: string[]
+  instructions?: string[]
+  isFavorite?: boolean
+  featured?: boolean
+  premium?: boolean
+  calories?: number
+  nutritionalInfo?: {
+    protein: number
+    carbs: number
+    fat: number
+    fiber: number
+  }
 }
 
 export interface Ingredient {
@@ -16,6 +33,23 @@ export interface Ingredient {
   expiryDate: Date
   quantity: number
   unit: string
+}
+
+export interface PantryItem {
+  id: string
+  name: string
+  quantity: number
+  unit: string
+  expiryDate: Date
+  category: string
+}
+
+export interface Meal {
+  id: string
+  name: string
+  type: 'breakfast' | 'lunch' | 'dinner' | 'snack'
+  recipe?: Recipe
+  scheduledTime?: string
 }
 
 export interface User {
