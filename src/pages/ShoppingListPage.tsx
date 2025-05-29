@@ -1,60 +1,56 @@
 
-// src/pages/ShoppingListPage.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ShoppingBag, Plus, Trash2, Share2, Search, Filter, Edit3, Check, Printer } from 'lucide-react';
+import { ShoppingBag, Plus, Trash2, Share2, Printer } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRTL } from '@/contexts/RTLContext';
 
-// Sample shopping list data
-const initialItems = [
+interface ShoppingListItem {
+  id: string;
+  name: string;
+  quantity: number;
+  unit: string;
+  category: string;
+  checked: boolean;
+  dateAdded: Date;
+  priority: 'high' | 'medium' | 'low';
+}
+
+const initialItems: ShoppingListItem[] = [
   { id: '1', name: 'Chicken breast', quantity: 500, unit: 'g', category: 'Meat', checked: false, dateAdded: new Date(), priority: 'high' },
   { id: '2', name: 'Olive oil', quantity: 1, unit: 'bottle', category: 'Oils', checked: false, dateAdded: new Date(), priority: 'medium' },
   { id: '3', name: 'Garlic', quantity: 5, unit: 'cloves', category: 'Vegetables', checked: false, dateAdded: new Date(), priority: 'low' },
   { id: '4', name: 'Onions', quantity: 2, unit: '', category: 'Vegetables', checked: true, dateAdded: new Date(), priority: 'medium' },
-  { id: '5', name: 'Rice', quantity: 1, unit: 'kg', category: 'Grains', checked: false, dateAdded: new Date(), priority: 'high' },
-  { id: '6', name: 'Tomatoes', quantity: 4, unit: '', category: 'Vegetables', checked: false, dateAdded: new Date(), priority: 'medium' },
-  { id: '7', name: 'Greek yogurt', quantity: 500, unit: 'g', category: 'Dairy', checked: true, dateAdded: new Date(), priority: 'low' },
-  { id: '8', name: 'Lemons', quantity: 3, unit: '', category: 'Fruits', checked: false, dateAdded: new Date(), priority: 'low' },
 ];
 
 export default function ShoppingListPage() {
   const { toast } = useToast();
   const { t } = useRTL();
-  const [items, setItems] = useState(initialItems);
+  const [items, setItems] = useState<ShoppingListItem[]>(initialItems);
   const [newItemName, setNewItemName] = useState('');
   const [newItemQuantity, setNewItemQuantity] = useState('');
   const [newItemUnit, setNewItemUnit] = useState('');
   const [newItemCategory, setNewItemCategory] = useState('Other');
-  const [newItemPriority, setNewItemPriority] = useState('medium');
+  const [newItemPriority, setNewItemPriority] = useState<'high' | 'medium' | 'low'>('medium');
   const [showAddForm, setShowAddForm] = useState(false);
-  const [editingItemId, setEditingItemId] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortOption, setSortOption] = useState('name');
-  const [filterCategory, setFilterCategory] = useState('all');
-  const [filterPriority, setFilterPriority] = useState('all');
 
-  // Ensure 'Other' is always an option, and add existing categories
   const categories = [...new Set(items.map(item => item.category))].sort();
   const categoryOptions = ['Other', ...categories];
 
-  const priorities = ['high', 'medium', 'low'];
-
-  const handleCheck = (id) => {
+  const handleCheck = (id: string) => {
     setItems(items.map(item =>
       item.id === id ? { ...item, checked: !item.checked } : item
     ));
   };
 
-  const handleAddItem = (e) => {
+  const handleAddItem = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!newItemName.trim()) {
@@ -66,7 +62,7 @@ export default function ShoppingListPage() {
       return;
     }
 
-    const newItem = {
+    const newItem: ShoppingListItem = {
       id: Date.now().toString(),
       name: newItemName.trim(),
       quantity: Number(newItemQuantity) || 1,
@@ -108,178 +104,6 @@ export default function ShoppingListPage() {
     });
   };
 
-  const handleClearAll = () => {
-    if (items.length === 0) {
-         toast({
-            title: t("List is already empty", "القائمة فارغة بالفعل"),
-            description: t("There are no items to clear.", "لا توجد عناصر لمسحها."),
-         });
-         return;
-    }
-    if (window.confirm(t("Are you sure you want to clear the entire list?", "هل أنت متأكد أنك تريد مسح القائمة بأكملها؟"))) {
-        setItems([]);
-        toast({
-          title: t("List cleared", "تم مسح القائمة"),
-          description: t("All items have been removed from your list.", "تمت إزالة جميع العناصر من قائمتك."),
-        });
-    }
-  };
-
-  const handleEditItem = (id) => {
-    const itemToEdit = items.find(item => item.id === id);
-    if (itemToEdit) {
-      setEditingItemId(id);
-      setNewItemName(itemToEdit.name);
-      setNewItemQuantity(itemToEdit.quantity.toString());
-      setNewItemUnit(itemToEdit.unit);
-      setNewItemCategory(itemToEdit.category);
-      setNewItemPriority(itemToEdit.priority);
-      setShowAddForm(true);
-    }
-  };
-
-  const handleUpdateItem = (e) => {
-    e.preventDefault();
-
-    if (!newItemName.trim()) {
-      toast({
-        title: t("Error", "خطأ"),
-        description: t("Please enter an item name", "يرجى إدخال اسم العنصر"),
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setItems(items.map(item =>
-      item.id === editingItemId
-        ? {
-            ...item,
-            name: newItemName.trim(),
-            quantity: Number(newItemQuantity) || 1,
-            unit: newItemUnit.trim(),
-            category: newItemCategory,
-            priority: newItemPriority,
-          }
-        : item
-    ));
-
-    setEditingItemId(null);
-    setNewItemName('');
-    setNewItemQuantity('');
-    setNewItemUnit('');
-    setNewItemCategory('Other');
-    setNewItemPriority('medium');
-    setShowAddForm(false);
-
-    toast({
-      title: t("Item updated", "تم تحديث العنصر"),
-      description: t("Your item has been updated.", "تم تحديث العنصر."),
-    });
-  };
-
-  const formatShoppingListText = () => {
-    if (items.length === 0) {
-      return t("My Shopping List is empty!", "قائمة التسوق الخاصة بي فارغة!");
-    }
-    const listHeader = t("My Shopping List:", "قائمة التسوق الخاصة بي:");
-    const itemList = items.map(item => {
-      const status = item.checked ? ` [${t('Done', 'تم')}]` : '';
-      const quantityUnit = item.quantity > 0 ? `${item.quantity}${item.unit ? ' ' + item.unit : ''}` : '';
-      return `- ${quantityUnit} ${item.name}${status}`;
-    }).join('\n');
-    return `${listHeader}\n\n${itemList}`;
-  };
-
-  const handleShareList = async () => {
-    const listText = formatShoppingListText();
-
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: t('My Shopping List', 'قائمة التسوق الخاصة بي'),
-          text: listText,
-        });
-        console.log('Shopping list shared successfully');
-      } catch (error: any) {
-        console.error('Error sharing shopping list:', error);
-        if (error.name !== 'AbortError') {
-             toast({
-                title: t("Share Failed", "فشل المشاركة"),
-                description: t("Could not share the list.", "تعذر مشاركة القائمة."),
-                variant: "destructive",
-             });
-        }
-      }
-    } else if (navigator.clipboard && navigator.clipboard.writeText) {
-      try {
-        await navigator.clipboard.writeText(listText);
-        toast({
-          title: t("Copied to Clipboard", "تم النسخ إلى الحافظة"),
-          description: t("Shopping list copied to your clipboard.", "تم نسخ قائمة التسوق إلى الحافظة."),
-        });
-      } catch (err) {
-        console.error('Failed to copy shopping list: ', err);
-        toast({
-          title: t("Copy Failed", "فشل النسخ"),
-          description: t("Could not copy the list to clipboard.", "تعذر نسخ القائمة إلى الحافظة."),
-          variant: "destructive",
-        });
-      }
-    } else {
-      toast({
-        title: t("Feature Not Supported", "الميزة غير مدعومة"),
-        description: t("Sharing and copying are not supported by your browser.", "المشاركة والنسخ غير مدعومين في متصفحك."),
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handlePrintList = () => {
-    if (items.length === 0) {
-         toast({
-            title: t("List is empty", "القائمة فارغة"),
-            description: t("There are no items to print.", "لا توجد عناصر للطباعة."),
-         });
-         return;
-    }
-    toast({
-      title: t("Printing List", "طباعة القائمة"),
-      description: t("Opening print dialog...", "جارٍ فتح مربع حوار الطباعة..."),
-    });
-    window.print();
-  };
-
-  const sortedItems = [...items].sort((a, b) => {
-    if (sortOption === 'name') {
-      return a.name.localeCompare(b.name);
-    } else if (sortOption === 'category') {
-      return a.category.localeCompare(b.category);
-    } else if (sortOption === 'priority') {
-      const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
-      return priorityOrder[b.priority] - priorityOrder[a.priority];
-    } else if (sortOption === 'checked') {
-      if (a.checked === b.checked) return 0;
-      return a.checked ? 1 : -1;
-    }
-    return 0;
-  });
-
-  const filteredItems = sortedItems.filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = filterCategory === 'all' || item.category === filterCategory;
-    const matchesPriority = filterPriority === 'all' || item.priority === filterPriority;
-    return matchesSearch && matchesCategory && matchesPriority;
-  });
-
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800 border-red-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
   const completedCount = items.filter(item => item.checked).length;
   const totalCount = items.length;
   const completionPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
@@ -287,7 +111,7 @@ export default function ShoppingListPage() {
   return (
     <PageContainer header={{ title: t('Shopping List', 'قائمة التسوق'), showBackButton: true }}>
       <div className="space-y-6 pb-6">
-        {/* Header Card with Progress and Actions */}
+        {/* Header Card */}
         <Card className="bg-gradient-to-r from-wasfah-bright-teal to-wasfah-teal text-white">
           <CardHeader className="pb-2">
             <div className="flex items-start justify-between">
@@ -301,28 +125,6 @@ export default function ShoppingListPage() {
                     {t(`${totalCount} items total`, `${totalCount} عنصر إجمالي`)}
                   </p>
                 </div>
-              </div>
-              <div className="flex space-x-2 rtl:space-x-reverse">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-white border-white/30 hover:bg-white/20"
-                  onClick={handleShareList}
-                  disabled={items.length === 0}
-                >
-                  <Share2 className="h-4 w-4" />
-                  <span className="hidden sm:inline ml-2 rtl:mr-2">{t('Share', 'مشاركة')}</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-white border-white/30 hover:bg-white/20"
-                  onClick={handlePrintList}
-                  disabled={items.length === 0}
-                >
-                  <Printer className="h-4 w-4" />
-                  <span className="hidden sm:inline ml-2 rtl:mr-2">{t('Print', 'طباعة')}</span>
-                </Button>
               </div>
             </div>
           </CardHeader>
@@ -345,21 +147,11 @@ export default function ShoppingListPage() {
         {/* Quick Actions */}
         <div className="grid grid-cols-2 gap-3">
           <Button
-            onClick={() => {
-                setShowAddForm(!showAddForm);
-                if (!showAddForm) {
-                    setEditingItemId(null);
-                    setNewItemName('');
-                    setNewItemQuantity('');
-                    setNewItemUnit('');
-                    setNewItemCategory('Other');
-                    setNewItemPriority('medium');
-                }
-            }}
+            onClick={() => setShowAddForm(!showAddForm)}
             className="bg-wasfah-bright-teal hover:bg-wasfah-teal h-12"
           >
             <Plus className="h-4 w-4 mr-2 rtl:ml-2" />
-            {editingItemId ? t('Edit Item', 'تعديل عنصر') : t('Add Item', 'إضافة عنصر')}
+            {t('Add Item', 'إضافة عنصر')}
           </Button>
           <Button
             variant="outline"
@@ -372,7 +164,7 @@ export default function ShoppingListPage() {
           </Button>
         </div>
 
-        {/* Add/Edit Form */}
+        {/* Add Form */}
         <AnimatePresence>
           {showAddForm && (
             <motion.div
@@ -383,7 +175,7 @@ export default function ShoppingListPage() {
             >
               <Card>
                 <CardContent className="p-4">
-                  <form onSubmit={editingItemId ? handleUpdateItem : handleAddItem} className="space-y-4">
+                  <form onSubmit={handleAddItem} className="space-y-4">
                     <div className="grid grid-cols-2 gap-3">
                       <div className="col-span-2">
                         <Input
@@ -413,7 +205,7 @@ export default function ShoppingListPage() {
                           ))}
                         </SelectContent>
                       </Select>
-                      <Select value={newItemPriority} onValueChange={setNewItemPriority}>
+                      <Select value={newItemPriority} onValueChange={(value: 'high' | 'medium' | 'low') => setNewItemPriority(value)}>
                         <SelectTrigger>
                           <SelectValue placeholder={t("Priority", "الأولوية")} />
                         </SelectTrigger>
@@ -424,24 +216,12 @@ export default function ShoppingListPage() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="flex justify-end space-x-2 rtl:space-x-reverse">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => {
-                          setShowAddForm(false);
-                          setEditingItemId(null);
-                          setNewItemName('');
-                          setNewItemQuantity('');
-                          setNewItemUnit('');
-                          setNewItemCategory('Other');
-                          setNewItemPriority('medium');
-                        }}
-                      >
-                        {t('Cancel', 'إلغاء')}
+                    <div className="flex space-x-3 rtl:space-x-reverse">
+                      <Button type="submit" className="flex-1 bg-wasfah-bright-teal hover:bg-wasfah-teal">
+                        {t('Add Item', 'إضافة عنصر')}
                       </Button>
-                      <Button type="submit" className="bg-wasfah-bright-teal hover:bg-wasfah-teal">
-                        {editingItemId ? t('Update', 'تحديث') : t('Add', 'إضافة')}
+                      <Button type="button" variant="outline" onClick={() => setShowAddForm(false)}>
+                        {t('Cancel', 'إلغاء')}
                       </Button>
                     </div>
                   </form>
@@ -451,121 +231,43 @@ export default function ShoppingListPage() {
           )}
         </AnimatePresence>
 
-        {/* Search and Filters */}
-        <Card>
-          <CardContent className="p-4">
-            <div className="space-y-3">
-              <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500 rtl:left-auto rtl:right-2" />
-                <Input
-                  placeholder={t('Search items...', 'البحث عن العناصر...')}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-8 rtl:pr-8 rtl:pl-3"
-                />
-              </div>
-              <div className="grid grid-cols-3 gap-2">
-                <Select value={sortOption} onValueChange={setSortOption}>
-                  <SelectTrigger className="text-xs">
-                    <SelectValue placeholder={t("Sort", "ترتيب")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="name">{t("Name", "الاسم")}</SelectItem>
-                    <SelectItem value="category">{t("Category", "الفئة")}</SelectItem>
-                    <SelectItem value="priority">{t("Priority", "الأولوية")}</SelectItem>
-                    <SelectItem value="checked">{t("Status", "الحالة")}</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={filterCategory} onValueChange={setFilterCategory}>
-                  <SelectTrigger className="text-xs">
-                    <SelectValue placeholder={t("Category", "الفئة")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t("All", "الكل")}</SelectItem>
-                    {categories.map(category => (
-                      <SelectItem key={category} value={category}>{category}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select value={filterPriority} onValueChange={setFilterPriority}>
-                  <SelectTrigger className="text-xs">
-                    <SelectValue placeholder={t("Priority", "الأولوية")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t("All", "الكل")}</SelectItem>
-                    <SelectItem value="high">{t("High", "عالية")}</SelectItem>
-                    <SelectItem value="medium">{t("Medium", "متوسطة")}</SelectItem>
-                    <SelectItem value="low">{t("Low", "منخفضة")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Items List */}
-        <div className="space-y-2">
-          <AnimatePresence>
-            {filteredItems.map(item => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className={`${item.checked ? 'opacity-60' : ''}`}
-              >
-                <Card className="overflow-hidden">
-                  <CardContent className="p-4">
-                    <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                      <Checkbox
-                        checked={item.checked}
-                        onCheckedChange={() => handleCheck(item.id)}
-                        className="h-5 w-5"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <h3 className={`font-medium ${item.checked ? 'line-through text-gray-500' : ''}`}>
-                            {item.name}
-                          </h3>
-                          <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                            <Badge variant="outline" className={getPriorityColor(item.priority)}>
-                              {t(item.priority, item.priority)}
-                            </Badge>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditItem(item.id)}
-                              className="h-8 w-8 p-0"
-                            >
-                              <Edit3 className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </div>
-                        <div className="flex items-center justify-between mt-1">
-                          <p className="text-sm text-gray-500">
-                            {item.quantity} {item.unit} • {item.category}
-                          </p>
-                          {item.checked && (
-                            <div className="flex items-center text-green-600 text-xs">
-                              <Check className="h-3 w-3 mr-1 rtl:ml-1 rtl:mr-0" />
-                              {t('Completed', 'مكتمل')}
-                            </div>
-                          )}
-                        </div>
-                      </div>
+        <div className="space-y-3">
+          {items.map((item) => (
+            <Card key={item.id} className={item.checked ? 'opacity-60' : ''}>
+              <CardContent className="p-4 flex items-center justify-between">
+                <div className="flex items-center space-x-3 rtl:space-x-reverse flex-1">
+                  <Checkbox
+                    checked={item.checked}
+                    onCheckedChange={() => handleCheck(item.id)}
+                  />
+                  <div className="flex-1">
+                    <h3 className={`font-medium ${item.checked ? 'line-through text-gray-500' : 'text-gray-800'}`}>
+                      {item.quantity > 0 && `${item.quantity}${item.unit ? ' ' + item.unit : ''} `}{item.name}
+                    </h3>
+                    <div className="flex items-center space-x-2 rtl:space-x-reverse mt-1">
+                      <Badge variant="outline" className="text-xs">
+                        {item.category}
+                      </Badge>
+                      <Badge 
+                        variant={item.priority === 'high' ? 'destructive' : item.priority === 'medium' ? 'default' : 'secondary'}
+                        className="text-xs"
+                      >
+                        {t(item.priority === 'high' ? 'High' : item.priority === 'medium' ? 'Medium' : 'Low', 
+                           item.priority === 'high' ? 'عالية' : item.priority === 'medium' ? 'متوسطة' : 'منخفضة')}
+                      </Badge>
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
-        {filteredItems.length === 0 && (
+        {items.length === 0 && (
           <Card>
-            <CardContent className="p-8 text-center">
-              <ShoppingBag className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-              <p className="text-gray-500">{t('No items found', 'لم يتم العثور على عناصر')}</p>
+            <CardContent className="p-8 text-center text-gray-500">
+              {t('No items in your shopping list yet.', 'لا توجد عناصر في قائمة التسوق الخاصة بك حتى الآن.')}
             </CardContent>
           </Card>
         )}

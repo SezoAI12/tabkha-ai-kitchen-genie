@@ -28,12 +28,16 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
     setCheckedIngredients(newChecked);
   };
 
-  // Helper function to render ingredient text
-  const renderIngredient = (ingredient: string | IngredientItem) => {
+  // Helper function to render ingredient text with proper type handling
+  const renderIngredient = (ingredient: any) => {
     if (typeof ingredient === 'string') {
       return ingredient;
     }
-    return `${ingredient.amount} ${ingredient.unit} ${ingredient.name}`;
+    // Handle both Ingredient and IngredientItem types
+    if (ingredient.amount !== undefined && ingredient.unit !== undefined) {
+      return `${ingredient.amount} ${ingredient.unit} ${ingredient.name}`;
+    }
+    return ingredient.name || String(ingredient);
   };
 
   return (
@@ -64,7 +68,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
           <div className="flex items-center space-x-6 text-sm">
             <div className="flex items-center">
               <Clock size={16} className="mr-2" />
-              <span>{recipe.cookTime} mins</span>
+              <span>{recipe.cookTime || recipe.cookingTime} mins</span>
             </div>
             <div className="flex items-center">
               <Users size={16} className="mr-2" />
@@ -72,7 +76,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
             </div>
             <div className="flex items-center">
               <Star size={16} className="mr-2 text-yellow-400" />
-              <span>{recipe.rating} ({recipe.ratingCount} reviews)</span>
+              <span>{recipe.rating} ({recipe.ratingCount || recipe.reviews} reviews)</span>
             </div>
             <div className="flex items-center">
               <span className="text-wasfah-mint font-medium">{recipe.difficulty}</span>
@@ -172,15 +176,15 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
                     <div className="text-sm text-gray-600">Calories</div>
                   </div>
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <div className="text-2xl font-bold text-wasfah-deep-teal">{recipe.nutritionalInfo?.protein}g</div>
+                    <div className="text-2xl font-bold text-wasfah-deep-teal">{recipe.nutritionalInfo?.protein || recipe.nutrition?.protein || 0}g</div>
                     <div className="text-sm text-gray-600">Protein</div>
                   </div>
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <div className="text-2xl font-bold text-wasfah-deep-teal">{recipe.nutritionalInfo?.carbs}g</div>
+                    <div className="text-2xl font-bold text-wasfah-deep-teal">{recipe.nutritionalInfo?.carbs || recipe.nutrition?.carbs || 0}g</div>
                     <div className="text-sm text-gray-600">Carbs</div>
                   </div>
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <div className="text-2xl font-bold text-wasfah-deep-teal">{recipe.nutritionalInfo?.fat}g</div>
+                    <div className="text-2xl font-bold text-wasfah-deep-teal">{recipe.nutritionalInfo?.fat || recipe.nutrition?.fat || 0}g</div>
                     <div className="text-sm text-gray-600">Fat</div>
                   </div>
                 </div>
