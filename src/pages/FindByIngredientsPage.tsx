@@ -1,8 +1,17 @@
-
-// src/pages/FindByIngredientsPage.tsx
-
 import React, { useState } from 'react';
-import { Utensils, Cake, Coffee, Camera, Mic } from 'lucide-react';
+import {
+  Utensils, Cake, Coffee, Camera, Mic, Soup, Salad, Egg, Milk, Drumstick,
+  LeafyGreen, Apple, Carrot, IceCream, Cookie, Wine, Beer, Pizza, ChefHat, // ChefHat for Food category
+  Share2, Calendar, Users, Award, Sparkles, Circle, Wheat, Fish, GlassWater,
+  Jar,
+  Cheese,
+  Shrimp,
+  Fork,
+  Candy,
+  Bottle,
+  MoreHorizontal
+} from 'lucide-react'; // Import necessary icons
+
 import { PageContainer } from '@/components/layout/PageContainer';
 import { CategorySelector } from '@/components/ingredients/CategorySelector';
 import { IngredientManager } from '@/components/ingredients/IngredientManager';
@@ -10,19 +19,25 @@ import { FilterPanel } from '@/components/ingredients/FilterPanel';
 import { SearchSummary } from '@/components/ingredients/SearchSummary';
 import { useToast } from '@/hooks/use-toast';
 
+import { ElementType } from 'react';
+
+// Updated Ingredient interface to include optional icon
 interface Ingredient {
   id: string;
   name: string;
   quantity: string;
   unit: string;
   source: 'manual' | 'pantry';
+  icon?: ElementType;
 }
 
+// Updated PantryItem interface to include optional icon
 interface PantryItem {
   id: string;
   name: string;
   quantity: string;
   unit: string;
+  icon?: ElementType;
 }
 
 interface Filters {
@@ -35,45 +50,43 @@ interface Filters {
 export default function FindByIngredientsPage() {
   const { toast } = useToast();
 
+  // --- Data with Thematic Icons (Updated based on image for main 'Food' category) ---
   const mainCategories = [
     {
       id: 'food',
       name: 'Food',
-      icon: Utensils,
-      image: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Food background
+      icon: ChefHat, // Changed to ChefHat as it's the "By Ingredients" icon in the attached image
       subcategories: [
-        { name: 'Main Dishes', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
-        { name: 'Appetizers', image: 'https://images.unsplash.com/photo-1541529086526-db283c563270?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
-        { name: 'Pickles', image: 'https://images.unsplash.com/photo-1505158381292-f40064d5bf4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
-        { name: 'Soups', image: 'https://images.unsplash.com/photo-1547592180-85f173990554?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
-        { name: 'Sauces', image: 'https://images.unsplash.com/photo-1621996346565-e3dbc353d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
-        { name: 'Others', image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' }
+        { name: 'Main Dishes', icon: ChefHat }, // Chef hat for main cooking (still relevant here)
+        { name: 'Appetizers', icon: Salad }, // Salad for starters
+        { name: 'Pickles', icon: Jar }, // Jar for preserved/pickled items
+        { name: 'Soups', icon: Soup }, // Soup bowl
+        { name: 'Sauces', icon: Fork }, // Fork/Utensil for sauces
+        { name: 'Others', icon: Utensils } // Generic food icon
       ]
     },
     {
       id: 'desserts',
       name: 'Desserts',
-      icon: Cake,
-      image: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Desserts background
+      icon: Cake, // Cake icon (retained)
       subcategories: [
-        { name: 'Traditional', image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
-        { name: 'Western', image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
-        { name: 'Pastries', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
-        { name: 'Ice Cream', image: 'https://images.unsplash.com/photo-1567206563064-6f60f40a2b57?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
-        { name: 'Others', image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' }
+        { name: 'Traditional', icon: Cookie }, // Cookie/Pastry icon (retained)
+        { name: 'Western', icon: IceCream }, // Ice cream for cold/western desserts (retained)
+        { name: 'Pastries', icon: Cake }, // Cake/Pastry icon (retained)
+        { name: 'Ice Cream', icon: IceCream }, // Ice cream icon (retained)
+        { name: 'Others', icon: Sparkles } // Sparkles for sweet/special (retained)
       ]
     },
     {
       id: 'drinks',
       name: 'Drinks',
-      icon: Coffee,
-      image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', // Drinks background
+      icon: Coffee, // Coffee/Drink icon (retained)
       subcategories: [
-        { name: 'Detox', image: 'https://images.unsplash.com/photo-1570197788417-0e82375c9371?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
-        { name: 'Cocktails', image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
-        { name: 'Alcoholic', image: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
-        { name: 'Hot Drinks', image: 'https://images.unsplash.com/photo-1549740425-5e9ed4d8cd34?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
-        { name: 'Others', image: 'https://images.unsplash.com/photo-1437418747212-8d9709afab22?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' }
+        { name: 'Detox', icon: GlassWater }, // Glass of water/drink (retained)
+        { name: 'Cocktails', icon: Wine }, // Wine glass for cocktails (retained)
+        { name: 'Alcoholic', icon: Beer }, // Beer mug for alcoholic drinks (retained)
+        { name: 'Hot Drinks', icon: Coffee }, // Coffee cup for hot drinks (retained)
+        { name: 'Others', icon: GlassWater } // Generic drink icon (retained)
       ]
     },
   ];
@@ -85,20 +98,25 @@ export default function FindByIngredientsPage() {
     cuisine: ['Levant', 'Italian', 'Mexican', 'Chinese', 'Indian', 'American'],
   };
 
+  // Mock Pantry Items - Using specific icons (retained)
   const PANTRY_ITEMS: PantryItem[] = [
-    { id: '1', name: 'Flour', quantity: '1', unit: 'kg' },
-    { id: '2', name: 'Sugar', quantity: '500', unit: 'g' },
-    { id: '3', name: 'Eggs', quantity: '6', unit: 'pcs' },
-    { id: '4', name: 'Milk', quantity: '1', unit: 'liter' },
-    { id: '5', name: 'Chicken Breast', quantity: '500', unit: 'g' },
-    { id: '6', name: 'Spinach', quantity: '200', unit: 'g' },
+    { id: 'p1', name: 'Flour', quantity: '1', unit: 'kg', icon: Wheat },
+    { id: 'p2', name: 'Sugar', quantity: '500', unit: 'g', icon: Sparkles },
+    { id: 'p3', name: 'Eggs', quantity: '6', unit: 'pcs', icon: Egg },
+    { id: 'p4', name: 'Milk', quantity: '1', unit: 'liter', icon: Milk },
+    { id: 'p5', name: 'Chicken Breast', quantity: '500', unit: 'g', icon: Drumstick },
+    { id: 'p6', name: 'Spinach', quantity: '200', unit: 'g', icon: LeafyGreen },
+    { id: 'p7', name: 'Cheese', quantity: '300', unit: 'g', icon: Cheese },
+    { id: 'p8', name: 'Salmon', quantity: '400', unit: 'g', icon: Fish },
+    { id: 'p9', name: 'Shrimp', quantity: '500', unit: 'g', icon: Shrimp },
+    { id: 'p10', name: 'Carrots', quantity: '5', unit: 'pcs', icon: Carrot },
   ];
 
   // State
   const [currentStep, setCurrentStep] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<any>(null);
-  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const [filters, setFilters] = useState<Filters>({
     dietary: '',
     cookingTime: '',
@@ -122,14 +140,32 @@ export default function FindByIngredientsPage() {
     setFilters(prev => ({ ...prev, [filterType]: value }));
   };
 
+  // handleAddIngredient now expects an Ingredient object which might include an icon
   const handleAddIngredient = (ingredient: Ingredient) => {
-    setAddedIngredients(prev => [...prev, ingredient]);
+      // Ensure the ingredient has a unique ID if it's manual and doesn't have one yet
+      const ingredientWithId = ingredient.id ? ingredient : { ...ingredient, id: `manual-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` };
+      setAddedIngredients(prev => [...prev, ingredientWithId]);
   };
 
   const handleAddPantryItem = (item: PantryItem) => {
     const isAlreadyAdded = addedIngredients.some(ing => ing.name === item.name);
-    if (isAlreadyAdded) return;
-    setAddedIngredients(prev => [...prev, { ...item, source: 'pantry' as const }]);
+    if (isAlreadyAdded) {
+        toast({
+            title: "Already Added",
+            description: `${item.name} is already in your list.`,
+            variant: "default",
+        });
+        return;
+    }
+    // Add pantry item, ensuring it has an icon if available
+    setAddedIngredients(prev => [...prev, {
+        id: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        unit: item.unit,
+        source: 'pantry',
+        icon: item.icon
+    }]);
   };
 
   const handleRemoveIngredient = (id: string) => {
@@ -155,7 +191,12 @@ export default function FindByIngredientsPage() {
       category: selectedCategory?.name,
       subcategory: selectedSubcategory,
       filters,
-      ingredients: addedIngredients.map(ing => ({ name: ing.name, quantity: ing.quantity, unit: ing.unit })),
+      ingredients: addedIngredients.map(ing => ({
+          name: ing.name,
+          quantity: ing.quantity,
+          unit: ing.unit,
+          // icon: ing.icon // Optional: pass icon if needed by results page
+      })),
     };
     console.log('Searching recipes with:', searchData);
     toast({
