@@ -73,7 +73,6 @@ const translations: Record<string, Record<string, string>> = {
     'Challenge Completed!': 'Challenge Completed!',
     'Great job on completing this challenge!': 'Great job on completing this challenge!',
     'Challenge Unchecked': 'Challenge Unchecked',
-    'Scan Dish': 'Scan Dish',
     'Open Camera': 'Open Camera',
     'or': 'or',
     'Upload Image': 'Upload Image',
@@ -94,7 +93,19 @@ const translations: Record<string, Record<string, string>> = {
     'Carbs': 'Carbs',
     'Ingredients': 'Ingredients',
     'Add to Health Tracking': 'Add to Health Tracking',
-    'direction': 'ltr'
+    'Language Updated': 'Language Updated',
+    'Language Preferences': 'Language Preferences',
+    'Language Settings': 'Language Settings',
+    'Language Information': 'Language Information',
+    'Save Changes': 'Save Changes',
+    'My Recipes': 'My Recipes',
+    'Loyalty Program': 'Loyalty Program',
+    'Body Information': 'Body Information',
+    'Connected Devices': 'Connected Devices',
+    'Help & Support': 'Help & Support',
+    'Admin Panel': 'Admin Panel',
+    'Appearance': 'Appearance',
+    'Log Out': 'Log Out'
   },
   ar: {
     'Quick Actions': 'إجراءات سريعة',
@@ -143,7 +154,6 @@ const translations: Record<string, Record<string, string>> = {
     'Challenge Completed!': 'تم إكمال التحدي!',
     'Great job on completing this challenge!': 'عمل رائع في إكمال هذا التحدي!',
     'Challenge Unchecked': 'تم إلغاء التحدي',
-    'Scan Dish': 'مسح الطبق',
     'Open Camera': 'فتح الكاميرا',
     'or': 'أو',
     'Upload Image': 'تحميل صورة',
@@ -164,7 +174,19 @@ const translations: Record<string, Record<string, string>> = {
     'Carbs': 'كربوهيدرات',
     'Ingredients': 'المكونات',
     'Add to Health Tracking': 'أضف إلى تتبع الصحة',
-    'direction': 'rtl'
+    'Language Updated': 'تم تحديث اللغة',
+    'Language Preferences': 'تفضيلات اللغة',
+    'Language Settings': 'إعدادات اللغة',
+    'Language Information': 'معلومات اللغة',
+    'Save Changes': 'حفظ التغييرات',
+    'My Recipes': 'وصفاتي',
+    'Loyalty Program': 'برنامج الولاء',
+    'Body Information': 'معلومات الجسم',
+    'Connected Devices': 'الأجهزة المتصلة',
+    'Help & Support': 'المساعدة والدعم',
+    'Admin Panel': 'لوحة الإدارة',
+    'Appearance': 'المظهر',
+    'Log Out': 'تسجيل الخروج'
   }
 };
 

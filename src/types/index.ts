@@ -60,6 +60,12 @@ export interface User {
   cuisinePreferences?: string[];
   allergies?: string[];
   chefAvatar?: string;
+  nutritionalGoals?: {
+    dailyCalories?: number;
+    protein?: number;
+    carbs?: number;
+    fat?: number;
+  };
 }
 
 export interface MealPlan {
@@ -79,6 +85,7 @@ export interface PantryItem {
   expiryDate: string;
   category: string;
   image?: string;
+  addedDate?: string;
 }
 
 export interface Meal {
