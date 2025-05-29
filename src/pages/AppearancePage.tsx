@@ -366,4 +366,78 @@ export default function AppearancePage() {
                   {colorScheme === scheme.id && (
                     <Check size={20} className="text-green-500" />
                   )}
-                </Button
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Font Size */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 rtl:space-x-reverse">
+              <Type size={20} />
+              {t('Font Size', 'حجم الخط')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-4">
+              <Slider
+                value={fontSize}
+                onValueChange={handleFontSizeChange}
+                max={24}
+                min={12}
+                step={1}
+                className="w-full"
+              />
+              <div className="flex justify-between text-sm text-gray-500">
+                <span>12px</span>
+                <span className="font-medium">{fontSize[0]}px</span>
+                <span>24px</span>
+              </div>
+              <div className="p-4 border rounded-lg">
+                <p style={{ fontSize: `${fontSize[0]}px` }}>{previewText}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Accessibility Options */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 rtl:space-x-reverse">
+              <Eye size={20} />
+              {t('Accessibility', 'إمكانية الوصول')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-medium">{t('Reduce Motion', 'تقليل الحركة')}</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {t('Minimize animations and transitions', 'تقليل الرسوم المتحركة والانتقالات')}
+                </p>
+              </div>
+              <Switch
+                checked={reducedMotion}
+                onCheckedChange={handleReducedMotionChange}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-medium">{t('High Contrast', 'تباين عالي')}</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {t('Increase contrast for better visibility', 'زيادة التباين لرؤية أفضل')}
+                </p>
+              </div>
+              <Switch
+                checked={highContrast}
+                onCheckedChange={handleHighContrastChange}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </PageContainer>
+  );
+}
