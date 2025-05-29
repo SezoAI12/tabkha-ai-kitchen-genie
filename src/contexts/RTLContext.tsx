@@ -3,50 +3,31 @@ import React, { createContext, useContext, useState } from 'react';
 
 interface RTLContextType {
   isRTL: boolean;
-  t: (key: string, options?: any) => string;
-  language?: string;
-  setLanguage?: (lang: string) => void;
-  direction?: 'ltr' | 'rtl';
+  toggleRTL: () => void;
 }
 
-const RTLContext = createContext<RTLContextType>({
-  isRTL: false,
-  t: (key: string) => key,
-});
+const RTLContext = createContext<RTLContextType | undefined>(undefined);
 
-export const useRTL = () => useContext(RTLContext);
+export const RTLProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isRTL, setIsRTL] = useState(false);
 
-// Simple translation hook
-export const useTranslation = () => {
-  return {
-    t: (key: string, options?: any) => key, // Simple fallback - returns the key as translation
+  const toggleRTL = () => {
+    setIsRTL(!isRTL);
   };
-};
-
-interface RTLProviderProps {
-  children: React.ReactNode;
-  isRTL?: boolean;
-}
-
-export const RTLProvider: React.FC<RTLProviderProps> = ({ 
-  children, 
-  isRTL = false 
-}) => {
-  const [language, setLanguage] = useState('en');
-  
-  const t = (key: string, options?: any) => key; // Simple translation function
 
   return (
-    <RTLContext.Provider value={{ 
-      isRTL, 
-      t, 
-      language, 
-      setLanguage, 
-      direction: isRTL ? 'rtl' : 'ltr' 
-    }}>
-      {children}
+    <RTLContext.Provider value={{ isRTL, toggleRTL }}>
+      <div dir={isRTL ? 'rtl' : 'ltr'}>
+        {children}
+      </div>
     </RTLContext.Provider>
   );
 };
 
-export default RTLContext;
+export const useRTL = () => {
+  const context = useContext(RTLContext);
+  if (context === undefined) {
+    throw new Error('useRTL must be used within an RTLProvider');
+  }
+  return context;
+};
