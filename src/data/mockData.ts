@@ -100,3 +100,56 @@ export const mockPantryItems: PantryItem[] = [
     }
   }
 ];
+
+export const mockUser = {
+  id: '1',
+  name: 'John Doe',
+  email: 'john.doe@example.com',
+  dietaryPreferences: ['Vegetarian', 'Gluten-Free'],
+  cuisinePreferences: ['Mediterranean', 'Italian'],
+  allergies: ['Nuts', 'Dairy'],
+  chefAvatar: 'The Grill Master',
+  nutritionalGoals: {
+    calories: 2000,
+    protein: 150
+  }
+};
+
+export const categories = [
+  'Breakfast',
+  'Lunch',
+  'Dinner',
+  'Snacks',
+  'Desserts',
+  'Healthy',
+  'Quick & Easy',
+  'Vegetarian',
+  'Protein'
+];
+
+export const cuisines = [
+  'Mediterranean',
+  'Italian',
+  'Mexican',
+  'Asian',
+  'American',
+  'French',
+  'Indian',
+  'Middle Eastern'
+];
+
+export const difficulties = [
+  'Easy',
+  'Medium',
+  'Hard'
+];
+
+export const dietaryOptions = [
+  'Vegetarian',
+  'Vegan',
+  'Gluten-Free',
+  'Keto',
+  'Low-Carb',
+  'Dairy-Free',
+  'Nut-Free'
+];
