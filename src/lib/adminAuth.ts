@@ -21,12 +21,20 @@ export const getCurrentAdminUser = () => {
   return {
     id: '1',
     username: 'admin',
-    role: 'super_admin',
+    role: 'superadmin',
     name: 'System Administrator'
   };
 };
 
 export const isSuperAdmin = (): boolean => {
   const user = getCurrentAdminUser();
-  return user.role === 'super_admin';
+  return user.role === 'superadmin';
+};
+
+export const getAdminRole = (): string | null => {
+  if (!isAdminAuthenticated()) {
+    return null;
+  }
+  const user = getCurrentAdminUser();
+  return user.role;
 };
