@@ -6,6 +6,8 @@ interface RTLContextType {
   toggleRTL: () => void;
   language: string;
   setLanguage: (lang: string) => void;
+  t: (englishText: string, arabicText: string) => string;
+  direction: 'ltr' | 'rtl';
 }
 
 const RTLContext = createContext<RTLContextType | undefined>(undefined);
@@ -30,6 +32,12 @@ export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
     setIsRTL(!isRTL);
   };
 
+  const t = (englishText: string, arabicText: string) => {
+    return isRTL ? arabicText : englishText;
+  };
+
+  const direction: 'ltr' | 'rtl' = isRTL ? 'rtl' : 'ltr';
+
   React.useEffect(() => {
     if (isRTL) {
       document.documentElement.dir = 'rtl';
@@ -45,6 +53,8 @@ export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
     toggleRTL,
     language,
     setLanguage,
+    t,
+    direction,
   };
 
   return (

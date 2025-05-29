@@ -123,7 +123,7 @@ export default function PantryPage() {
       quantity: newItem.quantity,
       unit: newItem.unit,
       category: newItem.category,
-      expiryDate: newItem.expiryDate || '',
+      expiryDate: newItem.expiryDate,
       addedDate: currentDate,
       ingredient: {
         id: `ing-${Date.now()}`,

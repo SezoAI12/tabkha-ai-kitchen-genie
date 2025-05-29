@@ -116,7 +116,7 @@ export const CookingMode: React.FC<CookingModeProps> = ({ recipe, onClose }) => 
           <div className="flex items-center space-x-4 text-sm text-gray-600">
             <div className="flex items-center">
               <Clock size={16} className="mr-1" />
-              <span>{recipe.cookingTime} mins</span>
+              <span>{recipe.cookTime} mins</span>
             </div>
             <div className="flex items-center">
               <Users size={16} className="mr-1" />

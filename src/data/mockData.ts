@@ -7,7 +7,7 @@ export const mockPantryItems: PantryItem[] = [
     name: 'Milk',
     quantity: 1,
     unit: 'liter',
-    expiryDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now
+    expiryDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 2 days from now
     category: 'Dairy',
   },
   {
@@ -15,7 +15,7 @@ export const mockPantryItems: PantryItem[] = [
     name: 'Bread',
     quantity: 1,
     unit: 'loaf',
-    expiryDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000), // 1 day from now
+    expiryDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 1 day from now
     category: 'Bakery',
   },
   {
@@ -23,7 +23,7 @@ export const mockPantryItems: PantryItem[] = [
     name: 'Eggs',
     quantity: 12,
     unit: 'pieces',
-    expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+    expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 7 days from now
     category: 'Dairy',
   },
 ];
@@ -32,6 +32,7 @@ export const mockRecipes: Recipe[] = [
   {
     id: '1',
     title: 'Scrambled Eggs',
+    name: 'Scrambled Eggs',
     description: 'Simple and delicious scrambled eggs',
     ingredients: ['3 eggs', '2 tbsp milk', 'Salt', 'Pepper', '1 tbsp butter'],
     instructions: [
@@ -42,13 +43,23 @@ export const mockRecipes: Recipe[] = [
     ],
     prepTime: 5,
     cookTime: 5,
+    cookingTime: 5,
     servings: 2,
     difficulty: 'Easy',
     category: 'Breakfast',
+    image: '/placeholder.svg',
+    imageUrl: '/placeholder.svg',
+    rating: 4.5,
+    ratingCount: 120,
+    isFavorite: false,
+    featured: false,
+    tags: ['quick', 'easy', 'breakfast'],
+    calories: 220,
   },
   {
     id: '2',
     title: 'French Toast',
+    name: 'French Toast',
     description: 'Classic French toast with bread and eggs',
     ingredients: ['4 slices bread', '2 eggs', '1/4 cup milk', '1 tsp vanilla', 'Butter'],
     instructions: [
@@ -59,9 +70,18 @@ export const mockRecipes: Recipe[] = [
     ],
     prepTime: 10,
     cookTime: 8,
+    cookingTime: 8,
     servings: 2,
     difficulty: 'Easy',
     category: 'Breakfast',
+    image: '/placeholder.svg',
+    imageUrl: '/placeholder.svg',
+    rating: 4.7,
+    ratingCount: 89,
+    isFavorite: true,
+    featured: true,
+    tags: ['breakfast', 'sweet'],
+    calories: 310,
   },
 ];
 
@@ -111,6 +131,10 @@ export const mockUser = {
   name: 'John Doe',
   email: 'john.doe@example.com',
   avatar: '/placeholder.svg',
+  chefAvatar: '/placeholder.svg',
+  dietaryPreferences: ['Vegetarian'],
+  cuisinePreferences: ['Italian', 'Mediterranean'],
+  allergies: ['Nuts'],
   preferences: {
     dietaryRestrictions: ['Vegetarian'],
     allergies: ['Nuts'],
