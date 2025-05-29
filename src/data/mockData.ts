@@ -64,3 +64,57 @@ export const mockRecipes: Recipe[] = [
     category: 'Breakfast',
   },
 ];
+
+// Export additional data that components are trying to import
+export const categories = [
+  'Breakfast',
+  'Lunch', 
+  'Dinner',
+  'Snacks',
+  'Desserts',
+  'Beverages'
+];
+
+export const cuisines = [
+  'Italian',
+  'Mexican',
+  'Chinese',
+  'Indian',
+  'Mediterranean',
+  'American',
+  'French',
+  'Thai',
+  'Japanese',
+  'Greek'
+];
+
+export const difficulties = [
+  'Easy',
+  'Medium', 
+  'Hard'
+];
+
+export const dietaryOptions = [
+  'Vegetarian',
+  'Vegan',
+  'Gluten-Free',
+  'Dairy-Free',
+  'Keto',
+  'Low-Carb',
+  'High-Protein',
+  'Paleo'
+];
+
+// Mock user data
+export const mockUser = {
+  id: '1',
+  name: 'John Doe',
+  email: 'john.doe@example.com',
+  avatar: '/placeholder.svg',
+  preferences: {
+    dietaryRestrictions: ['Vegetarian'],
+    allergies: ['Nuts'],
+    favoriteCategories: ['Italian', 'Mediterranean'],
+    skillLevel: 'Intermediate' as const
+  }
+};
