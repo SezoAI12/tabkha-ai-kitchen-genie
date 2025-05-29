@@ -1,4 +1,24 @@
 
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+  chefAvatar?: string;
+  preferences: {
+    diet: string[];
+    allergies: string[];
+    cuisine: string[];
+  };
+  dietaryPreferences: string[];
+  cuisinePreferences: string[];
+  allergies: string[];
+  nutritionalGoals: {
+    calories: number;
+    protein: number;
+  };
+}
+
 export interface Recipe {
   id: string;
   name: string;
@@ -42,39 +62,19 @@ export interface PantryItem {
   name: string;
   quantity: string;
   unit: string;
-  expiryDate: string;
+  expiryDate?: string;
   category: string;
-  daysUntilExpiry: number;
+  daysUntilExpiry?: number;
   addedDate: string;
-}
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string;
-  chefAvatar: string;
-  preferences: {
-    diet: string[];
-    allergies: string[];
-    cuisine: string[];
-  };
-  dietaryPreferences: string[];
-  cuisinePreferences: string[];
-  allergies: string[];
-  nutritionalGoals: {
-    calories: number;
-    protein: number;
-  };
 }
 
 export interface Meal {
   id: string;
   name: string;
-  type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
-  recipe?: Recipe;
-  time?: string;
-  image?: string;
-  prepTime?: string;
-  calories?: number;
+  type: string;
+  recipe: Recipe;
+  time: string;
+  image: string;
+  prepTime: string;
+  calories: number;
 }

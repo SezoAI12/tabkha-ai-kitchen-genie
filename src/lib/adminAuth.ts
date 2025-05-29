@@ -1,5 +1,4 @@
 
-
 // Mock admin authentication functions
 export const isAuthenticated = (): boolean => {
   return localStorage.getItem('adminToken') !== null;
@@ -62,4 +61,3 @@ export const requireAuth = () => {
     throw new Error('Authentication required');
   }
 };
-
