@@ -1,44 +1,32 @@
 
-// Simple admin authentication utilities
-export const getAdminRole = () => {
-  return localStorage.getItem('adminRole') || 'user';
+// Mock admin authentication functions
+export const isAdminAuthenticated = (): boolean => {
+  return localStorage.getItem('adminAuth') === 'true';
 };
 
-export const verifyAdminCredentials = async (email: string, password: string) => {
-  // Mock implementation for demo
-  if (email === 'admin@wasfahai.com' && password === 'admin123') {
-    return { success: true, role: 'admin' };
+export const adminLogin = (username: string, password: string): boolean => {
+  // Mock authentication logic
+  if (username === 'admin' && password === 'admin') {
+    localStorage.setItem('adminAuth', 'true');
+    return true;
   }
-  if (email === 'superadmin@wasfahai.com' && password === 'superadmin123') {
-    return { success: true, role: 'superadmin' };
-  }
-  return { success: false, role: null };
+  return false;
 };
 
-export const setAdminAuth = (role: string) => {
-  localStorage.setItem('adminToken', role === 'superadmin' ? 'super-admin-token' : 'admin-token');
-  localStorage.setItem('adminRole', role);
+export const adminLogout = (): void => {
+  localStorage.removeItem('adminAuth');
 };
 
-export const clearAdminAuth = () => {
-  localStorage.removeItem('adminToken');
-  localStorage.removeItem('adminRole');
+export const getCurrentAdminUser = () => {
+  return {
+    id: '1',
+    username: 'admin',
+    role: 'super_admin',
+    name: 'System Administrator'
+  };
 };
 
-export const isAdmin = () => {
-  return getAdminRole() === 'admin';
-};
-
-export const isAdminAuthenticated = () => {
-  return localStorage.getItem('adminToken') !== null;
-};
-
-export const adminLogout = () => {
-  clearAdminAuth();
-  window.location.href = '/admin/login';
-};
-
-export const isSuperAdmin = () => {
-  const role = getAdminRole();
-  return role === 'superadmin';
+export const isSuperAdmin = (): boolean => {
+  const user = getCurrentAdminUser();
+  return user.role === 'super_admin';
 };
