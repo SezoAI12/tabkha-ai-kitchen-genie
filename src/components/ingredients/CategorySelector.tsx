@@ -3,21 +3,20 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
-interface Category {
+interface MainCategory {
   id: string;
   name: string;
   icon: React.ComponentType;
-  image: string;
-  subcategories: { name: string; image: string }[];
+  subcategories: { name: string; icon: React.ComponentType; requiresCustomForm?: boolean }[];
 }
 
 interface CategorySelectorProps {
-  categories: Category[];
-  selectedCategory: Category | null;
-  selectedSubcategory: string | null;
+  categories: MainCategory[];
+  selectedCategory: MainCategory | null;
+  selectedSubcategory: { name: string; icon: React.ComponentType; requiresCustomForm?: boolean } | null;
   currentStep: number;
-  onCategorySelect: (category: Category) => void;
-  onSubcategorySelect: (subcategory: string) => void;
+  onCategorySelect: (category: MainCategory) => void;
+  onSubcategorySelect: (subcategory: { name: string; icon: React.ComponentType; requiresCustomForm?: boolean }) => void;
   onBack: () => void;
 }
 
@@ -47,20 +46,14 @@ export const CategorySelector: React.FC<CategorySelectorProps> = ({
                     : 'border-gray-200 active:scale-98'
                 }`}
               >
-                <div className="relative h-32 w-full">
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-black/30" />
+                <div className="relative h-32 w-full bg-gradient-to-br from-wasfah-light-gray to-gray-100">
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center text-white">
-                      <div className="p-2 rounded-lg bg-white/20 backdrop-blur-sm inline-block mb-2">
+                    <div className="text-center text-wasfah-deep-teal">
+                      <div className="p-4 rounded-lg bg-white/80 backdrop-blur-sm inline-block mb-2 shadow-sm">
                         <IconComponent />
                       </div>
                       <p className="font-bold text-xl">{category.name}</p>
-                      <p className="text-sm opacity-90">
+                      <p className="text-sm opacity-70">
                         {category.subcategories.length} subcategories
                       </p>
                     </div>
@@ -92,31 +85,33 @@ export const CategorySelector: React.FC<CategorySelectorProps> = ({
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          {selectedCategory?.subcategories?.map((sub) => (
-            <button
-              key={sub.name}
-              onClick={() => onSubcategorySelect(sub.name)}
-              className={`relative overflow-hidden rounded-lg border-2 transition-all hover:scale-102 ${
-                selectedSubcategory === sub.name
-                  ? 'border-wasfah-bright-teal shadow-lg'
-                  : 'border-gray-200 active:scale-95'
-              }`}
-            >
-              <div className="relative h-24 w-full">
-                <img
-                  src={sub.image}
-                  alt={sub.name}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/40" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <p className="font-semibold text-white text-center text-sm px-2">
-                    {sub.name}
-                  </p>
+          {selectedCategory?.subcategories?.map((sub) => {
+            const SubIconComponent = sub.icon;
+            return (
+              <button
+                key={sub.name}
+                onClick={() => onSubcategorySelect(sub)}
+                className={`relative overflow-hidden rounded-lg border-2 transition-all hover:scale-102 ${
+                  selectedSubcategory?.name === sub.name
+                    ? 'border-wasfah-bright-teal shadow-lg'
+                    : 'border-gray-200 active:scale-95'
+                }`}
+              >
+                <div className="relative h-24 w-full bg-gradient-to-br from-wasfah-light-mint to-gray-50">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center text-wasfah-deep-teal">
+                      <div className="p-2 rounded-lg bg-white/60 backdrop-blur-sm inline-block mb-1">
+                        <SubIconComponent />
+                      </div>
+                      <p className="font-semibold text-sm px-2">
+                        {sub.name}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
       </div>
     );
