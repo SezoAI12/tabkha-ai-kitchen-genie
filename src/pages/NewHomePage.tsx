@@ -1,4 +1,4 @@
-
+// src/pages/NewHomePage.tsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { PageContainer } from '@/components/layout/PageContainer';
@@ -11,8 +11,8 @@ import { TodayMealPlan } from '@/components/home/TodayMealPlan';
 import { LoyaltyCard } from '@/components/home/LoyaltyCard';
 import { SubscriptionBanner } from '@/components/home/SubscriptionBanner';
 // Removed unused imports: Card, CardContent, Button, Badge
-// Import new icons needed for quick actions
-import { ChefHat, Heart, Users, Award, Calendar, Box, PlusCircle, Camera } from 'lucide-react';
+// Import new icons needed for quick actions, including Share2
+import { ChefHat, Heart, Users, Award, Calendar, Box, PlusCircle, Camera, Share2 } from 'lucide-react';
 
 
 // Assuming these components are still needed and exist:
@@ -62,11 +62,13 @@ const quickActions = [
     label: "Rewards",
     path: "/loyalty-program"
   },
+  // --- MODIFIED: Replaced Favorites with Shared Recipes ---
   {
-    icon: <Heart className="h-6 w-6" />, // Re-using Heart for Favorites
-    label: "Favorites",
-    path: "/favorites"
+    icon: <Share2 className="h-6 w-6" />, // Using Share2 for Shared Recipes
+    label: "Shared Recipes", // Changed label
+    path: "/shared-recipes" // Placeholder path for shared recipes
   },
+  // --- END MODIFIED ---
   {
     icon: <Users className="h-6 w-6" />, // Re-using Users for Community
     label: "Community",
@@ -186,9 +188,11 @@ const NewHomePage = () => {
 
         {/* Premium Features / Loyalty Card Section (New Location) */}
         <div className="px-4">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Unlock Premium Features</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Get personalized AI recommendations and more!</p>
-            {/* Loyalty Card (Moved Here) */}
+            {/* --- REMOVED: Premium Features Heading and Text --- */}
+            {/* <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Unlock Premium Features</h2> */}
+            {/* <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Get personalized AI recommendations and more!</p> */}
+            {/* --- END REMOVED --- */}
+            {/* Loyalty Card (Kept Here) */}
             <LoyaltyCard />
         </div>
 
