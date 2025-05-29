@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { PantryItem } from '@/types';
 import { isAfter, parseISO, format, differenceInDays } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 interface PantryItemCardProps {
   item: PantryItem;
@@ -59,6 +60,3 @@ export const PantryItemCard: React.FC<PantryItemCardProps> = ({ item }) => {
     </Card>
   );
 };
-
-// Add the cn function import
-import { cn } from '@/lib/utils';

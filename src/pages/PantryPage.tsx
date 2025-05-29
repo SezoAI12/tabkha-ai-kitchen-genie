@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { mockPantryItems } from '@/data/mockData';
@@ -22,10 +23,9 @@ export default function PantryPage() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newItem, setNewItem] = useState<Partial<PantryItem>>({
     name: '',
-    quantity: 0,
+    quantity: '',
     unit: '',
     category: '',
-    location: 'Refrigerator',
     expiryDate: new Date(Date.now() + 7 * 86400000).toISOString()
   });
 
@@ -56,7 +56,6 @@ export default function PantryPage() {
       quantity: newItem.quantity,
       unit: newItem.unit,
       category: newItem.category,
-      location: newItem.location,
       expiryDate: newItem.expiryDate
     };
 
@@ -64,10 +63,9 @@ export default function PantryPage() {
     setIsAddDialogOpen(false);
     setNewItem({
       name: '',
-      quantity: 0,
+      quantity: '',
       unit: '',
       category: '',
-      location: 'Refrigerator',
       expiryDate: new Date(Date.now() + 7 * 86400000).toISOString()
     });
   };
@@ -206,7 +204,7 @@ export default function PantryPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label htmlFor="quantity" className="text-sm font-medium">Quantity</label>
-                <Input id="quantity" type="number" placeholder="e.g., 500" value={newItem.quantity || ''} onChange={(e) => setNewItem({...newItem, quantity: Number(e.target.value)})} />
+                <Input id="quantity" placeholder="e.g., 500" value={newItem.quantity || ''} onChange={(e) => setNewItem({...newItem, quantity: e.target.value})} />
               </div>
               <div className="space-y-2">
                 <label htmlFor="unit" className="text-sm font-medium">Unit</label>
@@ -234,18 +232,6 @@ export default function PantryPage() {
                   <SelectItem value="Grains & Pasta">Grains & Pasta</SelectItem>
                   <SelectItem value="Canned Goods">Canned Goods</SelectItem>
                   <SelectItem value="Spices & Herbs">Spices & Herbs</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="location" className="text-sm font-medium">Storage Location</label>
-              <Select value={newItem.location || 'Refrigerator'} onValueChange={(value) => setNewItem({...newItem, location: value})}>
-                <SelectTrigger id="location"><SelectValue placeholder="Select location" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Refrigerator">Refrigerator</SelectItem>
-                  <SelectItem value="Freezer">Freezer</SelectItem>
-                  <SelectItem value="Pantry">Pantry</SelectItem>
-                  <SelectItem value="Cabinet">Cabinet</SelectItem>
                 </SelectContent>
               </Select>
             </div>
