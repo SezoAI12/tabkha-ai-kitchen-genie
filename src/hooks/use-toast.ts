@@ -1,54 +1,56 @@
 
-import * as React from "react"
-import { toast } from "sonner"
+import { useState } from 'react';
 
-type ToastProps = {
-  id?: string
-  title?: string
-  description?: string
-  variant?: "default" | "destructive"
-  action?: React.ReactNode
+export interface Toast {
+  id: string;
+  title?: string;
+  description?: string;
+  variant?: 'default' | 'destructive';
 }
 
-type Toast = ToastProps & {
-  id: string
+export interface ToastProps {
+  title?: string;
+  description?: string;
+  variant?: 'default' | 'destructive';
 }
+
+const toasts: Toast[] = [];
 
 export const useToast = () => {
-  const [toasts, setToasts] = React.useState<Toast[]>([])
+  const [, setUpdate] = useState(0);
 
-  const addToast = React.useCallback((props: ToastProps) => {
-    const id = props.id || Math.random().toString(36).substr(2, 9)
-    const newToast: Toast = { ...props, id }
+  const toast = ({ title, description, variant = 'default' }: ToastProps) => {
+    const id = Math.random().toString(36).substring(2, 9);
+    const newToast: Toast = { id, title, description, variant };
     
-    setToasts(prev => [...prev, newToast])
-    
-    // Also use sonner for actual display
-    if (props.variant === "destructive") {
-      toast.error(props.title || "Error", {
-        description: props.description
-      });
-    } else {
-      toast.success(props.title || "Success", {
-        description: props.description
-      });
-    }
+    toasts.push(newToast);
+    setUpdate(prev => prev + 1);
 
     // Auto remove after 5 seconds
     setTimeout(() => {
-      setToasts(prev => prev.filter(t => t.id !== id))
-    }, 5000)
+      const index = toasts.findIndex(t => t.id === id);
+      if (index > -1) {
+        toasts.splice(index, 1);
+        setUpdate(prev => prev + 1);
+      }
+    }, 5000);
 
-    return id
-  }, [])
+    return { id };
+  };
 
-  const removeToast = React.useCallback((id: string) => {
-    setToasts(prev => prev.filter(t => t.id !== id))
-  }, [])
+  const dismiss = (toastId: string) => {
+    const index = toasts.findIndex(t => t.id === toastId);
+    if (index > -1) {
+      toasts.splice(index, 1);
+      setUpdate(prev => prev + 1);
+    }
+  };
 
   return {
-    toast: addToast,
-    toasts,
-    removeToast
-  }
-}
+    toast,
+    dismiss,
+    toasts
+  };
+};
+
+export { toast } from './use-toast';
