@@ -1,3 +1,4 @@
+
 // src/lib/adminAuth.ts
 
 // Simple admin authentication utility
@@ -69,14 +70,62 @@ export const adminAuth = {
     return user?.role === 'super_admin';
   },
 
-  // --- NEW: Added setAdminAuth as per error ---
+  // Set admin authentication status
   setAdminAuth: (status: boolean, user?: AdminUser): void => {
     if (status && user) {
-      localStorage.setItem('admin_token', 'mock_token'); // Or the actual token from login
+      localStorage.setItem('admin_token', 'mock_token');
       localStorage.setItem('admin_user', JSON.stringify(user));
     } else {
       localStorage.removeItem('admin_token');
       localStorage.removeItem('admin_user');
     }
+  }
+};
+
+// Additional exported functions for compatibility
+export const isAdminAuthenticated = (): boolean => {
+  return adminAuth.isAuthenticated();
+};
+
+export const adminLogout = (): void => {
+  adminAuth.logout();
+};
+
+export const getAdminRole = (): string | null => {
+  const user = adminAuth.getCurrentUser();
+  return user?.role === 'super_admin' ? 'superadmin' : user?.role === 'admin' ? 'admin' : null;
+};
+
+export const verifyAdminCredentials = async (email: string, password: string): Promise<{ success: boolean; role?: string }> => {
+  try {
+    const user = await adminAuth.login(email, password);
+    return { 
+      success: true, 
+      role: user.role === 'super_admin' ? 'superadmin' : 'admin' 
+    };
+  } catch {
+    return { success: false };
+  }
+};
+
+export const setAdminAuth = (role: string): void => {
+  if (role === 'superadmin') {
+    const user: AdminUser = {
+      id: '2',
+      email: 'superadmin@wasfah.com',
+      role: 'super_admin',
+      name: 'Super Admin'
+    };
+    adminAuth.setAdminAuth(true, user);
+    localStorage.setItem('adminRole', 'superadmin');
+  } else if (role === 'admin') {
+    const user: AdminUser = {
+      id: '1',
+      email: 'admin@wasfah.com',
+      role: 'admin',
+      name: 'Admin User'
+    };
+    adminAuth.setAdminAuth(true, user);
+    localStorage.setItem('adminRole', 'admin');
   }
 };
