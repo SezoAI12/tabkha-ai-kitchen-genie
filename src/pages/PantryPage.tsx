@@ -100,14 +100,16 @@ export default function PantryPage() {
       return;
     }
 
+    const currentDate = new Date().toISOString().split('T')[0];
     const item: PantryItem = {
       id: Date.now().toString(),
       name: newItem.name,
       quantity: newItem.quantity,
       unit: newItem.unit,
       category: newItem.category,
-      expiryDate: newItem.expiryDate || undefined,
-      purchaseDate: new Date().toISOString().split('T')[0]
+      expiryDate: newItem.expiryDate || '',
+      addedDate: currentDate,
+      purchaseDate: currentDate
     };
 
     setPantryItems(prev => [...prev, item]);
