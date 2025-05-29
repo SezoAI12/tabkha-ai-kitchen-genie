@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Input } from '@/components/ui/input';
@@ -28,13 +29,15 @@ export default function SearchPage() {
     const matchesSearch = recipe.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || recipe.category === selectedCategory;
     const matchesIngredients = selectedIngredients.length === 0 || 
-      recipe.ingredients.some(ingredient => 
-        selectedIngredients.some(selected => {
-          const ingredientName = typeof ingredient === 'string' ? ingredient : ingredient.name;
-          const selectedName = typeof selected === 'string' ? selected : selected.name;
-          return ingredientName.toLowerCase().includes(selectedName.toLowerCase());
-        })
-      );
+      recipe.ingredients.some(ingredient => {
+        const ingredientName = typeof ingredient === 'string' 
+          ? ingredient 
+          : (ingredient as IngredientItem).name;
+        
+        return selectedIngredients.some(selected => 
+          ingredientName.toLowerCase().includes(selected.toLowerCase())
+        );
+      });
     
     return matchesSearch && matchesCategory && matchesIngredients;
   });
