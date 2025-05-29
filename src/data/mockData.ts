@@ -1,5 +1,5 @@
 // Mock data for the application
-import { Recipe, PantryItem, Meal, User, Comment, Ticket, Notification, Advertisement } from '@/types';
+import { Recipe, PantryItem, Meal, User, Comment, Ticket, Notification, Advertisement } from '@/types/index';
 
 export const mockRecipes: Recipe[] = [
   {
@@ -839,3 +839,31 @@ export const dietaryOptions = [
   'Gluten-Free',
   'Dairy-Free'
 ];
+
+// Add a single mock user for profile pages
+export const mockUser: User & {
+  dietaryPreferences?: string[];
+  cuisinePreferences?: string[];
+  allergies?: string[];
+  chefAvatar?: string;
+  nutritionalGoals?: {
+    calories: number;
+    protein: number;
+  };
+} = {
+  id: '1',
+  name: 'John Doe',
+  email: 'john.doe@example.com',
+  avatar: '/avatar1.jpg',
+  role: 'user',
+  status: 'active',
+  createdAt: '2024-01-01T00:00:00Z',
+  dietaryPreferences: ['Vegetarian', 'Gluten-Free'],
+  cuisinePreferences: ['Italian', 'Mediterranean', 'Asian'],
+  allergies: ['Nuts', 'Shellfish'],
+  chefAvatar: 'The Culinary Explorer',
+  nutritionalGoals: {
+    calories: 2000,
+    protein: 150
+  }
+};

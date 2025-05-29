@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Recipe } from '@/types';
-import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ChefHat } from 'lucide-react';
+import { Recipe } from '@/types/index';
+import { Link } from 'react-router-dom';
+import { Clock, Star, ChefHat } from 'lucide-react';
 
 interface FeaturedRecipeProps {
   recipe: Recipe;

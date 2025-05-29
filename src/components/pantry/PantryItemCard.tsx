@@ -1,61 +1,34 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { PantryItem } from '@/types';
-import { isAfter, parseISO, format, differenceInDays } from 'date-fns';
-import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+import { PantryItem } from '@/types/index';
+import { Calendar, Package } from 'lucide-react';
 
-interface PantryItemCardProps {
-  item: PantryItem;
-}
-
-export const PantryItemCard: React.FC<PantryItemCardProps> = ({ item }) => {
-  const getExpiryText = () => {
-    if (!item.expiryDate) return 'No expiry date';
-    
-    const expiryDate = parseISO(item.expiryDate);
-    const today = new Date();
-    
-    if (isAfter(today, expiryDate)) {
-      return 'Expired';
-    }
-    
-    const daysLeft = differenceInDays(expiryDate, today);
-    
-    if (daysLeft === 0) {
-      return 'Expires today';
-    } else if (daysLeft === 1) {
-      return 'Expires tomorrow';
-    } else {
-      return `Expires in ${daysLeft} days`;
-    }
-  };
-  
-  const expiryText = getExpiryText();
-  const isExpired = expiryText === 'Expired';
-  const isExpiringSoon = expiryText === 'Expires today' || expiryText === 'Expires tomorrow';
-  
+export const PantryItemCard: React.FC<{ item: PantryItem }> = ({ item }) => {
   return (
-    <Card className={cn(
-      'mb-2',
-      isExpired && 'border-wasfah-coral-red',
-      isExpiringSoon && 'border-amber-400'
-    )}>
+    <Card>
       <CardContent className="p-4">
-        <div className="flex justify-between items-start">
-          <div>
-            <h3 className="font-semibold text-wasfah-deep-teal">{item.name}</h3>
-            <p className={cn(
-              'text-sm',
-              isExpired ? 'text-wasfah-coral-red' : isExpiringSoon ? 'text-amber-500' : 'text-gray-500'
-            )}>
-              {expiryText}
-            </p>
+        <h3 className="font-medium text-lg">{item.name}</h3>
+        <p className="text-sm text-gray-500">{item.category}</p>
+        <div className="flex items-center space-x-2 mt-2">
+          <div className="flex items-center text-gray-600">
+            <Package size={16} className="mr-1" />
+            <span>{item.quantity} {item.unit}</span>
           </div>
-          <div className="text-right">
-            <p className="font-medium">{item.quantity} {item.unit}</p>
-          </div>
+          {item.expiryDate && (
+            <div className="flex items-center text-gray-600">
+              <Calendar size={16} className="mr-1" />
+              <span className="text-sm">
+                {new Date(item.expiryDate).toLocaleDateString()}
+              </span>
+            </div>
+          )}
         </div>
+        {item.expiryDate && (
+          <Badge className="mt-3">
+            Expires in {Math.round((new Date(item.expiryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days
+          </Badge>
+        )}
       </CardContent>
     </Card>
   );
