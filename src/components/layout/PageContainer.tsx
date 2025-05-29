@@ -10,10 +10,12 @@ interface PageContainerProps {
     showSearch?: boolean;
     showBackButton?: boolean;
     actions?: React.ReactNode;
+    customContent?: React.ReactNode;
   };
   className?: string;
   fullWidth?: boolean;
   noPadding?: boolean;
+  hideNavbar?: boolean;
 }
 
 export const PageContainer: React.FC<PageContainerProps> = ({
@@ -21,11 +23,12 @@ export const PageContainer: React.FC<PageContainerProps> = ({
   header,
   className,
   fullWidth = false,
-  noPadding = false
+  noPadding = false,
+  hideNavbar = false
 }) => {
   return (
     <div className={cn("min-h-screen bg-background", className)}>
-      {header && (
+      {header && !hideNavbar && (
         <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className={cn("flex h-14 items-center", fullWidth ? "px-4" : "container")}>
             {header.showBackButton && (
@@ -33,13 +36,19 @@ export const PageContainer: React.FC<PageContainerProps> = ({
                 ← Back
               </button>
             )}
-            {header.title && (
-              <h1 className="text-lg font-semibold">{header.title}</h1>
-            )}
-            {header.actions && (
-              <div className="ml-auto">
-                {header.actions}
-              </div>
+            {header.customContent ? (
+              header.customContent
+            ) : (
+              <>
+                {header.title && (
+                  <h1 className="text-lg font-semibold">{header.title}</h1>
+                )}
+                {header.actions && (
+                  <div className="ml-auto">
+                    {header.actions}
+                  </div>
+                )}
+              </>
             )}
           </div>
         </header>
