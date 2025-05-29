@@ -12,18 +12,22 @@ interface PageContainerProps {
     actions?: React.ReactNode;
   };
   className?: string;
+  fullWidth?: boolean;
+  noPadding?: boolean;
 }
 
 export const PageContainer: React.FC<PageContainerProps> = ({
   children,
   header,
-  className
+  className,
+  fullWidth = false,
+  noPadding = false
 }) => {
   return (
     <div className={cn("min-h-screen bg-background", className)}>
       {header && (
         <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="container flex h-14 items-center">
+          <div className={cn("flex h-14 items-center", fullWidth ? "px-4" : "container")}>
             {header.showBackButton && (
               <button className="mr-4">
                 ← Back
@@ -40,7 +44,10 @@ export const PageContainer: React.FC<PageContainerProps> = ({
           </div>
         </header>
       )}
-      <main className="container mx-auto">
+      <main className={cn(
+        fullWidth ? "w-full" : "container mx-auto",
+        noPadding ? "" : "p-4"
+      )}>
         {children}
       </main>
     </div>

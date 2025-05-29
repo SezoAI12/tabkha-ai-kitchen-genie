@@ -5,7 +5,8 @@ interface RTLContextType {
   language: string;
   setLanguage: (lang: string) => void;
   isRTL: boolean;
-  t: (key: string) => string;
+  direction: 'ltr' | 'rtl';
+  t: (englishKey: string, arabicKey?: string) => string;
 }
 
 const RTLContext = createContext<RTLContextType | undefined>(undefined);
@@ -25,16 +26,19 @@ interface RTLProviderProps {
 export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
   const [language, setLanguage] = useState('en');
   const isRTL = language === 'ar';
+  const direction = isRTL ? 'rtl' : 'ltr';
 
-  // Simple translation function - in a real app this would be more sophisticated
-  const t = (key: string) => {
-    // For now, just return the key - translation logic would go here
-    return key;
+  // Translation function that supports both English and Arabic
+  const t = (englishKey: string, arabicKey?: string) => {
+    if (language === 'ar' && arabicKey) {
+      return arabicKey;
+    }
+    return englishKey;
   };
 
   return (
-    <RTLContext.Provider value={{ language, setLanguage, isRTL, t }}>
-      <div dir={isRTL ? 'rtl' : 'ltr'}>
+    <RTLContext.Provider value={{ language, setLanguage, isRTL, direction, t }}>
+      <div dir={direction}>
         {children}
       </div>
     </RTLContext.Provider>
