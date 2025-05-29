@@ -1,44 +1,74 @@
 
-import { Recipe, PantryItem, User, Ingredient } from '@/types/index';
+import { Recipe, PantryItem, User } from '@/types/index';
+
+export const mockUser: User = {
+  id: '1',
+  name: 'Ahmed Hassan',
+  email: 'ahmed.hassan@example.com',
+  avatar: '/avatars/ahmed.jpg',
+  chefAvatar: 'The Grill Master',
+  preferences: {
+    diet: ['Mediterranean'],
+    allergies: ['Nuts'],
+    cuisine: ['Middle Eastern', 'Italian']
+  },
+  dietaryPreferences: ['Mediterranean'],
+  cuisinePreferences: ['Middle Eastern', 'Italian'],
+  allergies: ['Nuts'],
+  nutritionalGoals: {
+    calories: 2000,
+    protein: 150
+  }
+};
 
 export const mockRecipes: Recipe[] = [
   {
     id: '1',
-    name: 'Spaghetti Carbonara',
-    title: 'Classic Italian Spaghetti Carbonara',
-    description: 'A traditional Roman pasta dish made with eggs, cheese, pancetta, and pepper.',
-    image: '/api/placeholder/400/300',
-    cookTime: '20 minutes',
-    cookingTime: 20,
-    prepTime: '10 minutes',
+    name: 'Mediterranean Grilled Chicken',
+    title: 'Mediterranean Grilled Chicken',
+    description: 'Juicy grilled chicken with Mediterranean herbs and spices',
+    image: '/recipes/mediterranean-chicken.jpg',
+    cookTime: '25 min',
+    cookingTime: 25,
+    prepTime: '15 min',
     difficulty: 'Medium',
-    rating: 4.5,
-    ratingCount: 128,
-    cuisine: 'Italian',
+    rating: 4.8,
+    ratingCount: 124,
+    cuisine: 'Mediterranean',
     ingredients: [
-      { id: '1', name: 'Spaghetti', quantity: '400', unit: 'g', category: 'Pasta', amount: '400g' },
-      { id: '2', name: 'Pancetta', quantity: '150', unit: 'g', category: 'Meat', amount: '150g' },
-      { id: '3', name: 'Eggs', quantity: '3', unit: 'pcs', category: 'Dairy', amount: '3 pcs' },
-      { id: '4', name: 'Parmesan Cheese', quantity: '100', unit: 'g', category: 'Dairy', amount: '100g' }
+      {
+        id: '1',
+        name: 'Chicken breast',
+        quantity: '4',
+        unit: 'pieces',
+        category: 'Protein',
+        amount: '4 pieces'
+      },
+      {
+        id: '2',
+        name: 'Olive oil',
+        quantity: '3',
+        unit: 'tbsp',
+        category: 'Oil',
+        amount: '3 tbsp'
+      }
     ],
     instructions: [
-      'Bring a large pot of salted water to boil and cook spaghetti according to package directions.',
-      'Meanwhile, cook pancetta in a large skillet over medium heat until crispy.',
-      'In a bowl, whisk together eggs and grated Parmesan cheese.',
-      'Drain pasta and immediately add to the skillet with pancetta.',
-      'Remove from heat and quickly stir in egg mixture, tossing to coat pasta.',
-      'Season with black pepper and serve immediately.'
+      'Marinate chicken with olive oil and herbs',
+      'Preheat grill to medium-high heat',
+      'Grill chicken for 6-7 minutes per side',
+      'Let rest for 5 minutes before serving'
     ],
-    calories: 520,
+    calories: 320,
     servings: 4,
-    tags: ['Italian', 'Pasta', 'Quick'],
+    tags: ['Healthy', 'Protein', 'Mediterranean'],
     featured: true,
     isFavorite: false,
     premium: false,
     nutritionalInfo: {
-      calories: 520,
-      protein: 24,
-      carbs: 65,
+      calories: 320,
+      protein: 35,
+      carbs: 2,
       fat: 18
     }
   }
@@ -47,91 +77,22 @@ export const mockRecipes: Recipe[] = [
 export const mockPantryItems: PantryItem[] = [
   {
     id: '1',
-    name: 'Tomatoes',
-    quantity: '5',
-    unit: 'pcs',
-    expiryDate: '2024-06-15',
-    category: 'Vegetables',
-    daysUntilExpiry: 3,
-    addedDate: '2024-06-01'
+    name: 'Milk',
+    quantity: '1',
+    unit: 'liter',
+    expiryDate: '2024-02-01',
+    category: 'Dairy',
+    daysUntilExpiry: 2,
+    addedDate: '2024-01-25'
   },
   {
     id: '2',
-    name: 'Milk',
+    name: 'Bread',
     quantity: '1',
-    unit: 'L',
-    expiryDate: '2024-06-20',
-    category: 'Dairy',
-    daysUntilExpiry: 8,
-    addedDate: '2024-06-05'
+    unit: 'loaf',
+    expiryDate: '2024-01-31',
+    category: 'Grains',
+    daysUntilExpiry: 1,
+    addedDate: '2024-01-28'
   }
-];
-
-export const mockUser: User = {
-  id: '1',
-  name: 'John Doe',
-  email: 'john@example.com',
-  avatar: '/api/placeholder/100/100',
-  chefAvatar: '/api/placeholder/100/100',
-  preferences: {
-    diet: ['Vegetarian'],
-    allergies: ['Nuts'],
-    cuisine: ['Italian', 'Mediterranean']
-  },
-  dietaryPreferences: ['Vegetarian'],
-  cuisinePreferences: ['Italian', 'Mediterranean'],
-  allergies: ['Nuts'],
-  nutritionalGoals: {
-    calories: 2000,
-    protein: 150
-  }
-};
-
-// Export the missing arrays
-export const categories = [
-  'Italian',
-  'Mexican',
-  'Asian',
-  'Mediterranean',
-  'American',
-  'Indian',
-  'Chinese',
-  'Thai',
-  'French',
-  'German'
-];
-
-export const cuisines = [
-  'Italian',
-  'Mexican',
-  'Asian',
-  'Mediterranean',
-  'American',
-  'Indian',
-  'Chinese',
-  'Thai',
-  'French',
-  'German',
-  'Japanese',
-  'Korean',
-  'Turkish',
-  'Lebanese',
-  'Moroccan'
-];
-
-export const difficulties = [
-  'Easy',
-  'Medium',
-  'Hard'
-];
-
-export const dietaryOptions = [
-  'Vegetarian',
-  'Vegan',
-  'Gluten-Free',
-  'Dairy-Free',
-  'Keto',
-  'Paleo',
-  'Low-Carb',
-  'Nut-Free'
 ];
