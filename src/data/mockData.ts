@@ -86,3 +86,52 @@ export const mockUser: User = {
     protein: 150
   }
 };
+
+// Export the missing arrays
+export const categories = [
+  'Italian',
+  'Mexican',
+  'Asian',
+  'Mediterranean',
+  'American',
+  'Indian',
+  'Chinese',
+  'Thai',
+  'French',
+  'German'
+];
+
+export const cuisines = [
+  'Italian',
+  'Mexican',
+  'Asian',
+  'Mediterranean',
+  'American',
+  'Indian',
+  'Chinese',
+  'Thai',
+  'French',
+  'German',
+  'Japanese',
+  'Korean',
+  'Turkish',
+  'Lebanese',
+  'Moroccan'
+];
+
+export const difficulties = [
+  'Easy',
+  'Medium',
+  'Hard'
+];
+
+export const dietaryOptions = [
+  'Vegetarian',
+  'Vegan',
+  'Gluten-Free',
+  'Dairy-Free',
+  'Keto',
+  'Paleo',
+  'Low-Carb',
+  'Nut-Free'
+];
