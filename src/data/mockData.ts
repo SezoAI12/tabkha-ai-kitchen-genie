@@ -1,151 +1,109 @@
 
-import { Recipe, PantryItem, User } from '@/types/index';
-
-export const categories = [
-  'Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Desserts', 'Appetizers', 'Salads', 'Soups'
-];
-
-export const cuisines = [
-  'Italian', 'Chinese', 'Mexican', 'Indian', 'French', 'Japanese', 'Thai', 'Mediterranean', 'American'
-];
-
-export const difficulties = [
-  'Easy', 'Medium', 'Hard'
-];
-
-export const dietaryOptions = [
-  'Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Keto', 'Paleo', 'Low-Carb', 'High-Protein'
-];
-
-export const mockUser: User = {
-  id: '1',
-  name: 'John Doe',
-  email: 'john.doe@example.com',
-  chefAvatar: 'Master Chef',
-  dietaryPreferences: ['Vegetarian', 'Low-Carb'],
-  cuisinePreferences: ['Italian', 'Mediterranean', 'Asian'],
-  allergies: ['Nuts', 'Shellfish'],
-  nutritionalGoals: {
-    calories: 2000,
-    protein: 150
-  }
-};
+import { Recipe, PantryItem } from '@/types/index';
 
 export const mockRecipes: Recipe[] = [
   {
     id: '1',
-    title: 'Classic Spaghetti Carbonara',
-    description: 'A traditional Italian pasta dish with eggs, cheese, and pancetta',
+    name: 'Spaghetti Carbonara',
+    description: 'Classic Italian pasta dish with eggs, cheese, and pancetta',
     image: '/placeholder.svg',
-    cookingTime: 30,
-    prepTime: 10,
+    prepTime: 15,
     cookTime: 20,
-    difficulty: 'Medium',
-    rating: 4.8,
-    ratingCount: 156,
-    category: 'Italian',
-    cuisine: 'Italian',
     servings: 4,
-    calories: 520,
-    featured: true,
-    premium: false,
-    isFavorite: false,
-    tags: ['Italian', 'Pasta', 'Quick'],
-    ingredients: ['Spaghetti', 'Eggs', 'Pancetta', 'Parmesan', 'Black Pepper'],
-    instructions: [
-      'Cook spaghetti in salted water',
-      'Fry pancetta until crispy',
-      'Mix eggs with cheese',
-      'Combine all ingredients'
+    difficulty: 'Medium',
+    cuisine: 'Italian',
+    rating: 4.8,
+    ingredients: [
+      { id: '1', name: 'Spaghetti', amount: 400, unit: 'g' },
+      { id: '2', name: 'Eggs', amount: 4, unit: 'pieces' },
+      { id: '3', name: 'Parmesan cheese', amount: 100, unit: 'g' },
+      { id: '4', name: 'Pancetta', amount: 150, unit: 'g' },
     ],
-    nutritionalInfo: {
-      protein: 25,
+    instructions: [
+      'Cook spaghetti according to package instructions',
+      'Fry pancetta until crispy',
+      'Beat eggs with grated parmesan',
+      'Combine hot pasta with pancetta and egg mixture',
+      'Serve immediately'
+    ],
+    nutrition: {
+      calories: 520,
+      protein: 22,
       carbs: 45,
       fat: 28
     },
-    nutrition: {
-      calories: 520,
-      protein: 25,
-      carbs: 45,
-      fat: 28
-    }
+    tags: ['pasta', 'italian', 'dinner']
   },
   {
     id: '2',
-    title: 'Chicken Tikka Masala',
-    description: 'Creamy Indian curry with tender chicken pieces',
+    name: 'Chicken Stir Fry',
+    description: 'Quick and healthy stir fry with vegetables',
     image: '/placeholder.svg',
-    cookingTime: 45,
-    prepTime: 15,
-    cookTime: 30,
-    difficulty: 'Medium',
-    rating: 4.7,
-    ratingCount: 203,
-    category: 'Indian',
-    cuisine: 'Indian',
-    servings: 6,
-    calories: 420,
-    featured: false,
-    premium: true,
-    isFavorite: true,
-    tags: ['Indian', 'Curry', 'Spicy'],
-    ingredients: ['Chicken', 'Tomatoes', 'Cream', 'Spices', 'Onion'],
-    instructions: [
-      'Marinate chicken in yogurt and spices',
-      'Cook chicken until tender',
-      'Make tomato-cream sauce',
-      'Combine and simmer'
+    prepTime: 10,
+    cookTime: 15,
+    servings: 2,
+    difficulty: 'Easy',
+    cuisine: 'Asian',
+    rating: 4.5,
+    ingredients: [
+      { id: '5', name: 'Chicken breast', amount: 300, unit: 'g' },
+      { id: '6', name: 'Mixed vegetables', amount: 200, unit: 'g' },
+      { id: '7', name: 'Soy sauce', amount: 2, unit: 'tbsp' },
+      { id: '8', name: 'Garlic', amount: 2, unit: 'cloves' },
     ],
-    nutritionalInfo: {
-      protein: 35,
-      carbs: 15,
-      fat: 22
-    },
+    instructions: [
+      'Cut chicken into strips',
+      'Heat oil in wok',
+      'Stir fry chicken until cooked',
+      'Add vegetables and sauce',
+      'Serve with rice'
+    ],
     nutrition: {
-      calories: 420,
+      calories: 350,
       protein: 35,
       carbs: 15,
-      fat: 22
-    }
+      fat: 18
+    },
+    tags: ['chicken', 'healthy', 'quick']
   }
 ];
 
 export const mockPantryItems: PantryItem[] = [
   {
     id: '1',
-    name: 'Eggs',
-    quantity: 12,
-    unit: 'pieces',
+    name: 'Milk',
     category: 'Dairy',
-    expiryDate: '2024-01-15',
-    addedDate: '2024-01-01',
-    location: 'Refrigerator'
+    quantity: 1,
+    unit: 'liter',
+    expiryDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000) // 2 days from now
   },
   {
     id: '2',
-    name: 'Milk',
+    name: 'Bread',
+    category: 'Bakery',
     quantity: 1,
-    unit: 'liter',
-    category: 'Dairy',
-    expiryDate: '2024-01-10',
-    addedDate: '2024-01-05',
-    location: 'Refrigerator'
+    unit: 'loaf',
+    expiryDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000) // 1 day from now
   },
   {
     id: '3',
-    name: 'Bread',
-    quantity: 1,
-    unit: 'loaf',
-    category: 'Bakery',
-    expiryDate: '2024-01-08',
-    addedDate: '2024-01-06',
-    location: 'Pantry'
+    name: 'Eggs',
+    category: 'Dairy',
+    quantity: 12,
+    unit: 'pieces',
+    expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days from now
   }
 ];
 
-export const expiringIngredients = mockPantryItems.filter(item => {
-  const expiryDate = new Date(item.expiryDate);
-  const today = new Date();
-  const threeDaysFromNow = new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000);
-  return expiryDate <= threeDaysFromNow;
-});
+export const mockIngredients = [
+  { id: '1', name: 'Tomatoes', category: 'Vegetables' },
+  { id: '2', name: 'Onions', category: 'Vegetables' },
+  { id: '3', name: 'Garlic', category: 'Vegetables' },
+  { id: '4', name: 'Chicken breast', category: 'Meat' },
+  { id: '5', name: 'Ground beef', category: 'Meat' },
+  { id: '6', name: 'Salmon', category: 'Fish' },
+  { id: '7', name: 'Rice', category: 'Grains' },
+  { id: '8', name: 'Pasta', category: 'Grains' },
+  { id: '9', name: 'Olive oil', category: 'Oils' },
+  { id: '10', name: 'Salt', category: 'Seasonings' }
+];
