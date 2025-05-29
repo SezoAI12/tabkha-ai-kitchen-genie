@@ -93,7 +93,7 @@ export const mockPantryItems: PantryItem[] = [
     name: 'Rice',
     quantity: 2,
     unit: 'kg',
-    expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     category: 'Grains'
   },
   {
@@ -101,7 +101,7 @@ export const mockPantryItems: PantryItem[] = [
     name: 'Olive Oil',
     quantity: 1,
     unit: 'bottle',
-    expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+    expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     category: 'Oils'
   }
 ]
@@ -113,6 +113,14 @@ export const mockUser: User = {
   preferences: {
     dietary: ['Vegetarian'],
     allergies: ['Nuts']
+  },
+  dietaryPreferences: ['Vegetarian', 'Gluten-Free'],
+  cuisinePreferences: ['Italian', 'Mediterranean'],
+  allergies: ['Nuts'],
+  chefAvatar: 'The Grill Master',
+  nutritionalGoals: {
+    calories: 2000,
+    protein: 150
   }
 }
 

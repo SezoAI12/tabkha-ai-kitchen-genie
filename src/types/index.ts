@@ -1,4 +1,5 @@
 
+
 export interface Recipe {
   id: string
   title: string
@@ -46,8 +47,10 @@ export interface PantryItem {
   name: string
   quantity: number
   unit: string
-  expiryDate: Date
+  expiryDate: string // Changed from Date to string to match form inputs
   category: string
+  addedDate?: string
+  purchaseDate?: string
 }
 
 export interface Meal {
@@ -73,4 +76,9 @@ export interface User {
   cuisinePreferences?: string[]
   allergies?: string[]
   chefAvatar?: string
+  nutritionalGoals?: {
+    calories: number
+    protein: number
+  }
 }
+
