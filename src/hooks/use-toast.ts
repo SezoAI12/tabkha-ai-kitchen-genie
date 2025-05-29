@@ -1,40 +1,28 @@
 
 import * as React from "react"
-import { toast as sonnerToast } from "sonner"
 
 type ToastProps = {
   title?: string
   description?: string
   variant?: "default" | "destructive"
-  duration?: number
-}
-
-type ToastType = {
-  id: string
-  title?: string
-  description?: string
-  action?: React.ReactNode
-  variant?: "default" | "destructive"
 }
 
 export const useToast = () => {
-  const [toasts, setToasts] = React.useState<ToastType[]>([])
+  const [toasts, setToasts] = React.useState<ToastProps[]>([])
 
-  const toast = React.useCallback(({ title, description, variant = "default", duration }: ToastProps) => {
-    if (variant === "destructive") {
-      sonnerToast.error(title || "Error", {
-        description,
-        duration,
-      })
-    } else {
-      sonnerToast.success(title || "Success", {
-        description,
-        duration,
-      })
-    }
+  const toast = React.useCallback((props: ToastProps) => {
+    setToasts((prev) => [...prev, props])
+    // Auto-dismiss after 3 seconds
+    setTimeout(() => {
+      setToasts((prev) => prev.slice(1))
+    }, 3000)
   }, [])
 
-  return { toast, toasts }
+  return {
+    toast,
+    toasts,
+    dismiss: () => setToasts([])
+  }
 }
 
-export { sonnerToast as toast }
+export { useToast as toast }
