@@ -5,12 +5,16 @@ interface RTLContextType {
   isRTL: boolean;
   toggleRTL: () => void;
   t: (key: string, fallback?: string) => string;
+  direction: 'ltr' | 'rtl';
+  language: string;
+  setLanguage: (lang: string) => void;
 }
 
 const RTLContext = createContext<RTLContextType | undefined>(undefined);
 
 export const RTLProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isRTL, setIsRTL] = useState(false);
+  const [language, setLanguage] = useState('en');
 
   const toggleRTL = () => {
     setIsRTL(!isRTL);
@@ -22,9 +26,18 @@ export const RTLProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return fallback || key;
   };
 
+  const direction = isRTL ? 'rtl' : 'ltr';
+
   return (
-    <RTLContext.Provider value={{ isRTL, toggleRTL, t }}>
-      <div dir={isRTL ? 'rtl' : 'ltr'}>
+    <RTLContext.Provider value={{ 
+      isRTL, 
+      toggleRTL, 
+      t, 
+      direction, 
+      language, 
+      setLanguage 
+    }}>
+      <div dir={direction}>
         {children}
       </div>
     </RTLContext.Provider>
