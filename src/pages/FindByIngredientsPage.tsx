@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, ElementType } from 'react'; // ElementType for icons
 import {
   Utensils, Cake, Coffee, Camera, Mic, Soup, Salad, Egg, Milk, Drumstick,
-  LeafyGreen, Apple, Carrot, IceCream, Cookie, Wine, Beer, Pizza, ChefHat, // ChefHat for Food category
+  LeafyGreen, Apple, Carrot, IceCream, Cookie, Wine, Beer, Pizza, ChefHat,
   Share2, Calendar, Users, Award, Sparkles, Circle, Wheat, Fish, GlassWater,
-  Jar,
-  Cheese,
-  Shrimp,
-  Fork,
-  Candy,
-  Bottle,
-  MoreHorizontal
-} from 'lucide-react'; // Import necessary icons
+  Jar, Cheese, Shrimp, Fork, Candy, Bottle, MoreHorizontal,
+  // New icons potentially for drink customization if needed in SearchSummary or elsewhere
+  Cocktail, Droplet, Sun, Snow, Chili, Citrus, Leaf, Diamond, Cherry,
+  // Ensure all necessary lucide-react icons are imported if used in DrinkCustomizationForm
+  // For the purpose of this file, the primary dependency is on the component itself.
+} from 'lucide-react';
 
 import { PageContainer } from '@/components/layout/PageContainer';
 import { CategorySelector } from '@/components/ingredients/CategorySelector';
@@ -18,8 +16,7 @@ import { IngredientManager } from '@/components/ingredients/IngredientManager';
 import { FilterPanel } from '@/components/ingredients/FilterPanel';
 import { SearchSummary } from '@/components/ingredients/SearchSummary';
 import { useToast } from '@/hooks/use-toast';
-
-import { ElementType } from 'react';
+import { DrinkCustomizationForm, DrinkOptions } from '@/components/drinks/DrinkCustomizationForm'; // Import the new component and its type
 
 // Updated Ingredient interface to include optional icon
 interface Ingredient {
@@ -50,44 +47,38 @@ interface Filters {
 export default function FindByIngredientsPage() {
   const { toast } = useToast();
 
-  // --- Data with Thematic Icons (Updated based on image for main 'Food' category) ---
   const mainCategories = [
     {
       id: 'food',
       name: 'Food',
-      icon: ChefHat, // Changed to ChefHat as it's the "By Ingredients" icon in the attached image
+      icon: ChefHat,
       subcategories: [
-        { name: 'Main Dishes', icon: ChefHat }, // Chef hat for main cooking (still relevant here)
-        { name: 'Appetizers', icon: Salad }, // Salad for starters
-        { name: 'Pickles', icon: Jar }, // Jar for preserved/pickled items
-        { name: 'Soups', icon: Soup }, // Soup bowl
-        { name: 'Sauces', icon: Fork }, // Fork/Utensil for sauces
-        { name: 'Others', icon: Utensils } // Generic food icon
+        { name: 'Main Dishes', icon: ChefHat },
+        { name: 'Appetizers', icon: Salad },
+        { name: 'Pickles', icon: Jar },
+        { name: 'Soups', icon: Soup },
+        { name: 'Sauces', icon: Fork },
+        { name: 'Others', icon: Utensils }
       ]
     },
     {
       id: 'desserts',
       name: 'Desserts',
-      icon: Cake, // Cake icon (retained)
+      icon: Cake,
       subcategories: [
-        { name: 'Traditional', icon: Cookie }, // Cookie/Pastry icon (retained)
-        { name: 'Western', icon: IceCream }, // Ice cream for cold/western desserts (retained)
-        { name: 'Pastries', icon: Cake }, // Cake/Pastry icon (retained)
-        { name: 'Ice Cream', icon: IceCream }, // Ice cream icon (retained)
-        { name: 'Others', icon: Sparkles } // Sparkles for sweet/special (retained)
+        { name: 'Traditional', icon: Cookie },
+        { name: 'Western', icon: IceCream },
+        { name: 'Pastries', icon: Cake },
+        { name: 'Ice Cream', icon: IceCream },
+        { name: 'Others', icon: Sparkles }
       ]
     },
     {
       id: 'drinks',
       name: 'Drinks',
-      icon: Coffee, // Coffee/Drink icon (retained)
-      subcategories: [
-        { name: 'Detox', icon: GlassWater }, // Glass of water/drink (retained)
-        { name: 'Cocktails', icon: Wine }, // Wine glass for cocktails (retained)
-        { name: 'Alcoholic', icon: Beer }, // Beer mug for alcoholic drinks (retained)
-        { name: 'Hot Drinks', icon: Coffee }, // Coffee cup for hot drinks (retained)
-        { name: 'Others', icon: GlassWater } // Generic drink icon (retained)
-      ]
+      icon: Coffee, // Keep Coffee icon for main 'Drinks' category selection
+      isCustomizable: true, // NEW: Flag to indicate custom form for drinks
+      subcategories: [] // No traditional subcategories for drinks in this flow
     },
   ];
 
@@ -98,7 +89,6 @@ export default function FindByIngredientsPage() {
     cuisine: ['Levant', 'Italian', 'Mexican', 'Chinese', 'Indian', 'American'],
   };
 
-  // Mock Pantry Items - Using specific icons (retained)
   const PANTRY_ITEMS: PantryItem[] = [
     { id: 'p1', name: 'Flour', quantity: '1', unit: 'kg', icon: Wheat },
     { id: 'p2', name: 'Sugar', quantity: '500', unit: 'g', icon: Sparkles },
@@ -115,8 +105,8 @@ export default function FindByIngredientsPage() {
   // State
   const [currentStep, setCurrentStep] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState<{ id: string; name: string; icon: ElementType; isCustomizable?: boolean; subcategories: any[] } | null>(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null); // Still used for non-drink categories
   const [filters, setFilters] = useState<Filters>({
     dietary: '',
     cookingTime: '',
@@ -124,25 +114,29 @@ export default function FindByIngredientsPage() {
     cuisine: '',
   });
   const [addedIngredients, setAddedIngredients] = useState<Ingredient[]>([]);
+  // NEW: State for custom drink options
+  const [customDrinkOptions, setCustomDrinkOptions] = useState<DrinkOptions | null>(null);
 
   // Handlers
-  const handleCategorySelect = (category: any) => {
+  const handleCategorySelect = (category: typeof mainCategories[0]) => {
     setSelectedCategory(category);
-    setCurrentStep(2);
+    if (category.isCustomizable) {
+      setCurrentStep(2); // Go to step 2, but will render custom form
+    } else {
+      setCurrentStep(2); // For food/desserts, still go to subcategory selection
+    }
   };
 
   const handleSubcategorySelect = (subcategoryName: string) => {
     setSelectedSubcategory(subcategoryName);
-    setCurrentStep(3);
+    setCurrentStep(3); // Proceed to Ingredient Manager for non-drink items
   };
 
   const handleFilterChange = (filterType: keyof Filters, value: string) => {
     setFilters(prev => ({ ...prev, [filterType]: value }));
   };
 
-  // handleAddIngredient now expects an Ingredient object which might include an icon
   const handleAddIngredient = (ingredient: Ingredient) => {
-      // Ensure the ingredient has a unique ID if it's manual and doesn't have one yet
       const ingredientWithId = ingredient.id ? ingredient : { ...ingredient, id: `manual-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` };
       setAddedIngredients(prev => [...prev, ingredientWithId]);
   };
@@ -157,7 +151,6 @@ export default function FindByIngredientsPage() {
         });
         return;
     }
-    // Add pantry item, ensuring it has an icon if available
     setAddedIngredients(prev => [...prev, {
         id: item.id,
         name: item.name,
@@ -186,23 +179,39 @@ export default function FindByIngredientsPage() {
     });
   };
 
+  // NEW: Handle generation of custom drink
+  const handleGenerateCustomDrink = (options: DrinkOptions) => {
+    setCustomDrinkOptions(options);
+    setCurrentStep(4); // Skip ingredient manager, go straight to search summary
+  };
+
   const handleSearchRecipes = () => {
-    const searchData = {
-      category: selectedCategory?.name,
-      subcategory: selectedSubcategory,
-      filters,
-      ingredients: addedIngredients.map(ing => ({
-          name: ing.name,
-          quantity: ing.quantity,
-          unit: ing.unit,
-          // icon: ing.icon // Optional: pass icon if needed by results page
-      })),
-    };
+    let searchData: any; // Use 'any' for flexibility, or define a more complex type
+    if (selectedCategory?.id === 'drinks' && customDrinkOptions) {
+      searchData = {
+        category: selectedCategory.name,
+        drinkOptions: customDrinkOptions,
+        filters,
+      };
+    } else {
+      searchData = {
+        category: selectedCategory?.name,
+        subcategory: selectedSubcategory,
+        filters,
+        ingredients: addedIngredients.map(ing => ({
+            name: ing.name,
+            quantity: ing.quantity,
+            unit: ing.unit,
+        })),
+      };
+    }
+
     console.log('Searching recipes with:', searchData);
     toast({
       title: "Search Started",
       description: "Looking for recipes with your criteria...",
     });
+    // In a real app, this would trigger an API call and navigate to results page
   };
 
   const renderStepIndicator = () => (
@@ -244,19 +253,43 @@ export default function FindByIngredientsPage() {
           onCloseFilters={() => setShowFilters(false)}
         />
 
-        {(currentStep === 1 || currentStep === 2) && (
+        {/* Step 1: Category Selection */}
+        {currentStep === 1 && (
           <CategorySelector
             categories={mainCategories}
             selectedCategory={selectedCategory}
             selectedSubcategory={selectedSubcategory}
             currentStep={currentStep}
             onCategorySelect={handleCategorySelect}
-            onSubcategorySelect={handleSubcategorySelect}
-            onBack={() => setCurrentStep(1)}
+            onSubcategorySelect={handleSubcategorySelect} // This won't be called for drinks category
+            onBack={() => setCurrentStep(1)} // Back from subcategory or drink form to main category
           />
         )}
 
-        {currentStep === 3 && (
+        {/* Step 2: Conditional Rendering for Drink Customization vs. Subcategories */}
+        {currentStep === 2 && selectedCategory && (
+          selectedCategory.isCustomizable ? (
+            // If 'Drinks' category is selected, show the custom form
+            <DrinkCustomizationForm
+              onGenerateDrink={handleGenerateCustomDrink}
+              onBack={() => setCurrentStep(1)} // Back to main categories
+            />
+          ) : (
+            // For Food/Desserts, show subcategory selection
+            <CategorySelector
+              categories={mainCategories} // Pass all categories to allow CategorySelector to find subcategories
+              selectedCategory={selectedCategory}
+              selectedSubcategory={selectedSubcategory}
+              currentStep={currentStep}
+              onCategorySelect={handleCategorySelect} // This won't be used here but kept for prop structure
+              onSubcategorySelect={handleSubcategorySelect}
+              onBack={() => setCurrentStep(1)} // Back to main categories
+            />
+          )
+        )}
+
+        {/* Step 3: Ingredient Manager (Skipped for custom drinks, only for food/desserts) */}
+        {currentStep === 3 && selectedCategory?.id !== 'drinks' && (
           <>
             <IngredientManager
               addedIngredients={addedIngredients}
@@ -280,12 +313,14 @@ export default function FindByIngredientsPage() {
           </>
         )}
 
+        {/* Step 4: Search Summary */}
         {currentStep === 4 && (
           <SearchSummary
             selectedCategory={selectedCategory}
-            selectedSubcategory={selectedSubcategory}
-            ingredientCount={addedIngredients.length}
+            selectedSubcategory={selectedSubcategory} // Will be null for drinks
+            ingredientCount={selectedCategory?.id === 'drinks' ? 0 : addedIngredients.length} // 0 for drinks
             filterCount={Object.values(filters).filter(v => v).length}
+            customDrinkOptions={customDrinkOptions} // Pass new options to SearchSummary
             onSearch={handleSearchRecipes}
           />
         )}
