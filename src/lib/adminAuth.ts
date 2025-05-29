@@ -22,3 +22,33 @@ export const requireAdmin = () => {
     throw new Error('Admin access required');
   }
 };
+
+// Additional exports needed by other components
+export const isAdminAuthenticated = () => {
+  return localStorage.getItem('isAdmin') === 'true';
+};
+
+export const adminLogout = () => {
+  localStorage.removeItem('isAdmin');
+  localStorage.removeItem('adminRole');
+};
+
+export const getAdminRole = () => {
+  return localStorage.getItem('adminRole') || 'admin';
+};
+
+export const setAdminAuth = (role: string) => {
+  localStorage.setItem('isAdmin', 'true');
+  localStorage.setItem('adminRole', role);
+};
+
+export const verifyAdminCredentials = async (email: string, password: string) => {
+  // Mock verification - in a real app this would be a secure API call
+  if (email === 'admin@wasfahai.com' && password === 'admin123') {
+    return { success: true, role: 'admin' };
+  }
+  if (email === 'superadmin@wasfahai.com' && password === 'superadmin123') {
+    return { success: true, role: 'superadmin' };
+  }
+  return { success: false, role: null };
+};
