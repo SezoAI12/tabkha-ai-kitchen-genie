@@ -135,6 +135,14 @@ export const mockUser = {
   dietaryPreferences: ['Vegetarian'],
   cuisinePreferences: ['Italian', 'Mediterranean'],
   allergies: ['Nuts'],
+  nutritionalGoals: {
+    calories: 2000,
+    protein: 150,
+    carbs: 250,
+    fat: 65,
+    fiber: 25,
+    sugar: 50
+  },
   preferences: {
     dietaryRestrictions: ['Vegetarian'],
     allergies: ['Nuts'],

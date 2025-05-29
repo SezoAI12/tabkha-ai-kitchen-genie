@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { WasfahLogo } from '@/components/icons/WasfahLogo';
@@ -51,7 +50,6 @@ export default function AuthPage() {
       toast({
         title: t("Login successful", "تسجيل الدخول ناجح"),
         description: t("Welcome back to WasfahAI!", "مرحبًا بك مرة أخرى في وصفة الذكاء الاصطناعي!"),
-        duration: 3000,
       });
       navigate('/home');
     } catch (error: any) {
@@ -90,7 +88,6 @@ export default function AuthPage() {
       toast({
         title: t("Registration successful", "التسجيل ناجح"),
         description: t("Welcome to WasfahAI!", "مرحبًا بك في وصفة الذكاء الاصطناعي!"),
-        duration: 3000,
       });
       navigate('/home');
     } catch (error: any) {

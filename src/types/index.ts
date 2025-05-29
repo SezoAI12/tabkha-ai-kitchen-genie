@@ -69,6 +69,7 @@ export interface User {
   dietaryPreferences?: string[]; // Added
   cuisinePreferences?: string[]; // Added
   allergies?: string[]; // Added
+  nutritionalGoals?: NutritionInfo; // Added
 }
 
 export interface UserPreferences {
@@ -86,4 +87,5 @@ export interface Meal {
   plannedDate: string;
   calories?: number;
   prepTime?: number;
+  image?: string; // Added missing image property
 }

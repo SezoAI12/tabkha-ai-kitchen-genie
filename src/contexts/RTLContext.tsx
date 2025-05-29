@@ -6,7 +6,7 @@ interface RTLContextType {
   toggleRTL: () => void;
   language: string;
   setLanguage: (lang: string) => void;
-  t: (englishText: string, arabicText: string) => string;
+  t: (englishText: string, arabicText?: string) => string;
   direction: 'ltr' | 'rtl';
 }
 
@@ -32,8 +32,11 @@ export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
     setIsRTL(!isRTL);
   };
 
-  const t = (englishText: string, arabicText: string) => {
-    return isRTL ? arabicText : englishText;
+  const t = (englishText: string, arabicText?: string) => {
+    if (isRTL && arabicText) {
+      return arabicText;
+    }
+    return englishText;
   };
 
   const direction: 'ltr' | 'rtl' = isRTL ? 'rtl' : 'ltr';
