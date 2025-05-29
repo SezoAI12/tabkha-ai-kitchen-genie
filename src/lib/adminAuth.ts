@@ -33,3 +33,25 @@ export const getAdminRole = (): string => {
   if (isAdmin()) return 'admin';
   return 'user';
 };
+
+// New functions for AdminLoginPage
+export const verifyAdminCredentials = async (email: string, password: string): Promise<{success: boolean, role?: string}> => {
+  // Mock credential verification
+  if (email === 'admin@wasfahai.com' && password === 'admin123') {
+    return { success: true, role: 'admin' };
+  }
+  if (email === 'superadmin@wasfahai.com' && password === 'superadmin123') {
+    return { success: true, role: 'super-admin' };
+  }
+  return { success: false };
+};
+
+export const setAdminAuth = (role: string): void => {
+  if (role === 'super-admin') {
+    localStorage.setItem('isAdmin', 'true');
+    localStorage.setItem('isSuperAdmin', 'true');
+  } else if (role === 'admin') {
+    localStorage.setItem('isAdmin', 'true');
+    localStorage.removeItem('isSuperAdmin');
+  }
+};
