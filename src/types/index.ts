@@ -61,3 +61,26 @@ export interface User {
     protein: number;
   };
 }
+
+export interface Meal {
+  id: string;
+  name: string;
+  image?: string;
+  prepTime?: number;
+  calories?: number;
+  recipe?: Recipe;
+}
+
+export interface IngredientItem {
+  id: string;
+  name: string;
+  amount: number;
+  unit: string;
+  category?: string;
+}
+
+export interface Ingredient {
+  id: string;
+  name: string;
+  category: string;
+}
