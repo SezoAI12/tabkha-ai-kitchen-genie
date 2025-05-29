@@ -1,22 +1,22 @@
 
-import React from 'react';
+import React, { ElementType } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
 interface MainCategory {
   id: string;
   name: string;
-  icon: React.ComponentType;
-  subcategories: { name: string; icon: React.ComponentType; requiresCustomForm?: boolean }[];
+  icon: ElementType;
+  subcategories: { name: string; icon: ElementType; requiresCustomForm?: boolean }[];
 }
 
 interface CategorySelectorProps {
   categories: MainCategory[];
   selectedCategory: MainCategory | null;
-  selectedSubcategory: { name: string; icon: React.ComponentType; requiresCustomForm?: boolean } | null;
+  selectedSubcategory: { name: string; icon: ElementType; requiresCustomForm?: boolean } | null;
   currentStep: number;
   onCategorySelect: (category: MainCategory) => void;
-  onSubcategorySelect: (subcategory: { name: string; icon: React.ComponentType; requiresCustomForm?: boolean }) => void;
+  onSubcategorySelect: (subcategory: { name: string; icon: ElementType; requiresCustomForm?: boolean }) => void;
   onBack: () => void;
 }
 
