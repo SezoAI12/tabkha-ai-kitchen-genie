@@ -1,213 +1,164 @@
-import { Recipe, Ingredient, PantryItem, User, IngredientItem } from '@/types/index';
 
-export const recipes: Recipe[] = [
+import { Recipe, PantryItem } from '@/types/index';
+
+export const mockRecipes: Recipe[] = [
   {
     id: '1',
-    name: 'Pasta Carbonara',
-    description: 'Classic Italian pasta dish with eggs, cheese, and pancetta',
-    ingredients: [
-      { name: 'Spaghetti', amount: 400, unit: 'g' },
-      { name: 'Eggs', amount: 4, unit: 'pieces' },
-      { name: 'Parmesan cheese', amount: 100, unit: 'g' },
-      { name: 'Pancetta', amount: 150, unit: 'g' },
-      { name: 'Black pepper', amount: 1, unit: 'tsp' }
-    ] as IngredientItem[],
-    instructions: [
-      'Cook pasta according to package directions',
-      'Fry pancetta until crispy',
-      'Whisk eggs and cheese together',
-      'Combine all ingredients while pasta is hot'
-    ],
-    prepTime: 15,
-    cookTime: 20,
-    servings: 4,
-    difficulty: 'medium',
-    cuisine: 'Italian',
-    category: 'main-course',
-    image: 'https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?w=300&h=200&fit=crop',
-    calories: 520,
+    title: 'Mediterranean Quinoa Bowl',
+    description: 'A healthy and flavorful quinoa bowl with Mediterranean ingredients',
+    image: '/placeholder.svg',
+    cookingTime: 25,
+    servings: 2,
+    difficulty: 'Easy',
     rating: 4.5,
+    ingredients: [
+      '1 cup quinoa',
+      '2 cups vegetable broth',
+      '1 cucumber, diced',
+      '1 cup cherry tomatoes',
+      '1/2 red onion, sliced',
+      '1/4 cup olives',
+      '1/4 cup feta cheese',
+      '2 tbsp olive oil',
+      '1 lemon, juiced'
+    ],
+    instructions: [
+      'Cook quinoa in vegetable broth according to package instructions',
+      'Dice cucumber and halve cherry tomatoes',
+      'Slice red onion thinly',
+      'Combine all ingredients in a bowl',
+      'Drizzle with olive oil and lemon juice',
+      'Serve chilled'
+    ],
+    category: 'Bowl',
+    cuisine: 'Mediterranean',
     featured: true,
-    isFavorite: false,
-    tags: ['pasta', 'italian', 'main-course'],
-    premium: false,
-    ratingCount: 125,
-    nutritionalInfo: {
-      calories: 520,
-      protein: 22,
-      carbs: 45,
-      fat: 28
-    }
+    calories: 420,
+    protein: 15,
+    carbs: 65,
+    fat: 12,
+    fiber: 8
   },
   {
     id: '2',
-    name: 'Chicken Tikka Masala',
-    description: 'Creamy tomato-based curry with tender chicken pieces',
-    ingredients: [
-      { name: 'Chicken breast', amount: 500, unit: 'g' },
-      { name: 'Tomato sauce', amount: 400, unit: 'ml' },
-      { name: 'Cream', amount: 200, unit: 'ml' },
-      { name: 'Spices', amount: 2, unit: 'tbsp' },
-      { name: 'Onion', amount: 1, unit: 'piece' },
-      { name: 'Garlic', amount: 3, unit: 'cloves' }
-    ] as IngredientItem[],
-    instructions: [
-      'Marinate chicken in spices',
-      'Cook chicken until golden',
-      'Prepare sauce with tomatoes and cream',
-      'Simmer chicken in sauce'
-    ],
-    prepTime: 30,
-    cookTime: 25,
+    title: 'Chicken Tikka Masala',
+    description: 'Creamy and spicy Indian curry with tender chicken',
+    image: '/placeholder.svg',
+    cookingTime: 45,
     servings: 4,
-    difficulty: 'medium',
+    difficulty: 'Medium',
+    rating: 4.8,
+    ingredients: [
+      '2 lbs chicken breast, cubed',
+      '1 cup heavy cream',
+      '1 can tomato sauce',
+      '2 tbsp garam masala',
+      '1 tbsp ginger-garlic paste',
+      '1 onion, diced',
+      '2 tbsp oil',
+      'Salt to taste'
+    ],
+    instructions: [
+      'Marinate chicken with spices for 30 minutes',
+      'Cook chicken until golden brown',
+      'Sauté onions until translucent',
+      'Add tomato sauce and simmer',
+      'Add cream and cooked chicken',
+      'Simmer for 15 minutes and serve'
+    ],
+    category: 'Curry',
     cuisine: 'Indian',
-    category: 'main-course',
-    image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=300&h=200&fit=crop',
-    calories: 380,
-    rating: 4.7,
+    featured: true,
+    calories: 520,
+    protein: 35,
+    carbs: 12,
+    fat: 38,
+    fiber: 3
+  },
+  {
+    id: '3',
+    title: 'Classic Caesar Salad',
+    description: 'Traditional Caesar salad with homemade dressing',
+    image: '/placeholder.svg',
+    cookingTime: 15,
+    servings: 2,
+    difficulty: 'Easy',
+    rating: 4.2,
+    ingredients: [
+      '1 head romaine lettuce',
+      '1/4 cup parmesan cheese',
+      '1/2 cup croutons',
+      '2 tbsp caesar dressing',
+      '1 lemon, juiced',
+      'Black pepper to taste'
+    ],
+    instructions: [
+      'Wash and chop romaine lettuce',
+      'Toss with caesar dressing',
+      'Add croutons and parmesan',
+      'Finish with lemon juice and pepper',
+      'Serve immediately'
+    ],
+    category: 'Salad',
+    cuisine: 'Italian',
     featured: false,
-    isFavorite: true,
-    tags: ['curry', 'indian', 'main-course'],
-    premium: true,
-    ratingCount: 89,
-    nutritionalInfo: {
-      calories: 380,
-      protein: 35,
-      carbs: 12,
-      fat: 18
-    }
+    calories: 280,
+    protein: 8,
+    carbs: 15,
+    fat: 22,
+    fiber: 4
   }
 ];
 
-// Export with both names for compatibility
-export const mockRecipes = recipes;
-
-export const ingredients: Ingredient[] = [
+export const mockPantryItems: PantryItem[] = [
   {
     id: '1',
-    name: 'Tomato',
-    category: 'vegetables',
-    image: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=100&h=100&fit=crop',
-    nutrition: {
-      calories: 18,
-      protein: 0.9,
-      carbs: 3.9,
-      fat: 0.2
-    }
+    name: 'Quinoa',
+    quantity: 2,
+    unit: 'cups',
+    category: 'Grains',
+    expiryDate: '2024-12-31',
+    purchaseDate: '2024-01-15',
+    location: 'Pantry'
   },
   {
     id: '2',
     name: 'Chicken Breast',
-    category: 'meat',
-    image: 'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=100&h=100&fit=crop',
-    nutrition: {
-      calories: 165,
-      protein: 31,
-      carbs: 0,
-      fat: 3.6
-    }
-  }
-];
-
-export const pantryItems: PantryItem[] = [
-  {
-    id: '1',
-    ingredient: ingredients[0],
-    quantity: 5,
-    unit: 'pieces',
-    expiryDate: '2024-02-15',
-    addedDate: '2024-01-20'
-  },
-  {
-    id: '2',
-    ingredient: ingredients[1],
-    quantity: 1,
-    unit: 'kg',
-    expiryDate: '2024-02-10',
-    addedDate: '2024-01-25'
-  }
-];
-
-// Export with both names for compatibility
-export const mockPantryItems = pantryItems;
-
-export const mockUser: User = {
-  id: '1',
-  name: 'Ahmed Hassan',
-  email: 'ahmed.hassan@example.com',
-  preferences: {
-    dietaryRestrictions: ['halal'],
-    allergies: ['nuts'],
-    favoritesCuisines: ['Middle Eastern', 'Italian']
-  },
-  dietaryPreferences: ['Vegetarian', 'Gluten-Free'],
-  cuisinePreferences: ['Italian', 'Mexican', 'Thai'],
-  allergies: ['Peanuts', 'Shellfish'],
-  chefAvatar: 'The Grill Master',
-  nutritionalGoals: {
-    calories: 2000,
-    protein: 150
-  }
-};
-
-export const categories = [
-  'appetizers',
-  'main-course',
-  'desserts',
-  'beverages',
-  'salads',
-  'soups',
-  'breakfast',
-  'snacks'
-];
-
-export const cuisines = [
-  'Italian',
-  'Indian',
-  'Chinese',
-  'Mexican',
-  'French',
-  'Thai',
-  'Japanese',
-  'Mediterranean',
-  'American',
-  'Middle Eastern'
-];
-
-export const difficulties = ['easy', 'medium', 'hard'];
-
-export const dietaryOptions = [
-  'vegetarian',
-  'vegan',
-  'gluten-free',
-  'dairy-free',
-  'keto',
-  'paleo',
-  'low-carb',
-  'high-protein'
-];
-
-export const expiringIngredients = [
-  {
-    id: '1',
-    name: 'Milk',
-    expiryDate: '2024-02-08',
-    daysLeft: 2,
-    category: 'dairy'
-  },
-  {
-    id: '2',
-    name: 'Bananas',
-    expiryDate: '2024-02-10',
-    daysLeft: 4,
-    category: 'fruits'
+    quantity: 1.5,
+    unit: 'lbs',
+    category: 'Meat',
+    expiryDate: '2024-06-02',
+    purchaseDate: '2024-05-28',
+    location: 'Refrigerator'
   },
   {
     id: '3',
-    name: 'Bread',
-    expiryDate: '2024-02-09',
-    daysLeft: 3,
-    category: 'grains'
+    name: 'Heavy Cream',
+    quantity: 1,
+    unit: 'cup',
+    category: 'Dairy',
+    expiryDate: '2024-06-01',
+    purchaseDate: '2024-05-25',
+    location: 'Refrigerator'
+  },
+  {
+    id: '4',
+    name: 'Tomatoes',
+    quantity: 6,
+    unit: 'pieces',
+    category: 'Vegetables',
+    expiryDate: '2024-05-31',
+    purchaseDate: '2024-05-27',
+    location: 'Counter'
+  },
+  {
+    id: '5',
+    name: 'Lettuce',
+    quantity: 1,
+    unit: 'head',
+    category: 'Vegetables',
+    expiryDate: '2024-05-30',
+    purchaseDate: '2024-05-26',
+    location: 'Refrigerator'
   }
 ];

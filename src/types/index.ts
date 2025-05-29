@@ -1,99 +1,66 @@
 
 export interface Recipe {
   id: string;
-  name: string;
-  title?: string; // For backward compatibility
-  description: string;
-  ingredients: string[] | IngredientItem[];
+  title: string;
+  description?: string;
+  image?: string;
+  cookingTime: number;
+  servings?: number;
+  difficulty?: 'Easy' | 'Medium' | 'Hard';
+  rating: number;
+  ingredients: string[];
   instructions: string[];
-  prepTime: number;
-  cookTime: number;
-  cookingTime?: number; // For backward compatibility
-  servings: number;
-  difficulty: 'easy' | 'medium' | 'hard';
-  cuisine: string;
-  category: string;
-  image?: string;
-  calories?: number;
-  rating?: number;
-  tags?: string[];
+  category?: string;
+  cuisine?: string;
   featured?: boolean;
-  isFavorite?: boolean;
-  premium?: boolean;
-  ratingCount?: number;
-  nutritionalInfo?: {
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-  };
-}
-
-export interface IngredientItem {
-  name: string;
-  amount: number;
-  unit: string;
-}
-
-export interface Ingredient {
-  id: string;
-  name: string;
-  category: string;
-  image?: string;
-  nutrition?: {
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-  };
+  calories?: number;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
+  fiber?: number;
 }
 
 export interface PantryItem {
   id: string;
-  ingredient: Ingredient;
+  name: string;
   quantity: number;
   unit: string;
-  expiryDate: string;
-  addedDate: string;
-  name?: string; // For backward compatibility
-  category?: string; // For backward compatibility
-}
-
-export interface MealPlan {
-  id: string;
-  date: string;
-  breakfast?: Recipe;
-  lunch?: Recipe;
-  dinner?: Recipe;
-  snacks?: Recipe[];
-}
-
-export interface Meal {
-  id: string;
-  name: string;
-  type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
-  recipe?: Recipe;
-  calories?: number;
-  time?: string;
-  image?: string;
-  prepTime?: number;
+  category?: string;
+  expiryDate?: string;
+  purchaseDate?: string;
+  location?: string;
 }
 
 export interface User {
   id: string;
   name: string;
   email: string;
-  preferences?: {
-    dietaryRestrictions: string[];
-    allergies: string[];
-    favoritesCuisines: string[];
-  };
-  dietaryPreferences?: string[];
-  cuisinePreferences?: string[];
+  avatar?: string;
+  preferences?: UserPreferences;
+}
+
+export interface UserPreferences {
+  dietaryRestrictions?: string[];
   allergies?: string[];
-  chefAvatar?: string;
-  nutritionalGoals?: {
-    calories: number;
-    protein: number;
-  };
+  favoritesCuisines?: string[];
+  skillLevel?: 'Beginner' | 'Intermediate' | 'Advanced';
+  language?: string;
+}
+
+export interface ShoppingListItem {
+  id: string;
+  name: string;
+  quantity: number;
+  unit: string;
+  category?: string;
+  purchased?: boolean;
+  notes?: string;
+}
+
+export interface NutritionGoal {
+  id: string;
+  type: 'calories' | 'protein' | 'carbs' | 'fat' | 'fiber';
+  target: number;
+  current: number;
+  unit: string;
 }
