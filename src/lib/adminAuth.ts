@@ -1,100 +1,49 @@
 
-
-export interface AdminUser {
-  id: string;
-  email: string;
-  role: 'admin' | 'super_admin';
-  name: string;
-}
-
 export interface AuthResult {
   success: boolean;
-  role?: 'admin' | 'super_admin';
-  user?: AdminUser;
+  role?: string;
+  user?: any;
 }
 
-export const adminAuth = {
-  login: async (email: string, password: string): Promise<AdminUser | null> => {
-    // Mock authentication - replace with real implementation
-    if (email === 'admin@example.com' && password === 'admin123') {
-      const user: AdminUser = {
-        id: '1',
-        email: 'admin@example.com',
-        role: 'admin',
-        name: 'Admin User'
-      };
-      localStorage.setItem('adminUser', JSON.stringify(user));
-      return user;
-    }
-    return null;
-  },
-
-  logout: () => {
-    localStorage.removeItem('adminUser');
-  },
-
-  getCurrentUser: (): AdminUser | null => {
-    const userStr = localStorage.getItem('adminUser');
-    if (userStr) {
-      try {
-        return JSON.parse(userStr);
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  },
-
-  isAuthenticated: (): boolean => {
-    return adminAuth.getCurrentUser() !== null;
-  },
-
-  isSuperAdmin: (): boolean => {
-    const user = adminAuth.getCurrentUser();
-    return user?.role === 'super_admin';
-  }
-};
-
-// Additional exports for compatibility
-export const isAdminAuthenticated = (): boolean => {
-  return adminAuth.isAuthenticated();
-};
-
-export const adminLogout = () => {
-  adminAuth.logout();
-};
-
-export const getAdminRole = (): string | null => {
-  const user = adminAuth.getCurrentUser();
-  return user?.role || null;
-};
-
-export const verifyAdminCredentials = async (email: string, password: string): Promise<AuthResult> => {
-  // Mock authentication with different credentials
-  if (email === 'admin@wasfahai.com' && password === 'admin123') {
+export const login = async (email: string, password: string): Promise<AuthResult> => {
+  // Mock authentication logic
+  if (email === 'admin@wasfah.com' && password === 'admin123') {
     return {
       success: true,
-      role: 'admin'
+      role: 'admin',
+      user: { email, name: 'Admin User' }
     };
   }
-  if (email === 'superadmin@wasfahai.com' && password === 'superadmin123') {
+  
+  if (email === 'superadmin@wasfah.com' && password === 'superadmin123') {
     return {
       success: true,
-      role: 'super_admin'
+      role: 'superadmin',
+      user: { email, name: 'Super Admin' }
     };
   }
+  
   return {
     success: false
   };
 };
 
-export const setAdminAuth = (role: 'admin' | 'super_admin') => {
-  const user: AdminUser = {
-    id: '1',
-    email: role === 'admin' ? 'admin@wasfahai.com' : 'superadmin@wasfahai.com',
-    role,
-    name: role === 'admin' ? 'Admin User' : 'Super Admin'
-  };
-  localStorage.setItem('adminUser', JSON.stringify(user));
+export const logout = () => {
+  localStorage.removeItem('adminAuth');
+  window.location.href = '/admin/login';
 };
 
+export const getCurrentAdmin = () => {
+  const auth = localStorage.getItem('adminAuth');
+  return auth ? JSON.parse(auth) : null;
+};
+
+export const isAuthenticated = () => {
+  const admin = getCurrentAdmin();
+  return admin && admin.role;
+};
+
+export const isSuperAdmin = () => {
+  const admin = getCurrentAdmin();
+  return admin && admin.role === 'superadmin';
+};

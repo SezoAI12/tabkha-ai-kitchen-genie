@@ -4,9 +4,10 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 interface RTLContextType {
   isRTL: boolean;
   language: string;
+  direction: string;
   toggleLanguage: () => void;
   setLanguage: (lang: string) => void;
-  t: (english: string, arabic?: string) => string;
+  t: (english: string, arabic?: string, turkish?: string) => string;
 }
 
 const RTLContext = createContext<RTLContextType | undefined>(undefined);
@@ -18,6 +19,7 @@ interface RTLProviderProps {
 export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
   const [language, setLanguageState] = useState('en');
   const isRTL = language === 'ar';
+  const direction = isRTL ? 'rtl' : 'ltr';
 
   const toggleLanguage = () => {
     setLanguageState(prev => prev === 'en' ? 'ar' : 'en');
@@ -27,9 +29,12 @@ export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
     setLanguageState(lang);
   };
 
-  const t = (english: string, arabic?: string) => {
+  const t = (english: string, arabic?: string, turkish?: string) => {
     if (language === 'ar' && arabic) {
       return arabic;
+    }
+    if (language === 'tr' && turkish) {
+      return turkish;
     }
     return english;
   };
@@ -37,6 +42,7 @@ export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
   const value: RTLContextType = {
     isRTL,
     language,
+    direction,
     toggleLanguage,
     setLanguage,
     t
