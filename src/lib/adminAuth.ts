@@ -28,9 +28,22 @@ export const login = async (email: string, password: string): Promise<AuthResult
   };
 };
 
+export const verifyAdminCredentials = async (email: string, password: string): Promise<AuthResult> => {
+  return login(email, password);
+};
+
 export const logout = () => {
   localStorage.removeItem('adminAuth');
   window.location.href = '/admin/login';
+};
+
+export const adminLogout = () => {
+  logout();
+};
+
+export const setAdminAuth = (role: string) => {
+  localStorage.setItem('adminAuth', JSON.stringify({ role }));
+  localStorage.setItem('adminRole', role);
 };
 
 export const getCurrentAdmin = () => {
@@ -41,6 +54,14 @@ export const getCurrentAdmin = () => {
 export const isAuthenticated = () => {
   const admin = getCurrentAdmin();
   return admin && admin.role;
+};
+
+export const isAdminAuthenticated = () => {
+  return isAuthenticated();
+};
+
+export const getAdminRole = () => {
+  return localStorage.getItem('adminRole');
 };
 
 export const isSuperAdmin = () => {

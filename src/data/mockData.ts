@@ -1,5 +1,35 @@
 
-import { Recipe, PantryItem } from '@/types/index';
+import { Recipe, PantryItem, User } from '@/types/index';
+
+export const categories = [
+  'Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Desserts', 'Appetizers', 'Salads', 'Soups'
+];
+
+export const cuisines = [
+  'Italian', 'Chinese', 'Mexican', 'Indian', 'French', 'Japanese', 'Thai', 'Mediterranean', 'American'
+];
+
+export const difficulties = [
+  'Easy', 'Medium', 'Hard'
+];
+
+export const dietaryOptions = [
+  'Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Keto', 'Paleo', 'Low-Carb', 'High-Protein'
+];
+
+export const mockUser: User = {
+  id: '1',
+  name: 'John Doe',
+  email: 'john.doe@example.com',
+  chefAvatar: 'Master Chef',
+  dietaryPreferences: ['Vegetarian', 'Low-Carb'],
+  cuisinePreferences: ['Italian', 'Mediterranean', 'Asian'],
+  allergies: ['Nuts', 'Shellfish'],
+  nutritionalGoals: {
+    calories: 2000,
+    protein: 150
+  }
+};
 
 export const mockRecipes: Recipe[] = [
   {
@@ -8,9 +38,19 @@ export const mockRecipes: Recipe[] = [
     description: 'A traditional Italian pasta dish with eggs, cheese, and pancetta',
     image: '/placeholder.svg',
     cookingTime: 30,
+    prepTime: 10,
+    cookTime: 20,
     difficulty: 'Medium',
     rating: 4.8,
+    ratingCount: 156,
     category: 'Italian',
+    cuisine: 'Italian',
+    servings: 4,
+    calories: 520,
+    featured: true,
+    premium: false,
+    isFavorite: false,
+    tags: ['Italian', 'Pasta', 'Quick'],
     ingredients: ['Spaghetti', 'Eggs', 'Pancetta', 'Parmesan', 'Black Pepper'],
     instructions: [
       'Cook spaghetti in salted water',
@@ -18,6 +58,11 @@ export const mockRecipes: Recipe[] = [
       'Mix eggs with cheese',
       'Combine all ingredients'
     ],
+    nutritionalInfo: {
+      protein: 25,
+      carbs: 45,
+      fat: 28
+    },
     nutrition: {
       calories: 520,
       protein: 25,
@@ -31,9 +76,19 @@ export const mockRecipes: Recipe[] = [
     description: 'Creamy Indian curry with tender chicken pieces',
     image: '/placeholder.svg',
     cookingTime: 45,
+    prepTime: 15,
+    cookTime: 30,
     difficulty: 'Medium',
     rating: 4.7,
+    ratingCount: 203,
     category: 'Indian',
+    cuisine: 'Indian',
+    servings: 6,
+    calories: 420,
+    featured: false,
+    premium: true,
+    isFavorite: true,
+    tags: ['Indian', 'Curry', 'Spicy'],
     ingredients: ['Chicken', 'Tomatoes', 'Cream', 'Spices', 'Onion'],
     instructions: [
       'Marinate chicken in yogurt and spices',
@@ -41,6 +96,11 @@ export const mockRecipes: Recipe[] = [
       'Make tomato-cream sauce',
       'Combine and simmer'
     ],
+    nutritionalInfo: {
+      protein: 35,
+      carbs: 15,
+      fat: 22
+    },
     nutrition: {
       calories: 420,
       protein: 35,
