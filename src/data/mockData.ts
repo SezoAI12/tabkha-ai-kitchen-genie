@@ -82,3 +82,30 @@ export const categories = [
   'Meat',
   'Spices'
 ];
+
+export const cuisines = [
+  'Italian',
+  'Mediterranean',
+  'Asian',
+  'Mexican',
+  'Indian',
+  'French',
+  'American',
+  'Middle Eastern'
+];
+
+export const difficulties = [
+  'Easy',
+  'Medium',
+  'Hard'
+];
+
+export const dietaryOptions = [
+  'Vegetarian',
+  'Vegan',
+  'Gluten-Free',
+  'Dairy-Free',
+  'Keto',
+  'Low-Carb',
+  'High-Protein'
+];
