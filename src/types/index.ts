@@ -1,46 +1,28 @@
 
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string;
-  chefAvatar?: string;
-  preferences: {
-    diet: string[];
-    allergies: string[];
-    cuisine: string[];
-  };
-  dietaryPreferences: string[];
-  cuisinePreferences: string[];
-  allergies: string[];
-  nutritionalGoals: {
-    calories: number;
-    protein: number;
-  };
-}
-
 export interface Recipe {
   id: string;
   name: string;
-  title: string;
   description: string;
-  image: string;
-  cookTime: string;
-  cookingTime: number;
-  prepTime: string;
-  difficulty: string;
-  rating: number;
-  ratingCount: number;
-  cuisine: string;
-  ingredients: Ingredient[];
+  ingredients: string[];
   instructions: string[];
-  calories: number;
+  prepTime: number;
+  cookTime: number;
   servings: number;
-  tags: string[];
-  featured: boolean;
-  isFavorite: boolean;
-  premium: boolean;
-  nutritionalInfo: {
+  difficulty: 'easy' | 'medium' | 'hard';
+  cuisine: string;
+  category: string;
+  image?: string;
+  calories?: number;
+  rating?: number;
+  tags?: string[];
+}
+
+export interface Ingredient {
+  id: string;
+  name: string;
+  category: string;
+  image?: string;
+  nutrition?: {
     calories: number;
     protein: number;
     carbs: number;
@@ -48,33 +30,31 @@ export interface Recipe {
   };
 }
 
-export interface Ingredient {
-  id: string;
-  name: string;
-  quantity: string;
-  unit: string;
-  category: string;
-  amount: string;
-}
-
 export interface PantryItem {
   id: string;
-  name: string;
-  quantity: string;
+  ingredient: Ingredient;
+  quantity: number;
   unit: string;
-  expiryDate?: string;
-  category: string;
-  daysUntilExpiry?: number;
+  expiryDate: string;
   addedDate: string;
 }
 
-export interface Meal {
+export interface MealPlan {
+  id: string;
+  date: string;
+  breakfast?: Recipe;
+  lunch?: Recipe;
+  dinner?: Recipe;
+  snacks?: Recipe[];
+}
+
+export interface User {
   id: string;
   name: string;
-  type: string;
-  recipe: Recipe;
-  time: string;
-  image: string;
-  prepTime: string;
-  calories: number;
+  email: string;
+  preferences?: {
+    dietaryRestrictions: string[];
+    allergies: string[];
+    favoritesCuisines: string[];
+  };
 }

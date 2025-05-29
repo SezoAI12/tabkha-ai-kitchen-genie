@@ -1,63 +1,26 @@
 
-// Mock admin authentication functions
-export const isAuthenticated = (): boolean => {
-  return localStorage.getItem('adminToken') !== null;
+// Mock admin authentication utility
+export const isAdmin = (): boolean => {
+  // In a real app, this would check actual authentication state
+  return localStorage.getItem('isAdmin') === 'true' || false;
 };
 
-export const isAdminAuthenticated = (): boolean => {
-  return localStorage.getItem('adminToken') !== null;
+export const isSuperAdmin = (): boolean => {
+  // In a real app, this would check actual user roles
+  return localStorage.getItem('isSuperAdmin') === 'true' || false;
 };
 
-export const login = (username: string, password: string): boolean => {
-  // Mock login logic
-  if (username === 'admin' && password === 'admin') {
-    localStorage.setItem('adminToken', 'mock-token');
-    return true;
-  }
-  return false;
+export const signOut = (): void => {
+  localStorage.removeItem('isAdmin');
+  localStorage.removeItem('isSuperAdmin');
+  window.location.href = '/auth';
 };
 
-export const logout = (): void => {
-  localStorage.removeItem('adminToken');
-  localStorage.removeItem('adminRole');
+export const signInAsAdmin = (): void => {
+  localStorage.setItem('isAdmin', 'true');
 };
 
-export const adminLogout = (): void => {
-  localStorage.removeItem('adminToken');
-  localStorage.removeItem('adminRole');
-};
-
-export const getAdminUser = () => {
-  return {
-    id: '1',
-    name: 'Admin User',
-    email: 'admin@example.com',
-    role: 'admin'
-  };
-};
-
-export const getAdminRole = (): 'admin' | 'superadmin' | null => {
-  const role = localStorage.getItem('adminRole');
-  return role as 'admin' | 'superadmin' | null;
-};
-
-export const verifyAdminCredentials = async (email: string, password: string) => {
-  // Mock verification based on email
-  if (email === 'admin@wasfahai.com' && password === 'admin123') {
-    return { success: true, role: 'admin' as const };
-  } else if (email === 'superadmin@wasfahai.com' && password === 'superadmin123') {
-    return { success: true, role: 'superadmin' as const };
-  }
-  return { success: false, role: null };
-};
-
-export const setAdminAuth = (role: 'admin' | 'superadmin') => {
-  localStorage.setItem('adminRole', role);
-  localStorage.setItem('adminToken', 'mock-token');
-};
-
-export const requireAuth = () => {
-  if (!isAuthenticated()) {
-    throw new Error('Authentication required');
-  }
+export const signInAsSuperAdmin = (): void => {
+  localStorage.setItem('isAdmin', 'true');
+  localStorage.setItem('isSuperAdmin', 'true');
 };
