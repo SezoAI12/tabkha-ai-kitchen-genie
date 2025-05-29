@@ -10,14 +10,11 @@ import { Label } from '@/components/ui/label';
 import { Wine, GlassWater } from 'lucide-react';
 
 export interface DrinkOptions {
-  baseAlcohol: string;
-  strength: number;
-  flavorProfile: string[];
-  mixers: string[];
-  garnish: string;
-  temperature: string;
-  sweetness: number;
-  specialty: string;
+  base: string;
+  sournessSweetness: number[];
+  dryRefreshing: number[];
+  glassType: string;
+  themes: string[];
 }
 
 interface DrinkCustomizationFormProps {
@@ -25,73 +22,50 @@ interface DrinkCustomizationFormProps {
   onBack: () => void;
 }
 
-export const DrinkCustomizationForm: React.FC<DrinkCustomizationFormProps> = ({
-  onGenerateDrink,
-  onBack
-}) => {
-  const [drinkOptions, setDrinkOptions] = useState<DrinkOptions>({
-    baseAlcohol: '',
-    strength: 40,
-    flavorProfile: [],
-    mixers: [],
-    garnish: '',
-    temperature: '',
-    sweetness: 50,
-    specialty: ''
-  });
+const baseOptions = [
+  'No Alcohol', 'Vodka', 'Gin', 'Rum', 'Tequila', 'Whiskey', 'Brandy', 'Liqueur', 'Sake', 'Other', 'Any Alcohol'
+];
 
-  const baseAlcohols = [
-    'Vodka', 'Gin', 'Rum', 'Whiskey', 'Tequila', 'Brandy', 'Wine', 'Beer'
-  ];
+const glassOptions = [
+  'Martini glass', 'Highball glass', 'Collins glass', 'Old Fashioned glass', 'Coupe glass',
+  'Margarita glass', 'Shot glass', 'Wine glass', 'Champagne flute', 'Mug', 'Any Glass'
+];
 
-  const flavorProfiles = [
-    'Citrusy', 'Sweet', 'Bitter', 'Spicy', 'Herbal', 'Fruity', 'Smoky', 'Creamy'
-  ];
+const themeOptions = [
+  'Tropical', 'Holiday', 'Spicy', 'Citrusy', 'Herbal', 'Classic', 'Fruity', 'Minty',
+  'Chocolatey', 'Sweet', 'Sour', 'Bitter', 'Savory', 'Refreshing', 'Warm', 'Cold', 'Any Theme'
+];
 
-  const mixers = [
-    'Tonic Water', 'Soda Water', 'Ginger Beer', 'Fruit Juice', 'Simple Syrup', 
-    'Bitters', 'Vermouth', 'Liqueur', 'Cola', 'Cranberry Juice'
-  ];
+export const DrinkCustomizationForm: React.FC<DrinkCustomizationFormProps> = ({ onGenerateDrink, onBack }) => {
+  const [base, setBase] = useState<string>('');
+  const [sournessSweetness, setSournessSweetness] = useState<number[]>([50]);
+  const [dryRefreshing, setDryRefreshing] = useState<number[]>([50]);
+  const [glassType, setGlassType] = useState<string>('');
+  const [themes, setThemes] = useState<string[]>([]);
 
-  const garnishes = [
-    'Lemon Twist', 'Lime Wheel', 'Orange Peel', 'Cherry', 'Olive', 
-    'Mint Leaves', 'Salt Rim', 'Sugar Rim', 'None'
-  ];
-
-  const temperatures = ['On the Rocks', 'Neat', 'Chilled', 'Hot', 'Frozen'];
-
-  const specialties = [
-    'Classic Cocktail', 'Signature Mix', 'Low Alcohol', 'Mocktail Version', 
-    'Regional Specialty', 'Seasonal Special'
-  ];
-
-  const handleFlavorProfileChange = (flavor: string, checked: boolean) => {
-    setDrinkOptions(prev => ({
-      ...prev,
-      flavorProfile: checked 
-        ? [...prev.flavorProfile, flavor]
-        : prev.flavorProfile.filter(f => f !== flavor)
-    }));
+  const handleThemeChange = (theme: string, isChecked: boolean) => {
+    if (isChecked) {
+      setThemes(prev => [...prev, theme]);
+    } else {
+      setThemes(prev => prev.filter(t => t !== theme));
+    }
   };
 
-  const handleMixerChange = (mixer: string, checked: boolean) => {
-    setDrinkOptions(prev => ({
-      ...prev,
-      mixers: checked 
-        ? [...prev.mixers, mixer]
-        : prev.mixers.filter(m => m !== mixer)
-    }));
-  };
-
-  const handleGenerate = () => {
-    if (!drinkOptions.baseAlcohol || !drinkOptions.temperature) {
-      alert('Please select at least a base alcohol and temperature preference');
+  const handleSubmit = () => {
+    if (!base || !glassType) {
+      console.error("Please select a Base and Glass Type.");
       return;
     }
-    onGenerateDrink(drinkOptions);
+    const options: DrinkOptions = {
+      base,
+      sournessSweetness,
+      dryRefreshing,
+      glassType,
+      themes,
+    };
+    onGenerateDrink(options);
   };
 
-  // Framer Motion variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -123,144 +97,93 @@ export const DrinkCustomizationForm: React.FC<DrinkCustomizationFormProps> = ({
           <p className="text-gray-600">Create your perfect drink by customizing the options below</p>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Base Alcohol */}
           <motion.div variants={itemVariants}>
-            <Label className="text-sm font-medium">Base Alcohol</Label>
-            <Select 
-              value={drinkOptions.baseAlcohol} 
-              onValueChange={(value) => setDrinkOptions(prev => ({ ...prev, baseAlcohol: value }))}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Choose your base alcohol" />
+            <Label htmlFor="base-select" className="text-lg font-medium">1. Select Base</Label>
+            <Select onValueChange={setBase} value={base}>
+              <SelectTrigger id="base-select" className="w-full mt-2">
+                <SelectValue placeholder="Choose an alcohol base or 'No Alcohol'" />
               </SelectTrigger>
               <SelectContent>
-                {baseAlcohols.map((alcohol) => (
-                  <SelectItem key={alcohol} value={alcohol}>{alcohol}</SelectItem>
+                {baseOptions.map(option => (
+                  <SelectItem key={option} value={option}>{option}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </motion.div>
 
-          {/* Alcohol Strength */}
-          <motion.div variants={itemVariants} className="space-y-3">
-            <Label className="text-sm font-medium">Alcohol Strength: {drinkOptions.strength}%</Label>
-            <Slider
-              value={[drinkOptions.strength]}
-              onValueChange={(value) => setDrinkOptions(prev => ({ ...prev, strength: value[0] }))}
-              max={80}
-              min={10}
-              step={5}
-              className="w-full"
-            />
+          <motion.div variants={itemVariants}>
+            <Label htmlFor="sourness-sweetness-slider" className="text-lg font-medium">2. Sourness / Sweetness</Label>
+            <div className="flex items-center space-x-4 mt-4">
+              <span className="text-sm text-gray-600 dark:text-gray-400">Sour</span>
+              <Slider
+                id="sourness-sweetness-slider"
+                value={sournessSweetness}
+                onValueChange={setSournessSweetness}
+                max={100}
+                step={1}
+                className="flex-1"
+              />
+              <span className="text-sm text-gray-600 dark:text-gray-400">Sweet</span>
+            </div>
+            <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-2">
+              Current: {sournessSweetness[0] < 40 ? 'More Sour' : sournessSweetness[0] > 60 ? 'More Sweet' : 'Balanced'}
+            </p>
           </motion.div>
 
-          {/* Flavor Profile */}
-          <motion.div variants={itemVariants} className="space-y-3">
-            <Label className="text-sm font-medium">Flavor Profile (select multiple)</Label>
-            <div className="grid grid-cols-2 gap-2">
-              {flavorProfiles.map((flavor) => (
-                <div key={flavor} className="flex items-center space-x-2">
+          <motion.div variants={itemVariants}>
+            <Label htmlFor="dry-refreshing-slider" className="text-lg font-medium">3. Dry / Refreshing</Label>
+            <div className="flex items-center space-x-4 mt-4">
+              <span className="text-sm text-gray-600 dark:text-gray-400">Dry</span>
+              <Slider
+                id="dry-refreshing-slider"
+                value={dryRefreshing}
+                onValueChange={setDryRefreshing}
+                max={100}
+                step={1}
+                className="flex-1"
+              />
+              <span className="text-sm text-gray-600 dark:text-gray-400">Refreshing</span>
+            </div>
+            <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-2">
+              Current: {dryRefreshing[0] < 40 ? 'More Dry' : dryRefreshing[0] > 60 ? 'More Refreshing' : 'Balanced'}
+            </p>
+          </motion.div>
+
+          <motion.div variants={itemVariants}>
+            <Label htmlFor="glass-select" className="text-lg font-medium">4. Select Glass Type</Label>
+            <Select onValueChange={setGlassType} value={glassType}>
+              <SelectTrigger id="glass-select" className="w-full mt-2">
+                <SelectValue placeholder="Choose a glass type" />
+              </SelectTrigger>
+              <SelectContent>
+                {glassOptions.map(option => (
+                  <SelectItem key={option} value={option}>{option}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </motion.div>
+
+          <motion.div variants={itemVariants}>
+            <Label className="text-lg font-medium">5. Select Themes (Optional)</Label>
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              {themeOptions.map(theme => (
+                <div key={theme} className="flex items-center space-x-2">
                   <Checkbox
-                    id={`flavor-${flavor}`}
-                    checked={drinkOptions.flavorProfile.includes(flavor)}
-                    onCheckedChange={(checked) => handleFlavorProfileChange(flavor, checked as boolean)}
+                    id={`theme-${theme}`}
+                    checked={themes.includes(theme)}
+                    onCheckedChange={(checked) => handleThemeChange(theme, checked as boolean)}
                   />
-                  <Label htmlFor={`flavor-${flavor}`} className="text-sm">{flavor}</Label>
+                  <Label htmlFor={`theme-${theme}`} className="text-sm">{theme}</Label>
                 </div>
               ))}
             </div>
           </motion.div>
 
-          {/* Mixers */}
-          <motion.div variants={itemVariants} className="space-y-3">
-            <Label className="text-sm font-medium">Mixers & Ingredients</Label>
-            <div className="grid grid-cols-2 gap-2">
-              {mixers.map((mixer) => (
-                <div key={mixer} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`mixer-${mixer}`}
-                    checked={drinkOptions.mixers.includes(mixer)}
-                    onCheckedChange={(checked) => handleMixerChange(mixer, checked as boolean)}
-                  />
-                  <Label htmlFor={`mixer-${mixer}`} className="text-sm">{mixer}</Label>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Sweetness Level */}
-          <motion.div variants={itemVariants} className="space-y-3">
-            <Label className="text-sm font-medium">Sweetness Level: {drinkOptions.sweetness}%</Label>
-            <Slider
-              value={[drinkOptions.sweetness]}
-              onValueChange={(value) => setDrinkOptions(prev => ({ ...prev, sweetness: value[0] }))}
-              max={100}
-              min={0}
-              step={10}
-              className="w-full"
-            />
-          </motion.div>
-
-          {/* Garnish */}
-          <motion.div variants={itemVariants} className="space-y-2">
-            <Label className="text-sm font-medium">Garnish</Label>
-            <Select 
-              value={drinkOptions.garnish} 
-              onValueChange={(value) => setDrinkOptions(prev => ({ ...prev, garnish: value }))}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Choose a garnish" />
-              </SelectTrigger>
-              <SelectContent>
-                {garnishes.map((garnish) => (
-                  <SelectItem key={garnish} value={garnish}>{garnish}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </motion.div>
-
-          {/* Temperature */}
-          <motion.div variants={itemVariants} className="space-y-2">
-            <Label className="text-sm font-medium">Temperature & Serving Style</Label>
-            <Select 
-              value={drinkOptions.temperature} 
-              onValueChange={(value) => setDrinkOptions(prev => ({ ...prev, temperature: value }))}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="How would you like it served?" />
-              </SelectTrigger>
-              <SelectContent>
-                {temperatures.map((temp) => (
-                  <SelectItem key={temp} value={temp}>{temp}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </motion.div>
-
-          {/* Specialty */}
-          <motion.div variants={itemVariants} className="space-y-2">
-            <Label className="text-sm font-medium">Drink Category</Label>
-            <Select 
-              value={drinkOptions.specialty} 
-              onValueChange={(value) => setDrinkOptions(prev => ({ ...prev, specialty: value }))}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Choose a specialty style" />
-              </SelectTrigger>
-              <SelectContent>
-                {specialties.map((specialty) => (
-                  <SelectItem key={specialty} value={specialty}>{specialty}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </motion.div>
-
-          {/* Action Buttons */}
           <motion.div variants={itemVariants} className="flex gap-3 pt-4">
             <Button variant="outline" onClick={onBack} className="flex-1">
               Back
             </Button>
-            <Button onClick={handleGenerate} className="flex-1 bg-purple-600 hover:bg-purple-700">
+            <Button onClick={handleSubmit} className="flex-1 bg-purple-600 hover:bg-purple-700">
               <GlassWater className="h-4 w-4 mr-2" />
               Generate My Drink
             </Button>
