@@ -1,19 +1,4 @@
 
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string;
-  dietaryPreferences?: string[];
-  cuisinePreferences?: string[];
-  allergies?: string[];
-  chefAvatar?: string;
-  nutritionalGoals?: {
-    calories?: number;
-    protein?: number;
-  };
-}
-
 export interface Recipe {
   id: string;
   title: string;
@@ -48,23 +33,6 @@ export interface Recipe {
   };
 }
 
-export interface Meal {
-  id: string;
-  name: string;
-  image?: string;
-  prepTime?: number;
-  calories?: number;
-  recipe?: Recipe;
-}
-
-export interface IngredientItem {
-  id: string;
-  name: string;
-  amount: number;
-  unit: string;
-  category?: string;
-}
-
 export interface PantryItem {
   id: string;
   name: string;
@@ -80,8 +48,16 @@ export interface PantryItem {
   };
 }
 
-export interface Ingredient {
+export interface User {
   id: string;
   name: string;
-  category: string;
+  email: string;
+  dietaryPreferences: string[];
+  cuisinePreferences: string[];
+  allergies: string[];
+  chefAvatar: string;
+  nutritionalGoals: {
+    calories: number;
+    protein: number;
+  };
 }
