@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -183,7 +182,7 @@ export default function PantryPage() {
                       id="quantity"
                       type="number"
                       value={newItem.quantity || ''}
-                      onChange={(e) => setNewItem(prev => ({ ...prev, quantity: Number(e.target.value) }))}
+                      onChange={(e) => setNewItem(prev => ({ ...prev, quantity: e.target.value }))}
                       placeholder="e.g., 5"
                     />
                   </div>
