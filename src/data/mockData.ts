@@ -1,6 +1,50 @@
 
 import { Recipe, PantryItem, User, Meal } from '@/types/index';
 
+export const categories = [
+  'All',
+  'breakfast',
+  'lunch', 
+  'dinner',
+  'snack',
+  'dessert',
+  'appetizer',
+  'soup',
+  'salad',
+  'main-course',
+  'side-dish'
+];
+
+export const cuisines = [
+  'Italian',
+  'Indian',
+  'Chinese',
+  'Mexican',
+  'Japanese',
+  'French',
+  'Thai',
+  'Mediterranean',
+  'American',
+  'Korean'
+];
+
+export const difficulties = [
+  'Easy',
+  'Medium',
+  'Hard'
+];
+
+export const dietaryOptions = [
+  'vegetarian',
+  'vegan',
+  'gluten-free',
+  'dairy-free',
+  'nut-free',
+  'low-carb',
+  'keto',
+  'paleo'
+];
+
 export const mockRecipes: Recipe[] = [
   {
     id: '1',
