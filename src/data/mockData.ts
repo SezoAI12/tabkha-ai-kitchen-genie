@@ -1,16 +1,23 @@
 
-import { Recipe, PantryItem } from '@/types/index';
+import { Recipe, PantryItem, User } from '@/types/index';
 
 export const mockRecipes: Recipe[] = [
   {
     id: '1',
     title: 'Mediterranean Quinoa Bowl',
+    name: 'Mediterranean Quinoa Bowl',
     description: 'A healthy and flavorful quinoa bowl with Mediterranean ingredients',
     image: '/placeholder.svg',
     cookingTime: 25,
+    prepTime: 10,
+    cookTime: 15,
     servings: 2,
     difficulty: 'Easy',
     rating: 4.5,
+    ratingCount: 128,
+    isFavorite: true,
+    premium: false,
+    tags: ['Mediterranean', 'Healthy', 'Vegetarian'],
     ingredients: [
       '1 cup quinoa',
       '2 cups vegetable broth',
@@ -37,17 +44,30 @@ export const mockRecipes: Recipe[] = [
     protein: 15,
     carbs: 65,
     fat: 12,
-    fiber: 8
+    fiber: 8,
+    nutritionalInfo: {
+      protein: 15,
+      carbs: 65,
+      fat: 12,
+      fiber: 8
+    }
   },
   {
     id: '2',
     title: 'Chicken Tikka Masala',
+    name: 'Chicken Tikka Masala',
     description: 'Creamy and spicy Indian curry with tender chicken',
     image: '/placeholder.svg',
     cookingTime: 45,
+    prepTime: 15,
+    cookTime: 30,
     servings: 4,
     difficulty: 'Medium',
     rating: 4.8,
+    ratingCount: 256,
+    isFavorite: false,
+    premium: true,
+    tags: ['Indian', 'Spicy', 'Curry'],
     ingredients: [
       '2 lbs chicken breast, cubed',
       '1 cup heavy cream',
@@ -73,17 +93,30 @@ export const mockRecipes: Recipe[] = [
     protein: 35,
     carbs: 12,
     fat: 38,
-    fiber: 3
+    fiber: 3,
+    nutritionalInfo: {
+      protein: 35,
+      carbs: 12,
+      fat: 38,
+      fiber: 3
+    }
   },
   {
     id: '3',
     title: 'Classic Caesar Salad',
+    name: 'Classic Caesar Salad',
     description: 'Traditional Caesar salad with homemade dressing',
     image: '/placeholder.svg',
     cookingTime: 15,
+    prepTime: 10,
+    cookTime: 5,
     servings: 2,
     difficulty: 'Easy',
     rating: 4.2,
+    ratingCount: 89,
+    isFavorite: true,
+    premium: false,
+    tags: ['Salad', 'Quick', 'Italian'],
     ingredients: [
       '1 head romaine lettuce',
       '1/4 cup parmesan cheese',
@@ -106,7 +139,13 @@ export const mockRecipes: Recipe[] = [
     protein: 8,
     carbs: 15,
     fat: 22,
-    fiber: 4
+    fiber: 4,
+    nutritionalInfo: {
+      protein: 8,
+      carbs: 15,
+      fat: 22,
+      fiber: 4
+    }
   }
 ];
 
@@ -161,4 +200,54 @@ export const mockPantryItems: PantryItem[] = [
     purchaseDate: '2024-05-26',
     location: 'Refrigerator'
   }
+];
+
+export const mockUser: User = {
+  id: '1',
+  name: 'John Doe',
+  email: 'john@example.com',
+  avatar: '/placeholder.svg',
+  preferences: {
+    dietaryRestrictions: ['Vegetarian'],
+    allergies: ['Nuts'],
+    favoritesCuisines: ['Mediterranean', 'Italian'],
+    skillLevel: 'Intermediate',
+    language: 'en'
+  }
+};
+
+export const categories = [
+  'Mediterranean',
+  'Italian',
+  'Indian',
+  'Asian',
+  'Mexican',
+  'American',
+  'French',
+  'Thai'
+];
+
+export const cuisines = [
+  'Mediterranean',
+  'Italian',
+  'Indian',
+  'Asian',
+  'Mexican',
+  'American',
+  'French',
+  'Thai',
+  'Chinese',
+  'Japanese'
+];
+
+export const difficulties = ['Easy', 'Medium', 'Hard'];
+
+export const dietaryOptions = [
+  'Vegetarian',
+  'Vegan',
+  'Gluten-Free',
+  'Dairy-Free',
+  'Keto',
+  'Paleo',
+  'Low-Carb'
 ];

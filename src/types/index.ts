@@ -2,22 +2,52 @@
 export interface Recipe {
   id: string;
   title: string;
+  name?: string; // Alternative name property used in some components
   description?: string;
   image?: string;
   cookingTime: number;
+  prepTime?: number;
+  cookTime?: number;
   servings?: number;
   difficulty?: 'Easy' | 'Medium' | 'Hard';
   rating: number;
+  ratingCount?: number;
   ingredients: string[];
   instructions: string[];
   category?: string;
   cuisine?: string;
   featured?: boolean;
+  premium?: boolean;
+  isFavorite?: boolean;
+  tags?: string[];
   calories?: number;
   protein?: number;
   carbs?: number;
   fat?: number;
   fiber?: number;
+  nutritionalInfo?: {
+    protein: number;
+    carbs: number;
+    fat: number;
+    fiber?: number;
+  };
+}
+
+export interface Meal {
+  id: string;
+  name: string;
+  image?: string;
+  prepTime?: number;
+  calories?: number;
+  recipe?: Recipe;
+}
+
+export interface IngredientItem {
+  id: string;
+  name: string;
+  amount: number;
+  unit: string;
+  category?: string;
 }
 
 export interface PantryItem {
@@ -28,7 +58,13 @@ export interface PantryItem {
   category?: string;
   expiryDate?: string;
   purchaseDate?: string;
+  addedDate?: string;
   location?: string;
+  ingredient?: {
+    id: string;
+    name: string;
+    category?: string;
+  };
 }
 
 export interface User {

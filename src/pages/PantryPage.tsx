@@ -63,32 +63,29 @@ export default function PantryPage() {
 
   // Get unique categories
   const categories = useMemo(() => {
-    const cats = Array.from(new Set(pantryItems.map(item => item.ingredient?.category || item.category || 'Other')));
+    const cats = Array.from(new Set(pantryItems.map(item => item.category || 'Other')));
     return ['All', ...cats.sort()];
   }, [pantryItems]);
 
   // Filter and sort items
   const filteredItems = useMemo(() => {
     let items = pantryItems.filter(item => {
-      const itemName = item.ingredient?.name || item.name || '';
-      const itemCategory = item.ingredient?.category || item.category || 'Other';
-      return itemName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      const itemCategory = item.category || 'Other';
+      return item.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
         (selectedCategory === 'All' || itemCategory === selectedCategory);
     });
 
     items.sort((a, b) => {
       switch (sortBy) {
         case 'name':
-          const nameA = a.ingredient?.name || a.name || '';
-          const nameB = b.ingredient?.name || b.name || '';
-          return nameA.localeCompare(nameB);
+          return a.name.localeCompare(b.name);
         case 'expiry':
           if (!a.expiryDate) return 1;
           if (!b.expiryDate) return -1;
           return new Date(a.expiryDate).getTime() - new Date(b.expiryDate).getTime();
         case 'category':
-          const catA = a.ingredient?.category || a.category || 'Other';
-          const catB = b.ingredient?.category || b.category || 'Other';
+          const catA = a.category || 'Other';
+          const catB = b.category || 'Other';
           return catA.localeCompare(catB);
         default:
           return 0;
@@ -122,13 +119,10 @@ export default function PantryPage() {
     const currentDate = new Date().toISOString().split('T')[0];
     const item: PantryItem = {
       id: Date.now().toString(),
-      ingredient: {
-        id: Date.now().toString(),
-        name: newItem.name,
-        category: newItem.category
-      },
+      name: newItem.name,
       quantity: newItem.quantity,
       unit: newItem.unit,
+      category: newItem.category,
       expiryDate: newItem.expiryDate || '',
       addedDate: currentDate
     };
@@ -292,7 +286,7 @@ export default function PantryPage() {
                 {expiringItems.slice(0, 3).map((item: PantryItem) => (
                   <div key={item.id} className="flex items-center justify-between p-2 bg-white rounded-lg">
                     <div>
-                      <span className="font-medium">{item.ingredient?.name || item.name}</span>
+                      <span className="font-medium">{item.name}</span>
                       <span className="text-sm text-gray-500 ml-2">
                         {item.quantity} {item.unit}
                       </span>
@@ -359,16 +353,14 @@ export default function PantryPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredItems.map((item: PantryItem) => {
             const expiryStatus = getExpiryStatus(item.expiryDate);
-            const itemName = item.ingredient?.name || item.name || 'Unknown Item';
-            const itemCategory = item.ingredient?.category || item.category || 'Other';
             
             return (
               <Card key={item.id} className="relative">
                 <CardContent className="p-4">
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <h3 className="font-medium text-lg">{itemName}</h3>
-                      <p className="text-sm text-gray-500">{itemCategory}</p>
+                      <h3 className="font-medium text-lg">{item.name}</h3>
+                      <p className="text-sm text-gray-500">{item.category || 'Other'}</p>
                     </div>
                     <Button
                       variant="ghost"

@@ -5,6 +5,7 @@ type ToastProps = {
   title?: string
   description?: string
   variant?: "default" | "destructive"
+  duration?: number
 }
 
 type ToastActionElement = React.ReactElement
@@ -17,6 +18,8 @@ type ToasterToast = ToastProps & {
   title?: string
   description?: string
   action?: ToastActionElement
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 const actionTypes = {
