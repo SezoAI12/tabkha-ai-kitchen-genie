@@ -1,34 +1,65 @@
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface RTLContextType {
   isRTL: boolean;
-  toggleRTL: () => void;
-  direction: 'ltr' | 'rtl';
+  language: string;
+  direction: string;
+  toggleLanguage: () => void;
+  setLanguage: (lang: string) => void;
+  t: (english: string, arabic?: string, turkish?: string) => string;
 }
 
 const RTLContext = createContext<RTLContextType | undefined>(undefined);
 
-export const RTLProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isRTL, setIsRTL] = useState(false);
+interface RTLProviderProps {
+  children: ReactNode;
+}
 
-  const toggleRTL = () => {
-    setIsRTL(!isRTL);
-    document.documentElement.dir = !isRTL ? 'rtl' : 'ltr';
-  };
-
+export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
+  const [language, setLanguageState] = useState('en');
+  const isRTL = language === 'ar';
   const direction = isRTL ? 'rtl' : 'ltr';
 
+  const toggleLanguage = () => {
+    setLanguageState(prev => prev === 'en' ? 'ar' : 'en');
+  };
+
+  const setLanguage = (lang: string) => {
+    setLanguageState(lang);
+  };
+
+  const t = (english: string, arabic?: string, turkish?: string) => {
+    if (language === 'ar' && arabic) {
+      return arabic;
+    }
+    if (language === 'tr' && turkish) {
+      return turkish;
+    }
+    return english;
+  };
+
+  const value: RTLContextType = {
+    isRTL,
+    language,
+    direction,
+    toggleLanguage,
+    setLanguage,
+    t
+  };
+
   return (
-    <RTLContext.Provider value={{ isRTL, toggleRTL, direction }}>
-      {children}
+    <RTLContext.Provider value={value}>
+      <div className={isRTL ? 'rtl' : 'ltr'}>
+        {children}
+      </div>
     </RTLContext.Provider>
   );
 };
 
 export const useRTL = (): RTLContextType => {
   const context = useContext(RTLContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useRTL must be used within an RTLProvider');
   }
   return context;

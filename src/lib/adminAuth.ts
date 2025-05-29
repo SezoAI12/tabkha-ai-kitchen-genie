@@ -1,70 +1,65 @@
 
-export interface AuthResult {
-  success: boolean;
-  role?: string;
-  user?: any;
+// Mock admin authentication functionality
+export interface AdminUser {
+  id: string;
+  email: string;
+  role: 'admin' | 'super_admin';
+  name: string;
 }
 
-export const login = async (email: string, password: string): Promise<AuthResult> => {
-  // Mock authentication logic
-  if (email === 'admin@wasfah.com' && password === 'admin123') {
-    return {
-      success: true,
-      role: 'admin',
-      user: { email, name: 'Admin User' }
-    };
-  }
+export const isAdminAuthenticated = (): boolean => {
+  const adminToken = localStorage.getItem('admin_token');
+  return !!adminToken;
+};
+
+export const isSuperAdmin = (): boolean => {
+  const adminUser = getCurrentAdminUser();
+  return adminUser?.role === 'super_admin';
+};
+
+export const getCurrentAdminUser = (): AdminUser | null => {
+  const userStr = localStorage.getItem('admin_user');
+  if (!userStr) return null;
   
-  if (email === 'superadmin@wasfah.com' && password === 'superadmin123') {
-    return {
-      success: true,
-      role: 'superadmin',
-      user: { email, name: 'Super Admin' }
-    };
+  try {
+    return JSON.parse(userStr);
+  } catch {
+    return null;
   }
-  
-  return {
-    success: false
-  };
 };
 
-export const verifyAdminCredentials = async (email: string, password: string): Promise<AuthResult> => {
-  return login(email, password);
+export const adminLogin = (email: string, password: string): Promise<boolean> => {
+  return new Promise((resolve) => {
+    // Mock authentication
+    setTimeout(() => {
+      if (email === 'admin@wasfah.com' && password === 'admin123') {
+        const adminUser: AdminUser = {
+          id: '1',
+          email,
+          role: 'admin',
+          name: 'Admin User'
+        };
+        localStorage.setItem('admin_token', 'mock-admin-token');
+        localStorage.setItem('admin_user', JSON.stringify(adminUser));
+        resolve(true);
+      } else if (email === 'super@wasfah.com' && password === 'super123') {
+        const adminUser: AdminUser = {
+          id: '2',
+          email,
+          role: 'super_admin',
+          name: 'Super Admin'
+        };
+        localStorage.setItem('admin_token', 'mock-super-admin-token');
+        localStorage.setItem('admin_user', JSON.stringify(adminUser));
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    }, 1000);
+  });
 };
 
-export const logout = () => {
-  localStorage.removeItem('adminAuth');
-  window.location.href = '/admin/login';
-};
-
-export const adminLogout = () => {
-  logout();
-};
-
-export const setAdminAuth = (role: string) => {
-  localStorage.setItem('adminAuth', JSON.stringify({ role }));
-  localStorage.setItem('adminRole', role);
-};
-
-export const getCurrentAdmin = () => {
-  const auth = localStorage.getItem('adminAuth');
-  return auth ? JSON.parse(auth) : null;
-};
-
-export const isAuthenticated = () => {
-  const admin = getCurrentAdmin();
-  return admin && admin.role;
-};
-
-export const isAdminAuthenticated = () => {
-  return isAuthenticated();
-};
-
-export const getAdminRole = () => {
-  return localStorage.getItem('adminRole');
-};
-
-export const isSuperAdmin = () => {
-  const admin = getCurrentAdmin();
-  return admin && admin.role === 'superadmin';
+export const adminLogout = (): void => {
+  localStorage.removeItem('admin_token');
+  localStorage.removeItem('admin_user');
 };

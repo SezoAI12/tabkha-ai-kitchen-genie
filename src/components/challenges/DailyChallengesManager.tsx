@@ -154,7 +154,7 @@ export const DailyChallengesManager: React.FC = () => {
               <div key={challenge.id} className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                 <Checkbox
                   checked={isCompleted}
-                  onCheckedChange={(checked) => toggleChallengeCompletion(challenge.id, checked as boolean)}
+                  onCheckedChange={(checked: boolean) => toggleChallengeCompletion(challenge.id, checked)}
                   className="mt-1"
                 />
                 <div className="flex-1">
