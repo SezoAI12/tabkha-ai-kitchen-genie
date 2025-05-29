@@ -161,6 +161,7 @@ export default function RecipesPage() {
     <PageContainer
       header={{
         title: 'Recipes',
+        showBackButton: true,
         showSearch: true,
         actions: (
           <Sheet>

@@ -26,6 +26,7 @@ export default function FavoritesPage() {
     <PageContainer
       header={{
         title: 'My Favorites',
+        showBackButton: true,
         showSearch: true,
         actions: (
           <Button variant="ghost" size="icon">

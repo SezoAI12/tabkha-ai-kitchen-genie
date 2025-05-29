@@ -81,7 +81,7 @@ const mockMealPlan = {
   meals: [
     {
       id: 'breakfast-1',
-      type: 'breakfast',
+      type: 'breakfast' as const,
       recipe: {
         id: 'recipe-1',
         title: 'Avocado Toast',
@@ -90,7 +90,7 @@ const mockMealPlan = {
         prepTime: 10,
         cookTime: 5,
         servings: 1,
-        difficulty: 'Easy',
+        difficulty: 'Easy' as const,
         calories: 320,
         rating: 4.5,
         ratingCount: 120,
@@ -99,12 +99,11 @@ const mockMealPlan = {
         categories: ['Breakfast'],
         tags: ['healthy', 'quick'],
         isFavorite: false
-      },
-      scheduledTime: '8:00 AM'
+      }
     },
     {
       id: 'lunch-1',
-      type: 'lunch',
+      type: 'lunch' as const,
       recipe: {
         id: 'recipe-2',
         title: 'Quinoa Salad',
@@ -113,7 +112,7 @@ const mockMealPlan = {
         prepTime: 15,
         cookTime: 20,
         servings: 2,
-        difficulty: 'Easy',
+        difficulty: 'Easy' as const,
         calories: 450,
         rating: 4.3,
         ratingCount: 89,
@@ -122,12 +121,11 @@ const mockMealPlan = {
         categories: ['Lunch', 'Salad'],
         tags: ['healthy', 'vegetarian'],
         isFavorite: false
-      },
-      scheduledTime: '1:00 PM'
+      }
     },
     {
       id: 'dinner-1',
-      type: 'dinner',
+      type: 'dinner' as const,
       recipe: {
         id: 'recipe-3',
         title: 'Grilled Salmon',
@@ -136,7 +134,7 @@ const mockMealPlan = {
         prepTime: 10,
         cookTime: 15,
         servings: 2,
-        difficulty: 'Medium',
+        difficulty: 'Medium' as const,
         calories: 520,
         rating: 4.7,
         ratingCount: 156,
@@ -145,8 +143,7 @@ const mockMealPlan = {
         categories: ['Dinner', 'Seafood'],
         tags: ['protein', 'healthy'],
         isFavorite: true
-      },
-      scheduledTime: '7:00 PM'
+      }
     }
   ]
 };

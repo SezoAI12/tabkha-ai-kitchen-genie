@@ -9,6 +9,7 @@ interface HeaderProps {
   onBackClick?: () => void;
   actions?: React.ReactNode;
   className?: string;
+  showSearch?: boolean;
 }
 
 interface PageContainerProps {
@@ -16,18 +17,24 @@ interface PageContainerProps {
   header?: HeaderProps;
   className?: string;
   showBottomToolbar?: boolean;
+  hideNavbar?: boolean;
+  fullWidth?: boolean;
+  noPadding?: boolean;
 }
 
 export const PageContainer: React.FC<PageContainerProps> = ({
   children,
   header,
   className = '',
-  showBottomToolbar = true
+  showBottomToolbar = true,
+  hideNavbar = false,
+  fullWidth = false,
+  noPadding = false
 }) => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {header && <MobileHeader {...header} />}
-      <main className={`${header ? 'pt-14' : ''} ${showBottomToolbar ? 'pb-20' : ''} ${className}`}>
+      {header && !hideNavbar && <MobileHeader {...header} />}
+      <main className={`${header && !hideNavbar ? 'pt-14' : ''} ${showBottomToolbar ? 'pb-20' : ''} ${fullWidth ? 'w-full' : ''} ${noPadding ? '' : 'p-4'} ${className}`}>
         {children}
       </main>
       {showBottomToolbar && <BottomToolbar />}
