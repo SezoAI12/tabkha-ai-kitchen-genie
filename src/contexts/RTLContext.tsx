@@ -1,13 +1,12 @@
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface RTLContextType {
-  language: string;
-  setLanguage: (lang: string) => void;
-  direction: 'ltr' | 'rtl';
   isRTL: boolean;
-  setRTL: (value: boolean) => void;
-  t: (englishText: string, arabicText?: string, turkishText?: string) => string;
+  language: string;
+  toggleLanguage: () => void;
+  setLanguage: (lang: string) => void;
+  t: (english: string, arabic?: string) => string;
 }
 
 const RTLContext = createContext<RTLContextType | undefined>(undefined);
@@ -17,49 +16,44 @@ interface RTLProviderProps {
 }
 
 export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
-  const [language, setLanguageState] = useState(() => {
-    return localStorage.getItem('language') || 'en';
-  });
-
-  const direction = language === 'ar' ? 'rtl' : 'ltr';
+  const [language, setLanguageState] = useState('en');
   const isRTL = language === 'ar';
 
-  useEffect(() => {
-    document.documentElement.dir = direction;
-    document.documentElement.lang = language;
-  }, [direction, language]);
+  const toggleLanguage = () => {
+    setLanguageState(prev => prev === 'en' ? 'ar' : 'en');
+  };
 
   const setLanguage = (lang: string) => {
     setLanguageState(lang);
-    localStorage.setItem('language', lang);
   };
 
-  const setRTL = (value: boolean) => {
-    const newLang = value ? 'ar' : 'en';
-    setLanguage(newLang);
-  };
-
-  const t = (englishText: string, arabicText: string = '', turkishText: string = '') => {
-    switch (language) {
-      case 'ar':
-        return arabicText || englishText;
-      case 'tr':
-        return turkishText || englishText;
-      default:
-        return englishText;
+  const t = (english: string, arabic?: string) => {
+    if (language === 'ar' && arabic) {
+      return arabic;
     }
+    return english;
+  };
+
+  const value: RTLContextType = {
+    isRTL,
+    language,
+    toggleLanguage,
+    setLanguage,
+    t
   };
 
   return (
-    <RTLContext.Provider value={{ language, setLanguage, direction, isRTL, setRTL, t }}>
-      {children}
+    <RTLContext.Provider value={value}>
+      <div className={isRTL ? 'rtl' : 'ltr'}>
+        {children}
+      </div>
     </RTLContext.Provider>
   );
 };
 
-export const useRTL = () => {
+export const useRTL = (): RTLContextType => {
   const context = useContext(RTLContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useRTL must be used within an RTLProvider');
   }
   return context;
