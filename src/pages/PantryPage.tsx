@@ -124,7 +124,12 @@ export default function PantryPage() {
       unit: newItem.unit,
       category: newItem.category,
       expiryDate: newItem.expiryDate || '',
-      addedDate: currentDate
+      addedDate: currentDate,
+      ingredient: {
+        id: `ing-${Date.now()}`,
+        name: newItem.name,
+        category: newItem.category
+      }
     };
 
     setPantryItems(prev => [...prev, item]);
