@@ -5,10 +5,18 @@ export interface Recipe {
   description: string;
   image: string;
   cookTime: number;
+  cookingTime: number;
+  prepTime: number;
+  servings: number;
   difficulty: 'Easy' | 'Medium' | 'Hard';
   cuisine: string;
   rating: number;
-  ingredients: string[];
+  ratingCount: number;
+  ingredients: Array<{
+    name: string;
+    amount: string;
+    unit: string;
+  }>;
   instructions: string[];
   nutrition: {
     calories: number;
@@ -16,6 +24,16 @@ export interface Recipe {
     carbs: string;
     fat: string;
   };
+  nutritionalInfo: {
+    protein: string;
+    carbs: string;
+    fat: string;
+  };
+  calories: number;
+  tags: string[];
+  featured: boolean;
+  isFavorite: boolean;
+  premium: boolean;
 }
 
 export interface Ingredient {
@@ -47,4 +65,22 @@ export interface MealPlan {
   lunch?: Recipe;
   dinner?: Recipe;
   snacks?: Recipe[];
+}
+
+export interface PantryItem {
+  id: string;
+  name: string;
+  quantity: number;
+  unit: string;
+  expiryDate: string;
+  category: string;
+  image?: string;
+}
+
+export interface Meal {
+  id: string;
+  name: string;
+  recipe: Recipe;
+  scheduledFor: string;
+  type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
 }
