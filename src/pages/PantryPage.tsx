@@ -46,7 +46,7 @@ export default function PantryPage() {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [newItem, setNewItem] = useState<Partial<PantryItem>>({
     name: '',
-    quantity: '',
+    quantity: 0,
     unit: '',
     category: '',
     expiryDate: ''
@@ -106,13 +106,14 @@ export default function PantryPage() {
       quantity: newItem.quantity,
       unit: newItem.unit,
       category: newItem.category,
-      expiryDate: newItem.expiryDate || undefined
+      expiryDate: newItem.expiryDate || undefined,
+      addedDate: new Date().toISOString().split('T')[0]
     };
 
     setPantryItems(prev => [...prev, item]);
     setNewItem({
       name: '',
-      quantity: '',
+      quantity: 0,
       unit: '',
       category: '',
       expiryDate: ''
@@ -178,8 +179,9 @@ export default function PantryPage() {
                     <Label htmlFor="quantity">Quantity</Label>
                     <Input
                       id="quantity"
+                      type="number"
                       value={newItem.quantity || ''}
-                      onChange={(e) => setNewItem(prev => ({ ...prev, quantity: e.target.value }))}
+                      onChange={(e) => setNewItem(prev => ({ ...prev, quantity: Number(e.target.value) }))}
                       placeholder="e.g., 5"
                     />
                   </div>

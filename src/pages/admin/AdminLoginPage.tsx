@@ -16,14 +16,14 @@ const AdminLoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
 
     // Simulate network delay
-    setTimeout(() => {
-      const result = verifyAdminCredentials(email, password);
+    setTimeout(async () => {
+      const result = await verifyAdminCredentials(email, password);
       if (result.success && result.role) {
         // Set admin authentication with role
         setAdminAuth(result.role);
