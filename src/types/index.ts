@@ -1,5 +1,4 @@
 
-
 export interface Recipe {
   id: string;
   name: string;
@@ -79,4 +78,3 @@ export interface Meal {
   prepTime?: string;
   calories?: number;
 }
-
