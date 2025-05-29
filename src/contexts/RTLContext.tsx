@@ -1,10 +1,13 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 interface RTLContextType {
+  language: string;
+  setLanguage: (lang: string) => void;
+  direction: 'ltr' | 'rtl';
   isRTL: boolean;
   setRTL: (value: boolean) => void;
-  t: (key: string, fallback?: string) => string;
+  t: (englishText: string, arabicText?: string, turkishText?: string) => string;
 }
 
 const RTLContext = createContext<RTLContextType | undefined>(undefined);
@@ -14,20 +17,41 @@ interface RTLProviderProps {
 }
 
 export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
-  const [isRTL, setIsRTL] = useState(false);
+  const [language, setLanguageState] = useState(() => {
+    return localStorage.getItem('language') || 'en';
+  });
 
-  const setRTL = (value: boolean) => {
-    setIsRTL(value);
-    document.documentElement.dir = value ? 'rtl' : 'ltr';
+  const direction = language === 'ar' ? 'rtl' : 'ltr';
+  const isRTL = language === 'ar';
+
+  useEffect(() => {
+    document.documentElement.dir = direction;
+    document.documentElement.lang = language;
+  }, [direction, language]);
+
+  const setLanguage = (lang: string) => {
+    setLanguageState(lang);
+    localStorage.setItem('language', lang);
   };
 
-  const t = (key: string, fallback?: string) => {
-    // Simple translation function - can be expanded later
-    return fallback || key;
+  const setRTL = (value: boolean) => {
+    const newLang = value ? 'ar' : 'en';
+    setLanguage(newLang);
+  };
+
+  const t = (englishText: string, arabicText: string = '', turkishText: string = '') => {
+    switch (language) {
+      case 'ar':
+        return arabicText || englishText;
+      case 'tr':
+        return turkishText || englishText;
+      default:
+        return englishText;
+    }
   };
 
   return (
-    <RTLContext.Provider value={{ isRTL, setRTL, t }}>
+    <RTLContext.Provider value={{ language, setLanguage, direction, isRTL, setRTL, t }}>
       {children}
     </RTLContext.Provider>
   );
