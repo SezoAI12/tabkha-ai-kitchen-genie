@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, User, ChefHat, Wheat, Activity, Menu as MenuIcon } from 'lucide-react'; // Import Activity and MenuIcon
+import { Home, User, ChefHat, Wheat, Activity, Menu as MenuIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const BottomToolbar = () => {
@@ -32,9 +33,9 @@ const BottomToolbar = () => {
       isActive: pathname === '/recipes'
     },
     {
-      icon: Activity, // New: Health Tracking icon
-      label: 'Health', // Label for Health Tracking
-      href: '/health-tracking-home', // Path for Health Tracking
+      icon: Activity,
+      label: 'Health',
+      href: '/health-tracking-home',
       isActive: pathname === '/health-tracking-home'
     },
     {
@@ -44,15 +45,15 @@ const BottomToolbar = () => {
       isActive: pathname === '/profile'
     },
     {
-      icon: MenuIcon, // New: Menu icon
-      label: 'Menu', // Label for Menu
-      href: '/menu', // Path for Menu
+      icon: MenuIcon,
+      label: 'Menu',
+      href: '/menu',
       isActive: pathname === '/menu'
     }
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 py-2 safe-area-pb">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 py-2">
       <nav className="flex justify-around items-center max-w-md mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
