@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { RecipeGrid } from '@/components/recipe/RecipeGrid';
@@ -31,8 +32,6 @@ export default function SearchPage() {
   return (
     <PageContainer
       header={{
-        title: 'Search Recipes',
-        showSearch: false,
         customContent: (
           <div className="flex items-center w-full">
             <div className="relative flex-1">

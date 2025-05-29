@@ -11,6 +11,7 @@ interface PageContainerHeaderProps {
   actions?: React.ReactNode;
   showLogo?: boolean;
   showSearch?: boolean;
+  customContent?: React.ReactNode;
 }
 
 interface PageContainerProps {
@@ -53,13 +54,19 @@ export function PageContainer({
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             )}
-            {header.title && (
-              <h1 className="text-lg font-semibold">{header.title}</h1>
-            )}
-            {header.actions && (
-              <div className="ml-auto">
-                {header.actions}
-              </div>
+            {header.customContent ? (
+              header.customContent
+            ) : (
+              <>
+                {header.title && (
+                  <h1 className="text-lg font-semibold">{header.title}</h1>
+                )}
+                {header.actions && (
+                  <div className="ml-auto">
+                    {header.actions}
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
