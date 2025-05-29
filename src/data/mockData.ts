@@ -759,7 +759,7 @@ export const mockNotifications: Notification[] = [
     type: 'warning',
     targetUsers: 'all',
     createdAt: '2024-05-01T12:00:00Z',
-    status: 'scheduled',
+    status: 'sent',
     scheduled: true,
     scheduledDate: '2024-05-05T00:00:00Z'
   }

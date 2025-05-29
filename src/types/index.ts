@@ -1,4 +1,5 @@
 
+
 // Core application types
 export interface Recipe {
   id: string;
@@ -16,6 +17,21 @@ export interface Recipe {
   createdBy: string;
   createdAt: string;
   status: 'pending' | 'approved' | 'rejected';
+  cuisineType: string;
+  prepTime: number;
+  cookTime: number;
+  servings: number;
+  calories: number;
+  tags: string[];
+  ratingCount: number;
+  isFavorite: boolean;
+  nutritionalInfo: {
+    protein: number;
+    carbs: number;
+    fat: number;
+    fiber: number;
+    sugar: number;
+  };
 }
 
 export interface PantryItem {
@@ -34,6 +50,7 @@ export interface Meal {
   image: string;
   calories: number;
   prepTime: number;
+  recipe: Recipe;
 }
 
 export interface User {
@@ -95,3 +112,4 @@ export interface Advertisement {
   scheduledStart?: string;
   scheduledEnd?: string;
 }
+
