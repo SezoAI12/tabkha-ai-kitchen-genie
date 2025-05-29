@@ -6,6 +6,7 @@ export interface Toast {
   title?: string;
   description?: string;
   variant?: 'default' | 'destructive';
+  action?: React.ReactNode;
 }
 
 export interface ToastProps {
@@ -52,5 +53,3 @@ export const useToast = () => {
     toasts
   };
 };
-
-export { toast } from './use-toast';

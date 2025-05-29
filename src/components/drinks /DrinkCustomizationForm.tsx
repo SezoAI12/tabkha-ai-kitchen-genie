@@ -43,8 +43,9 @@ export const DrinkCustomizationForm: React.FC<DrinkCustomizationFormProps> = ({ 
   const [glassType, setGlassType] = useState<string>('');
   const [themes, setThemes] = useState<string[]>([]);
 
-  const handleThemeChange = (theme: string, isChecked: boolean) => {
-    if (isChecked) {
+  const handleThemeChange = (theme: string, isChecked: boolean | string) => {
+    const checked = typeof isChecked === 'boolean' ? isChecked : isChecked === 'true';
+    if (checked) {
       setThemes(prev => [...prev, theme]);
     } else {
       setThemes(prev => prev.filter(t => t !== theme));
