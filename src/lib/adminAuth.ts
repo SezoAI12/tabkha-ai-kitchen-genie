@@ -1,9 +1,16 @@
 
+
 export interface AdminUser {
   id: string;
   email: string;
   role: 'admin' | 'super_admin';
   name: string;
+}
+
+export interface AuthResult {
+  success: boolean;
+  role?: 'admin' | 'super_admin';
+  user?: AdminUser;
 }
 
 export const adminAuth = {
@@ -62,10 +69,32 @@ export const getAdminRole = (): string | null => {
   return user?.role || null;
 };
 
-export const verifyAdminCredentials = async (email: string, password: string): Promise<AdminUser | null> => {
-  return adminAuth.login(email, password);
+export const verifyAdminCredentials = async (email: string, password: string): Promise<AuthResult> => {
+  // Mock authentication with different credentials
+  if (email === 'admin@wasfahai.com' && password === 'admin123') {
+    return {
+      success: true,
+      role: 'admin'
+    };
+  }
+  if (email === 'superadmin@wasfahai.com' && password === 'superadmin123') {
+    return {
+      success: true,
+      role: 'super_admin'
+    };
+  }
+  return {
+    success: false
+  };
 };
 
-export const setAdminAuth = (user: AdminUser) => {
+export const setAdminAuth = (role: 'admin' | 'super_admin') => {
+  const user: AdminUser = {
+    id: '1',
+    email: role === 'admin' ? 'admin@wasfahai.com' : 'superadmin@wasfahai.com',
+    role,
+    name: role === 'admin' ? 'Admin User' : 'Super Admin'
+  };
   localStorage.setItem('adminUser', JSON.stringify(user));
 };
+

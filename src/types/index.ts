@@ -1,4 +1,5 @@
 
+
 export interface Recipe {
   id: string;
   title: string;
@@ -7,6 +8,7 @@ export interface Recipe {
   instructions: string[];
   prepTime: number;
   cookTime: number;
+  cookingTime: number; // Add this for compatibility
   servings: number;
   difficulty: 'Easy' | 'Medium' | 'Hard';
   cuisine: string;
@@ -74,10 +76,14 @@ export interface MealPlan {
 
 export interface Meal {
   id: string;
+  name: string;
+  image: string;
   type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
   recipe: Recipe;
   date: string;
   completed: boolean;
+  prepTime: number;
+  calories: number;
 }
 
 export interface User {
@@ -97,6 +103,14 @@ export interface User {
     activityLevel: string;
     goals: string[];
   };
+  dietaryPreferences?: string[];
+  cuisinePreferences?: string[];
+  allergies?: string[];
+  chefAvatar?: string;
+  nutritionalGoals?: {
+    calories: number;
+    protein: number;
+  };
 }
 
 export interface NutritionGoal {
@@ -107,3 +121,4 @@ export interface NutritionGoal {
   unit: string;
   type: 'daily' | 'weekly' | 'monthly';
 }
+

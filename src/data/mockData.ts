@@ -1,4 +1,5 @@
 
+
 import { Recipe, PantryItem, ShoppingListItem, User } from '../types/index';
 
 export const mockRecipes: Recipe[] = [
@@ -15,6 +16,7 @@ export const mockRecipes: Recipe[] = [
     ],
     prepTime: 15,
     cookTime: 20,
+    cookingTime: 20,
     servings: 4,
     difficulty: 'Medium',
     cuisine: 'Italian',
@@ -56,6 +58,7 @@ export const mockRecipes: Recipe[] = [
     ],
     prepTime: 30,
     cookTime: 25,
+    cookingTime: 25,
     servings: 4,
     difficulty: 'Medium',
     cuisine: 'Indian',
@@ -147,6 +150,14 @@ export const mockUser: User = {
     age: 30,
     activityLevel: 'moderate',
     goals: ['maintain_weight', 'eat_healthy']
+  },
+  dietaryPreferences: ['Vegetarian'],
+  cuisinePreferences: ['Italian', 'Mediterranean'],
+  allergies: ['Nuts'],
+  chefAvatar: 'The Grill Master',
+  nutritionalGoals: {
+    calories: 2000,
+    protein: 150
   }
 };
 
@@ -193,3 +204,4 @@ export const mockShoppingList: ShoppingListItem[] = [
     priority: 'medium'
   }
 ];
+
