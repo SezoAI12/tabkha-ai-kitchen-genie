@@ -14,6 +14,7 @@ const LoyaltyProgramPage = () => {
   const [userPoints, setUserPoints] = useState(1250);
   const [userTier, setUserTier] = useState('Gold');
   const [claimedRewards, setClaimedRewards] = useState<number[]>([]);
+  const [earnedToday, setEarnedToday] = useState<string[]>([]);
 
   const rewards = [
     { 
@@ -76,7 +77,6 @@ const LoyaltyProgramPage = () => {
   };
 
   const nextTier = getNextTier();
-  const progressPercentage = nextTier ? (userPoints / nextTier.points) * 100 : 100;
 
   const handleRedeemReward = (rewardId: number, pointsCost: number) => {
     if (userPoints >= pointsCost && !claimedRewards.includes(rewardId)) {
@@ -87,7 +87,14 @@ const LoyaltyProgramPage = () => {
   };
 
   const handleEarnPoints = (points: number, activity: string) => {
+    // Check if activity was already earned today
+    if (earnedToday.includes(activity)) {
+      toast.error('You can only earn points once per day for this activity!');
+      return;
+    }
+
     setUserPoints(prev => prev + points);
+    setEarnedToday(prev => [...prev, activity]);
     toast.success(`+${points} points earned for ${activity}! ⭐`);
   };
 
@@ -252,35 +259,40 @@ const LoyaltyProgramPage = () => {
           </div>
 
           <div className="grid gap-4">
-            {activities.map((activity, index) => (
-              <EnhancedCard key={index} variant="default" hover>
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-4">
-                    <IconContainer className={`${activity.color} text-white`} size="lg">
-                      <activity.icon className="h-6 w-6" />
-                    </IconContainer>
-                    
-                    <div className="flex-1">
-                      <Typography.H3 className="text-lg mb-1">{activity.action}</Typography.H3>
-                      <Typography.Body className="text-sm">{activity.description}</Typography.Body>
+            {activities.map((activity, index) => {
+              const isEarnedToday = earnedToday.includes(activity.action);
+              
+              return (
+                <EnhancedCard key={index} variant="default" hover>
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-4">
+                      <IconContainer className={`${activity.color} text-white`} size="lg">
+                        <activity.icon className="h-6 w-6" />
+                      </IconContainer>
+                      
+                      <div className="flex-1">
+                        <Typography.H3 className="text-lg mb-1">{activity.action}</Typography.H3>
+                        <Typography.Body className="text-sm">{activity.description}</Typography.Body>
+                      </div>
+                      
+                      <div className="text-center space-y-1">
+                        <div className="text-2xl font-bold text-wasfah-bright-teal">+{activity.points}</div>
+                        <Typography.Caption>points</Typography.Caption>
+                      </div>
+                      
+                      <EnhancedButton 
+                        variant={isEarnedToday ? "outline" : "primary"}
+                        size="md"
+                        disabled={isEarnedToday}
+                        onClick={() => handleEarnPoints(activity.points, activity.action)}
+                      >
+                        {isEarnedToday ? 'Earned Today' : 'Earn'}
+                      </EnhancedButton>
                     </div>
-                    
-                    <div className="text-center space-y-1">
-                      <div className="text-2xl font-bold text-wasfah-bright-teal">+{activity.points}</div>
-                      <Typography.Caption>points</Typography.Caption>
-                    </div>
-                    
-                    <EnhancedButton 
-                      variant="outline" 
-                      size="md"
-                      onClick={() => handleEarnPoints(activity.points, activity.action)}
-                    >
-                      Earn
-                    </EnhancedButton>
-                  </div>
-                </CardContent>
-              </EnhancedCard>
-            ))}
+                  </CardContent>
+                </EnhancedCard>
+              );
+            })}
           </div>
         </div>
       </LayoutContainer>

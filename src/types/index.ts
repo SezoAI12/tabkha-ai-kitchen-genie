@@ -1,40 +1,39 @@
 
-// Define ChefPersonality type
-export type ChefPersonality = 'Traditional' | 'Adventurous' | 'Health-conscious' | 'Comfort Food' | 
-  'Gourmet' | 'Speedy Chef' | 'Precision' | 'Creative';
-
+// Core application types
 export interface Recipe {
   id: string;
   title: string;
   description: string;
   image: string;
-  prepTime: number;
-  cookTime: number;
-  servings: number;
+  cookingTime: number;
   difficulty: 'Easy' | 'Medium' | 'Hard';
-  calories: number;
   rating: number;
-  ratingCount: number;
-  ingredients: {
-    id: string;
-    name: string;
-    quantity: string | number;
-    unit: string;
-    inPantry: boolean;
-  }[];
+  cuisine: string;
+  ingredients: string[];
   instructions: string[];
-  categories: string[];
-  tags: string[];
-  isFavorite: boolean;
-  tips?: string[]; // Add tips property
-  cuisineType?: string; // Add cuisineType property
-  nutritionalInfo?: {
-    protein: number;
-    carbs: number;
-    fat: number;
-    fiber: number;
-    sugar: number;
-  };
+  featured: boolean;
+  premium: boolean;
+  createdBy: string;
+  createdAt: string;
+  status: 'pending' | 'approved' | 'rejected';
+}
+
+export interface PantryItem {
+  id: string;
+  name: string;
+  quantity: string;
+  unit: string;
+  expiryDate?: string;
+  category: string;
+}
+
+export interface Meal {
+  id: string;
+  name: string;
+  type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  image: string;
+  calories: number;
+  prepTime: number;
 }
 
 export interface User {
@@ -42,84 +41,57 @@ export interface User {
   name: string;
   email: string;
   avatar?: string;
-  isPremium?: boolean; // Add isPremium property
-  dietaryPreferences?: string[];
-  allergies?: string[];
-  allergens?: string[]; // Add allergens property
-  favoriteRecipes?: string[];
-  recipesSaved?: number; // Add recipesSaved property
-  recipesCreated?: number; // Add recipesCreated property
-  followersCount?: number; // Add followersCount property
-  cuisinePreferences?: string[]; // Add cuisinePreferences property
-  chefAvatar?: string; // Add chefAvatar property
-  nutritionalGoals?: { // Add nutritionalGoals property
-    calories: number;
-    protein: number;
-    carbs?: number;
-    fat?: number;
-  };
+  role: 'admin' | 'user';
+  status: 'active' | 'inactive';
+  createdAt: string;
 }
 
-export interface MealPlan {
+export interface Comment {
   id: string;
-  date: string; // Change to string for easier comparison
-  meals: Meal[];
-  nutritionSummary?: { // Add nutritionSummary property
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-  };
+  content: string;
+  userId: string;
+  userName: string;
+  createdAt: string;
+  status: 'pending' | 'approved' | 'rejected';
+  reportCount: number;
 }
 
-export interface Meal {
+export interface Ticket {
   id: string;
-  type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
-  recipe: Recipe;
-  completed?: boolean;
+  userId: string;
+  userName: string;
+  subject: string;
+  description: string;
+  status: 'open' | 'in-progress' | 'resolved' | 'closed';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  createdAt: string;
+  updatedAt: string;
+  assignedTo?: string;
 }
 
-export interface PantryItem {
+export interface Notification {
   id: string;
-  name: string;
-  category: string;
-  quantity: number;
-  unit: string;
-  expiryDate?: string; // Change to string for easier date handling
-  image?: string;
-  location?: string; // Add location property
+  title: string;
+  message: string;
+  type: 'info' | 'warning' | 'success' | 'error';
+  targetUsers: 'all' | 'premium' | 'specific';
+  userIds?: string[];
+  scheduled: boolean;
+  scheduledDate?: string;
+  createdAt: string;
+  status: 'draft' | 'sent';
 }
 
-export interface NutritionGoal {
+export interface Advertisement {
   id: string;
-  type: 'calories' | 'protein' | 'carbs' | 'fat' | 'fiber' | 'sugar';
-  target: number;
-  current: number;
-}
-
-export interface HealthRecord {
-  id: string;
-  date: string; // Change to string for easier date handling
-  weight?: number;
-  height?: number;
-  bmi?: number;
-  notes?: string;
-}
-
-export interface ShoppingListItem {
-  id: string;
-  name: string;
-  quantity: number;
-  unit: string;
-  checked: boolean;
-  category?: string;
-}
-
-export interface RecipeSocialData {
-  views: number;
-  likes: number;
-  comments: number;
-  shares: number;
-  usedCount: number;
-  isLiked: boolean;
+  title: string;
+  content: string;
+  imageUrl?: string;
+  targetUrl?: string;
+  isActive: boolean;
+  displayDuration: number;
+  targetUsers: 'all' | 'premium' | 'free';
+  createdAt: string;
+  scheduledStart?: string;
+  scheduledEnd?: string;
 }
