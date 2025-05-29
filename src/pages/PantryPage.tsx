@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { mockPantryItems } from '@/data/mockData';
@@ -37,7 +36,7 @@ export default function PantryPage() {
     if (!acc[item.category]) acc[item.category] = [];
     acc[item.category].push(item);
     return acc;
-  }, {} as Record<string, typeof pantryItems>);
+  }, {} as Record<string, PantryItem[]>);
 
   const today = new Date();
   const expiringItems = pantryItems.filter(item => {
