@@ -25,17 +25,15 @@ export default function LanguageSettingsPage() {
   const handleSaveLanguage = () => {
     const selectedLang = languages.find(lang => lang.code === language);
     toast({
-      title: t('Language Updated', 'تم تحديث اللغة', 'Dil Güncellendi'),
+      title: t('Language Updated'),
       description: t(
-        `Your language has been set to ${selectedLang?.name}`,
-        `تم تعيين لغتك إلى ${selectedLang?.name}`,
-        `Diliniz ${selectedLang?.name} olarak ayarlandı`
+        `Your language has been set to ${selectedLang?.name}`
       ),
     });
   };
 
   return (
-    <PageContainer header={{ title: t('Language Settings', 'إعدادات اللغة', 'Dil Ayarları'), showBackButton: true }}>
+    <PageContainer header={{ title: t('Language Settings'), showBackButton: true }}>
       <div className="p-4 space-y-6">
         <Card>
           <CardContent className="p-6">
@@ -43,14 +41,10 @@ export default function LanguageSettingsPage() {
               <Globe className="h-8 w-8 text-wasfah-bright-teal" />
               <div>
                 <h2 className="text-2xl font-bold">
-                  {t('Language Preferences', 'تفضيلات اللغة', 'Dil Tercihleri')}
+                  {t('Language Preferences')}
                 </h2>
                 <p className="text-gray-600">
-                  {t(
-                    'Select your preferred language for the app interface',
-                    'اختر لغتك المفضلة لواجهة التطبيق',
-                    'Uygulama arayüzü için tercih ettiğiniz dili seçin'
-                  )}
+                  {t('Select your preferred language for the app interface')}
                 </p>
               </div>
             </div>
@@ -84,7 +78,7 @@ export default function LanguageSettingsPage() {
               onClick={handleSaveLanguage} 
               className="w-full mt-6 bg-wasfah-bright-teal hover:bg-wasfah-teal"
             >
-              {t('Save Changes', 'حفظ التغييرات', 'Değişiklikleri Kaydet')}
+              {t('Save Changes')}
             </Button>
           </CardContent>
         </Card>
@@ -92,14 +86,10 @@ export default function LanguageSettingsPage() {
         <Card>
           <CardContent className="p-6">
             <h3 className="font-bold text-lg mb-4">
-              {t('Language Information', 'معلومات اللغة', 'Dil Bilgisi')}
+              {t('Language Information')}
             </h3>
             <p className="text-gray-600">
-              {t(
-                'The app interface will be displayed in your selected language. Recipe content may vary based on availability in your chosen language. To contribute translations, please contact our support team.',
-                'ستُعرض واجهة التطبيق باللغة التي اخترتها. قد يختلف محتوى الوصفات بناءً على توفرها باللغة التي اخترتها. للمساهمة في الترجمات، يرجى الاتصال بفريق الدعم.',
-                'Uygulama arayüzü seçtiğiniz dilde görüntülenecektir. Tarif içeriği, seçtiğiniz dildeki kullanılabilirliğe göre değişebilir. Çevirilere katkıda bulunmak için lütfen destek ekibimizle iletişime geçin.'
-              )}
+              {t('The app interface will be displayed in your selected language. Recipe content may vary based on availability in your chosen language.')}
             </p>
           </CardContent>
         </Card>

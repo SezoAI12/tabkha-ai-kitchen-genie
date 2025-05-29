@@ -1,4 +1,3 @@
-
 export interface Recipe {
   id: string;
   title: string;
@@ -86,6 +85,7 @@ export interface PantryItem {
   category: string;
   image?: string;
   addedDate?: string;
+  purchaseDate?: string;
 }
 
 export interface Meal {

@@ -105,7 +105,10 @@ const translations: Record<string, Record<string, string>> = {
     'Help & Support': 'Help & Support',
     'Admin Panel': 'Admin Panel',
     'Appearance': 'Appearance',
-    'Log Out': 'Log Out'
+    'Log Out': 'Log Out',
+    'Your language has been set to English': 'Your language has been set to English',
+    'Select your preferred language for the app interface': 'Select your preferred language for the app interface',
+    'The app interface will be displayed in your selected language. Recipe content may vary based on availability in your chosen language.': 'The app interface will be displayed in your selected language. Recipe content may vary based on availability in your chosen language.'
   },
   ar: {
     'Quick Actions': 'إجراءات سريعة',
@@ -186,7 +189,10 @@ const translations: Record<string, Record<string, string>> = {
     'Help & Support': 'المساعدة والدعم',
     'Admin Panel': 'لوحة الإدارة',
     'Appearance': 'المظهر',
-    'Log Out': 'تسجيل الخروج'
+    'Log Out': 'تسجيل الخروج',
+    'Your language has been set to العربية': 'تم تعيين لغتك إلى العربية',
+    'Select your preferred language for the app interface': 'اختر لغتك المفضلة لواجهة التطبيق',
+    'The app interface will be displayed in your selected language. Recipe content may vary based on availability in your chosen language.': 'ستُعرض واجهة التطبيق باللغة التي اخترتها. قد يختلف محتوى الوصفات بناءً على توفرها باللغة التي اخترتها.'
   }
 };
 
