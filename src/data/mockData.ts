@@ -80,3 +80,44 @@ export const mockPantryItems: PantryItem[] = [
     purchaseDate: '2024-01-01'
   }
 ];
+
+// Add missing exports
+export const categories = [
+  'Breakfast',
+  'Lunch', 
+  'Dinner',
+  'Snacks',
+  'Desserts',
+  'Appetizers',
+  'Vegetarian',
+  'Vegan',
+  'Gluten-Free'
+];
+
+export const cuisines = [
+  'Italian',
+  'Mediterranean', 
+  'Asian',
+  'Mexican',
+  'Indian',
+  'French',
+  'Middle Eastern',
+  'American'
+];
+
+export const difficulties = [
+  'Easy',
+  'Medium',
+  'Hard'
+];
+
+export const dietaryOptions = [
+  'Vegetarian',
+  'Vegan',
+  'Gluten-Free',
+  'Dairy-Free',
+  'Nut-Free',
+  'Low-Carb',
+  'Keto',
+  'Paleo'
+];
