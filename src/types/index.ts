@@ -2,17 +2,30 @@
 export interface Recipe {
   id: string;
   name: string;
+  title: string; // Adding missing title property
   description: string;
   image: string;
   cookTime: string;
+  cookingTime?: number; // Adding cookingTime as optional number
+  prepTime?: string; // Adding prepTime
   difficulty: 'Easy' | 'Medium' | 'Hard';
   rating: number;
+  ratingCount?: number; // Adding ratingCount
   cuisine: string;
   ingredients: string[];
   instructions: string[];
   calories?: number;
   servings?: number;
   tags?: string[];
+  featured?: boolean; // Adding featured property
+  isFavorite?: boolean; // Adding isFavorite property
+  premium?: boolean; // Adding premium property
+  nutritionalInfo?: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  };
 }
 
 export interface Ingredient {
@@ -20,6 +33,7 @@ export interface Ingredient {
   name: string;
   quantity: string;
   unit: string;
+  amount?: string; // Adding amount property
   expiryDate?: string;
   category: string;
   image?: string;
@@ -34,6 +48,7 @@ export interface PantryItem {
   category: string;
   image?: string;
   daysUntilExpiry: number;
+  addedDate?: string; // Adding addedDate property
 }
 
 export interface User {
@@ -46,6 +61,14 @@ export interface User {
     allergies: string[];
     cuisine: string[];
   };
+}
+
+export interface Meal {
+  id: string;
+  name: string;
+  type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  recipe?: Recipe;
+  time?: string;
 }
 
 export interface MealPlan {
