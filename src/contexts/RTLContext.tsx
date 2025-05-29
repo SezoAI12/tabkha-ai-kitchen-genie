@@ -1,48 +1,13 @@
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface RTLContextType {
   isRTL: boolean;
-  toggleRTL: () => void;
-  t: (key: string, fallback?: string) => string;
-  direction: 'ltr' | 'rtl';
-  language: string;
-  setLanguage: (lang: string) => void;
+  setIsRTL: (isRTL: boolean) => void;
+  t: (englishText: string, arabicText?: string) => string;
 }
 
 const RTLContext = createContext<RTLContextType | undefined>(undefined);
-
-export const RTLProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isRTL, setIsRTL] = useState(false);
-  const [language, setLanguage] = useState('en');
-
-  const toggleRTL = () => {
-    setIsRTL(!isRTL);
-  };
-
-  // Simple translation function - in real app this would fetch from API
-  const t = (key: string, fallback?: string) => {
-    // Mock translations - return fallback or key if no translation found
-    return fallback || key;
-  };
-
-  const direction = isRTL ? 'rtl' : 'ltr';
-
-  return (
-    <RTLContext.Provider value={{ 
-      isRTL, 
-      toggleRTL, 
-      t, 
-      direction, 
-      language, 
-      setLanguage 
-    }}>
-      <div dir={direction}>
-        {children}
-      </div>
-    </RTLContext.Provider>
-  );
-};
 
 export const useRTL = () => {
   const context = useContext(RTLContext);
@@ -50,4 +15,24 @@ export const useRTL = () => {
     throw new Error('useRTL must be used within a RTLProvider');
   }
   return context;
+};
+
+interface RTLProviderProps {
+  children: ReactNode;
+}
+
+export const RTLProvider: React.FC<RTLProviderProps> = ({ children }) => {
+  const [isRTL, setIsRTL] = useState(false);
+
+  const t = (englishText: string, arabicText?: string) => {
+    return isRTL && arabicText ? arabicText : englishText;
+  };
+
+  return (
+    <RTLContext.Provider value={{ isRTL, setIsRTL, t }}>
+      <div dir={isRTL ? 'rtl' : 'ltr'} className={isRTL ? 'rtl' : 'ltr'}>
+        {children}
+      </div>
+    </RTLContext.Provider>
+  );
 };
