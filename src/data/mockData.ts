@@ -1,149 +1,114 @@
 
-import { Recipe, PantryItem, User } from '@/types/index';
+import { Recipe, User, PantryItem } from '@/types/index';
+
+export const mockUser: User = {
+  id: '1',
+  name: 'Ahmad Al-Rashid',
+  email: 'ahmad@example.com',
+  avatar: '/lovable-uploads/3478e6c6-66b6-44b8-9f16-0426e1989ab2.png',
+  dietaryPreferences: ['Halal', 'No Pork'],
+  cuisinePreferences: ['Middle Eastern', 'Mediterranean'],
+  allergies: ['Nuts'],
+  chefAvatar: '/lovable-uploads/9b05b1e3-4b54-4a1e-9961-e5d2a7da7672.png',
+  nutritionalGoals: {
+    calories: 2000,
+    protein: 150
+  }
+};
+
+export const categories = [
+  'Appetizers',
+  'Main Course',
+  'Desserts',
+  'Beverages',
+  'Salads',
+  'Soups'
+];
+
+export const cuisines = [
+  'Italian',
+  'Middle Eastern',
+  'Asian',
+  'Mexican',
+  'Mediterranean',
+  'Indian'
+];
+
+export const difficulties = ['Easy', 'Medium', 'Hard'];
+
+export const dietaryOptions = [
+  'Vegetarian',
+  'Vegan',
+  'Gluten-Free',
+  'Halal',
+  'Keto',
+  'Low-Carb'
+];
 
 export const mockRecipes: Recipe[] = [
   {
     id: '1',
     title: 'Mediterranean Quinoa Bowl',
     name: 'Mediterranean Quinoa Bowl',
-    description: 'A healthy and flavorful quinoa bowl with Mediterranean ingredients',
-    image: '/placeholder.svg',
+    description: 'A healthy and delicious quinoa bowl with Mediterranean flavors',
+    image: '/lovable-uploads/3478e6c6-66b6-44b8-9f16-0426e1989ab2.png',
     cookingTime: 25,
-    prepTime: 10,
-    cookTime: 15,
-    servings: 2,
+    prepTime: 15,
+    cookTime: 20,
+    servings: 4,
     difficulty: 'Easy',
     rating: 4.5,
-    ratingCount: 128,
-    isFavorite: true,
-    premium: false,
-    tags: ['Mediterranean', 'Healthy', 'Vegetarian'],
-    ingredients: [
-      '1 cup quinoa',
-      '2 cups vegetable broth',
-      '1 cucumber, diced',
-      '1 cup cherry tomatoes',
-      '1/2 red onion, sliced',
-      '1/4 cup olives',
-      '1/4 cup feta cheese',
-      '2 tbsp olive oil',
-      '1 lemon, juiced'
-    ],
-    instructions: [
-      'Cook quinoa in vegetable broth according to package instructions',
-      'Dice cucumber and halve cherry tomatoes',
-      'Slice red onion thinly',
-      'Combine all ingredients in a bowl',
-      'Drizzle with olive oil and lemon juice',
-      'Serve chilled'
-    ],
-    category: 'Bowl',
+    ratingCount: 123,
+    ingredients: ['Quinoa', 'Cucumber', 'Tomatoes', 'Feta cheese', 'Olive oil'],
+    instructions: ['Cook quinoa', 'Chop vegetables', 'Mix ingredients', 'Serve'],
+    category: 'Main Course',
     cuisine: 'Mediterranean',
     featured: true,
-    calories: 420,
-    protein: 15,
-    carbs: 65,
-    fat: 12,
-    fiber: 8,
+    premium: false,
+    isFavorite: false,
+    tags: ['healthy', 'vegetarian'],
+    calories: 350,
+    protein: 12,
+    carbs: 45,
+    fat: 8,
+    fiber: 6,
     nutritionalInfo: {
-      protein: 15,
-      carbs: 65,
-      fat: 12,
-      fiber: 8
+      protein: 12,
+      carbs: 45,
+      fat: 8,
+      fiber: 6
     }
   },
   {
     id: '2',
-    title: 'Chicken Tikka Masala',
-    name: 'Chicken Tikka Masala',
-    description: 'Creamy and spicy Indian curry with tender chicken',
-    image: '/placeholder.svg',
-    cookingTime: 45,
-    prepTime: 15,
-    cookTime: 30,
-    servings: 4,
-    difficulty: 'Medium',
-    rating: 4.8,
-    ratingCount: 256,
-    isFavorite: false,
-    premium: true,
-    tags: ['Indian', 'Spicy', 'Curry'],
-    ingredients: [
-      '2 lbs chicken breast, cubed',
-      '1 cup heavy cream',
-      '1 can tomato sauce',
-      '2 tbsp garam masala',
-      '1 tbsp ginger-garlic paste',
-      '1 onion, diced',
-      '2 tbsp oil',
-      'Salt to taste'
-    ],
-    instructions: [
-      'Marinate chicken with spices for 30 minutes',
-      'Cook chicken until golden brown',
-      'Sauté onions until translucent',
-      'Add tomato sauce and simmer',
-      'Add cream and cooked chicken',
-      'Simmer for 15 minutes and serve'
-    ],
-    category: 'Curry',
-    cuisine: 'Indian',
-    featured: true,
-    calories: 520,
-    protein: 35,
-    carbs: 12,
-    fat: 38,
-    fiber: 3,
-    nutritionalInfo: {
-      protein: 35,
-      carbs: 12,
-      fat: 38,
-      fiber: 3
-    }
-  },
-  {
-    id: '3',
-    title: 'Classic Caesar Salad',
-    name: 'Classic Caesar Salad',
-    description: 'Traditional Caesar salad with homemade dressing',
-    image: '/placeholder.svg',
-    cookingTime: 15,
+    title: 'Spicy Chicken Tacos',
+    name: 'Spicy Chicken Tacos',
+    description: 'Delicious spicy chicken tacos with fresh toppings',
+    image: '/lovable-uploads/fe3b59a8-1853-4e9f-90d0-2c00d1a21d78.png',
+    cookingTime: 30,
     prepTime: 10,
-    cookTime: 5,
-    servings: 2,
-    difficulty: 'Easy',
-    rating: 4.2,
+    cookTime: 20,
+    servings: 6,
+    difficulty: 'Medium',
+    rating: 4.7,
     ratingCount: 89,
-    isFavorite: true,
-    premium: false,
-    tags: ['Salad', 'Quick', 'Italian'],
-    ingredients: [
-      '1 head romaine lettuce',
-      '1/4 cup parmesan cheese',
-      '1/2 cup croutons',
-      '2 tbsp caesar dressing',
-      '1 lemon, juiced',
-      'Black pepper to taste'
-    ],
-    instructions: [
-      'Wash and chop romaine lettuce',
-      'Toss with caesar dressing',
-      'Add croutons and parmesan',
-      'Finish with lemon juice and pepper',
-      'Serve immediately'
-    ],
-    category: 'Salad',
-    cuisine: 'Italian',
+    ingredients: ['Chicken breast', 'Tortillas', 'Lettuce', 'Tomatoes', 'Cheese'],
+    instructions: ['Season chicken', 'Cook chicken', 'Warm tortillas', 'Assemble tacos'],
+    category: 'Main Course',
+    cuisine: 'Mexican',
     featured: false,
-    calories: 280,
-    protein: 8,
-    carbs: 15,
-    fat: 22,
+    premium: true,
+    isFavorite: true,
+    tags: ['spicy', 'protein'],
+    calories: 420,
+    protein: 25,
+    carbs: 35,
+    fat: 15,
     fiber: 4,
     nutritionalInfo: {
-      protein: 8,
-      carbs: 15,
-      fat: 22,
+      protein: 25,
+      carbs: 35,
+      fat: 15,
       fiber: 4
     }
   }
@@ -157,97 +122,25 @@ export const mockPantryItems: PantryItem[] = [
     unit: 'cups',
     category: 'Grains',
     expiryDate: '2024-12-31',
-    purchaseDate: '2024-01-15',
-    location: 'Pantry'
+    addedDate: '2024-01-15',
+    ingredient: {
+      id: 'ing-1',
+      name: 'Quinoa',
+      category: 'Grains'
+    }
   },
   {
     id: '2',
-    name: 'Chicken Breast',
-    quantity: 1.5,
-    unit: 'lbs',
-    category: 'Meat',
-    expiryDate: '2024-06-02',
-    purchaseDate: '2024-05-28',
-    location: 'Refrigerator'
-  },
-  {
-    id: '3',
-    name: 'Heavy Cream',
+    name: 'Olive Oil',
     quantity: 1,
-    unit: 'cup',
-    category: 'Dairy',
-    expiryDate: '2024-06-01',
-    purchaseDate: '2024-05-25',
-    location: 'Refrigerator'
-  },
-  {
-    id: '4',
-    name: 'Tomatoes',
-    quantity: 6,
-    unit: 'pieces',
-    category: 'Vegetables',
-    expiryDate: '2024-05-31',
-    purchaseDate: '2024-05-27',
-    location: 'Counter'
-  },
-  {
-    id: '5',
-    name: 'Lettuce',
-    quantity: 1,
-    unit: 'head',
-    category: 'Vegetables',
-    expiryDate: '2024-05-30',
-    purchaseDate: '2024-05-26',
-    location: 'Refrigerator'
+    unit: 'bottle',
+    category: 'Oils',
+    expiryDate: '2025-06-01',
+    addedDate: '2024-01-10',
+    ingredient: {
+      id: 'ing-2',
+      name: 'Olive Oil',
+      category: 'Oils'
+    }
   }
-];
-
-export const mockUser: User = {
-  id: '1',
-  name: 'John Doe',
-  email: 'john@example.com',
-  avatar: '/placeholder.svg',
-  preferences: {
-    dietaryRestrictions: ['Vegetarian'],
-    allergies: ['Nuts'],
-    favoritesCuisines: ['Mediterranean', 'Italian'],
-    skillLevel: 'Intermediate',
-    language: 'en'
-  }
-};
-
-export const categories = [
-  'Mediterranean',
-  'Italian',
-  'Indian',
-  'Asian',
-  'Mexican',
-  'American',
-  'French',
-  'Thai'
-];
-
-export const cuisines = [
-  'Mediterranean',
-  'Italian',
-  'Indian',
-  'Asian',
-  'Mexican',
-  'American',
-  'French',
-  'Thai',
-  'Chinese',
-  'Japanese'
-];
-
-export const difficulties = ['Easy', 'Medium', 'Hard'];
-
-export const dietaryOptions = [
-  'Vegetarian',
-  'Vegan',
-  'Gluten-Free',
-  'Dairy-Free',
-  'Keto',
-  'Paleo',
-  'Low-Carb'
 ];
