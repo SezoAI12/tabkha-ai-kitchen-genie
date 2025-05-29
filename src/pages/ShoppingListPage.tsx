@@ -1,3 +1,4 @@
+
 // src/pages/ShoppingListPage.tsx
 import React, { useState, useEffect } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
@@ -8,7 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ShoppingBag, Plus, Trash2, Share2, Search, Filter, Edit3, Check, Printer } from 'lucide-react'; // Import Printer icon
+import { ShoppingBag, Plus, Trash2, Share2, Search, Filter, Edit3, Check, Printer } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRTL } from '@/contexts/RTLContext';
@@ -27,7 +28,7 @@ const initialItems = [
 
 export default function ShoppingListPage() {
   const { toast } = useToast();
-  const { t } = useRTL(); // Assuming t is your translation function
+  const { t } = useRTL();
   const [items, setItems] = useState(initialItems);
   const [newItemName, setNewItemName] = useState('');
   const [newItemQuantity, setNewItemQuantity] = useState('');
@@ -301,8 +302,8 @@ export default function ShoppingListPage() {
         {/* Header Card with Progress and Actions */}
         <Card className="bg-gradient-to-r from-wasfah-bright-teal to-wasfah-teal text-white">
           <CardHeader className="pb-2">
-            <div className="flex items-start justify-between"> {/* Use items-start for better alignment */}
-              <div className="flex items-center space-x-3 rtl:space-x-reverse"> {/* Add RTL support */}
+            <div className="flex items-start justify-between">
+              <div className="flex items-center space-x-3 rtl:space-x-reverse">
                 <div className="p-2 bg-white/20 rounded-lg">
                   <ShoppingBag className="h-6 w-6" />
                 </div>
@@ -313,28 +314,27 @@ export default function ShoppingListPage() {
                   </p>
                 </div>
               </div>
-              {/* Share and Print Buttons */}
-              <div className="flex space-x-2 rtl:space-x-reverse"> {/* Add RTL support */}
-                 <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-white border-white/30 hover:bg-white/20"
-                    onClick={handleShareList}
-                    disabled={items.length === 0} // Disable if list is empty
-                 >
-                    <Share2 className="h-4 w-4" /> {/* Removed mr-2 to keep icon only for sm size */}
-                    <span className="hidden sm:inline ml-2 rtl:mr-2">{t('Share', 'مشاركة')}</span> {/* Show text on larger screens */}
-                 </Button>
-                 <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-white border-white/30 hover:bg-white/20"
-                    onClick={handlePrintList}
-                    disabled={items.length === 0} // Disable if list is empty
-                 >
-                    <Printer className="h-4 w-4" /> {/* Removed mr-2 */}
-                    <span className="hidden sm:inline ml-2 rtl:mr-2">{t('Print', 'طباعة')}</span> {/* Show text on larger screens */}
-                 </Button>
+              <div className="flex space-x-2 rtl:space-x-reverse">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white border-white/30 hover:bg-white/20"
+                  onClick={handleShareList}
+                  disabled={items.length === 0}
+                >
+                  <Share2 className="h-4 w-4" />
+                  <span className="hidden sm:inline ml-2 rtl:mr-2">{t('Share', 'مشاركة')}</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white border-white/30 hover:bg-white/20"
+                  onClick={handlePrintList}
+                  disabled={items.length === 0}
+                >
+                  <Printer className="h-4 w-4" />
+                  <span className="hidden sm:inline ml-2 rtl:mr-2">{t('Print', 'طباعة')}</span>
+                </Button>
               </div>
             </div>
           </CardHeader>
@@ -359,7 +359,6 @@ export default function ShoppingListPage() {
           <Button
             onClick={() => {
                 setShowAddForm(!showAddForm);
-                // Reset form fields when toggling
                 if (!showAddForm) {
                     setEditingItemId(null);
                     setNewItemName('');
@@ -371,28 +370,18 @@ export default function ShoppingListPage() {
             }}
             className="bg-wasfah-bright-teal hover:bg-wasfah-teal h-12"
           >
-            <Plus className="h-4 w-4 mr-2 rtl:ml-2" /> {/* Add RTL support */}
-            {editingItemId ? t('Edit Item', 'تعديل عنصر') : t('Add Item', 'إضافة عنصر')} {/* Update button text */}
+            <Plus className="h-4 w-4 mr-2 rtl:ml-2" />
+            {editingItemId ? t('Edit Item', 'تعديل عنصر') : t('Add Item', 'إضافة عنصر')}
           </Button>
           <Button
             variant="outline"
             onClick={handleRemoveChecked}
             className="h-12 border-red-200 text-red-600 hover:bg-red-50"
-            disabled={completedCount === 0} // Disable if no items are checked
+            disabled={completedCount === 0}
           >
-            <Trash2 className="h-4 w-4 mr-2 rtl:ml-2" /> {/* Add RTL support */}
+            <Trash2 className="h-4 w-4 mr-2 rtl:ml-2" />
             {t('Clear Checked', 'مسح المحدد')}
           </Button>
-           {/* Optional: Add a Clear All button */}
-           {/* <Button
-                variant="outline"
-                onClick={handleClearAll}
-                className="h-12 col-span-2 border-gray-200 text-gray-600 hover:bg-gray-50"
-                disabled={items.length === 0}
-            >
-                <Trash2 className="h-4 w-4 mr-2 rtl:ml-2" />
-                {t('Clear All', 'مسح الكل')}
-            </Button> */}
         </div>
 
         {/* Add/Edit Form */}
@@ -431,7 +420,7 @@ export default function ShoppingListPage() {
                           <SelectValue placeholder={t("Category", "الفئة")} />
                         </SelectTrigger>
                         <SelectContent>
-                          {categoryOptions.map(category => ( // Use categoryOptions
+                          {categoryOptions.map(category => (
                             <SelectItem key={category} value={category}>{category}</SelectItem>
                           ))}
                         </SelectContent>
@@ -447,7 +436,7 @@ export default function ShoppingListPage() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="flex justify-end space-x-2 rtl:space-x-reverse"> {/* Add RTL support */}
+                    <div className="flex justify-end space-x-2 rtl:space-x-reverse">
                       <Button
                         type="button"
                         variant="outline"
@@ -479,12 +468,12 @@ export default function ShoppingListPage() {
           <CardContent className="p-4">
             <div className="space-y-3">
               <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500 rtl:left-auto rtl:right-2" /> {/* Add RTL support */}
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500 rtl:left-auto rtl:right-2" />
                 <Input
                   placeholder={t('Search items...', 'البحث عن العناصر...')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-8 rtl:pr-8 rtl:pl-3" // Add RTL support
+                  className="pl-8 rtl:pr-8 rtl:pl-3"
                 />
               </div>
               <div className="grid grid-cols-3 gap-2">
@@ -539,7 +528,7 @@ export default function ShoppingListPage() {
               >
                 <Card className="overflow-hidden">
                   <CardContent className="p-4">
-                    <div className="flex items-center space-x-3 rtl:space-x-reverse"> {/* Add RTL support */}
+                    <div className="flex items-center space-x-3 rtl:space-x-reverse">
                       <Checkbox
                         checked={item.checked}
                         onCheckedChange={() => handleCheck(item.id)}
@@ -550,9 +539,9 @@ export default function ShoppingListPage() {
                           <h3 className={`font-medium ${item.checked ? 'line-through text-gray-500' : ''}`}>
                             {item.name}
                           </h3>
-                          <div className="flex items-center space-x-2 rtl:space-x-reverse"> {/* Add RTL support */}
+                          <div className="flex items-center space-x-2 rtl:space-x-reverse">
                             <Badge variant="outline" className={getPriorityColor(item.priority)}>
-                              {t(item.priority, item.priority)} {/* Assuming priority names are translatable */}
+                              {t(item.priority, item.priority)}
                             </Badge>
                             <Button
                               variant="ghost"
@@ -570,7 +559,7 @@ export default function ShoppingListPage() {
                           </p>
                           {item.checked && (
                             <div className="flex items-center text-green-600 text-xs">
-                              <Check className="h-3 w-3 mr-1 rtl:ml-1 rtl:mr-0" /> {/* Add RTL support */}
+                              <Check className="h-3 w-3 mr-1 rtl:ml-1 rtl:mr-0" />
                               {t('Completed', 'مكتمل')}
                             </div>
                           )}
@@ -588,4 +577,25 @@ export default function ShoppingListPage() {
           <Card>
             <CardContent className="p-8 text-center">
               <ShoppingBag className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-              <p className="text
+              <p className="text-gray-500">{t('No items found', 'لم يتم العثور على عناصر')}</p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </PageContainer>
+  );
+}
+
+// Sample shopping list data
+const initialItems = [
+  { id: '1', name: 'Chicken breast', quantity: 500, unit: 'g', category: 'Meat', checked: false, dateAdded: new Date(), priority: 'high' },
+  { id: '2', name: 'Olive oil', quantity: 1, unit: 'bottle', category: 'Oils', checked: false, dateAdded: new Date(), priority: 'medium' },
+  { id: '3', name: 'Garlic', quantity: 5, unit: 'cloves', category: 'Vegetables', checked: false, dateAdded: new Date(), priority: 'low' },
+  { id: '4', name: 'Onions', quantity: 2, unit: '', category: 'Vegetables', checked: true, dateAdded: new Date(), priority: 'medium' },
+  { id: '5', name: 'Rice', quantity: 1, unit: 'kg', category: 'Grains', checked: false, dateAdded: new Date(), priority: 'high' },
+  { id: '6', name: 'Tomatoes', quantity: 4, unit: '', category: 'Vegetables', checked: false, dateAdded: new Date(), priority: 'medium' },
+  { id: '7', name: 'Greek yogurt', quantity: 500, unit: 'g', category: 'Dairy', checked: true, dateAdded: new Date(), priority: 'low' },
+  { id: '8', name: 'Lemons', quantity: 3, unit: '', category: 'Fruits', checked: false, dateAdded: new Date(), priority: 'low' },
+];
+
+// Handler functions would need to be added back to the component scope
