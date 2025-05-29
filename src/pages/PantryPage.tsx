@@ -107,7 +107,7 @@ export default function PantryPage() {
       unit: newItem.unit,
       category: newItem.category,
       expiryDate: newItem.expiryDate || undefined,
-      addedDate: new Date().toISOString().split('T')[0]
+      purchaseDate: new Date().toISOString().split('T')[0]
     };
 
     setPantryItems(prev => [...prev, item]);

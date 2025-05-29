@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Recipe } from '@/types/index';
@@ -128,7 +127,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
                         className="w-4 h-4 text-wasfah-bright-teal"
                       />
                       <span className={checkedIngredients[index] ? 'line-through text-gray-500' : ''}>
-                        {ingredient}
+                        {ingredient.amount} {ingredient.unit} {ingredient.name}
                       </span>
                     </div>
                   ))}
@@ -165,15 +164,15 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
                     <div className="text-sm text-gray-600">Calories</div>
                   </div>
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <div className="text-2xl font-bold text-wasfah-deep-teal">{recipe.nutritionalInfo.protein}g</div>
+                    <div className="text-2xl font-bold text-wasfah-deep-teal">{recipe.nutritionalInfo?.protein}g</div>
                     <div className="text-sm text-gray-600">Protein</div>
                   </div>
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <div className="text-2xl font-bold text-wasfah-deep-teal">{recipe.nutritionalInfo.carbs}g</div>
+                    <div className="text-2xl font-bold text-wasfah-deep-teal">{recipe.nutritionalInfo?.carbs}g</div>
                     <div className="text-sm text-gray-600">Carbs</div>
                   </div>
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <div className="text-2xl font-bold text-wasfah-deep-teal">{recipe.nutritionalInfo.fat}g</div>
+                    <div className="text-2xl font-bold text-wasfah-deep-teal">{recipe.nutritionalInfo?.fat}g</div>
                     <div className="text-sm text-gray-600">Fat</div>
                   </div>
                 </div>
@@ -185,4 +184,3 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
     </div>
   );
 };
-

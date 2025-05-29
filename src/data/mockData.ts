@@ -101,7 +101,7 @@ export const mockPantryItems: PantryItem[] = [
     category: 'Dairy',
     quantity: 1,
     unit: 'liter',
-    expiryDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000) // 2 days from now
+    expiryDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 2 days from now
   },
   {
     id: '2',
@@ -109,7 +109,7 @@ export const mockPantryItems: PantryItem[] = [
     category: 'Bakery',
     quantity: 1,
     unit: 'loaf',
-    expiryDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000) // 1 day from now
+    expiryDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 1 day from now
   },
   {
     id: '3',
@@ -117,7 +117,7 @@ export const mockPantryItems: PantryItem[] = [
     category: 'Dairy',
     quantity: 12,
     unit: 'pieces',
-    expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days from now
+    expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 7 days from now
   }
 ];
 
@@ -188,5 +188,13 @@ export const mockUser = {
     allergies: [],
     favoritesCuisines: ['Italian', 'Asian'],
     cookingSkillLevel: 'Intermediate' as const
+  },
+  dietaryPreferences: ['vegetarian'],
+  cuisinePreferences: ['Italian', 'Asian'],
+  allergies: ['nuts'],
+  chefAvatar: 'The Grill Master',
+  nutritionalGoals: {
+    calories: 2000,
+    protein: 120
   }
 };

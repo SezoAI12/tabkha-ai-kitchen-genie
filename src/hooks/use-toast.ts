@@ -7,6 +7,9 @@ export interface ToastData {
   description?: React.ReactNode
   action?: React.ReactElement
   variant?: "default" | "destructive"
+  duration?: number
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 const TOAST_LIMIT = 1

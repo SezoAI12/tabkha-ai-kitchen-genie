@@ -48,6 +48,14 @@ export interface User {
   name: string;
   avatar?: string;
   preferences?: UserPreferences;
+  dietaryPreferences?: string[];
+  cuisinePreferences?: string[];
+  allergies?: string[];
+  chefAvatar?: string;
+  nutritionalGoals?: {
+    calories: number;
+    protein: number;
+  };
 }
 
 export interface UserPreferences {
@@ -63,8 +71,8 @@ export interface PantryItem {
   category: string;
   quantity: number;
   unit: string;
-  expiryDate?: Date;
-  purchaseDate?: Date;
+  expiryDate?: string; // Change to string for easier handling
+  purchaseDate?: string; // Change to string for easier handling
 }
 
 export interface MealPlan {
@@ -83,4 +91,6 @@ export interface Meal {
   recipe?: Recipe;
   calories?: number;
   planned: boolean;
+  image?: string;
+  prepTime?: number;
 }
