@@ -36,6 +36,7 @@ class AdminAuth {
   logout(): void {
     this.currentUser = null;
     localStorage.removeItem('adminUser');
+    localStorage.removeItem('adminRole');
   }
 
   getCurrentUser(): AdminUser | null {
@@ -77,3 +78,38 @@ class AdminAuth {
 
 export const adminAuth = new AdminAuth();
 
+// Export additional functions needed by components
+export const adminLogout = () => {
+  adminAuth.logout();
+};
+
+export const isAdminAuthenticated = () => {
+  return adminAuth.isAuthenticated();
+};
+
+export const getAdminRole = (): 'admin' | 'superadmin' | null => {
+  const user = adminAuth.getCurrentUser();
+  return user?.role || null;
+};
+
+export const verifyAdminCredentials = async (email: string, password: string) => {
+  // Mock verification based on email
+  if (email === 'admin@wasfahai.com' && password === 'admin123') {
+    return { success: true, role: 'admin' as const };
+  } else if (email === 'superadmin@wasfahai.com' && password === 'superadmin123') {
+    return { success: true, role: 'superadmin' as const };
+  }
+  return { success: false, role: null };
+};
+
+export const setAdminAuth = (role: 'admin' | 'superadmin') => {
+  localStorage.setItem('adminRole', role);
+  // Create a mock user based on role
+  const user: AdminUser = {
+    id: role === 'superadmin' ? '2' : '1',
+    username: role === 'superadmin' ? 'superadmin' : 'admin',
+    role: role
+  };
+  localStorage.setItem('adminUser', JSON.stringify(user));
+  adminAuth['currentUser'] = user;
+};
