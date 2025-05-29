@@ -1,9 +1,12 @@
 
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 interface RTLContextType {
   isRTL: boolean;
-  t: (key: string) => string;
+  t: (key: string, options?: any) => string;
+  language?: string;
+  setLanguage?: (lang: string) => void;
+  direction?: 'ltr' | 'rtl';
 }
 
 const RTLContext = createContext<RTLContextType>({
@@ -16,7 +19,7 @@ export const useRTL = () => useContext(RTLContext);
 // Simple translation hook
 export const useTranslation = () => {
   return {
-    t: (key: string) => key, // Simple fallback - returns the key as translation
+    t: (key: string, options?: any) => key, // Simple fallback - returns the key as translation
   };
 };
 
@@ -29,10 +32,18 @@ export const RTLProvider: React.FC<RTLProviderProps> = ({
   children, 
   isRTL = false 
 }) => {
-  const t = (key: string) => key; // Simple translation function
+  const [language, setLanguage] = useState('en');
+  
+  const t = (key: string, options?: any) => key; // Simple translation function
 
   return (
-    <RTLContext.Provider value={{ isRTL, t }}>
+    <RTLContext.Provider value={{ 
+      isRTL, 
+      t, 
+      language, 
+      setLanguage, 
+      direction: isRTL ? 'rtl' : 'ltr' 
+    }}>
       {children}
     </RTLContext.Provider>
   );

@@ -19,6 +19,14 @@ export interface Recipe {
   tags?: string[];
   featured?: boolean;
   isFavorite?: boolean;
+  premium?: boolean;
+  ratingCount?: number;
+  nutritionalInfo?: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  };
 }
 
 export interface Ingredient {
@@ -61,6 +69,8 @@ export interface Meal {
   recipe?: Recipe;
   calories?: number;
   time?: string;
+  image?: string;
+  prepTime?: number;
 }
 
 export interface User {
@@ -71,5 +81,13 @@ export interface User {
     dietaryRestrictions: string[];
     allergies: string[];
     favoritesCuisines: string[];
+  };
+  dietaryPreferences?: string[];
+  cuisinePreferences?: string[];
+  allergies?: string[];
+  chefAvatar?: string;
+  nutritionalGoals?: {
+    calories: number;
+    protein: number;
   };
 }

@@ -1,5 +1,5 @@
 
-import { Recipe, Ingredient, PantryItem } from '@/types';
+import { Recipe, Ingredient, PantryItem, User } from '@/types';
 
 export const recipes: Recipe[] = [
   {
@@ -24,7 +24,15 @@ export const recipes: Recipe[] = [
     rating: 4.5,
     featured: true,
     isFavorite: false,
-    tags: ['pasta', 'italian', 'main-course']
+    tags: ['pasta', 'italian', 'main-course'],
+    premium: false,
+    ratingCount: 125,
+    nutritionalInfo: {
+      calories: 520,
+      protein: 22,
+      carbs: 45,
+      fat: 28
+    }
   },
   {
     id: '2',
@@ -48,7 +56,15 @@ export const recipes: Recipe[] = [
     rating: 4.7,
     featured: false,
     isFavorite: true,
-    tags: ['curry', 'indian', 'main-course']
+    tags: ['curry', 'indian', 'main-course'],
+    premium: true,
+    ratingCount: 89,
+    nutritionalInfo: {
+      calories: 380,
+      protein: 35,
+      carbs: 12,
+      fat: 18
+    }
   }
 ];
 
@@ -103,6 +119,25 @@ export const pantryItems: PantryItem[] = [
 
 // Export with both names for compatibility
 export const mockPantryItems = pantryItems;
+
+export const mockUser: User = {
+  id: '1',
+  name: 'Ahmed Hassan',
+  email: 'ahmed.hassan@example.com',
+  preferences: {
+    dietaryRestrictions: ['halal'],
+    allergies: ['nuts'],
+    favoritesCuisines: ['Middle Eastern', 'Italian']
+  },
+  dietaryPreferences: ['Vegetarian', 'Gluten-Free'],
+  cuisinePreferences: ['Italian', 'Mexican', 'Thai'],
+  allergies: ['Peanuts', 'Shellfish'],
+  chefAvatar: 'The Grill Master',
+  nutritionalGoals: {
+    calories: 2000,
+    protein: 150
+  }
+};
 
 export const categories = [
   'appetizers',
