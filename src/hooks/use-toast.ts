@@ -1,7 +1,7 @@
 
 import * as React from "react"
 
-export interface Toast {
+export interface ToastData {
   id: string
   title?: React.ReactNode
   description?: React.ReactNode
@@ -12,7 +12,7 @@ export interface Toast {
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 1000000
 
-type ToasterToast = Toast & {
+type ToasterToast = ToastData & {
   id: string
 }
 
@@ -136,9 +136,9 @@ function dispatch(action: Action) {
   })
 }
 
-type Toast = Omit<ToasterToast, "id">
+type ToastInput = Omit<ToasterToast, "id">
 
-function toast({ ...props }: Toast) {
+function toast({ ...props }: ToastInput) {
   const id = genId()
 
   const update = (props: ToasterToast) =>

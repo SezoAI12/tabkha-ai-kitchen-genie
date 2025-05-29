@@ -5,14 +5,17 @@ export const mockRecipes: Recipe[] = [
   {
     id: '1',
     name: 'Spaghetti Carbonara',
+    title: 'Spaghetti Carbonara',
     description: 'Classic Italian pasta dish with eggs, cheese, and pancetta',
     image: '/placeholder.svg',
     prepTime: 15,
     cookTime: 20,
+    cookingTime: 20,
     servings: 4,
     difficulty: 'Medium',
     cuisine: 'Italian',
     rating: 4.8,
+    ratingCount: 245,
     ingredients: [
       { id: '1', name: 'Spaghetti', amount: 400, unit: 'g' },
       { id: '2', name: 'Eggs', amount: 4, unit: 'pieces' },
@@ -32,19 +35,32 @@ export const mockRecipes: Recipe[] = [
       carbs: 45,
       fat: 28
     },
-    tags: ['pasta', 'italian', 'dinner']
+    nutritionalInfo: {
+      calories: 520,
+      protein: 22,
+      carbs: 45,
+      fat: 28
+    },
+    calories: 520,
+    tags: ['pasta', 'italian', 'dinner'],
+    isFavorite: false,
+    featured: true,
+    premium: false
   },
   {
     id: '2',
     name: 'Chicken Stir Fry',
+    title: 'Chicken Stir Fry',
     description: 'Quick and healthy stir fry with vegetables',
     image: '/placeholder.svg',
     prepTime: 10,
     cookTime: 15,
+    cookingTime: 15,
     servings: 2,
     difficulty: 'Easy',
     cuisine: 'Asian',
     rating: 4.5,
+    ratingCount: 128,
     ingredients: [
       { id: '5', name: 'Chicken breast', amount: 300, unit: 'g' },
       { id: '6', name: 'Mixed vegetables', amount: 200, unit: 'g' },
@@ -64,7 +80,17 @@ export const mockRecipes: Recipe[] = [
       carbs: 15,
       fat: 18
     },
-    tags: ['chicken', 'healthy', 'quick']
+    nutritionalInfo: {
+      calories: 350,
+      protein: 35,
+      carbs: 15,
+      fat: 18
+    },
+    calories: 350,
+    tags: ['chicken', 'healthy', 'quick'],
+    isFavorite: true,
+    featured: false,
+    premium: false
   }
 ];
 
@@ -107,3 +133,60 @@ export const mockIngredients = [
   { id: '9', name: 'Olive oil', category: 'Oils' },
   { id: '10', name: 'Salt', category: 'Seasonings' }
 ];
+
+export const categories = [
+  'breakfast',
+  'lunch', 
+  'dinner',
+  'dessert',
+  'snack',
+  'appetizer',
+  'soup',
+  'salad',
+  'main',
+  'side'
+];
+
+export const cuisines = [
+  'Italian',
+  'Asian',
+  'Mexican',
+  'American',
+  'French',
+  'Indian',
+  'Mediterranean',
+  'Chinese',
+  'Japanese',
+  'Thai'
+];
+
+export const difficulties = [
+  'Easy',
+  'Medium', 
+  'Hard'
+];
+
+export const dietaryOptions = [
+  'vegetarian',
+  'vegan',
+  'gluten-free',
+  'dairy-free',
+  'keto',
+  'paleo',
+  'low-carb',
+  'halal',
+  'kosher'
+];
+
+export const mockUser = {
+  id: '1',
+  name: 'John Doe',
+  email: 'john@example.com',
+  avatar: '/placeholder.svg',
+  preferences: {
+    dietaryRestrictions: [],
+    allergies: [],
+    favoritesCuisines: ['Italian', 'Asian'],
+    cookingSkillLevel: 'Intermediate' as const
+  }
+};
