@@ -1,40 +1,40 @@
 {
-  "extends": "./tsconfig.json", // This ensures it inherits baseUrl and paths from the main tsconfig.json
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2023", "DOM", "DOM.Iterable"], // Essential for React (browser APIs)
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "skipLibCheck": true, // Recommended to skip type checking node_modules for speed
+    "skipLibCheck": true,
 
     /* Bundler mode */
-    "moduleResolution": "bundler", // Or "node" depending on your setup, "bundler" is common with Vite
+    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
-    "noEmit": true, // Vite handles emission
-    "jsx": "react-jsx", // Crucial for React components
+    "noEmit": true,
+    "jsx": "react-jsx",
 
-    /* Path mapping - These must be correctly picked up */
+    /* Path mapping - THESE MUST BE EFFECTIVE */
     "baseUrl": ".", // Relative to project root
     "paths": {
       "@/*": ["./src/*"] // Maps @/ to your src folder
     },
 
-    /* Linting/Strictness */
-    "strict": true, // Enables a wide range of type-checking, including noImplicitAny
-    "noUnusedLocals": false, // Set to 'true' for cleaner code after resolving errors
-    "noUnusedParameters": false, // Set to 'true' for cleaner code after resolving errors
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "src",              // <--- THIS IS CRUCIAL: Include your entire src directory
-    "src/**/*.ts",      // Include all TypeScript files
-    "src/**/*.tsx",     // Include all TypeScript React files
-    "src/**/*.d.ts",    // Include all declaration files (like types.d.ts)
-    "vite.config.ts"    // Include Vite config for type-checking
+    "src",              // <--- THIS IS ABSOLUTELY ESSENTIAL
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts",
+    "vite.config.ts"
   ],
   "exclude": [
-    "node_modules",     // Exclude node_modules from compilation
-    "dist"              // Exclude build output
+    "node_modules",
+    "dist"
   ]
 }
