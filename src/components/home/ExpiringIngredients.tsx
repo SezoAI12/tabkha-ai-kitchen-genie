@@ -1,93 +1,52 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Utensils } from 'lucide-react';
-import { PantryItem } from '@/types';
+import { Clock, AlertTriangle } from 'lucide-react';
+import { PantryItem } from '@/types/index';
+import { mockPantryItems } from '@/data/mockData';
 
-interface ExpiringIngredientsProps {
-  expiringItems?: PantryItem[];
-  onAddIngredient?: (itemName: string) => void;
-}
+export const ExpiringIngredients: React.FC = () => {
+  const today = new Date();
+  const expiringItems = mockPantryItems.filter(item => {
+    if (!item.expiryDate) return false;
+    const expiry = new Date(item.expiryDate);
+    const daysLeft = Math.round((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    return daysLeft >= 0 && daysLeft <= 3;
+  });
 
-export const ExpiringIngredients: React.FC<ExpiringIngredientsProps> = ({ 
-  expiringItems = [],
-  onAddIngredient 
-}) => {
-  // Mock expiring items if none provided
-  const mockExpiringItems: PantryItem[] = [
-    {
-      id: '1',
-      name: 'Tomatoes',
-      category: 'Vegetables',
-      quantity: 3,
-      unit: 'pieces',
-      expiryDate: '2025-01-30'
-    },
-    {
-      id: '2',
-      name: 'Bell Peppers',
-      category: 'Vegetables',
-      quantity: 2,
-      unit: 'pieces',
-      expiryDate: '2025-01-28'
-    },
-    {
-      id: '3',
-      name: 'Spinach',
-      category: 'Leafy Greens',
-      quantity: 1,
-      unit: 'bunch',
-      expiryDate: '2025-01-29'
-    }
-  ];
+  if (expiringItems.length === 0) {
+    return null;
+  }
 
-  const displayItems = expiringItems.length > 0 ? expiringItems : mockExpiringItems;
-  
-  if (displayItems.length === 0) return null;
-  
-  const handleAddIngredient = (itemName: string) => {
-    if (onAddIngredient) {
-      onAddIngredient(itemName);
-    }
-  };
-  
   return (
-    <div className="mb-6 animate-scale-in">
-      <div className="flex justify-between items-center mb-3">
-        <h2 className="text-lg font-bold text-wasfah-deep-teal">Cook with what you have</h2>
-        <Link to="/pantry">
-          <Button variant="link" className="text-wasfah-bright-teal p-0">
-            View All
-          </Button>
-        </Link>
-      </div>
-      <div className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-300">
-        <p className="text-sm text-gray-600 mb-3">
-          You have {displayItems.length} items expiring soon. Let's use them!
-        </p>
-        <div className="flex space-x-2 overflow-x-auto pb-2">
-          {displayItems.map((item, index) => (
-            <div
-              key={item.id}
-              className="px-3 py-2 bg-wasfah-light-gray rounded-md text-wasfah-deep-teal text-sm whitespace-nowrap flex-shrink-0 border border-gray-200 transform transition-all duration-300 hover:scale-105 hover:border-wasfah-bright-teal"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              {item.name}
+    <Card className="mb-4">
+      <CardContent className="p-4">
+        <div className="flex items-center space-x-2 mb-3">
+          <AlertTriangle size={20} className="text-wasfah-coral-red" />
+          <h3 className="font-bold text-wasfah-deep-teal">Expiring Soon</h3>
+        </div>
+        <div className="space-y-2">
+          {expiringItems.slice(0, 3).map(item => (
+            <div key={item.id} className="flex items-center justify-between p-2 bg-red-50 rounded-lg">
+              <div>
+                <p className="font-medium text-sm">{item.name}</p>
+                <p className="text-xs text-gray-500">{item.quantity} {item.unit}</p>
+              </div>
+              <div className="flex items-center text-xs text-wasfah-coral-red">
+                <Clock size={14} className="mr-1" />
+                {item.expiryDate && 
+                  Math.round((new Date(item.expiryDate).getTime() - today.getTime()) / (1000 * 60 * 60 * 24))} days
+              </div>
             </div>
           ))}
-          <button 
-            className="px-3 py-2 bg-wasfah-light-gray rounded-md text-wasfah-bright-teal text-sm font-medium whitespace-nowrap flex-shrink-0 border border-wasfah-bright-teal flex items-center transform transition-all duration-300 hover:scale-105 hover:bg-wasfah-bright-teal hover:text-white cursor-pointer"
-            onClick={() => handleAddIngredient("Custom Ingredient")}
-          >
-            + Add
-          </button>
         </div>
-        <Button className="w-full mt-3 bg-wasfah-bright-teal hover:bg-wasfah-teal text-white transition-all duration-300 transform hover:translate-y-[-1px]">
-          <Utensils size={16} className="mr-2" />
-          Find Recipes
-        </Button>
-      </div>
-    </div>
+        {expiringItems.length > 3 && (
+          <Button variant="outline" size="sm" className="w-full mt-3">
+            View All ({expiringItems.length})
+          </Button>
+        )}
+      </CardContent>
+    </Card>
   );
 };

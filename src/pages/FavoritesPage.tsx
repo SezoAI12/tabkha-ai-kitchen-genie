@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { RecipeGrid } from '@/components/recipe/RecipeGrid';
 import { CategoryFilters } from '@/components/recipe/CategoryFilters';
@@ -6,7 +7,7 @@ import { mockRecipes, categories } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
 import { Heart, Filter, SlidersHorizontal } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Recipe } from '@/types';
+import { Recipe } from '@/types/index';
 
 export default function FavoritesPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');

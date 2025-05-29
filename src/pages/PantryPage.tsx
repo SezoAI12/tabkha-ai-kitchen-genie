@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { mockPantryItems } from '@/data/mockData';
@@ -14,7 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { PantryItem } from '@/types';
+import { PantryItem } from '@/types/index';
 
 export default function PantryPage() {
   const [activeTab, setActiveTab] = useState('all');
