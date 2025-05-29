@@ -12,7 +12,7 @@ export interface Recipe {
   rating: number;
   ratingCount?: number; // Adding ratingCount
   cuisine: string;
-  ingredients: string[];
+  ingredients: Ingredient[]; // Changed from string[] to Ingredient[]
   instructions: string[];
   calories?: number;
   servings?: number;
@@ -56,10 +56,18 @@ export interface User {
   name: string;
   email: string;
   avatar?: string;
+  chefAvatar?: string; // Adding chefAvatar property
   preferences?: {
     diet: string[];
     allergies: string[];
     cuisine: string[];
+  };
+  dietaryPreferences?: string[]; // Adding dietaryPreferences
+  cuisinePreferences?: string[]; // Adding cuisinePreferences
+  allergies?: string[]; // Adding allergies
+  nutritionalGoals?: { // Adding nutritionalGoals
+    calories: number;
+    protein: number;
   };
 }
 
@@ -69,6 +77,9 @@ export interface Meal {
   type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
   recipe?: Recipe;
   time?: string;
+  image?: string; // Adding image property
+  prepTime?: string; // Adding prepTime property
+  calories?: number; // Adding calories property
 }
 
 export interface MealPlan {

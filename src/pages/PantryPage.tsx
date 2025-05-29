@@ -46,7 +46,7 @@ export default function PantryPage() {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [newItem, setNewItem] = useState<Partial<PantryItem>>({
     name: '',
-    quantity: 0,
+    quantity: '',
     unit: '',
     category: '',
     expiryDate: ''
@@ -109,13 +109,13 @@ export default function PantryPage() {
       category: newItem.category,
       expiryDate: newItem.expiryDate || '',
       addedDate: currentDate,
-      purchaseDate: currentDate
+      daysUntilExpiry: newItem.expiryDate ? getDaysUntilExpiry(newItem.expiryDate) : 0
     };
 
     setPantryItems(prev => [...prev, item]);
     setNewItem({
       name: '',
-      quantity: 0,
+      quantity: '',
       unit: '',
       category: '',
       expiryDate: ''

@@ -1,10 +1,54 @@
 
-import { Recipe, PantryItem, User } from '@/types/index';
+import { Recipe, PantryItem, User, Ingredient } from '@/types/index';
 
 export const categories = ['Italian', 'Asian', 'Mexican', 'American', 'Mediterranean', 'Indian'];
 export const cuisines = ['Italian', 'Asian', 'Mexican', 'American', 'Mediterranean', 'Indian', 'French', 'Chinese'];
 export const difficulties = ['Easy', 'Medium', 'Hard'];
 export const dietaryOptions = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Keto', 'Low-Carb'];
+
+// Mock ingredients for recipes
+const mockIngredients: Ingredient[] = [
+  {
+    id: '1',
+    name: 'Spaghetti',
+    quantity: '400',
+    unit: 'g',
+    amount: '400',
+    category: 'Pasta',
+  },
+  {
+    id: '2',
+    name: 'Eggs',
+    quantity: '4',
+    unit: 'pieces',
+    amount: '4',
+    category: 'Dairy',
+  },
+  {
+    id: '3',
+    name: 'Parmesan cheese',
+    quantity: '100',
+    unit: 'g',
+    amount: '100',
+    category: 'Dairy',
+  },
+  {
+    id: '4',
+    name: 'Pancetta',
+    quantity: '150',
+    unit: 'g',
+    amount: '150',
+    category: 'Meat',
+  },
+  {
+    id: '5',
+    name: 'Black pepper',
+    quantity: '1',
+    unit: 'tsp',
+    amount: '1',
+    category: 'Spices',
+  }
+];
 
 export const mockRecipes: Recipe[] = [
   {
@@ -20,7 +64,7 @@ export const mockRecipes: Recipe[] = [
     rating: 4.8,
     ratingCount: 123,
     cuisine: 'Italian',
-    ingredients: ['Spaghetti', 'Eggs', 'Parmesan cheese', 'Pancetta', 'Black pepper'],
+    ingredients: mockIngredients,
     instructions: ['Cook pasta', 'Prepare sauce', 'Combine and serve'],
     calories: 520,
     servings: 4,
@@ -48,7 +92,7 @@ export const mockRecipes: Recipe[] = [
     rating: 4.5,
     ratingCount: 89,
     cuisine: 'Asian',
-    ingredients: ['Chicken breast', 'Mixed vegetables', 'Soy sauce', 'Garlic', 'Ginger'],
+    ingredients: mockIngredients.slice(0, 3),
     instructions: ['Cut chicken', 'Stir fry vegetables', 'Add sauce and serve'],
     calories: 380,
     servings: 2,
@@ -76,7 +120,7 @@ export const mockRecipes: Recipe[] = [
     rating: 4.2,
     ratingCount: 45,
     cuisine: 'Modern',
-    ingredients: ['Bread', 'Avocado', 'Salt', 'Lemon juice', 'Red pepper flakes'],
+    ingredients: mockIngredients.slice(0, 2),
     instructions: ['Toast bread', 'Mash avocado', 'Spread and season'],
     calories: 250,
     servings: 1,
@@ -141,10 +185,18 @@ export const mockUser: User = {
   name: 'John Doe',
   email: 'john.doe@example.com',
   avatar: '/placeholder.svg',
+  chefAvatar: 'The Grill Master',
   preferences: {
     diet: ['Vegetarian'],
     allergies: ['Nuts'],
     cuisine: ['Italian', 'Mediterranean']
+  },
+  dietaryPreferences: ['Vegetarian', 'Gluten-Free'],
+  cuisinePreferences: ['Italian', 'Mediterranean'],
+  allergies: ['Nuts', 'Shellfish'],
+  nutritionalGoals: {
+    calories: 2000,
+    protein: 150
   }
 };
 

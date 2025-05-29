@@ -24,20 +24,30 @@ export const login = (isAdminUser: boolean = false, isSuperAdminUser: boolean = 
 export const adminLogout = logout; // Alias for logout
 export const isAdminAuthenticated = () => isAdmin() || isSuperAdmin();
 export const getAdminRole = () => {
-  if (isSuperAdmin()) return 'super_admin';
+  if (isSuperAdmin()) return 'superadmin'; // Changed to match expected type
   if (isAdmin()) return 'admin';
   return null;
 };
 
 export const verifyAdminCredentials = (username: string, password: string) => {
   // Mock verification - in real app this would validate against backend
-  return username === 'admin' && password === 'admin123';
+  const result = { success: false, role: null as 'admin' | 'superadmin' | null };
+  
+  if (username === 'admin@wasfahai.com' && password === 'admin123') {
+    result.success = true;
+    result.role = 'admin';
+  } else if (username === 'superadmin@wasfahai.com' && password === 'superadmin123') {
+    result.success = true;
+    result.role = 'superadmin';
+  }
+  
+  return result;
 };
 
-export const setAdminAuth = (role: 'admin' | 'super_admin') => {
+export const setAdminAuth = (role: 'admin' | 'superadmin') => {
   if (role === 'admin') {
     localStorage.setItem('isAdmin', 'true');
-  } else if (role === 'super_admin') {
+  } else if (role === 'superadmin') {
     localStorage.setItem('isSuperAdmin', 'true');
   }
 };
