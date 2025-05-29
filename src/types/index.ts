@@ -4,7 +4,7 @@ export interface Recipe {
   name: string;
   title?: string; // For backward compatibility
   description: string;
-  ingredients: string[];
+  ingredients: string[] | IngredientItem[];
   instructions: string[];
   prepTime: number;
   cookTime: number;
@@ -27,6 +27,12 @@ export interface Recipe {
     carbs: number;
     fat: number;
   };
+}
+
+export interface IngredientItem {
+  name: string;
+  amount: number;
+  unit: string;
 }
 
 export interface Ingredient {

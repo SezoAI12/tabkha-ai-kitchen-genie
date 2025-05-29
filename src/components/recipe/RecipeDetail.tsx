@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Recipe } from '@/types/index';
+import { Recipe, IngredientItem } from '@/types/index';
 import { Clock, Users, ChefHat, Star, Heart, Bookmark, Plus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -28,13 +28,21 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
     setCheckedIngredients(newChecked);
   };
 
+  // Helper function to render ingredient text
+  const renderIngredient = (ingredient: string | IngredientItem) => {
+    if (typeof ingredient === 'string') {
+      return ingredient;
+    }
+    return `${ingredient.amount} ${ingredient.unit} ${ingredient.name}`;
+  };
+
   return (
     <div className="bg-white">
       {/* Hero Image */}
       <div className="relative h-80">
         <img
           src={recipe.image}
-          alt={recipe.title}
+          alt={recipe.name}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
@@ -49,14 +57,14 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
               <Badge className="bg-yellow-500/90 text-white">Premium</Badge>
             )}
           </div>
-          <h1 className="text-3xl font-bold mb-2">{recipe.title}</h1>
+          <h1 className="text-3xl font-bold mb-2">{recipe.name}</h1>
           <p className="text-lg text-gray-200 mb-4">{recipe.description}</p>
           
           {/* Quick Stats */}
           <div className="flex items-center space-x-6 text-sm">
             <div className="flex items-center">
               <Clock size={16} className="mr-2" />
-              <span>{recipe.cookingTime} mins</span>
+              <span>{recipe.cookTime} mins</span>
             </div>
             <div className="flex items-center">
               <Users size={16} className="mr-2" />
@@ -127,7 +135,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
                         className="w-4 h-4 text-wasfah-bright-teal"
                       />
                       <span className={checkedIngredients[index] ? 'line-through text-gray-500' : ''}>
-                        {ingredient.amount} {ingredient.unit} {ingredient.name}
+                        {renderIngredient(ingredient)}
                       </span>
                     </div>
                   ))}

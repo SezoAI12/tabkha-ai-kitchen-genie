@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,7 +28,7 @@ import {
   Edit,
   X
 } from 'lucide-react';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 import {
   Dialog,
   DialogContent,
@@ -37,43 +38,58 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 
+interface NewPantryItem {
+  name: string;
+  quantity: number;
+  unit: string;
+  category: string;
+  expiryDate: string;
+}
+
 export default function PantryPage() {
   const [pantryItems, setPantryItems] = useState<PantryItem[]>(mockPantryItems);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('name');
   const [showAddDialog, setShowAddDialog] = useState(false);
-  const [newItem, setNewItem] = useState<Partial<PantryItem>>({
+  const [newItem, setNewItem] = useState<NewPantryItem>({
     name: '',
-    quantity: '',
+    quantity: 0,
     unit: '',
     category: '',
     expiryDate: ''
   });
+  const { toast } = useToast();
 
   // Get unique categories
   const categories = useMemo(() => {
-    const cats = Array.from(new Set(pantryItems.map(item => item.category)));
+    const cats = Array.from(new Set(pantryItems.map(item => item.ingredient?.category || item.category || 'Other')));
     return ['All', ...cats.sort()];
   }, [pantryItems]);
 
   // Filter and sort items
   const filteredItems = useMemo(() => {
-    let items = pantryItems.filter(item => 
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (selectedCategory === 'All' || item.category === selectedCategory)
-    );
+    let items = pantryItems.filter(item => {
+      const itemName = item.ingredient?.name || item.name || '';
+      const itemCategory = item.ingredient?.category || item.category || 'Other';
+      return itemName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        (selectedCategory === 'All' || itemCategory === selectedCategory);
+    });
 
     items.sort((a, b) => {
       switch (sortBy) {
         case 'name':
-          return a.name.localeCompare(b.name);
+          const nameA = a.ingredient?.name || a.name || '';
+          const nameB = b.ingredient?.name || b.name || '';
+          return nameA.localeCompare(nameB);
         case 'expiry':
           if (!a.expiryDate) return 1;
           if (!b.expiryDate) return -1;
           return new Date(a.expiryDate).getTime() - new Date(b.expiryDate).getTime();
         case 'category':
-          return a.category.localeCompare(b.category);
+          const catA = a.ingredient?.category || a.category || 'Other';
+          const catB = b.ingredient?.category || b.category || 'Other';
+          return catA.localeCompare(catB);
         default:
           return 0;
       }
@@ -95,37 +111,49 @@ export default function PantryPage() {
 
   const handleAddItem = () => {
     if (!newItem.name || !newItem.quantity || !newItem.unit || !newItem.category) {
-      toast.error('Please fill in all required fields');
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
       return;
     }
 
     const currentDate = new Date().toISOString().split('T')[0];
     const item: PantryItem = {
       id: Date.now().toString(),
-      name: newItem.name,
+      ingredient: {
+        id: Date.now().toString(),
+        name: newItem.name,
+        category: newItem.category
+      },
       quantity: newItem.quantity,
       unit: newItem.unit,
-      category: newItem.category,
       expiryDate: newItem.expiryDate || '',
-      addedDate: currentDate,
-      daysUntilExpiry: newItem.expiryDate ? getDaysUntilExpiry(newItem.expiryDate) : 0
+      addedDate: currentDate
     };
 
     setPantryItems(prev => [...prev, item]);
     setNewItem({
       name: '',
-      quantity: '',
+      quantity: 0,
       unit: '',
       category: '',
       expiryDate: ''
     });
     setShowAddDialog(false);
-    toast.success('Item added to pantry');
+    toast({
+      title: "Success",
+      description: "Item added to pantry"
+    });
   };
 
   const handleDeleteItem = (id: string) => {
     setPantryItems(prev => prev.filter(item => item.id !== id));
-    toast.success('Item removed from pantry');
+    toast({
+      title: "Success",
+      description: "Item removed from pantry"
+    });
   };
 
   const getDaysUntilExpiry = (expiryDate: string) => {
@@ -170,7 +198,7 @@ export default function PantryPage() {
                   <Label htmlFor="name">Item Name</Label>
                   <Input
                     id="name"
-                    value={newItem.name || ''}
+                    value={newItem.name}
                     onChange={(e) => setNewItem(prev => ({ ...prev, name: e.target.value }))}
                     placeholder="e.g., Tomatoes"
                   />
@@ -182,14 +210,14 @@ export default function PantryPage() {
                       id="quantity"
                       type="number"
                       value={newItem.quantity || ''}
-                      onChange={(e) => setNewItem(prev => ({ ...prev, quantity: e.target.value }))}
+                      onChange={(e) => setNewItem(prev => ({ ...prev, quantity: Number(e.target.value) }))}
                       placeholder="e.g., 5"
                     />
                   </div>
                   <div>
                     <Label htmlFor="unit">Unit</Label>
                     <Select 
-                      value={newItem.unit || ''} 
+                      value={newItem.unit} 
                       onValueChange={(value) => setNewItem(prev => ({ ...prev, unit: value }))}
                     >
                       <SelectTrigger>
@@ -211,7 +239,7 @@ export default function PantryPage() {
                 <div>
                   <Label htmlFor="category">Category</Label>
                   <Select 
-                    value={newItem.category || ''} 
+                    value={newItem.category} 
                     onValueChange={(value) => setNewItem(prev => ({ ...prev, category: value }))}
                   >
                     <SelectTrigger>
@@ -233,7 +261,7 @@ export default function PantryPage() {
                   <Input
                     id="expiry"
                     type="date"
-                    value={newItem.expiryDate || ''}
+                    value={newItem.expiryDate}
                     onChange={(e) => setNewItem(prev => ({ ...prev, expiryDate: e.target.value }))}
                   />
                 </div>
@@ -264,7 +292,7 @@ export default function PantryPage() {
                 {expiringItems.slice(0, 3).map((item: PantryItem) => (
                   <div key={item.id} className="flex items-center justify-between p-2 bg-white rounded-lg">
                     <div>
-                      <span className="font-medium">{item.name}</span>
+                      <span className="font-medium">{item.ingredient?.name || item.name}</span>
                       <span className="text-sm text-gray-500 ml-2">
                         {item.quantity} {item.unit}
                       </span>
@@ -331,14 +359,16 @@ export default function PantryPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredItems.map((item: PantryItem) => {
             const expiryStatus = getExpiryStatus(item.expiryDate);
+            const itemName = item.ingredient?.name || item.name || 'Unknown Item';
+            const itemCategory = item.ingredient?.category || item.category || 'Other';
             
             return (
               <Card key={item.id} className="relative">
                 <CardContent className="p-4">
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <h3 className="font-medium text-lg">{item.name}</h3>
-                      <p className="text-sm text-gray-500">{item.category}</p>
+                      <h3 className="font-medium text-lg">{itemName}</h3>
+                      <p className="text-sm text-gray-500">{itemCategory}</p>
                     </div>
                     <Button
                       variant="ghost"

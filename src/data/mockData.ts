@@ -1,12 +1,17 @@
-
-import { Recipe, Ingredient, PantryItem, User } from '@/types';
+import { Recipe, Ingredient, PantryItem, User, IngredientItem } from '@/types/index';
 
 export const recipes: Recipe[] = [
   {
     id: '1',
     name: 'Pasta Carbonara',
     description: 'Classic Italian pasta dish with eggs, cheese, and pancetta',
-    ingredients: ['Spaghetti', 'Eggs', 'Parmesan cheese', 'Pancetta', 'Black pepper'],
+    ingredients: [
+      { name: 'Spaghetti', amount: 400, unit: 'g' },
+      { name: 'Eggs', amount: 4, unit: 'pieces' },
+      { name: 'Parmesan cheese', amount: 100, unit: 'g' },
+      { name: 'Pancetta', amount: 150, unit: 'g' },
+      { name: 'Black pepper', amount: 1, unit: 'tsp' }
+    ] as IngredientItem[],
     instructions: [
       'Cook pasta according to package directions',
       'Fry pancetta until crispy',
@@ -38,7 +43,14 @@ export const recipes: Recipe[] = [
     id: '2',
     name: 'Chicken Tikka Masala',
     description: 'Creamy tomato-based curry with tender chicken pieces',
-    ingredients: ['Chicken breast', 'Tomato sauce', 'Cream', 'Spices', 'Onion', 'Garlic'],
+    ingredients: [
+      { name: 'Chicken breast', amount: 500, unit: 'g' },
+      { name: 'Tomato sauce', amount: 400, unit: 'ml' },
+      { name: 'Cream', amount: 200, unit: 'ml' },
+      { name: 'Spices', amount: 2, unit: 'tbsp' },
+      { name: 'Onion', amount: 1, unit: 'piece' },
+      { name: 'Garlic', amount: 3, unit: 'cloves' }
+    ] as IngredientItem[],
     instructions: [
       'Marinate chicken in spices',
       'Cook chicken until golden',
