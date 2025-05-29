@@ -44,7 +44,7 @@ export default function ShoppingListPage() {
 
   // Ensure 'Other' is always an option, and add existing categories
   const categories = [...new Set(items.map(item => item.category))].sort();
-  const categoryOptions = ['Other', ...categories]; // Add 'Other' first
+  const categoryOptions = ['Other', ...categories];
 
   const priorities = ['high', 'medium', 'low'];
 
@@ -81,8 +81,8 @@ export default function ShoppingListPage() {
     setNewItemName('');
     setNewItemQuantity('');
     setNewItemUnit('');
-    setNewItemCategory('Other'); // Reset to default 'Other'
-    setNewItemPriority('medium'); // Reset to default 'medium'
+    setNewItemCategory('Other');
+    setNewItemPriority('medium');
     setShowAddForm(false);
 
     toast({
@@ -116,7 +116,6 @@ export default function ShoppingListPage() {
          });
          return;
     }
-    // Optional: Add a confirmation dialog here before clearing all
     if (window.confirm(t("Are you sure you want to clear the entire list?", "هل أنت متأكد أنك تريد مسح القائمة بأكملها؟"))) {
         setItems([]);
         toast({
@@ -168,8 +167,8 @@ export default function ShoppingListPage() {
     setNewItemName('');
     setNewItemQuantity('');
     setNewItemUnit('');
-    setNewItemCategory('Other'); // Reset to default 'Other'
-    setNewItemPriority('medium'); // Reset to default 'medium'
+    setNewItemCategory('Other');
+    setNewItemPriority('medium');
     setShowAddForm(false);
 
     toast({
@@ -177,8 +176,6 @@ export default function ShoppingListPage() {
       description: t("Your item has been updated.", "تم تحديث العنصر."),
     });
   };
-
-  // --- New Share and Print Handlers ---
 
   const formatShoppingListText = () => {
     if (items.length === 0) {
@@ -197,17 +194,14 @@ export default function ShoppingListPage() {
     const listText = formatShoppingListText();
 
     if (navigator.share) {
-      // Use Web Share API if available
       try {
         await navigator.share({
           title: t('My Shopping List', 'قائمة التسوق الخاصة بي'),
           text: listText,
-          // url: window.location.href // Optional: share the page URL
         });
         console.log('Shopping list shared successfully');
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error sharing shopping list:', error);
-        // User might have cancelled, or sharing failed
         if (error.name !== 'AbortError') {
              toast({
                 title: t("Share Failed", "فشل المشاركة"),
@@ -217,7 +211,6 @@ export default function ShoppingListPage() {
         }
       }
     } else if (navigator.clipboard && navigator.clipboard.writeText) {
-      // Fallback to Copy to Clipboard if Web Share API is not available
       try {
         await navigator.clipboard.writeText(listText);
         toast({
@@ -233,7 +226,6 @@ export default function ShoppingListPage() {
         });
       }
     } else {
-      // Further fallback for very old browsers
       toast({
         title: t("Feature Not Supported", "الميزة غير مدعومة"),
         description: t("Sharing and copying are not supported by your browser.", "المشاركة والنسخ غير مدعومين في متصفحك."),
@@ -254,11 +246,8 @@ export default function ShoppingListPage() {
       title: t("Printing List", "طباعة القائمة"),
       description: t("Opening print dialog...", "جارٍ فتح مربع حوار الطباعة..."),
     });
-    window.print(); // Triggers the browser's print dialog
+    window.print();
   };
-
-  // --- End New Handlers ---
-
 
   const sortedItems = [...items].sort((a, b) => {
     if (sortOption === 'name') {
@@ -269,7 +258,6 @@ export default function ShoppingListPage() {
       const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
       return priorityOrder[b.priority] - priorityOrder[a.priority];
     } else if (sortOption === 'checked') {
-      // Unchecked items first, then checked
       if (a.checked === b.checked) return 0;
       return a.checked ? 1 : -1;
     }
@@ -585,17 +573,3 @@ export default function ShoppingListPage() {
     </PageContainer>
   );
 }
-
-// Sample shopping list data
-const initialItems = [
-  { id: '1', name: 'Chicken breast', quantity: 500, unit: 'g', category: 'Meat', checked: false, dateAdded: new Date(), priority: 'high' },
-  { id: '2', name: 'Olive oil', quantity: 1, unit: 'bottle', category: 'Oils', checked: false, dateAdded: new Date(), priority: 'medium' },
-  { id: '3', name: 'Garlic', quantity: 5, unit: 'cloves', category: 'Vegetables', checked: false, dateAdded: new Date(), priority: 'low' },
-  { id: '4', name: 'Onions', quantity: 2, unit: '', category: 'Vegetables', checked: true, dateAdded: new Date(), priority: 'medium' },
-  { id: '5', name: 'Rice', quantity: 1, unit: 'kg', category: 'Grains', checked: false, dateAdded: new Date(), priority: 'high' },
-  { id: '6', name: 'Tomatoes', quantity: 4, unit: '', category: 'Vegetables', checked: false, dateAdded: new Date(), priority: 'medium' },
-  { id: '7', name: 'Greek yogurt', quantity: 500, unit: 'g', category: 'Dairy', checked: true, dateAdded: new Date(), priority: 'low' },
-  { id: '8', name: 'Lemons', quantity: 3, unit: '', category: 'Fruits', checked: false, dateAdded: new Date(), priority: 'low' },
-];
-
-// Handler functions would need to be added back to the component scope
