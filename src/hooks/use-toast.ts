@@ -7,6 +7,7 @@ export interface Toast {
   description?: string
   action?: React.ReactNode
   variant?: 'default' | 'destructive'
+  duration?: number
 }
 
 interface ToastState {
@@ -75,6 +76,7 @@ type ToasterToast = Toast & {
   title?: string
   description?: string
   action?: React.ReactNode
+  duration?: number
 }
 
 function toast({ ...props }: Omit<ToasterToast, "id">) {
