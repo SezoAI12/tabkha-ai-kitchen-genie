@@ -1,3 +1,4 @@
+
 // src/pages/FindByIngredientsPage.tsx
 import React, { useState, ElementType } from 'react';
 import {
@@ -356,7 +357,7 @@ export default function FindByIngredientsPage() {
         {currentStep === 4 && (
           <SearchSummary
             selectedCategory={selectedCategory}
-            selectedSubcategory={selectedSubcategory}
+            selectedSubcategory={selectedSubcategory?.name || ''} // Pass only the name string instead of the full object
             // Pass 0 ingredient count if it's an alcoholic drink search, otherwise pass the actual count
             ingredientCount={showDrinkCustomizationForm ? 0 : addedIngredients.length}
             filterCount={Object.values(filters).filter(v => v).length}
