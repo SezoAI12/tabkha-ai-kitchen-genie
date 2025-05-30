@@ -1,40 +1,42 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Meal } from '@/types/index';
-import { Clock, Star } from 'lucide-react';
+import { Meal } from '@/types';
+import { Link } from 'react-router-dom';
 
 interface MealCardProps {
   meal: Meal;
 }
 
 export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
+  // Check if meal and recipe exist before accessing their properties
+  if (!meal || !meal.recipe) {
+    return (
+      <Card className="mb-3">
+        <CardContent className="p-3">
+          <p className="text-sm text-gray-500">Meal information unavailable</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="w-full">
-      <CardContent className="p-4">
-        <div className="flex items-center space-x-4">
-          <div className="w-16 h-16 rounded-md overflow-hidden">
-            <img 
-              src={meal.image || meal.recipe?.image || '/placeholder.svg'} 
-              alt={meal.name} 
-              className="object-cover w-full h-full" 
+    <Link to={`/recipe/${meal.recipe.id}`}>
+      <Card className="mb-3 hover:scale-105 transition-transform duration-300">
+        <CardContent className="p-0">
+          <div className="flex">
+            <div
+              className="w-24 h-24 bg-cover bg-center"
+              style={{ backgroundImage: `url(${meal.recipe.image})` }}
             />
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold">{meal.name}</h3>
-            <div className="flex items-center text-gray-500 space-x-2">
-              <Clock size={14} />
-              <span>{meal.prepTime || meal.recipe?.prepTime || 0} mins</span>
-              <span className="mx-1">•</span>
-              <span>{meal.calories || meal.recipe?.calories || 0} cal</span>
+            <div className="p-3 flex-1">
+              <h4 className="text-sm font-medium text-wasfah-bright-teal">{meal.type}</h4>
+              <h3 className="font-bold text-wasfah-deep-teal">{meal.recipe.title}</h3>
+              <p className="text-sm text-gray-500">{meal.recipe.calories} calories</p>
             </div>
-            <Button variant="secondary" size="sm" className="mt-2">
-              View Recipe
-            </Button>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </Link>
   );
 };
