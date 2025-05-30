@@ -1,42 +1,30 @@
 
 import { useState } from 'react';
-import { trackAIChefInteraction } from '@/components/analytics/GoogleAnalytics';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AIChefResponse {
   response: string;
-  type: 'recipe_suggestion' | 'cooking_advice' | 'ingredient_info' | 'error';
+  type: 'recipe_suggestion' | 'cooking_advice' | 'nutrition_info' | 'error';
 }
 
 export const useAIChef = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const askAIChef = async (query: string): Promise<AIChefResponse> => {
+  const askAIChef = async (query: string, context?: any): Promise<AIChefResponse> => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // This would call your Supabase Edge Function
-      const response = await fetch('/api/ai-chef', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ query }),
+      const { data, error } = await supabase.functions.invoke('ai-chef', {
+        body: { query, context }
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to get AI response');
-      }
+      if (error) throw error;
 
-      const data = await response.json();
-      
-      // Track the interaction
-      trackAIChefInteraction(query, data.type);
-      
       return data;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+    } catch (err: any) {
+      const errorMessage = err.message || 'Unknown error occurred';
       setError(errorMessage);
       
       return {

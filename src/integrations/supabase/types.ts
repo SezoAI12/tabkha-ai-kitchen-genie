@@ -39,6 +39,35 @@ export type Database = {
         }
         Relationships: []
       }
+      favorites: {
+        Row: {
+          created_at: string | null
+          id: string
+          recipe_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          recipe_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          recipe_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ingredient_images: {
         Row: {
           category: string | null
@@ -62,6 +91,319 @@ export type Database = {
           id?: string
           image_url?: string
           name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      ingredients: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          id: string
+          image_url: string | null
+          name: string
+          unit: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          unit?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          unit?: string | null
+        }
+        Relationships: []
+      }
+      meal_plan_meals: {
+        Row: {
+          created_at: string | null
+          id: string
+          meal_plan_id: string | null
+          meal_type: Database["public"]["Enums"]["meal_type"]
+          recipe_id: string | null
+          scheduled_time: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          meal_plan_id?: string | null
+          meal_type: Database["public"]["Enums"]["meal_type"]
+          recipe_id?: string | null
+          scheduled_time?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          meal_plan_id?: string | null
+          meal_type?: Database["public"]["Enums"]["meal_type"]
+          recipe_id?: string | null
+          scheduled_time?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meal_plan_meals_meal_plan_id_fkey"
+            columns: ["meal_plan_id"]
+            isOneToOne: false
+            referencedRelation: "meal_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meal_plan_meals_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meal_plans: {
+        Row: {
+          created_at: string | null
+          date: string
+          id: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          id?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          id?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      pantry_items: {
+        Row: {
+          created_at: string | null
+          expiry_date: string | null
+          id: string
+          ingredient_id: string | null
+          location: string | null
+          quantity: number
+          unit: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          expiry_date?: string | null
+          id?: string
+          ingredient_id?: string | null
+          location?: string | null
+          quantity: number
+          unit?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          expiry_date?: string | null
+          id?: string
+          ingredient_id?: string | null
+          location?: string | null
+          quantity?: number
+          unit?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pantry_items_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          allergies: string[] | null
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          cuisine_preferences: string[] | null
+          dietary_preferences: string[] | null
+          full_name: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          allergies?: string[] | null
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          cuisine_preferences?: string[] | null
+          dietary_preferences?: string[] | null
+          full_name?: string | null
+          id: string
+          updated_at?: string | null
+        }
+        Update: {
+          allergies?: string[] | null
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          cuisine_preferences?: string[] | null
+          dietary_preferences?: string[] | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      recipe_ingredients: {
+        Row: {
+          amount: number | null
+          id: string
+          ingredient_id: string | null
+          recipe_id: string | null
+          unit: string | null
+        }
+        Insert: {
+          amount?: number | null
+          id?: string
+          ingredient_id?: string | null
+          recipe_id?: string | null
+          unit?: string | null
+        }
+        Update: {
+          amount?: number | null
+          id?: string
+          ingredient_id?: string | null
+          recipe_id?: string | null
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_ingredients_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipe_ingredients_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipe_ratings: {
+        Row: {
+          created_at: string | null
+          id: string
+          rating: number | null
+          recipe_id: string | null
+          review: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          rating?: number | null
+          recipe_id?: string | null
+          review?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          rating?: number | null
+          recipe_id?: string | null
+          review?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_ratings_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipes: {
+        Row: {
+          author_id: string | null
+          calories: number | null
+          categories: string[] | null
+          cook_time: number | null
+          created_at: string | null
+          cuisine_type: string | null
+          description: string | null
+          difficulty: Database["public"]["Enums"]["difficulty_level"] | null
+          id: string
+          image_url: string | null
+          instructions: Json | null
+          is_verified: boolean | null
+          prep_time: number | null
+          servings: number | null
+          status: Database["public"]["Enums"]["recipe_status"] | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          author_id?: string | null
+          calories?: number | null
+          categories?: string[] | null
+          cook_time?: number | null
+          created_at?: string | null
+          cuisine_type?: string | null
+          description?: string | null
+          difficulty?: Database["public"]["Enums"]["difficulty_level"] | null
+          id?: string
+          image_url?: string | null
+          instructions?: Json | null
+          is_verified?: boolean | null
+          prep_time?: number | null
+          servings?: number | null
+          status?: Database["public"]["Enums"]["recipe_status"] | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          author_id?: string | null
+          calories?: number | null
+          categories?: string[] | null
+          cook_time?: number | null
+          created_at?: string | null
+          cuisine_type?: string | null
+          description?: string | null
+          difficulty?: Database["public"]["Enums"]["difficulty_level"] | null
+          id?: string
+          image_url?: string | null
+          instructions?: Json | null
+          is_verified?: boolean | null
+          prep_time?: number | null
+          servings?: number | null
+          status?: Database["public"]["Enums"]["recipe_status"] | null
+          tags?: string[] | null
+          title?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -131,15 +473,45 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _user_id: string
+          _role: Database["public"]["Enums"]["user_role"]
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      difficulty_level: "Easy" | "Medium" | "Hard"
+      meal_type: "breakfast" | "lunch" | "dinner" | "snack"
+      recipe_status: "draft" | "published" | "pending_review"
+      user_role: "user" | "admin" | "super_admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -254,6 +626,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      difficulty_level: ["Easy", "Medium", "Hard"],
+      meal_type: ["breakfast", "lunch", "dinner", "snack"],
+      recipe_status: ["draft", "published", "pending_review"],
+      user_role: ["user", "admin", "super_admin"],
+    },
   },
 } as const

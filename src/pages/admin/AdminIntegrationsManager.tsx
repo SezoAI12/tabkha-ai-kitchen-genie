@@ -48,7 +48,7 @@ const mockIntegrations: Integration[] = [
     icon: <Cpu className="w-6 h-6 text-green-600" />,
     isConnected: true,
     status: 'active',
-    lastSync: '5 minutes ago',
+    lastSync: '2 minutes ago',
     category: 'ai'
   },
   {
@@ -74,12 +74,22 @@ const mockIntegrations: Integration[] = [
   
   // Notifications
   {
+    id: 'resend',
+    name: 'Resend',
+    description: 'Email delivery service',
+    icon: <MessageSquare className="w-6 h-6 text-green-600" />,
+    isConnected: true,
+    status: 'active',
+    lastSync: '1 minute ago',
+    category: 'notifications'
+  },
+  {
     id: 'twilio',
     name: 'Twilio',
     description: 'SMS notifications',
     icon: <MessageSquare className="w-6 h-6 text-red-600" />,
-    isConnected: true,
-    status: 'error',
+    isConnected: false,
+    status: 'inactive',
     category: 'notifications'
   },
   {
@@ -112,7 +122,7 @@ const mockIntegrations: Integration[] = [
     category: 'social'
   },
   
-  // Existing integrations
+  // Payments
   {
     id: 'stripe',
     name: 'Stripe',
@@ -121,9 +131,8 @@ const mockIntegrations: Integration[] = [
       <path d="M14 8.5C14 8.5 14 4 9.5 4C5 4 5 8.5 5 8.5C5 8.5 5 13 9.5 13C14 13 14 8.5 14 8.5Z" stroke="#7A73FF" strokeWidth="2" />
       <path d="M19 15.5C19 15.5 19 11 14.5 11C10 11 10 15.5 10 15.5C10 15.5 10 20 14.5 20C19 20 19 15.5 19 15.5Z" stroke="#7A73FF" strokeWidth="2" />
     </svg>,
-    isConnected: true,
-    status: 'active',
-    lastSync: '15 minutes ago',
+    isConnected: false,
+    status: 'inactive',
     category: 'payments'
   },
 ];
@@ -142,17 +151,17 @@ const mockApiKeys: ApiKey[] = [
     id: '1',
     name: 'OpenAI Production',
     service: 'OpenAI',
-    key: 'sk-***********************************',
-    createdAt: '2025-03-15',
-    lastUsed: '5 minutes ago'
+    key: 'sk-proj-***********************************',
+    createdAt: '2025-01-30',
+    lastUsed: '2 minutes ago'
   },
   {
     id: '2',
-    name: 'Google Analytics',
-    service: 'Google Analytics',
-    key: 'G-***********',
-    createdAt: '2025-04-10',
-    lastUsed: '2 hours ago'
+    name: 'Resend API Key',
+    service: 'Resend',
+    key: 're_***********',
+    createdAt: '2025-01-30',
+    lastUsed: '1 minute ago'
   },
 ];
 
