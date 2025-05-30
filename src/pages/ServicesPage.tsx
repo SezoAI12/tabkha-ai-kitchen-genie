@@ -112,7 +112,7 @@ export default function ServicesPage() {
       id: 'connected-devices',
       icon: <Smartphone className="h-6 w-6 text-green-600" />,
       title: t('Connected Devices', 'الأجهزة المتصلة', 'Bağlı Cihazlar'),
-      description: t('Sync with your smart devices', 'مزامنة مع أجهزتك الذكية', 'Akıllı cihazlarınızla senkronize edin'),
+      description: t('Sync with your smart devices', 'مزامنة مع أجهزتك الذكية', 'Akıllı cihazlarınızla senkronيزه کنید'),
       link: '/connected-devices',
     },
     {
