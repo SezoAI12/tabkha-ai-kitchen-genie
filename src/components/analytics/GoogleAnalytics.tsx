@@ -15,7 +15,8 @@ const GoogleAnalytics: React.FC<GoogleAnalyticsProps> = ({ measurementId = 'G-XX
 
     // Initialize gtag
     window.gtag = window.gtag || function() {
-      (window.gtag.q = window.gtag.q || []).push(arguments);
+      window.gtag.q = window.gtag.q || [];
+      window.gtag.q.push(arguments);
     };
     window.gtag('js', new Date());
     window.gtag('config', measurementId);
