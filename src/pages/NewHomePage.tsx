@@ -1,5 +1,170 @@
-{
-  "name": "new_homepage_quick_actions",
-  "type": "code/react",
-  "content": "import React from 'react';\nimport { Link } from 'react-router-dom';\nimport {\n  ChefHat,\n  Heart,\n  Users,\n  Award,\n  Calendar,\n  Box,\n  PlusCircle,\n  Camera,\n  Share2,\n  Bot,\n  CreditCard,\n  Globe,\n} from 'lucide-react';\n\nconst cookingPlanningActions = [\n  {\n    icon: <ChefHat className=\"h-6 w-6 text-wasfah-bright-teal\" />,\n    label: 'By Ingredients',\n    path: '/find-by-ingredients',\n  },\n  {\n    icon: <Globe className=\"h-6 w-6 text-wasfah-bright-teal\" />,\n    label: 'Global Cuisine',\n    path: '/global-cuisine',\n  },\n  {\n    icon: <Calendar className=\"h-6 w-6 text-wasfah-bright-teal\" />,\n    label: 'Meal Plan',\n    path: '/meal-plan',\n  },\n  {\n    icon: <Camera className=\"h-6 w-6 text-wasfah-bright-teal\" />,\n    label: 'Scan Dish',\n    path: '/scan-dish',\n  },\n  {\n    icon: <PlusCircle className=\"h-6 w-6 text-wasfah-bright-teal\" />,\n    label: 'Create Recipe',\n    path: '/create-recipe',\n  },\n  {\n    icon: <Box className=\"h-6 w-6 text-wasfah-bright-teal\" />,\n    label: 'Pantry',\n    path: '/pantry',\n  },\n];\n\nconst communityRewardsActions = [\n  {\n    icon: <Heart className=\"h-6 w-6 text-wasfah-deep-teal\" />,\n    label: 'Health Tracking',\n    path: '/health-tracking-home',\n  },\n  {\n    icon: <Award className=\"h-6 w-6 text-wasfah-deep-teal\" />,\n    label: 'Rewards',\n    path: '/loyalty-program',\n  },\n  {\n    icon: <Share2 className=\"h-6 w-6 text-wasfah-deep-teal\" />,\n    label: 'Shared Recipes',\n    path: '/shared-recipes',\n  },\n  {\n    icon: <Users className=\"h-6 w-6 text-wasfah-deep-teal\" />,\n    label: 'Community',\n    path: '/community',\n  },\n  {\n    icon: <Bot className=\"h-6 w-6 text-wasfah-deep-teal\" />,\n    label: 'AI Chef',\n    path: '/ai-chef',\n  },\n  {\n    icon: <CreditCard className=\"h-6 w-6 text-wasfah-deep-teal\" />,\n    label: 'Subscription',\n    path: '/subscription',\n  },\n];\n\nconst NewHomePage: React.FC = () => {\n  return (\n    <div className=\"px-4 py-4 space-y-6\">\n      {/* Premium Features Banner */}\n      <div className=\"bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 rounded-xl shadow-lg flex items-center justify-between\">\n        <div>\n          <h3 className=\"text-lg font-bold\">Unlock Premium Features</h3>\n          <p className=\"text-sm opacity-90\">Get personalized AI recommendations</p>\n        </div>\n        <Link to=\"/subscription\">\n          <button className=\"bg-white text-purple-600 font-semibold py-2 px-4 rounded-full shadow-md hover:bg-gray-100 transition-colors\">\n            Upgrade\n          </button>\n        </Link>\n      </div>\n\n      {/* Gold Level Member Card */}\n      <div className=\"bg-yellow-500 text-white p-4 rounded-xl shadow-lg flex items-center justify-between\">\n        <div>\n          <h3 className=\"text-lg font-bold\">Gold Level Member</h3>\n          <p className=\"text-sm opacity-90\">850 points</p>\n        </div>\n        <Link to=\"/loyalty-program\">\n          <button className=\"bg-white text-yellow-700 font-semibold py-2 px-4 rounded-full shadow-md hover:bg-gray-100 transition-colors\">\n            Next level\n          </button>\n        </Link>\n      </div>\n\n      {/* Meal Plan Today Card */}\n      <div className=\"bg-green-500 text-white p-4 rounded-xl shadow-lg flex items-center justify-between\">\n        <div>\n          <h3 className=\"text-lg font-bold\">Your meal plan today</h3>\n          <p className=\"text-sm opacity-90\">Delicious and healthy!</p>\n        </div>\n        <Link to=\"/meal-plan\">\n          <button className=\"bg-white text-green-700 font-semibold py-2 px-4 rounded-full shadow-md hover:bg-gray-100 transition-colors\">\n            View Week\n          </button>\n        </Link>\n      </div>\n\n      {/* Quick Actions */}\n      <h2 className=\"text-lg font-semibold text-gray-900 dark:text-white mt-6 mb-4\">Quick Actions</h2>\n\n      {/* Cooking & Planning Section */}\n      <h3 className=\"text-md font-medium text-wasfah-bright-teal mb-2 mt-2\">Cooking & Planning</h3>\n      <div className=\"grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 mb-4\">\n        {cookingPlanningActions.map((action, index) => (\n          <Link\n            key={index}\n            to={action.path}\n            className=\"flex flex-col items-center p-3 sm:p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 text-center\"\n          >\n            <div className=\"w-10 h-10 sm:w-12 sm:h-12 bg-wasfah-bright-teal/10 rounded-full flex items-center justify-center mb-2\">\n              {action.icon}\n            </div>\n            <span className=\"text-xs font-medium text-gray-700 dark:text-gray-300 leading-tight\">\n              {action.label}\n            </span>\n          </Link>\n        ))}\n      </div>\n\n      {/* Community & Rewards Section */}\n      <h3 className=\"text-md font-medium text-wasfah-deep-teal mb-2 mt-2\">Community & Rewards</h3>\n      <div className=\"grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3\">\n        {communityRewardsActions.map((action, index) => (\n          <Link\n            key={index}\n            to={action.path}\n            className=\"flex flex-col items-center p-3 sm:p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 text-center\"\n          >\n            <div className=\"w-10 h-10 sm:w-12 sm:h-12 bg-wasfah-deep-teal/10 rounded-full flex items-center justify-center mb-2\">\n              {action.icon}\n            </div>\n            <span className=\"text-xs font-medium text-gray-700 dark:text-gray-300 leading-tight\">\n              {action.label}\n            </span>\n          </Link>\n        ))}\n      </div>\n    </div>\n  );\n};\n\nexport default NewHomePage;"
-}
+import React from 'react';
+import { Link } from 'react-router-dom';
+import {
+  ChefHat,
+  Heart,
+  Users,
+  Award,
+  Calendar,
+  Box,
+  PlusCircle,
+  Camera,
+  Share2,
+  Bot,
+  CreditCard,
+  Globe,
+} from 'lucide-react';
+
+const cookingPlanningActions = [
+  {
+    icon: <ChefHat className="h-6 w-6 text-wasfah-bright-teal" />,
+    label: 'By Ingredients',
+    path: '/find-by-ingredients',
+  },
+  {
+    icon: <Globe className="h-6 w-6 text-wasfah-bright-teal" />,
+    label: 'Global Cuisine',
+    path: '/global-cuisine',
+  },
+  {
+    icon: <Calendar className="h-6 w-6 text-wasfah-bright-teal" />,
+    label: 'Meal Plan',
+    path: '/meal-plan',
+  },
+  {
+    icon: <Camera className="h-6 w-6 text-wasfah-bright-teal" />,
+    label: 'Scan Dish',
+    path: '/scan-dish',
+  },
+  {
+    icon: <PlusCircle className="h-6 w-6 text-wasfah-bright-teal" />,
+    label: 'Create Recipe',
+    path: '/create-recipe',
+  },
+  {
+    icon: <Box className="h-6 w-6 text-wasfah-bright-teal" />,
+    label: 'Pantry',
+    path: '/pantry',
+  },
+];
+
+const communityRewardsActions = [
+  {
+    icon: <Heart className="h-6 w-6 text-wasfah-deep-teal" />,
+    label: 'Health Tracking',
+    path: '/health-tracking-home',
+  },
+  {
+    icon: <Award className="h-6 w-6 text-wasfah-deep-teal" />,
+    label: 'Rewards',
+    path: '/loyalty-program',
+  },
+  {
+    icon: <Share2 className="h-6 w-6 text-wasfah-deep-teal" />,
+    label: 'Shared Recipes',
+    path: '/shared-recipes',
+  },
+  {
+    icon: <Users className="h-6 w-6 text-wasfah-deep-teal" />,
+    label: 'Community',
+    path: '/community',
+  },
+  {
+    icon: <Bot className="h-6 w-6 text-wasfah-deep-teal" />,
+    label: 'AI Chef',
+    path: '/ai-chef',
+  },
+  {
+    icon: <CreditCard className="h-6 w-6 text-wasfah-deep-teal" />,
+    label: 'Subscription',
+    path: '/subscription',
+  },
+];
+
+const NewHomePage: React.FC = () => {
+  return (
+    <div className="px-4 py-4 space-y-6">
+      {/* Premium Features Banner */}
+      <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 rounded-xl shadow-lg flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-bold">Unlock Premium Features</h3>
+          <p className="text-sm opacity-90">Get personalized AI recommendations</p>
+        </div>
+        <Link to="/subscription">
+          <button className="bg-white text-purple-600 font-semibold py-2 px-4 rounded-full shadow-md hover:bg-gray-100 transition-colors">
+            Upgrade
+          </button>
+        </Link>
+      </div>
+
+      {/* Gold Level Member Card */}
+      <div className="bg-yellow-500 text-white p-4 rounded-xl shadow-lg flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-bold">Gold Level Member</h3>
+          <p className="text-sm opacity-90">850 points</p>
+        </div>
+        <Link to="/loyalty-program">
+          <button className="bg-white text-yellow-700 font-semibold py-2 px-4 rounded-full shadow-md hover:bg-gray-100 transition-colors">
+            Next level
+          </button>
+        </Link>
+      </div>
+
+      {/* Meal Plan Today Card */}
+      <div className="bg-green-500 text-white p-4 rounded-xl shadow-lg flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-bold">Your meal plan today</h3>
+          <p className="text-sm opacity-90">Delicious and healthy!</p>
+        </div>
+        <Link to="/meal-plan">
+          <button className="bg-white text-green-700 font-semibold py-2 px-4 rounded-full shadow-md hover:bg-gray-100 transition-colors">
+            View Week
+          </button>
+        </Link>
+      </div>
+
+      {/* Quick Actions */}
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mt-6 mb-4">Quick Actions</h2>
+
+      {/* Cooking & Planning Section */}
+      <h3 className="text-md font-medium text-wasfah-bright-teal mb-2 mt-2">Cooking & Planning</h3>
+      <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 mb-4">
+        {cookingPlanningActions.map((action, index) => (
+          <Link
+            key={index}
+            to={action.path}
+            className="flex flex-col items-center p-3 sm:p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 text-center"
+          >
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-wasfah-bright-teal/10 rounded-full flex items-center justify-center mb-2">
+              {action.icon}
+            </div>
+            <span className="text-xs font-medium text-gray-700 dark:text-gray-300 leading-tight">
+              {action.label}
+            </span>
+          </Link>
+        ))}
+      </div>
+
+      {/* Community & Rewards Section */}
+      <h3 className="text-md font-medium text-wasfah-deep-teal mb-2 mt-2">Community & Rewards</h3>
+      <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3">
+        {communityRewardsActions.map((action, index) => (
+          <Link
+            key={index}
+            to={action.path}
+            className="flex flex-col items-center p-3 sm:p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 text-center"
+          >
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-wasfah-deep-teal/10 rounded-full flex items-center justify-center mb-2">
+              {action.icon}
+            </div>
+            <span className="text-xs font-medium text-gray-700 dark:text-gray-300 leading-tight">
+              {action.label}
+            </span>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default NewHomePage;
