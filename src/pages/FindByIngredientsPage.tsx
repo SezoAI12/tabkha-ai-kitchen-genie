@@ -1,12 +1,11 @@
-
 // src/pages/FindByIngredientsPage.tsx
 import React, { useState, ElementType } from 'react';
 import {
   Utensils, Cake, Coffee, Camera, Mic, Soup, Salad, Egg, Milk, Drumstick,
   LeafyGreen, Apple, Carrot, IceCream, Cookie, Wine, Beer, Pizza, ChefHat,
   Share2, Calendar, Users, Award, Sparkles, Circle, Wheat, Fish, GlassWater,
-  Package2, Candy, MoreHorizontal, // Removed Cheese, Shrimp, Fork imports
-  // New icons potentially for drink customization if needed in SearchSummary or elsewhere
+  Package2, Candy, MoreHorizontal,
+  // New icons for drink customization
   GlassWater as Cocktail, Droplet, Sun, Snowflake as Snow, Flame as Chili, Citrus, Leaf, Diamond, Cherry,
 } from 'lucide-react';
 
@@ -71,7 +70,7 @@ export default function FindByIngredientsPage() {
         { name: 'Appetizers', icon: Salad }, // Salad for starters
         { name: 'Pickles', icon: Package2 }, // Using Package2 as a generic substitute for Jar/Pickles
         { name: 'Soups', icon: Soup }, // Soup bowl
-        { name: 'Sauces', icon: Utensils }, // Using Utensils as a substitute for Fork
+        { name: 'Sauces', icon: Utensils }, // Using Utensils as a substitute for Sauce
         { name: 'Others', icon: Utensils } // Generic food icon
       ]
     },
@@ -91,7 +90,6 @@ export default function FindByIngredientsPage() {
       id: 'drinks',
       name: 'Drinks',
       icon: Coffee, // Coffee/Drink icon (retained)
-      // isCustomizable: true, // REMOVED from main category
       subcategories: [
         { name: 'Detox', icon: GlassWater }, // Standard flow
         { name: 'Cocktails', icon: Wine }, // Standard flow (unless you want custom form for all cocktails?) - Keeping standard for now
@@ -117,7 +115,7 @@ export default function FindByIngredientsPage() {
     { id: 'p4', name: 'Milk', quantity: '1', unit: 'liter', icon: Milk },
     { id: 'p5', name: 'Chicken Breast', quantity: '500', unit: 'g', icon: Drumstick },
     { id: 'p6', name: 'Spinach', quantity: '200', unit: 'g', icon: LeafyGreen },
-    { id: 'p7', name: 'Cheese', quantity: '300', unit: 'g' /* Removed icon: Cheese */ }, // Removed icon
+    { id: 'p7', name: 'Cheese', quantity: '300', unit: 'g', icon: Package2 }, // Using Package2 for cheese
     { id: 'p8', name: 'Salmon', quantity: '400', unit: 'g', icon: Fish }, // Using Fish for Salmon
     { id: 'p9', name: 'Shrimp', quantity: '500', unit: 'g', icon: Fish }, // Using Fish for Shrimp
     { id: 'p10', name: 'Carrots', quantity: '5', unit: 'pcs', icon: Carrot },
@@ -357,7 +355,7 @@ export default function FindByIngredientsPage() {
         {currentStep === 4 && (
           <SearchSummary
             selectedCategory={selectedCategory}
-            selectedSubcategory={selectedSubcategory?.name || ''} // Pass only the name string instead of the full object
+            selectedSubcategory={selectedSubcategory}
             // Pass 0 ingredient count if it's an alcoholic drink search, otherwise pass the actual count
             ingredientCount={showDrinkCustomizationForm ? 0 : addedIngredients.length}
             filterCount={Object.values(filters).filter(v => v).length}
