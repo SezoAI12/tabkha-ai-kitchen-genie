@@ -1,254 +1,169 @@
 
 import React from 'react';
+import { Card } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
-// Design System Components for consistent UI across the app
+// Enhanced Card Component
+interface EnhancedCardProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: 'default' | 'elevated' | 'glass';
+  hover?: boolean;
+}
+
+export const EnhancedCard = React.forwardRef<HTMLDivElement, EnhancedCardProps>(
+  ({ className, variant = 'default', hover = false, ...props }, ref) => {
+    const variantClasses = {
+      default: 'border bg-card text-card-foreground shadow-sm',
+      elevated: 'border bg-card text-card-foreground shadow-lg',
+      glass: 'backdrop-blur-md bg-white/10 border border-white/20'
+    };
+
+    return (
+      <Card
+        ref={ref}
+        className={cn(
+          variantClasses[variant],
+          hover && 'hover:shadow-md transition-shadow',
+          className
+        )}
+        {...props}
+      />
+    );
+  }
+);
+EnhancedCard.displayName = "EnhancedCard";
+
+// Icon Container Component
+interface IconContainerProps extends React.HTMLAttributes<HTMLDivElement> {
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'default' | 'primary' | 'accent';
+}
+
+export const IconContainer = React.forwardRef<HTMLDivElement, IconContainerProps>(
+  ({ className, size = 'md', variant = 'default', children, ...props }, ref) => {
+    const sizeClasses = {
+      sm: 'h-8 w-8',
+      md: 'h-10 w-10',
+      lg: 'h-12 w-12'
+    };
+
+    const variantClasses = {
+      default: 'bg-gray-100 text-gray-600',
+      primary: 'bg-wasfah-bright-teal text-white',
+      accent: 'bg-green-100 text-green-600'
+    };
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          'rounded-full flex items-center justify-center',
+          sizeClasses[size],
+          variantClasses[variant],
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);
+IconContainer.displayName = "IconContainer";
 
 // Typography Components
 export const Typography = {
-  H1: ({ children, className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-    <h1 
-      className={cn(
-        "text-4xl md:text-5xl font-bold text-wasfah-deep-teal leading-tight tracking-tight",
-        className
-      )} 
-      {...props}
-    >
-      {children}
-    </h1>
+  H1: React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(
+    ({ className, ...props }, ref) => (
+      <h1 ref={ref} className={cn("text-4xl font-bold", className)} {...props} />
+    )
   ),
-  
-  H2: ({ children, className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-    <h2 
-      className={cn(
-        "text-2xl md:text-3xl font-semibold text-wasfah-deep-teal leading-tight",
-        className
-      )} 
-      {...props}
-    >
-      {children}
-    </h2>
+  H2: React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(
+    ({ className, ...props }, ref) => (
+      <h2 ref={ref} className={cn("text-2xl font-semibold", className)} {...props} />
+    )
   ),
-  
-  H3: ({ children, className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-    <h3 
-      className={cn(
-        "text-xl md:text-2xl font-medium text-wasfah-deep-teal",
-        className
-      )} 
-      {...props}
-    >
-      {children}
-    </h3>
+  H3: React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(
+    ({ className, ...props }, ref) => (
+      <h3 ref={ref} className={cn("text-xl font-medium", className)} {...props} />
+    )
   ),
-  
-  Body: ({ children, className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) => (
-    <p 
-      className={cn(
-        "text-gray-600 leading-relaxed",
-        className
-      )} 
-      {...props}
-    >
-      {children}
-    </p>
+  Body: React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
+    ({ className, ...props }, ref) => (
+      <p ref={ref} className={cn("text-base", className)} {...props} />
+    )
   ),
-  
-  Caption: ({ children, className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
-    <span 
-      className={cn(
-        "text-sm text-gray-500",
-        className
-      )} 
-      {...props}
-    >
-      {children}
-    </span>
+  Caption: React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
+    ({ className, ...props }, ref) => (
+      <p ref={ref} className={cn("text-sm text-muted-foreground", className)} {...props} />
+    )
   )
 };
 
-// Enhanced Card Component
-export const EnhancedCard: React.FC<{
-  children: React.ReactNode;
-  className?: string;
-  variant?: 'default' | 'elevated' | 'glass' | 'gradient';
-  hover?: boolean;
-  onClick?: () => void;
-}> = ({ 
-  children, 
-  className, 
-  variant = 'default', 
-  hover = true,
-  onClick 
-}) => {
-  const variantStyles = {
-    default: 'bg-white border border-gray-200 shadow-sm',
-    elevated: 'bg-white border-0 shadow-lg',
-    glass: 'bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg',
-    gradient: 'bg-gradient-to-br from-white to-wasfah-light-gray border-0 shadow-md'
-  };
+Typography.H1.displayName = "Typography.H1";
+Typography.H2.displayName = "Typography.H2";
+Typography.H3.displayName = "Typography.H3";
+Typography.Body.displayName = "Typography.Body";
+Typography.Caption.displayName = "Typography.Caption";
 
-  return (
-    <div
-      className={cn(
-        'rounded-xl overflow-hidden transition-all duration-300',
-        variantStyles[variant],
-        hover && 'hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02]',
-        onClick && 'cursor-pointer',
-        className
-      )}
-      onClick={onClick}
-    >
-      {children}
-    </div>
-  );
-};
-
-// Icon Container
-export const IconContainer: React.FC<{
-  children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'accent' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
-  className?: string;
-}> = ({ 
-  children, 
-  variant = 'primary', 
-  size = 'md',
-  className 
-}) => {
-  const variantStyles = {
-    primary: 'bg-wasfah-bright-teal/10 text-wasfah-bright-teal',
-    secondary: 'bg-gray-100 text-gray-600',
-    accent: 'bg-wasfah-mint/20 text-wasfah-teal',
-    danger: 'bg-wasfah-coral-red/10 text-wasfah-coral-red'
-  };
-
-  const sizeStyles = {
-    sm: 'w-8 h-8',
-    md: 'w-12 h-12',
-    lg: 'w-16 h-16'
-  };
-
-  return (
-    <div
-      className={cn(
-        'rounded-full flex items-center justify-center',
-        variantStyles[variant],
-        sizeStyles[size],
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-};
-
-// Progress Indicator
-export const ProgressIndicator: React.FC<{
+// Progress Indicator Component
+interface ProgressIndicatorProps {
   value: number;
-  max?: number;
-  showLabel?: boolean;
-  variant?: 'primary' | 'success' | 'warning';
+  max: number;
+  variant?: 'default' | 'primary';
   className?: string;
-}> = ({ 
-  value, 
-  max = 100, 
-  showLabel = false, 
-  variant = 'primary',
-  className 
-}) => {
-  const percentage = Math.min((value / max) * 100, 100);
-  
-  const variantStyles = {
-    primary: 'bg-wasfah-bright-teal',
-    success: 'bg-green-500',
-    warning: 'bg-yellow-500'
-  };
+}
 
-  return (
-    <div className={cn('space-y-2', className)}>
-      <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-        <div
+export const ProgressIndicator = React.forwardRef<HTMLDivElement, ProgressIndicatorProps>(
+  ({ value, max, variant = 'default', className }, ref) => {
+    const percentage = (value / max) * 100;
+    
+    return (
+      <div ref={ref} className={cn("w-full", className)}>
+        <Progress 
+          value={percentage} 
           className={cn(
-            'h-full transition-all duration-700 ease-out rounded-full',
-            variantStyles[variant]
+            variant === 'primary' && "h-2"
           )}
-          style={{ width: `${percentage}%` }}
         />
       </div>
-      {showLabel && (
-        <div className="flex justify-between text-sm text-gray-600">
-          <span>{value}</span>
-          <span>{max}</span>
-        </div>
-      )}
-    </div>
-  );
-};
+    );
+  }
+);
+ProgressIndicator.displayName = "ProgressIndicator";
 
-// Animated Badge
-export const AnimatedBadge: React.FC<{
-  children: React.ReactNode;
-  variant?: 'default' | 'success' | 'warning' | 'danger';
-  pulse?: boolean;
+// Animated Badge Component
+interface AnimatedBadgeProps {
+  variant?: 'default' | 'warning';
   className?: string;
-}> = ({ 
-  children, 
-  variant = 'default', 
-  pulse = false,
-  className 
-}) => {
-  const variantStyles = {
-    default: 'bg-gray-100 text-gray-800',
-    success: 'bg-green-100 text-green-800',
-    warning: 'bg-yellow-100 text-yellow-800',
-    danger: 'bg-red-100 text-red-800'
+  children?: React.ReactNode;
+}
+
+export const AnimatedBadge: React.FC<AnimatedBadgeProps> = ({ className, variant = 'default', children, ...props }) => {
+  const variantClasses = {
+    default: 'bg-primary text-primary-foreground',
+    warning: 'bg-yellow-500 text-white'
   };
 
   return (
-    <span
+    <Badge
       className={cn(
-        'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium',
-        variantStyles[variant],
-        pulse && 'animate-pulse',
+        'transition-all duration-200 hover:scale-105',
+        variantClasses[variant],
         className
       )}
+      {...props}
     >
       {children}
-    </span>
+    </Badge>
   );
 };
 
-// Layout Container
-export const LayoutContainer: React.FC<{
-  children: React.ReactNode;
-  className?: string;
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
-  padding?: boolean;
-}> = ({ 
-  children, 
-  className, 
-  maxWidth = 'lg',
-  padding = true 
-}) => {
-  const maxWidthStyles = {
-    sm: 'max-w-sm',
-    md: 'max-w-md', 
-    lg: 'max-w-4xl',
-    xl: 'max-w-6xl',
-    full: 'max-w-full'
-  };
-
-  return (
-    <div
-      className={cn(
-        'mx-auto',
-        maxWidthStyles[maxWidth],
-        padding && 'px-4 py-6',
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-};
+// Layout Container Component
+export const LayoutContainer = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cn("container mx-auto px-4", className)} {...props} />
+  )
+);
+LayoutContainer.displayName = "LayoutContainer";
