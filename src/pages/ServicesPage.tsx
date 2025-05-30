@@ -3,46 +3,40 @@ import { PageContainer } from '@/components/layout/PageContainer';
 import { Card, CardContent } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import {
-  Camera, Scale, Smartphone, Award, Gift, CreditCard, ShoppingCart,
+  Camera, Scale, Smartphone, Award, CreditCard, ShoppingCart,
   Activity, Heart, Book, Bot, Utensils, Users, MapPin,
-  PlusCircle, Share2, Archive // Added icons for new services
+  PlusCircle, Share2, Archive
 } from 'lucide-react';
 import { useRTL } from '@/contexts/RTLContext';
 
 export default function ServicesPage() {
   const { t } = useRTL();
 
-  // Define the list of IDs to remove
-  const idsToRemove = [
-    'loyalty-program',
-    'subscription',
-  ];
+  const idsToRemove = ['loyalty-program', 'subscription'];
 
-  // Define the new services to add
   const newServices = [
-      {
-          id: 'create-recipe',
-          icon: <PlusCircle className="h-6 w-6 text-green-600" />, // Using PlusCircle icon
-          title: t('Create Recipe', 'إنشاء وصفة', 'Tarif Oluştur'),
-          description: t('Add your own recipes to the app', 'أضف وصفاتك الخاصة إلى التطبيق', 'Kendi tariflerinizi uygulamaya ekleyin'),
-          link: '/create-recipe', // Placeholder link
-      },
-      {
-          id: 'share-recipe',
-          icon: <Share2 className="h-6 w-6 text-blue-500" />, // Using Share2 icon
-          title: t('Share Recipe', 'مشاركة وصفة', 'Tarif Paylaş'),
-          description: t('Share your favorite recipes with others', 'شارك وصفاتك المفضلة مع الآخرين', 'Favori tariflerinizi başkalarıyla paylaşın'),
-          link: '/share-recipe', // Placeholder link
-      },
-      {
-          id: 'smart-pantry',
-          icon: <Archive className="h-6 w-6 text-amber-600" />, // Using Archive icon
-          title: t('Smart Pantry', 'مخزن ذكي', 'Akıllı Kiler'),
-          description: t('Manage your ingredients and find recipes', 'إدارة مكوناتك والعثور على الوصفات', 'Malzemelerinizi yönetin ve tarif bulun'),
-          link: '/smart-pantry', // Placeholder link
-      },
+    {
+      id: 'create-recipe',
+      icon: <PlusCircle className="h-6 w-6 text-green-600" />,
+      title: t('Create Recipe', 'إنشاء وصفة', 'Tarif Oluştur'),
+      description: t('Add your own recipes to the app', 'أضف وصفاتك الخاصة إلى التطبيق', 'Kendi tariflerinizi uygulamaya ekleyin'),
+      link: '/create-recipe',
+    },
+    {
+      id: 'share-recipe',
+      icon: <Share2 className="h-6 w-6 text-blue-500" />,
+      title: t('Share Recipe', 'مشاركة وصفة', 'Tarif Paylaş'),
+      description: t('Share your favorite recipes with others', 'شارك وصفاتك المفضلة مع الآخرين', 'Favori tariflerinizi başkalarıyla paylaşın'),
+      link: '/share-recipe',
+    },
+    {
+      id: 'smart-pantry',
+      icon: <Archive className="h-6 w-6 text-amber-600" />,
+      title: t('Smart Pantry', 'مخزن ذكي', 'Akıllı Kiler'),
+      description: t('Manage your ingredients and find recipes', 'إدارة مكوناتك والعثور على الوصفات', 'Malzemelerinizi yönetin ve tarif bulun'),
+      link: '/smart-pantry',
+    },
   ];
-
 
   const services = [
     {
@@ -95,24 +89,10 @@ export default function ServicesPage() {
       link: '/shopping-list',
     },
     {
-      id: 'loyalty-program', // This will be filtered out
-      icon: <Award className="h-6 w-6 text-amber-500" />,
-      title: t('Loyalty Program', 'برنامج الولاء', 'Sadakat Programı'),
-      description: t('Earn rewards for cooking', 'اكسب مكافآت للطبخ', 'Yemek yaparak ödül kazanın'),
-      link: '/loyalty-program',
-    },
-    {
-      id: 'subscription', // This will be filtered out
-      icon: <CreditCard className="h-6 w-6 text-purple-500" />,
-      title: t('Premium Subscription', 'الاشتراك المميز', 'Premium Abonelik'),
-      description: t('Unlock premium features', 'فتح الميزات المميزة', 'Premium özelliklerin kilidini açın'),
-      link: '/subscription',
-    },
-    {
       id: 'connected-devices',
       icon: <Smartphone className="h-6 w-6 text-green-600" />,
       title: t('Connected Devices', 'الأجهزة المتصلة', 'Bağlı Cihazlar'),
-      description: t('Sync with your smart devices', 'مزامنة مع أجهزتك الذكية', 'Akıllı cihazlarınızla senkronيزه کنید'),
+      description: t('Sync with your smart devices', 'مزامنة مع أجهزتك الذكية', 'Akıllı cihazlarınızla senkronize edin'),
       link: '/connected-devices',
     },
     {
@@ -130,9 +110,8 @@ export default function ServicesPage() {
       link: '/global-cuisine',
     },
   ]
-  .filter(service => !idsToRemove.includes(service.id)) // Remove specified items
-  .concat(newServices); // Add the new items
-
+    .filter(service => !idsToRemove.includes(service.id))
+    .concat(newServices);
 
   return (
     <PageContainer header={{ title: t('Services', 'الخدمات', 'Hizmetler'), showBackButton: true }}>
@@ -141,7 +120,6 @@ export default function ServicesPage() {
           <h1 className="text-2xl font-bold mb-2">{t('Our Services', 'خدماتنا', 'Hizmetlerimiz')}</h1>
           <p className="opacity-90">{t('Discover all the amazing features WasfahAI has to offer', 'اكتشف جميع الميزات المذهلة التي تقدمها وصفة الذكية', 'WasfahAI\'nin sunduğu tüm harika özellikleri keşfedin')}</p>
         </div>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {services.map((service) => (
             <Link to={service.link} key={service.id}>
