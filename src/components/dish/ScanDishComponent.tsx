@@ -1,6 +1,5 @@
-
-import React, { useState } from 'react';
-import { Camera, Upload, Loader2 } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Camera, Upload, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -17,109 +16,262 @@ export interface ScanDishResult {
 }
 
 interface ScanDishComponentProps {
-  onScanResult: (result: ScanDishResult) => void;
+  onScanResult?: (result: ScanDishResult) => void;
 }
 
 export const ScanDishComponent: React.FC<ScanDishComponentProps> = ({ onScanResult }) => {
-  const { toast } = useToast();
   const { t } = useRTL();
-  const [isScanning, setIsScanning] = useState(false);
-
-  const handleScan = () => {
-    setIsScanning(true);
+  const { toast } = useToast();
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  
+  const startCamera = async () => {
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { facingMode: 'environment' } 
+        });
+        
+        streamRef.current = stream;
+        
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.onloadedmetadata = () => {
+            videoRef.current?.play();
+          };
+          setIsCameraActive(true);
+        }
+      } else {
+        throw new Error('getUserMedia not supported');
+      }
+    } catch (error) {
+      console.error('Error accessing camera:', error);
+      toast({
+        title: t('Camera Error', 'خطأ في الكاميرا'),
+        description: t('Could not access your camera. Please check permissions.', 'تعذر الوصول إلى الكاميرا الخاصة بك. يرجى التحقق من الأذونات.'),
+        variant: 'destructive'
+      });
+    }
+  };
+  
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
     
-    // Simulate AI scanning process
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    
+    setIsCameraActive(false);
+  };
+  
+  const captureImage = () => {
+    if (videoRef.current) {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = videoRef.current.videoWidth;
+        canvas.height = videoRef.current.videoHeight;
+        const ctx = canvas.getContext('2d');
+        
+        if (ctx && videoRef.current.videoWidth > 0) {
+          ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+          const imageDataUrl = canvas.toDataURL('image/png');
+          setCapturedImage(imageDataUrl);
+          stopCamera();
+          analyzeImage(imageDataUrl);
+        } else {
+          throw new Error('Could not capture image');
+        }
+      } catch (error) {
+        console.error('Error capturing image:', error);
+        toast({
+          title: t('Capture Error', 'خطأ في التقاط الصورة'),
+          description: t('Could not capture image from camera.', 'تعذر التقاط الصورة من الكاميرا.'),
+          variant: 'destructive'
+        });
+      }
+    }
+  };
+  
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Check if file is an image
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: t('Invalid File', 'ملف غير صالح'),
+          description: t('Please upload an image file.', 'يرجى تحميل ملف صورة.'),
+          variant: 'destructive'
+        });
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const imageDataUrl = event.target?.result as string;
+        setCapturedImage(imageDataUrl);
+        analyzeImage(imageDataUrl);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
+  const resetCapture = () => {
+    setCapturedImage(null);
+    setIsAnalyzing(false);
+  };
+  
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+  
+  const analyzeImage = (imageUrl: string) => {
+    setIsAnalyzing(true);
+    
+    // Simulate analysis (in a real app, this would call an AI service)
     setTimeout(() => {
+      setIsAnalyzing(false);
+      
+      // Mock result (would be replaced with actual AI analysis)
       const mockResult: ScanDishResult = {
-        id: Date.now().toString(),
-        name: t('Grilled Chicken Salad', 'سلطة الدجاج المشوي'),
-        calories: 320,
-        protein: 28,
-        carbs: 12,
-        fat: 18,
-        ingredients: [
-          t('Grilled chicken breast', 'صدر دجاج مشوي'),
-          t('Mixed greens', 'خضار مشكلة'),
-          t('Cherry tomatoes', 'طماطم كرزية'),
-          t('Cucumber', 'خيار'),
-          t('Olive oil', 'زيت زيتون'),
-          t('Lemon juice', 'عصير ليمون')
-        ]
+        id: crypto.randomUUID(), // Generate a unique ID
+        name: "Vegetable Salad",
+        calories: 120,
+        protein: 5,
+        carbs: 15,
+        fat: 3,
+        ingredients: ["Lettuce", "Tomato", "Cucumber", "Olive Oil"]
       };
       
-      setIsScanning(false);
-      onScanResult(mockResult);
+      if (onScanResult) {
+        onScanResult(mockResult);
+      }
       
       toast({
-        title: t('Dish Scanned Successfully', 'تم مسح الطبق بنجاح'),
-        description: t('Nutritional information has been analyzed.', 'تم تحليل المعلومات الغذائية.'),
+        title: t("Dish Analyzed", "تم تحليل الطبق"),
+        description: t(`Identified as ${mockResult.name}`, `تم التعرف عليه ك ${mockResult.name}`),
       });
     }, 2000);
   };
-
-  const handleUpload = () => {
-    toast({
-      title: t('Upload Feature', 'ميزة التحميل'),
-      description: t('Image upload will be implemented soon.', 'سيتم تنفيذ تحميل الصور قريباً.'),
-    });
-  };
-
+  
+  React.useEffect(() => {
+    // Clean up on component unmount
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
+  
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center text-wasfah-deep-teal dark:text-wasfah-bright-teal">
-          <Camera className="h-5 w-5 mr-2 rtl:ml-2" />
-          {t('Dish Scanner', 'ماسح الطبق')}
+    <Card className="overflow-hidden">
+      <CardHeader className="bg-gradient-to-r from-wasfah-light-gray to-wasfah-light-mint/10 pb-2">
+        <CardTitle className="flex items-center text-wasfah-deep-teal">
+          <Camera className="h-5 w-5 mr-2" />
+          {t('Scan Dish', 'مسح الطبق')}
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="text-center">
-          <div className="w-full h-48 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center mb-4">
-            {isScanning ? (
-              <div className="text-center">
-                <Loader2 className="h-8 w-8 animate-spin text-wasfah-bright-teal mx-auto mb-2" />
-                <p className="text-gray-600 dark:text-gray-300">{t('Analyzing dish...', 'جاري تحليل الطبق...')}</p>
+      <CardContent className="p-4">
+        <div className="flex flex-col items-center gap-4">
+          {!isCameraActive && !capturedImage && (
+            <>
+              <Button 
+                onClick={startCamera} 
+                className="w-full bg-wasfah-bright-teal hover:bg-wasfah-teal"
+              >
+                <Camera className="mr-2 h-4 w-4" />
+                {t('Open Camera', 'فتح الكاميرا')}
+              </Button>
+              
+              <div className="relative w-full">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-white dark:bg-gray-800 px-2 text-gray-500">
+                    {t('or', 'أو')}
+                  </span>
+                </div>
               </div>
-            ) : (
-              <div className="text-center">
-                <Camera className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                <p className="text-gray-500 dark:text-gray-400">{t('Point camera at your dish', 'وجه الكاميرا نحو طبقك')}</p>
+              
+              <Button 
+                variant="outline" 
+                onClick={triggerFileInput} 
+                className="w-full"
+              >
+                <Upload className="mr-2 h-4 w-4" />
+                {t('Upload Image', 'تحميل صورة')}
+              </Button>
+              <input 
+                ref={fileInputRef}
+                type="file" 
+                accept="image/*" 
+                onChange={handleFileUpload} 
+                className="hidden"
+              />
+            </>
+          )}
+          
+          {isCameraActive && (
+            <div className="relative w-full">
+              <video 
+                ref={videoRef} 
+                autoPlay 
+                playsInline
+                className="w-full rounded-lg"
+              />
+              <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+                <Button 
+                  onClick={captureImage} 
+                  className="bg-wasfah-bright-teal hover:bg-wasfah-teal rounded-full h-12 w-12 flex items-center justify-center"
+                >
+                  <Camera className="h-6 w-6" />
+                </Button>
+                <Button 
+                  onClick={stopCamera} 
+                  variant="outline" 
+                  className="bg-white/80 dark:bg-gray-700/80 border-gray-300 rounded-full h-12 w-12 flex items-center justify-center"
+                >
+                  <XCircle className="h-6 w-6" />
+                </Button>
               </div>
-            )}
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          <Button 
-            onClick={handleScan}
-            disabled={isScanning}
-            className="w-full bg-wasfah-bright-teal hover:bg-wasfah-teal"
-          >
-            {isScanning ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 rtl:ml-2 animate-spin" />
-                {t('Scanning...', 'جاري المسح...')}
-              </>
-            ) : (
-              <>
-                <Camera className="h-4 w-4 mr-2 rtl:ml-2" />
-                {t('Scan Dish', 'مسح الطبق')}
-              </>
-            )}
-          </Button>
-
-          <Button 
-            variant="outline" 
-            onClick={handleUpload}
-            className="w-full"
-          >
-            <Upload className="h-4 w-4 mr-2 rtl:ml-2" />
-            {t('Upload Photo', 'تحميل صورة')}
-          </Button>
-        </div>
-
-        <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
-          {t('AI will analyze your dish and provide nutritional information', 'سيقوم الذكاء الاصطناعي بتحليل طبقك وتقديم المعلومات الغذائية')}
+            </div>
+          )}
+          
+          {capturedImage && (
+            <div className="relative w-full">
+              <img 
+                src={capturedImage} 
+                alt="Captured dish" 
+                className="w-full rounded-lg"
+              />
+              
+              {isAnalyzing ? (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-lg">
+                  <div className="text-white text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-wasfah-bright-teal mx-auto"></div>
+                    <p className="mt-2">{t('Analyzing...', 'جاري التحليل...')}</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-4 flex justify-center gap-2">
+                  <Button 
+                    onClick={resetCapture} 
+                    variant="outline" 
+                    className="border-wasfah-bright-teal text-wasfah-bright-teal"
+                  >
+                    {t('Scan Another', 'مسح آخر')}
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
