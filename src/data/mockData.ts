@@ -1,5 +1,4 @@
-
-import { Recipe, User, PantryItem } from '@/types';
+import { Recipe, User, PantryItem } from '@/types/index';
 
 export const mockUser: User = {
   id: '1',

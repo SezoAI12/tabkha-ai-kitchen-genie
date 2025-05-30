@@ -1,13 +1,8 @@
-
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import Header from "@/components/Header";
-import CategoryCard from "@/components/CategoryCard";
-import IngredientInput from "@/components/IngredientInput";
-import SmartPantry from "@/components/SmartPantry";
 import { Search, Utensils, Coffee, Cookie, ShoppingCart, Scan, Clock } from "lucide-react";
 
 const Index = () => {
@@ -54,9 +49,9 @@ const Index = () => {
   const renderContent = () => {
     switch (activeTab) {
       case "ingredients":
-        return <IngredientInput />;
+        return null;
       case "pantry":
-        return <SmartPantry />;
+        return null;
       default:
         return (
           <div className="space-y-8">
@@ -100,11 +95,18 @@ const Index = () => {
               <h2 className="text-2xl font-bold mb-6 text-center">Explore Categories</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
                 {categories.map((category) => (
-                  <CategoryCard
+                  <Card
                     key={category.id}
-                    category={category}
-                    onClick={() => setActiveTab("ingredients")}
-                  />
+                    className="card-hover cursor-pointer overflow-hidden"
+                    style={{ animationDelay: `${category.delay}` }}
+                  >
+                    <div className={`h-48 ${category.bgColor} bg-gradient-to-br ${category.gradient}`}></div>
+                    <CardContent className="p-4">
+                      <h3 className="font-semibold mb-2">{category.title}</h3>
+                      <p className="text-sm text-muted-foreground mb-3">{category.description}</p>
+                      <Button>Explore {category.title}</Button>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             </div>

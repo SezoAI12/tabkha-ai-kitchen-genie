@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/accordion";
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Recipe } from '@/types';
+import { Recipe } from '@/types/index';
 
 export default function RecipesPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
