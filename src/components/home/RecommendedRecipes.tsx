@@ -1,53 +1,95 @@
 
-import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ChefHat, Clock, Star } from 'lucide-react';
-import { Recipe } from '@/types/index';
-import { mockRecipes } from '@/data/mockData';
+import { RecipeGrid } from '@/components/recipe/RecipeGrid';
+import { CategoryFilters } from '@/components/recipe/CategoryFilters';
+import { Recipe } from '@/types';
 
-export const RecommendedRecipes: React.FC = () => {
-  const featuredRecipes = mockRecipes.filter(recipe => recipe.featured).slice(0, 3);
+interface RecommendedRecipesProps {
+  recipes?: Recipe[];
+  categories?: string[];
+  selectedCategory?: string;
+  onSelectCategory?: (category: string) => void;
+}
+
+export const RecommendedRecipes: React.FC<RecommendedRecipesProps> = ({
+  recipes = [],
+  categories = [],
+  selectedCategory = 'All',
+  onSelectCategory
+}) => {
+  const [localSelectedCategory, setLocalSelectedCategory] = useState(selectedCategory);
+  
+  const handleCategorySelect = (category: string) => {
+    setLocalSelectedCategory(category);
+    if (onSelectCategory) {
+      onSelectCategory(category);
+    }
+  };
+
+  // Mock recipes if none provided
+  const mockRecipes: Recipe[] = [
+    {
+      id: '1',
+      title: 'Quick Pasta Primavera',
+      description: 'Fresh vegetables with pasta in a light sauce',
+      image: '/placeholder.svg',
+      prepTime: 15,
+      cookTime: 20,
+      servings: 4,
+      difficulty: 'Easy' as const,
+      calories: 320,
+      rating: 4.5,
+      ratingCount: 128,
+      ingredients: [],
+      instructions: [],
+      categories: ['Italian', 'Vegetarian'],
+      tags: ['quick', 'healthy'],
+      isFavorite: false
+    },
+    {
+      id: '2',
+      title: 'Mediterranean Bowl',
+      description: 'Healthy bowl with quinoa and fresh vegetables',
+      image: '/placeholder.svg',
+      prepTime: 10,
+      cookTime: 15,
+      servings: 2,
+      difficulty: 'Easy' as const,
+      calories: 280,
+      rating: 4.7,
+      ratingCount: 89,
+      ingredients: [],
+      instructions: [],
+      categories: ['Mediterranean', 'Healthy'],
+      tags: ['bowl', 'quinoa'],
+      isFavorite: true
+    }
+  ];
+
+  const displayRecipes = recipes.length > 0 ? recipes : mockRecipes;
+  const displayCategories = categories.length > 0 ? categories : ['Italian', 'Mediterranean', 'Healthy'];
 
   return (
-    <div className="mb-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-bold text-wasfah-deep-teal">Recommended for You</h3>
-        <Button variant="ghost" size="sm" className="text-wasfah-bright-teal">
-          View All
-        </Button>
+    <div className="mb-6 animate-fade-in">
+      <div className="flex justify-between items-center mb-3">
+        <h2 className="text-lg font-bold text-wasfah-deep-teal">Recommended for you</h2>
+        <Link to="/recipes">
+          <Button variant="link" className="text-wasfah-bright-teal p-0">
+            View All
+          </Button>
+        </Link>
       </div>
-      <div className="space-y-3">
-        {featuredRecipes.map(recipe => (
-          <Card key={recipe.id} className="overflow-hidden">
-            <CardContent className="p-0">
-              <div className="flex">
-                <div 
-                  className="w-20 h-20 bg-cover bg-center flex-shrink-0"
-                  style={{ backgroundImage: `url(${recipe.image})` }}
-                />
-                <div className="p-3 flex-grow">
-                  <h4 className="font-medium text-sm mb-1 line-clamp-1">{recipe.title}</h4>
-                  <div className="flex items-center space-x-3 text-xs text-gray-500">
-                    <div className="flex items-center">
-                      <Clock size={12} className="mr-1" />
-                      {recipe.cookingTime}m
-                    </div>
-                    <div className="flex items-center">
-                      <Star size={12} className="mr-1 text-yellow-400" />
-                      {recipe.rating}
-                    </div>
-                  </div>
-                </div>
-                <div className="p-3 flex items-center">
-                  <Button size="sm" className="bg-wasfah-bright-teal hover:bg-wasfah-teal text-white">
-                    <ChefHat size={14} />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      
+      <CategoryFilters
+        categories={['All', ...displayCategories]}
+        selectedCategory={localSelectedCategory}
+        onSelectCategory={handleCategorySelect}
+      />
+      
+      <div className="mt-4 transition-all duration-500 ease-in-out">
+        <RecipeGrid recipes={displayRecipes} columns={2} cardSize="medium" />
       </div>
     </div>
   );
