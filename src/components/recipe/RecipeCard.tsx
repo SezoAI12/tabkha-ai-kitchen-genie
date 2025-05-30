@@ -1,9 +1,8 @@
 
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Heart } from 'lucide-react';
-import { Recipe } from '@/types/index';
+import { Recipe } from '@/types';
 import { Link } from 'react-router-dom';
 
 interface RecipeCardProps {
@@ -32,7 +31,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, size = 'medium' 
             <button className="p-1.5 bg-white/20 backdrop-blur-sm rounded-full">
               <Heart
                 size={18}
-                className={recipe.featured ? 'fill-wasfah-coral-red text-wasfah-coral-red' : 'text-white'}
+                className={recipe.isFavorite ? 'fill-wasfah-coral-red text-wasfah-coral-red' : 'text-white'}
               />
             </button>
           </div>
@@ -48,7 +47,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, size = 'medium' 
               )}
               <div className="flex items-center space-x-2 text-xs pt-1">
                 <div className="flex items-center">
-                  <span>{recipe.cookingTime}m</span>
+                  <span>{recipe.prepTime + recipe.cookTime}m</span>
                 </div>
                 <div className="h-1 w-1 bg-white rounded-full"></div>
                 <div className="flex items-center">
@@ -67,4 +66,3 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, size = 'medium' 
     </Link>
   );
 };
-

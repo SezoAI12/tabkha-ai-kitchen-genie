@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Recipe } from '@/types/index';
+import { Recipe } from '@/types';
 import { Link } from 'react-router-dom';
-import { Clock, Star, ChefHat } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ChefHat } from 'lucide-react';
 
 interface FeaturedRecipeProps {
   recipe: Recipe;
@@ -34,7 +35,7 @@ export const FeaturedRecipe: React.FC<FeaturedRecipeProps> = ({ recipe }) => {
               <div className="flex items-center justify-between pt-2">
                 <div className="flex items-center space-x-3 text-sm">
                   <div className="flex items-center">
-                    <span>{recipe.cookingTime}m</span>
+                    <span>{recipe.prepTime + recipe.cookTime}m</span>
                   </div>
                   <div className="h-1 w-1 bg-white rounded-full"></div>
                   <div className="flex items-center">

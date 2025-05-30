@@ -1,10 +1,8 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Recipe } from '@/types/index';
-import { Clock, Users, Star, Heart, Bookmark } from 'lucide-react';
+import { Heart, Clock, Users, Star } from 'lucide-react';
+import { Recipe } from '@/types';
 import { Link } from 'react-router-dom';
 import { AnimatedCard } from '@/components/ui/enhanced-animations';
 
@@ -60,7 +58,7 @@ export const EnhancedRecipeCard: React.FC<EnhancedRecipeCardProps> = ({
 
               {/* Favorite button with pulse animation */}
               <div className="absolute top-3 right-3">
-                <Button 
+                <button 
                   className="p-2 bg-white/20 backdrop-blur-sm rounded-full transition-all duration-300 hover:bg-white/30 hover:scale-110 active:scale-95"
                   onClick={(e) => {
                     e.preventDefault();
@@ -75,18 +73,15 @@ export const EnhancedRecipeCard: React.FC<EnhancedRecipeCardProps> = ({
                         : 'text-white hover:text-red-300'
                     }`}
                   />
-                </Button>
+                </button>
               </div>
 
               {/* New/Popular badges with glow effect */}
               <div className="absolute top-3 left-3">
                 {recipe.rating > 4.5 && (
-                  <Badge 
-                    className="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-medium animate-pulse-glow"
-                    onClick={() => {}}
-                  >
+                  <div className="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-medium animate-pulse-glow">
                     Popular
-                  </Badge>
+                  </div>
                 )}
               </div>
 
@@ -135,4 +130,3 @@ export const EnhancedRecipeCard: React.FC<EnhancedRecipeCardProps> = ({
     </div>
   );
 };
-

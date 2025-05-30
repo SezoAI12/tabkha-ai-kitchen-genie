@@ -1,8 +1,7 @@
 
-
 import React from 'react';
 import { RecipeCard } from './RecipeCard';
-import { Recipe } from '@/types/index';
+import { Recipe } from '@/types';
 
 interface RecipeGridProps {
   recipes: Recipe[];
@@ -30,4 +29,3 @@ export const RecipeGrid: React.FC<RecipeGridProps> = ({
     </div>
   );
 };
-
