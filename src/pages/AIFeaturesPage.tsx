@@ -31,6 +31,29 @@ export default function AIFeaturesPage() {
     ]
   };
 
+  const mockAdaptationRecipe = {
+    id: "recipe-1",
+    title: t("Chicken Stir Fry", "دجاج مقلي"),
+    ingredients: [
+      { id: "1", name: "Chicken breast", amount: 500, unit: "g" },
+      { id: "2", name: "Soy sauce", amount: 3, unit: "tbsp" },
+      { id: "3", name: "Bell peppers", amount: 2, unit: "pieces" },
+      { id: "4", name: "Onion", amount: 1, unit: "piece" },
+      { id: "5", name: "Garlic", amount: 3, unit: "cloves" },
+      { id: "6", name: "Vegetable oil", amount: 2, unit: "tbsp" }
+    ],
+    instructions: [
+      t("Heat oil in a large wok or skillet", "سخن الزيت في مقلاة كبيرة"),
+      t("Add chicken and cook until golden", "أضف الدجاج واطبخه حتى يصبح ذهبياً"),
+      t("Add vegetables and stir fry for 3-4 minutes", "أضف الخضار وحركها لمدة 3-4 دقائق"),
+      t("Season with soy sauce and serve", "تبل بصلصة الصويا وقدمه")
+    ],
+    difficulty: "Medium" as const,
+    servings: 4,
+    prep_time: 15,
+    cook_time: 20
+  };
+
   return (
     <PageContainer 
       header={{ 
@@ -93,7 +116,11 @@ export default function AIFeaturesPage() {
           </TabsContent>
 
           <TabsContent value="adaptation" className="mt-6">
-            <SmartRecipeAdaptation />
+            <SmartRecipeAdaptation 
+              recipe={mockAdaptationRecipe}
+              pantryItems={["Chicken breast", "Onion", "Garlic", "Vegetable oil"]}
+              dietaryRestrictions={["Gluten-free"]}
+            />
           </TabsContent>
 
           <TabsContent value="mood" className="mt-6">

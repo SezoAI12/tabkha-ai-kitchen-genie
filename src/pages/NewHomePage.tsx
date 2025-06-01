@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Clock, Users, Star, ChevronRight, ChefHat, Sparkles } from 'lucide-react';
+import { Clock, Users, Star, ChevronRight, ChefHat, Sparkles, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { useRTL } from '@/contexts/RTLContext';
