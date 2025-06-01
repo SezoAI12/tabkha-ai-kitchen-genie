@@ -12,7 +12,7 @@ import { LoyaltyCard } from '@/components/home/LoyaltyCard';
 import { SubscriptionBanner } from '@/components/home/SubscriptionBanner';
 // Removed unused imports: Card, CardContent, Button, Badge
 // Import new icons needed for quick actions, including Share2, Bot, and CreditCard
-import { ChefHat, Heart, Users, Award, Calendar, Box, PlusCircle, Camera, Share2, Bot, CreditCard } from 'lucide-react'; // Added Bot and CreditCard
+import { ChefHat, Heart, Users, Award, Calendar, Box, PlusCircle, Camera, Share2, Bot, CreditCard, Sparkles } from 'lucide-react'; // Added Bot and CreditCard
 
 
 // Assuming these components are still needed and exist:
@@ -85,6 +85,12 @@ const quickActions = [
     icon: <CreditCard className="h-6 w-6" />, // Using CreditCard icon
     label: "Subscription",
     path: "/subscription" // Path to the Subscription page
+  },
+  // --- NEW: Sparkles ---
+  {
+    icon: <Sparkles className="h-6 w-6" />, // Using Sparkles icon
+    label: "Sparkles",
+    path: "/sparkles" // Path to the Sparkles page
   },
 ];
 
