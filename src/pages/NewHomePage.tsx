@@ -1,269 +1,92 @@
-
 import React from 'react';
-import { PageContainer } from '@/components/layout/PageContainer';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Clock, Users, Star, ChevronRight, ChefHat, Heart, TrendingUp, Award, Coffee, Calendar, Camera, Plus, Activity, ShoppingCart, User, Share2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Badge } from '@/components/ui/badge';
-import { useRTL } from '@/contexts/RTLContext';
-import { LoyaltyCard } from '@/components/home/LoyaltyCard';
+import { PageContainer } from '@/components/layout/PageContainer';
 import { TodayMealPlan } from '@/components/home/TodayMealPlan';
+import { LoyaltyCard } from '@/components/home/LoyaltyCard';
+import { SubscriptionBanner } from '@/components/home/SubscriptionBanner';
+import { mockMealPlan } from '@/data/mockData';
+import { ChefHat, Heart, Users, Award, Calendar, Box, PlusCircle, Camera, Share2, Bot, CreditCard } from 'lucide-react';
 
-interface QuickAction {
-  title: string;
-  titleAr: string;
-  description: string;
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  route: string;
-  color: string;
-  category: string;
-}
-
-interface FeaturedRecipe {
-  id: string;
-  title: string;
-  titleAr: string;
-  description: string;
-  descriptionAr: string;
-  time: number;
-  servings: number;
-  rating: number;
-  difficulty: string;
-  category: string;
-  image: string;
-  trending?: boolean;
-}
-
-const quickActions: QuickAction[] = [
-  // Cooking & Planning
-  {
-    title: 'By Ingredients',
-    titleAr: 'بالمكونات',
-    description: 'Find recipes by ingredients',
-    icon: ChefHat,
-    route: '/find-by-ingredients',
-    color: 'bg-wasfah-bright-teal',
-    category: 'cooking'
-  },
-  {
-    title: 'Global Cuisine',
-    titleAr: 'المطبخ العالمي',
-    description: 'Explore world cuisines',
-    icon: Star,
-    route: '/global-cuisine',
-    color: 'bg-wasfah-bright-teal',
-    category: 'cooking'
-  },
-  {
-    title: 'Meal Plan',
-    titleAr: 'خطة الوجبات',
-    description: 'Plan your meals',
-    icon: Calendar,
-    route: '/meal-plan',
-    color: 'bg-wasfah-bright-teal',
-    category: 'cooking'
-  },
-  {
-    title: 'Scan Dish',
-    titleAr: 'مسح الطبق',
-    description: 'Scan and identify dishes',
-    icon: Camera,
-    route: '/scan-dish',
-    color: 'bg-wasfah-bright-teal',
-    category: 'cooking'
-  },
-  {
-    title: 'Create Recipe',
-    titleAr: 'إنشاء وصفة',
-    description: 'Create your own recipe',
-    icon: Plus,
-    route: '/create-recipe',
-    color: 'bg-wasfah-bright-teal',
-    category: 'cooking'
-  },
-  {
-    title: 'Pantry',
-    titleAr: 'المخزن',
-    description: 'Manage your pantry',
-    icon: ShoppingCart,
-    route: '/pantry',
-    color: 'bg-wasfah-bright-teal',
-    category: 'cooking'
-  },
-  // Community & Rewards
-  {
-    title: 'Health Tracking',
-    titleAr: 'تتبع الصحة',
-    description: 'Track your health',
-    icon: Heart,
-    route: '/health-tracking-home',
-    color: 'bg-purple-500',
-    category: 'community'
-  },
-  {
-    title: 'Rewards',
-    titleAr: 'المكافآت',
-    description: 'Earn rewards',
-    icon: Award,
-    route: '/loyalty',
-    color: 'bg-purple-500',
-    category: 'community'
-  },
-  {
-    title: 'Shared Recipes',
-    titleAr: 'الوصفات المشتركة',
-    description: 'Share your recipes',
-    icon: Share2,
-    route: '/shared-recipes',
-    color: 'bg-purple-500',
-    category: 'community'
-  },
-  {
-    title: 'Community',
-    titleAr: 'المجتمع',
-    description: 'Join the community',
-    icon: Users,
-    route: '/community',
-    color: 'bg-purple-500',
-    category: 'community'
-  },
-  {
-    title: 'AI Chef',
-    titleAr: 'الطاهي الذكي',
-    description: 'AI cooking assistant',
-    icon: ChefHat,
-    route: '/ai-chef',
-    color: 'bg-purple-500',
-    category: 'community'
-  },
-  {
-    title: 'Subscription',
-    titleAr: 'الاشتراك',
-    description: 'Manage subscription',
-    icon: User,
-    route: '/subscription',
-    color: 'bg-purple-500',
-    category: 'community'
-  }
+// Grouped Quick Actions
+const quickActionsCookingPlanning = [
+  { icon: <ChefHat className="h-6 w-6" />, label: "By Ingredients", path: "/find-by-ingredients" },
+  { icon: <Users className="h-6 w-6" />, label: "Global Cuisine", path: "/global-cuisine" },
+  { icon: <Calendar className="h-6 w-6" />, label: "Meal Plan", path: "/meal-plan" },
+  { icon: <Camera className="h-6 w-6" />, label: "Scan Dish", path: "/scan-dish" },
+  { icon: <PlusCircle className="h-6 w-6" />, label: "Create Recipe", path: "/create-recipe" },
+  { icon: <Box className="h-6 w-6" />, label: "Pantry", path: "/pantry" },
 ];
 
-// Mock meal plan data
-const mockMealPlan = {
-  id: '1',
-  date: new Date().toISOString().split('T')[0],
-  meals: [
-    {
-      id: '1',
-      type: 'breakfast',
-      name: 'Avocado Toast',
-      nameAr: 'توست الأفوكادو',
-      calories: 280,
-      time: '8:00 AM'
-    },
-    {
-      id: '2',
-      type: 'lunch',
-      name: 'Mediterranean Salad',
-      nameAr: 'سلطة متوسطية',
-      calories: 350,
-      time: '1:00 PM'
-    }
-  ]
-};
+const quickActionsCommunityRewards = [
+  { icon: <Heart className="h-6 w-6" />, label: "Health Tracking", path: "/health-tracking-home" },
+  { icon: <Award className="h-6 w-6" />, label: "Rewards", path: "/loyalty-program" },
+  { icon: <Share2 className="h-6 w-6" />, label: "Shared Recipes", path: "/shared-recipes" },
+  { icon: <Users className="h-6 w-6" />, label: "Community", path: "/community" },
+  { icon: <Bot className="h-6 w-6" />, label: "AI Chef", path: "/ai-chef" },
+  { icon: <CreditCard className="h-6 w-6" />, label: "Subscription", path: "/subscription" },
+];
 
-export default function NewHomePage() {
-  const { t } = useRTL();
-
-  const cookingActions = quickActions.filter(action => action.category === 'cooking');
-  const communityActions = quickActions.filter(action => action.category === 'community');
-
-  return (
-    <PageContainer>
-      <div className="space-y-6 pb-24">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-wasfah-deep-teal">
-            {t('WasfahAI', 'واصفة AI')}
-          </h1>
-          <Button variant="ghost" size="sm">
-            <div className="w-6 h-6 rounded-full bg-gray-300"></div>
-          </Button>
-        </div>
-
-        {/* Loyalty Card */}
+const NewHomePage = () => (
+  <PageContainer
+    header={{
+      title: "WasfahAI",
+      showBackButton: false
+    }}
+    className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"
+  >
+    <div className="space-y-6 pb-24 pt-4">
+      <div className="px-4">
+        <SubscriptionBanner />
+      </div>
+      <div className="px-4">
         <LoyaltyCard />
+      </div>
 
-        {/* Quick Actions */}
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            {t('Quick Actions', 'إجراءات سريعة')}
-          </h2>
-          
-          {/* Cooking & Planning Section */}
-          <div className="mb-6">
-            <h3 className="text-md font-medium text-gray-700 mb-3">
-              {t('Cooking & Planning', 'الطبخ والتخطيط')}
-            </h3>
-            <div className="grid grid-cols-3 gap-3">
-              {cookingActions.map((action, index) => (
-                <Link key={index} to={action.route}>
-                  <Card className="p-3 text-center hover:shadow-md transition-shadow">
-                    <CardContent className="p-0">
-                      <div className={`w-12 h-12 ${action.color} rounded-xl flex items-center justify-center mx-auto mb-2`}>
-                        <action.icon className="h-6 w-6 text-white" />
-                      </div>
-                      <h4 className="text-sm font-medium text-gray-900 mb-1">
-                        {t(action.title, action.titleAr)}
-                      </h4>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Community & Rewards Section */}
-          <div className="mb-6">
-            <h3 className="text-md font-medium text-gray-700 mb-3">
-              {t('Community & Rewards', 'المجتمع والمكافآت')}
-            </h3>
-            <div className="grid grid-cols-3 gap-3">
-              {communityActions.map((action, index) => (
-                <Link key={index} to={action.route}>
-                  <Card className="p-3 text-center hover:shadow-md transition-shadow">
-                    <CardContent className="p-0">
-                      <div className={`w-12 h-12 ${action.color} rounded-xl flex items-center justify-center mx-auto mb-2`}>
-                        <action.icon className="h-6 w-6 text-white" />
-                      </div>
-                      <h4 className="text-sm font-medium text-gray-900 mb-1">
-                        {t(action.title, action.titleAr)}
-                      </h4>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Today's Meal Plan */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">
-              {t('Your meal plan today', 'خطة وجباتك اليوم')}
-            </h2>
-            <Link to="/meal-plan">
-              <Button variant="ghost" size="sm" className="text-wasfah-bright-teal">
-                {t('View Week', 'عرض الأسبوع')}
-                <ChevronRight className="ml-1 h-4 w-4" />
-              </Button>
+      {/* Quick Actions Grouped */}
+      <div className="px-4">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Quick Actions</h2>
+        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Cooking & Planning</h3>
+        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 mb-4">
+          {quickActionsCookingPlanning.map((action, index) => (
+            <Link
+              key={index}
+              to={action.path}
+              className="flex flex-col items-center p-3 sm:p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 text-center"
+            >
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-wasfah-bright-teal/10 rounded-full flex items-center justify-center mb-2 text-wasfah-bright-teal">
+                {action.icon}
+              </div>
+              <span className="text-xs font-medium text-gray-700 dark:text-gray-300 leading-tight">
+                {action.label}
+              </span>
             </Link>
-          </div>
-          
-          <TodayMealPlan mealPlan={mockMealPlan} />
+          ))}
+        </div>
+        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Community & Rewards</h3>
+        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3">
+          {quickActionsCommunityRewards.map((action, index) => (
+            <Link
+              key={index}
+              to={action.path}
+              className="flex flex-col items-center p-3 sm:p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 text-center"
+            >
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 dark:bg-purple-900/40 rounded-full flex items-center justify-center mb-2 text-purple-600 dark:text-purple-300">
+                {action.icon}
+              </div>
+              <span className="text-xs font-medium text-gray-700 dark:text-gray-300 leading-tight">
+                {action.label}
+              </span>
+            </Link>
+          ))}
         </div>
       </div>
-    </PageContainer>
-  );
-}
+
+      <div className="px-4">
+        <TodayMealPlan mealPlan={mockMealPlan} />
+      </div>
+      {/* ...rest of your page unchanged... */}
+    </div>
+  </PageContainer>
+);
+
+export default NewHomePage;
