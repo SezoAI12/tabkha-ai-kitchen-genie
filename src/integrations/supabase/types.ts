@@ -268,6 +268,83 @@ export type Database = {
         }
         Relationships: []
       }
+      recipe_approvals: {
+        Row: {
+          created_at: string | null
+          id: string
+          recipe_id: string | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          submitted_at: string | null
+          submitted_by: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          recipe_id?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          submitted_at?: string | null
+          submitted_by?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          recipe_id?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          submitted_at?: string | null
+          submitted_by?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_approvals_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipe_categories: {
+        Row: {
+          category: string
+          created_at: string | null
+          display_order: number | null
+          id: string
+          is_active: boolean | null
+          subcategory: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          subcategory: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          subcategory?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       recipe_ingredients: {
         Row: {
           amount: number | null
@@ -350,6 +427,7 @@ export type Database = {
           author_id: string | null
           calories: number | null
           categories: string[] | null
+          category: string | null
           cook_time: number | null
           created_at: string | null
           cuisine_type: string | null
@@ -362,6 +440,7 @@ export type Database = {
           prep_time: number | null
           servings: number | null
           status: Database["public"]["Enums"]["recipe_status"] | null
+          subcategory: string | null
           tags: string[] | null
           title: string
           updated_at: string | null
@@ -370,6 +449,7 @@ export type Database = {
           author_id?: string | null
           calories?: number | null
           categories?: string[] | null
+          category?: string | null
           cook_time?: number | null
           created_at?: string | null
           cuisine_type?: string | null
@@ -382,6 +462,7 @@ export type Database = {
           prep_time?: number | null
           servings?: number | null
           status?: Database["public"]["Enums"]["recipe_status"] | null
+          subcategory?: string | null
           tags?: string[] | null
           title: string
           updated_at?: string | null
@@ -390,6 +471,7 @@ export type Database = {
           author_id?: string | null
           calories?: number | null
           categories?: string[] | null
+          category?: string | null
           cook_time?: number | null
           created_at?: string | null
           cuisine_type?: string | null
@@ -402,6 +484,7 @@ export type Database = {
           prep_time?: number | null
           servings?: number | null
           status?: Database["public"]["Enums"]["recipe_status"] | null
+          subcategory?: string | null
           tags?: string[] | null
           title?: string
           updated_at?: string | null
