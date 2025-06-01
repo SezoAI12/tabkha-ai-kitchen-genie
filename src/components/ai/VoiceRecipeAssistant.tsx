@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,6 +5,14 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Mic, MicOff, Volume2, VolumeX, Play, Pause, SkipForward, SkipBack, RotateCcw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+
+// TypeScript declarations for Speech API
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
 
 interface VoiceRecipeAssistantProps {
   recipe: {
@@ -25,7 +32,7 @@ export const VoiceRecipeAssistant: React.FC<VoiceRecipeAssistantProps> = ({
   const [isVoiceEnabled, setIsVoiceEnabled] = useState(true);
   const { toast } = useToast();
 
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<any>(null);
   const synthRef = useRef<SpeechSynthesis | null>(null);
 
   useEffect(() => {
@@ -37,7 +44,7 @@ export const VoiceRecipeAssistant: React.FC<VoiceRecipeAssistantProps> = ({
       recognitionRef.current.interimResults = false;
       recognitionRef.current.lang = 'en-US';
 
-      recognitionRef.current.onresult = (event) => {
+      recognitionRef.current.onresult = (event: any) => {
         const command = event.results[event.results.length - 1][0].transcript.toLowerCase().trim();
         handleVoiceCommand(command);
       };
