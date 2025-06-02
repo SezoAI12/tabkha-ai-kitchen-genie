@@ -1,4 +1,5 @@
-import { Recipe, User, PantryItem } from '@/types/index';
+
+import { Recipe, User, PantryItem, MealPlan, Meal } from '@/types/index';
 
 export const mockUser: User = {
   id: '1',
@@ -118,7 +119,67 @@ export const mockRecipes: Recipe[] = [
     categories: ['Main Course', 'Asian'],
     tags: ['protein', 'quick'],
     isFavorite: true
+  },
+  {
+    id: '3',
+    title: 'Pancakes',
+    description: 'Fluffy morning pancakes with maple syrup',
+    image: '/placeholder.svg',
+    prepTime: 10,
+    cookTime: 15,
+    servings: 4,
+    difficulty: 'Easy',
+    calories: 320,
+    rating: 4.7,
+    ratingCount: 156,
+    cuisineType: 'American',
+    ingredients: [
+      { id: '7', name: 'Flour', amount: '2', unit: 'cups', category: 'grains' },
+      { id: '8', name: 'Milk', amount: '1', unit: 'cup', category: 'dairy' },
+      { id: '9', name: 'Eggs', amount: '2', unit: 'pieces', category: 'dairy' }
+    ],
+    instructions: [
+      'Mix dry ingredients',
+      'Add wet ingredients',
+      'Cook on griddle'
+    ],
+    categories: ['Breakfast'],
+    tags: ['breakfast', 'sweet'],
+    isFavorite: false
   }
 ];
 
 export const favoriteRecipes = mockRecipes.filter(recipe => recipe.isFavorite);
+
+// Create mock meals that match the Meal interface
+const mockMeals: Meal[] = [
+  {
+    id: '1',
+    type: 'Breakfast',
+    recipe: mockRecipes[2], // Pancakes
+    scheduledTime: '08:00'
+  },
+  {
+    id: '2',
+    type: 'Lunch',
+    recipe: mockRecipes[0], // Mediterranean Salad
+    scheduledTime: '12:30'
+  },
+  {
+    id: '3',
+    type: 'Dinner',
+    recipe: mockRecipes[1], // Chicken Stir Fry
+    scheduledTime: '19:00'
+  }
+];
+
+// Export the mock meal plan
+export const mockMealPlan: MealPlan = {
+  id: '1',
+  date: new Date().toISOString().split('T')[0], // Today's date
+  meals: mockMeals,
+  totalCalories: mockMeals.reduce((total, meal) => total + meal.recipe.calories, 0),
+  totalProtein: 45,
+  totalCarbs: 120,
+  totalFat: 25
+};
