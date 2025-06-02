@@ -56,6 +56,7 @@ import AdminLoginPage from "./pages/admin/AdminLoginPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminRecipes from "./pages/admin/AdminRecipes";
+import AdminIngredients from "./pages/admin/AdminIngredients";
 import AdminSubscriptionManager from "./pages/admin/AdminSubscriptionManager";
 import AdminRewardsManager from "./pages/admin/AdminRewardsManager";
 import AdminLanguageManager from "./pages/admin/AdminLanguageManager";
@@ -72,6 +73,7 @@ import AdminCommunicationsPage from "./pages/admin/AdminCommunicationsPage";
 import AdminAnalyticsPage from "./pages/admin/AdminAnalyticsPage";
 import AdminCommunityModeration from "./pages/admin/AdminCommunityModeration";
 import AdminStringManager from "./pages/admin/AdminStringManager";
+import MaintenancePage from "./pages/admin/MaintenancePage";
 import { AdminAuthGuard } from "./components/admin/AdminAuthGuard";
 
 const queryClient = new QueryClient();

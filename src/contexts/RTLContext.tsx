@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 export interface RTLContextType {
   direction: 'ltr' | 'rtl';
@@ -40,9 +40,15 @@ export const RTLProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  // Update document direction when direction changes
+  useEffect(() => {
+    document.documentElement.dir = direction;
+    document.documentElement.lang = language;
+  }, [direction, language]);
+
   return (
     <RTLContext.Provider value={{ direction, language, toggleDirection, setLanguage, t }}>
-      <div dir={direction}>
+      <div dir={direction} className={`${direction === 'rtl' ? 'font-arabic' : ''}`}>
         {children}
       </div>
     </RTLContext.Provider>
