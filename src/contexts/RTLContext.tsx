@@ -44,11 +44,18 @@ export const RTLProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   useEffect(() => {
     document.documentElement.dir = direction;
     document.documentElement.lang = language;
+    
+    // Add Arabic font class for better rendering
+    if (language === 'ar') {
+      document.documentElement.classList.add('font-arabic');
+    } else {
+      document.documentElement.classList.remove('font-arabic');
+    }
   }, [direction, language]);
 
   return (
     <RTLContext.Provider value={{ direction, language, toggleDirection, setLanguage, t }}>
-      <div dir={direction} className={`${direction === 'rtl' ? 'font-arabic' : ''}`}>
+      <div dir={direction} className={`min-h-screen ${direction === 'rtl' ? 'font-arabic' : ''}`}>
         {children}
       </div>
     </RTLContext.Provider>

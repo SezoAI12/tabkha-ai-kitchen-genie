@@ -10,9 +10,9 @@ import { ChefHat, Heart, Users, Award, Calendar, Box, PlusCircle, Camera, Share2
 import { useRTL } from '@/contexts/RTLContext';
 
 const NewHomePage = () => {
-  const { t } = useRTL();
+  const { t, direction } = useRTL();
 
-  // Grouped Quick Actions
+  // Grouped Quick Actions with proper Arabic translations
   const quickActionsCookingPlanning = [
     { icon: <ChefHat className="h-5 w-5 sm:h-6 sm:w-6" />, label: t("By Ingredients", "حسب المكونات"), path: "/ai-find-by-ingredients" },
     { icon: <Users className="h-5 w-5 sm:h-6 sm:w-6" />, label: t("Global Cuisine", "المطبخ العالمي"), path: "/global-cuisine" },
@@ -39,7 +39,7 @@ const NewHomePage = () => {
       }}
       className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"
     >
-      <div className="space-y-4 sm:space-y-6 pb-20 sm:pb-24 pt-2 sm:pt-4">
+      <div className={`space-y-4 sm:space-y-6 pb-20 sm:pb-24 pt-2 sm:pt-4 ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
         <div className="px-3 sm:px-4">
           <SubscriptionBanner />
         </div>
@@ -50,14 +50,14 @@ const NewHomePage = () => {
 
         {/* Quick Actions Grouped */}
         <div className="px-3 sm:px-4">
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">
+          <h2 className={`text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
             {t("Quick Actions", "الإجراءات السريعة")}
           </h2>
           
-          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+          <h3 className={`text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3 ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
             {t("Cooking & Planning", "الطبخ والتخطيط")}
           </h3>
-          <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-6">
+          <div className={`grid grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-6 ${direction === 'rtl' ? 'direction-rtl' : ''}`}>
             {quickActionsCookingPlanning.map((action, index) => (
               <Link
                 key={index}
@@ -67,17 +67,17 @@ const NewHomePage = () => {
                 <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-wasfah-bright-teal/10 rounded-full flex items-center justify-center mb-1 sm:mb-2 text-wasfah-bright-teal">
                   {action.icon}
                 </div>
-                <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 leading-tight text-center">
+                <span className={`text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 leading-tight text-center ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
                   {action.label}
                 </span>
               </Link>
             ))}
           </div>
           
-          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+          <h3 className={`text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 sm:mb-3 ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
             {t("Community & Rewards", "المجتمع والمكافآت")}
           </h3>
-          <div className="grid grid-cols-3 gap-2 sm:gap-3">
+          <div className={`grid grid-cols-3 gap-2 sm:gap-3 ${direction === 'rtl' ? 'direction-rtl' : ''}`}>
             {quickActionsCommunityRewards.map((action, index) => (
               <Link
                 key={index}
@@ -87,7 +87,7 @@ const NewHomePage = () => {
                 <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-purple-100 dark:bg-purple-900/40 rounded-full flex items-center justify-center mb-1 sm:mb-2 text-purple-600 dark:text-purple-300">
                   {action.icon}
                 </div>
-                <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 leading-tight text-center">
+                <span className={`text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 leading-tight text-center ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
                   {action.label}
                 </span>
               </Link>
