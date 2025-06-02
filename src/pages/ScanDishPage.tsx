@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { ScanDishComponent, ScanDishResult } from '@/components/dish/ScanDishComponent';
@@ -107,6 +106,7 @@ export default function ScanDishPage() {
         calories: 350,
         protein: 25,
         carbs: 15,
+        fat: 8,
         ingredients: [
           t('Grilled chicken breast', 'صدر دجاج مشوي'),
           t('Mixed greens', 'خضار ورقية مشكلة'),
@@ -294,7 +294,7 @@ export default function ScanDishPage() {
                 </Button>
               </div>
 
-              <div className="grid grid-cols-3 gap-2 text-center">
+              <div className="grid grid-cols-4 gap-2 text-center">
                 <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
                   <p className="text-xs text-gray-500 dark:text-gray-400">{t('Calories', 'سعرات حرارية')}</p>
                   <p className="font-bold text-gray-800 dark:text-gray-200">{scanResult.calories}</p>
@@ -306,6 +306,10 @@ export default function ScanDishPage() {
                 <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
                   <p className="text-xs text-gray-500 dark:text-gray-400">{t('Carbs', 'كربوهيدرات')}</p>
                   <p className="font-bold text-gray-800 dark:text-gray-200">{scanResult.carbs}g</p>
+                </div>
+                <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{t('Fat', 'دهون')}</p>
+                  <p className="font-bold text-gray-800 dark:text-gray-200">{scanResult.fat}g</p>
                 </div>
               </div>
 
@@ -359,7 +363,7 @@ export default function ScanDishPage() {
                     <div className="flex-1 min-w-0 space-y-1">
                       <h3 className="font-medium text-gray-800 dark:text-gray-200">{item.name}</h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {t('Calories', 'سعرات حرارية')}: {item.calories} • {t('Protein', 'بروتين')}: {item.protein}g • {t('Carbs', 'كربوهيدرات')}: {item.carbs}g
+                        {t('Calories', 'سعرات حرارية')}: {item.calories} • {t('Protein', 'بروتين')}: {item.protein}g • {t('Carbs', 'كربوهيدرات')}: {item.carbs}g • {t('Fat', 'دهون')}: {item.fat}g
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-500">
                         {new Date(item.timestamp).toLocaleString()}
