@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +14,7 @@ import RecipeDetailPage from "./pages/RecipeDetailPage";
 import CreateRecipePage from "./pages/CreateRecipePage";
 import FavoritesPage from "./pages/FavoritesPage";
 import FindByIngredientsPage from "./pages/FindByIngredientsPage";
+import AIFindByIngredientsPage from "./pages/AIFindByIngredientsPage";
 import PantryPage from "./pages/PantryPage";
 import MealPlanPage from "./pages/MealPlanPage";
 import SearchPage from "./pages/SearchPage";

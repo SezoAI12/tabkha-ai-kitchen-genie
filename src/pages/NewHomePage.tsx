@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { PageContainer } from '@/components/layout/PageContainer';
@@ -9,7 +10,7 @@ import { ChefHat, Heart, Users, Award, Calendar, Box, PlusCircle, Camera, Share2
 
 // Grouped Quick Actions
 const quickActionsCookingPlanning = [
-  { icon: <ChefHat className="h-6 w-6" />, label: "By Ingredients", path: "/find-by-ingredients" },
+  { icon: <ChefHat className="h-6 w-6" />, label: "By Ingredients", path: "/ai-find-by-ingredients" },
   { icon: <Users className="h-6 w-6" />, label: "Global Cuisine", path: "/global-cuisine" },
   { icon: <Calendar className="h-6 w-6" />, label: "Meal Plan", path: "/meal-plan" },
   { icon: <Camera className="h-6 w-6" />, label: "Scan Dish", path: "/scan-dish" },
@@ -22,7 +23,7 @@ const quickActionsCommunityRewards = [
   { icon: <Award className="h-6 w-6" />, label: "Rewards", path: "/loyalty-program" },
   { icon: <Share2 className="h-6 w-6" />, label: "Shared Recipes", path: "/shared-recipes" },
   { icon: <Users className="h-6 w-6" />, label: "Community", path: "/community" },
-  { icon: <Bot className="h-6 w-6" />, label: "AI Chef", path: "/ai-chef" },
+  { icon: <Bot className="h-6 w-6" />, label: "AI Features", path: "/ai-features" },
   { icon: <CreditCard className="h-6 w-6" />, label: "Subscription", path: "/subscription" },
 ];
 
@@ -84,7 +85,6 @@ const NewHomePage = () => (
       <div className="px-4">
         <TodayMealPlan mealPlan={mockMealPlan} />
       </div>
-      {/* ...rest of your page unchanged... */}
     </div>
   </PageContainer>
 );
