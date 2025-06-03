@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { Camera, Upload, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -140,12 +141,12 @@ export const ScanDishComponent: React.FC<ScanDishComponentProps> = ({ onScanResu
       
       // Mock result (would be replaced with actual AI analysis)
       const mockResult: ScanDishResult = {
-        id: crypto.randomUUID(), // Generate a unique ID
+        id: crypto.randomUUID(),
         name: "Vegetable Salad",
         calories: 120,
         protein: 5,
         carbs: 15,
-        fat: 3,
+        fat: 3, // Added the missing fat property
         ingredients: ["Lettuce", "Tomato", "Cucumber", "Olive Oil"]
       };
       
