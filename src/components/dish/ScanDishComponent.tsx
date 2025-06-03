@@ -146,7 +146,7 @@ export const ScanDishComponent: React.FC<ScanDishComponentProps> = ({ onScanResu
         calories: 120,
         protein: 5,
         carbs: 15,
-        fat: 3, // Added the missing fat property
+        fat: 3,
         ingredients: ["Lettuce", "Tomato", "Cucumber", "Olive Oil"]
       };
       
