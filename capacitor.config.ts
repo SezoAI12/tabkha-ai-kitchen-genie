@@ -2,11 +2,12 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.wasfah.app',
+  appId: 'com.wasfah.ai.kitchen',
   appName: 'Wasfah AI Kitchen Pal',
   webDir: 'dist',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
+    cleartext: true
   },
   plugins: {
     SplashScreen: {
@@ -25,6 +26,9 @@ const config: CapacitorConfig = {
       resize: 'body',
       style: 'dark',
       resizeOnFullScreen: true
+    },
+    App: {
+      appendUserAgent: 'WasfahAI'
     }
   },
   ios: {
@@ -33,7 +37,9 @@ const config: CapacitorConfig = {
   },
   android: {
     backgroundColor: '#009594',
-    allowMixedContent: true
+    allowMixedContent: true,
+    captureInput: true,
+    webContentsDebuggingEnabled: false
   }
 };
 

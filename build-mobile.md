@@ -1,109 +1,94 @@
 
-# Mobile Build Instructions for Wasfah AI Kitchen Pal
+# Mobile App Build Instructions
 
-## Prerequisites
+## Prerequisites for APK Building
 
-Before building for mobile platforms, ensure you have:
-
-### For iOS:
-- macOS with Xcode installed
-- iOS development account (for device testing)
-- CocoaPods installed: `sudo gem install cocoapods`
-
-### For Android:
-- Android Studio installed
-- Java Development Kit (JDK) 11 or higher
-- Android SDK and build tools
-
-## Initial Setup
-
-1. **Install Capacitor dependencies:**
+### 1. Install Required Dependencies
 ```bash
-npm install @capacitor/core @capacitor/cli @capacitor/ios @capacitor/android
+npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/ios
 ```
 
-2. **Build the web application:**
+### 2. Initialize Capacitor (if not already done)
+```bash
+npx cap init
+```
+
+### 3. Build the Web App
 ```bash
 npm run build
 ```
 
-3. **Add mobile platforms:**
+### 4. Add Android Platform
 ```bash
-# Add iOS platform
-npx cap add ios
-
-# Add Android platform  
 npx cap add android
 ```
 
-4. **Sync project with native platforms:**
+### 5. Sync Changes
 ```bash
 npx cap sync
 ```
 
-## Building and Running
-
-### For iOS:
+### 6. Open in Android Studio
 ```bash
-# Open iOS project in Xcode
-npx cap open ios
-
-# Or run directly
-npx cap run ios
-```
-
-### For Android:
-```bash
-# Open Android project in Android Studio
 npx cap open android
-
-# Or run directly
-npx cap run android
 ```
 
-## Production Build Steps
+## Building APK
 
-### iOS Production:
-1. Open the project in Xcode: `npx cap open ios`
-2. Set up signing certificates and provisioning profiles
-3. Archive the application (Product > Archive)
-4. Upload to App Store Connect
+### Option 1: Using Android Studio
+1. Open the project in Android Studio
+2. Go to `Build` → `Build Bundle(s) / APK(s)` → `Build APK(s)`
+3. Wait for the build to complete
+4. APK will be generated in `android/app/build/outputs/apk/debug/`
 
-### Android Production:
-1. Generate signed APK or AAB in Android Studio
-2. Build > Generate Signed Bundle/APK
-3. Upload to Google Play Console
+### Option 2: Using Command Line
+```bash
+cd android
+./gradlew assembleDebug
+```
 
-## Configuration Files
+### For Release APK
+```bash
+./gradlew assembleRelease
+```
 
-- **capacitor.config.ts**: Main Capacitor configuration
-- **android/**: Android-specific files and resources
-- **ios/**: iOS-specific files and resources
+## Font Alignment Optimizations Applied
 
-## Important Notes
+1. **Global Font Consistency**: Updated all font sizes and line heights across components
+2. **Button Font Alignment**: Ensured all buttons use consistent typography
+3. **Mobile Font Scaling**: Added proper font scaling for mobile devices
+4. **RTL Language Support**: Enhanced Arabic font rendering and alignment
+5. **Touch-Friendly Sizes**: Ensured minimum 44px touch targets for mobile
 
-- Run `npx cap sync` after any changes to web assets
-- Update native dependencies with `npx cap update`
-- Test on physical devices for best results
-- Ensure all required permissions are configured in native configs
+## Authentication System Features
 
-## App Store Requirements
+1. **Modern Design**: Glass morphism effects and gradient backgrounds
+2. **Form Validation**: Client-side validation with helpful error messages
+3. **Password Visibility**: Toggle password visibility for better UX
+4. **Language Support**: Multi-language interface
+5. **Responsive Design**: Works on all screen sizes
+6. **Smooth Animations**: Page transitions and form animations
 
-### iOS:
-- App icons: 1024x1024 for App Store, various sizes for device
-- Launch screens configured
-- Privacy policy URL (if using personal data)
-- App description and keywords
+## Admin Panel Maintenance Features
 
-### Android:
-- App icons: 512x512 for Play Store, various densities for devices
-- Feature graphic: 1024x500
-- Privacy policy (required for apps requesting permissions)
-- App description and store listing
+1. **System Monitoring**: Real-time system metrics and health indicators
+2. **Maintenance Tasks**: Automated and manual maintenance operations
+3. **Scheduled Tasks**: View and manage scheduled maintenance
+4. **Emergency Actions**: Critical system operations for emergencies
+5. **Progress Tracking**: Real-time progress indicators for running tasks
+6. **Categorized Tasks**: Organized by cleanup, performance, security, and backup
+
+## Next Steps
+
+1. **Test the APK**: Install and test on physical devices
+2. **Performance Testing**: Monitor app performance and memory usage
+3. **Security Review**: Conduct security audit before production release
+4. **Store Preparation**: Prepare app store listings and metadata
+5. **Documentation**: Update user documentation and help guides
 
 ## Troubleshooting
 
-- If build fails, try cleaning: `npx cap clean`
-- Update Capacitor: `npm update @capacitor/core @capacitor/cli`
-- Check platform-specific logs in Xcode/Android Studio
-- Ensure web build is successful before syncing
+- If build fails, run `npx cap sync` again
+- Ensure Android SDK is properly configured
+- Check Java version compatibility (Java 11+ recommended)
+- Clear gradle cache if needed: `./gradlew clean`
