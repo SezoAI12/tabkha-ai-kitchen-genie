@@ -1,281 +1,592 @@
 
-import React, { useState } from 'react';
-import { PageContainer } from '@/components/layout/PageContainer';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
-import { 
-  Search, 
-  Sparkles, 
-  Clock, 
-  Users, 
-  ChefHat,
-  Plus,
-  X,
-  Loader2
+import React, { useState, ElementType, useEffect } from 'react';
+import {
+  Utensils, Cake, Coffee, Camera, Mic, Soup, Salad, Egg, Milk, Drumstick,
+  LeafyGreen, Carrot, IceCream, Cookie, Wine, Beer, ChefHat,
+  Sparkles, Wheat, Fish, GlassWater, Package2, Loader2,
 } from 'lucide-react';
-import { useRTL } from '@/contexts/RTLContext';
-import { useAIChef } from '@/hooks/useAIChef';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { CategorySelector } from '@/components/ingredients/CategorySelector';
+import { IngredientManager } from '@/components/ingredients/IngredientManager';
+import { FilterPanel } from '@/components/ingredients/FilterPanel';
+import { SearchSummary } from '@/components/ingredients/SearchSummary';
+import { RecipeGrid } from '@/components/recipe/RecipeGrid';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { DrinkCustomizationForm, DrinkOptions } from '@/components/drinks/DrinkCustomizationForm';
+import { Recipe } from '@/types/index';
+import { supabase } from '@/integrations/supabase/client';
+import { useLocation } from 'react-router-dom';
 
-const AIFindByIngredientsPage = () => {
-  const { t } = useRTL();
-  const { askAIChef } = useAIChef();
+interface MainCategory {
+  id: string;
+  name: string;
+  icon: ElementType;
+  subcategories: { name: string; icon: ElementType; requiresCustomForm?: boolean }[];
+}
+
+interface Filters {
+  dietary: string;
+  cookTime: string;
+  difficulty: string;
+  cuisine: string;
+}
+
+interface Ingredient {
+  id: string;
+  name: string;
+  quantity: string;
+  unit: string;
+  source: 'manual' | 'pantry';
+  icon?: ElementType;
+}
+
+interface PantryItem {
+  id: string;
+  name: string;
+  quantity: string;
+  unit: string;
+  icon?: ElementType;
+}
+
+export default function FindByIngredients() {
   const { toast } = useToast();
-  
-  const [ingredients, setIngredients] = useState<string[]>([]);
-  const [currentIngredient, setCurrentIngredient] = useState('');
-  const [preferences, setPreferences] = useState('');
+  const { t } = useLanguage();
+  const location = useLocation();
+
+  // Get ingredients from previous page if navigated from ingredient selection
+  const stateIngredients = location.state?.selectedIngredients || [];
+
+  // --- Categories, Filters, Pantry ---
+  const mainCategories: MainCategory[] = [
+    {
+      id: 'food',
+      name: 'Food',
+      icon: ChefHat,
+      subcategories: [
+        { name: 'Main Dishes', icon: ChefHat },
+        { name: 'Appetizers', icon: Salad },
+        { name: 'Pickles', icon: Package2 },
+        { name: 'Soups', icon: Soup },
+        { name: 'Sauces', icon: Utensils },
+        { name: 'Others', icon: Utensils }
+      ]
+    },
+    {
+      id: 'desserts',
+      name: 'Desserts',
+      icon: Cake,
+      subcategories: [
+        { name: 'Traditional', icon: Cookie },
+        { name: 'Western', icon: IceCream },
+        { name: 'Pastries', icon: Cake },
+        { name: 'Ice Cream', icon: IceCream },
+        { name: 'Others', icon: Sparkles }
+      ]
+    },
+    {
+      id: 'drinks',
+      name: 'Drinks',
+      icon: Coffee,
+      subcategories: [
+        { name: 'Detox', icon: GlassWater },
+        { name: 'Cocktails', icon: Wine },
+        { name: 'Alcoholic', icon: Beer, requiresCustomForm: true },
+        { name: 'Hot Drinks', icon: Coffee },
+        { name: 'Others', icon: GlassWater }
+      ]
+    },
+  ];
+
+  const FILTER_OPTIONS = {
+    dietary: ['Normal', 'Healthy', 'Vegetarian', 'Vegan', 'Gluten-Free'],
+    cookTime: ['Under 30 mins', '30-60 mins', '1-2 hours', 'Over 2 hours'],
+    difficulty: ['Beginner', 'Intermediate', 'Expert'],
+    cuisine: ['Levant', 'Italian', 'Mexican', 'Chinese', 'Indian', 'American'],
+  };
+
+  const PANTRY_ITEMS: PantryItem[] = [
+    { id: 'p1', name: 'Flour', quantity: '1', unit: 'kg', icon: Wheat },
+    { id: 'p2', name: 'Sugar', quantity: '500', unit: 'g', icon: Sparkles },
+    { id: 'p3', name: 'Eggs', quantity: '6', unit: 'pcs', icon: Egg },
+    { id: 'p4', name: 'Milk', quantity: '1', unit: 'liter', icon: Milk },
+    { id: 'p5', name: 'Chicken Breast', quantity: '500', unit: 'g', icon: Drumstick },
+    { id: 'p6', name: 'Spinach', quantity: '200', unit: 'g', icon: LeafyGreen },
+    { id: 'p7', name: 'Cheese', quantity: '300', unit: 'g', icon: Package2 },
+    { id: 'p8', name: 'Salmon', quantity: '400', unit: 'g', icon: Fish },
+    { id: 'p9', name: 'Shrimp', quantity: '500', unit: 'g', icon: Fish },
+    { id: 'p10', name: 'Carrots', quantity: '5', unit: 'pcs', icon: Carrot },
+  ];
+
+  // --- State ---
+  const [currentStep, setCurrentStep] = useState(stateIngredients.length > 0 ? 4 : 1);
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<MainCategory | null>(
+    stateIngredients.length > 0 ? mainCategories[0] : null
+  );
+  const [selectedSubcategory, setSelectedSubcategory] = useState<{ name: string; icon: ElementType; requiresCustomForm?: boolean } | null>(
+    stateIngredients.length > 0 ? mainCategories[0].subcategories[0] : null
+  );
+  const [filters, setFilters] = useState<Filters>({
+    dietary: '',
+    cookTime: '',
+    difficulty: '',
+    cuisine: '',
+  });
+  const [addedIngredients, setAddedIngredients] = useState<Ingredient[]>([]);
+  const [customDrinkOptions, setCustomDrinkOptions] = useState<DrinkOptions | null>(null);
+  const [searchResults, setSearchResults] = useState<Recipe[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [discoveredRecipes, setDiscoveredRecipes] = useState<any[]>([]);
+  const [showResults, setShowResults] = useState(false);
 
-  const addIngredient = () => {
-    if (currentIngredient.trim() && !ingredients.includes(currentIngredient.trim())) {
-      setIngredients([...ingredients, currentIngredient.trim()]);
-      setCurrentIngredient('');
+  // Initialize ingredients from previous page
+  useEffect(() => {
+    if (stateIngredients.length > 0) {
+      const initialIngredients: Ingredient[] = stateIngredients.map((name: string, index: number) => ({
+        id: `from-selection-${index}`,
+        name,
+        quantity: '1',
+        unit: 'cup',
+        source: 'manual' as const
+      }));
+      setAddedIngredients(initialIngredients);
     }
-  };
+  }, []);
 
-  const removeIngredient = (ingredient: string) => {
-    setIngredients(ingredients.filter(i => i !== ingredient));
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      addIngredient();
+  // --- Handlers ---
+  const handleCategorySelect = (category: MainCategory) => {
+    setSelectedCategory(category);
+    setSelectedSubcategory(null);
+    if (!stateIngredients.length) {
+      setAddedIngredients([]);
     }
+    setCustomDrinkOptions(null);
+    setSearchResults([]);
+    setShowResults(false);
+    setCurrentStep(2);
   };
 
-  const findRecipes = async () => {
-    if (ingredients.length === 0) {
+  const handleSubcategorySelect = (subcategory: { name: string; icon: ElementType; requiresCustomForm?: boolean }) => {
+    setSelectedSubcategory(subcategory);
+    if (!stateIngredients.length) {
+      setAddedIngredients([]);
+    }
+    setCustomDrinkOptions(null);
+    setSearchResults([]);
+    setShowResults(false);
+    setCurrentStep(3);
+  };
+
+  const handleFilterChange = (filterType: keyof Filters, value: string) => {
+    setFilters(prev => ({ ...prev, [filterType]: value }));
+  };
+
+  const handleAddIngredient = (ingredient: Ingredient) => {
+    const ingredientWithId = ingredient.id ? ingredient : { ...ingredient, id: `manual-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` };
+    setAddedIngredients(prev => [...prev, ingredientWithId]);
+  };
+
+  const handleAddPantryItem = (item: PantryItem) => {
+    const isAlreadyAdded = addedIngredients.some(ing => ing.name === item.name);
+    if (isAlreadyAdded) {
       toast({
-        title: "Add ingredients",
-        description: "Please add at least one ingredient to find recipes.",
-        variant: "destructive"
+        title: t('error.alreadyAdded') || "Already Added",
+        description: `${item.name} ${t('error.alreadyInList') || 'is already in your list.'}`,
+        variant: "default",
       });
       return;
     }
+    setAddedIngredients(prev => [...prev, {
+      id: item.id,
+      name: item.name,
+      quantity: item.quantity,
+      unit: item.unit,
+      source: 'pantry',
+      icon: item.icon
+    }]);
+  };
 
-    setIsSearching(true);
-    
-    try {
-      const prompt = `
-        I have these ingredients available: ${ingredients.join(', ')}
-        
-        ${preferences ? `Additional preferences: ${preferences}` : ''}
-        
-        Please suggest 3-5 creative and delicious recipes I can make using primarily these ingredients. For each recipe, provide:
-        1. Recipe name
-        2. Brief description (1-2 sentences)
-        3. Estimated cooking time
-        4. Difficulty level (Easy/Medium/Hard)
-        5. Number of servings
-        6. Complete ingredient list (highlighting which ones I already have)
-        7. Step-by-step instructions
-        8. Any helpful cooking tips
-        
-        Focus on recipes that make the best use of the ingredients I have, and suggest alternatives if I'm missing something important.
-      `;
+  const handleRemoveIngredient = (id: string) => {
+    setAddedIngredients(prev => prev.filter(ing => ing.id !== id));
+  };
 
-      const response = await askAIChef(prompt);
-      
-      // Parse the response into recipe format
-      const recipes = parseAIResponse(response.response);
-      setDiscoveredRecipes(recipes);
-      
+  const handleScanIngredients = () => {
+    toast({
+      title: t('feature.scan') || "Scan Feature",
+      description: t('feature.scanDescription') || "Camera scanning feature will be implemented soon!",
+    });
+  };
+
+  const handleVoiceInput = () => {
+    toast({
+      title: t('feature.voice') || "Voice Feature",
+      description: t('feature.voiceDescription') || "Voice input feature will be implemented soon!",
+    });
+  };
+
+  const handleGenerateCustomDrink = (options: DrinkOptions) => {
+    setCustomDrinkOptions(options);
+    setCurrentStep(4);
+  };
+
+  // --- AI-powered Search ---
+  const handleSearchRecipes = async () => {
+    const isAlcoholicDrinkSearch = selectedCategory?.id === 'drinks' && selectedSubcategory?.requiresCustomForm;
+    if (!isAlcoholicDrinkSearch && addedIngredients.length === 0) {
       toast({
-        title: "Recipes found!",
-        description: `Found ${recipes.length} recipes using your ingredients.`
+        title: t('error.title') || "Error",
+        description: t('error.selectIngredients') || "Please select at least one ingredient",
+        variant: "destructive",
       });
-    } catch (error) {
+      return;
+    }
+    setIsSearching(true);
+    try {
+      let results: Recipe[] = [];
+      if (isAlcoholicDrinkSearch && customDrinkOptions) {
+        toast({
+          title: t('feature.customDrinks') || "Custom Drinks",
+          description: t('feature.customDrinksDescription') || "Custom drink generation coming soon!",
+        });
+        results = [];
+      } else {
+        // Use AI-powered search with optimized query for mobile
+        const ingredientNames = addedIngredients.map(ing => ing.name);
+        const aiQuery = `Generate 3-4 quick and easy recipes using: ${ingredientNames.join(', ')}.
+
+Return ONLY valid JSON array. Format:
+[{
+  "title": "Recipe Name",
+  "description": "Brief description", 
+  "difficulty": "Easy",
+  "prep_time": 10,
+  "cook_time": 20,
+  "servings": 4,
+  "cuisine_type": "International",
+  "calories": 300,
+  "protein": 20,
+  "carbs": 25,
+  "fat": 12,
+  "ingredients": [{"name": "ingredient", "amount": 1, "unit": "cup"}],
+  "instructions": ["Step 1", "Step 2"]
+}]
+
+Focus on practical recipes that can be made with the ingredients provided.`;
+
+        const { data: aiResponse, error: aiError } = await supabase.functions.invoke('ai-chef', {
+          body: {
+            query: aiQuery,
+            context: {
+              selectedIngredients: ingredientNames,
+              requestType: 'recipe_generation',
+              responseFormat: 'json_array'
+            }
+          }
+        });
+
+        if (aiError) throw new Error(`AI service error: ${aiError.message || 'Unknown error'}`);
+        if (!aiResponse || !aiResponse.response) throw new Error('Invalid or empty response from AI service');
+
+        let aiRecipes = [];
+        try {
+          const responseText = aiResponse.response.trim();
+          if (responseText.startsWith('[') && responseText.endsWith(']')) {
+            aiRecipes = JSON.parse(responseText);
+          } else {
+            // Fallback parsing logic
+            const jsonArrayMatch = responseText.match(/\[[\s\S]*\]/);
+            if (jsonArrayMatch) {
+              aiRecipes = JSON.parse(jsonArrayMatch[0]);
+            } else {
+              // Create fallback recipe
+              aiRecipes = [
+                {
+                  title: `Recipe with ${ingredientNames.slice(0, 2).join(' & ')}`,
+                  description: `A delicious combination using ${ingredientNames.join(', ')}.`,
+                  difficulty: 'Easy',
+                  prep_time: 10,
+                  cook_time: 20,
+                  servings: 4,
+                  cuisine_type: 'Fusion',
+                  calories: 300,
+                  protein: 18,
+                  carbs: 22,
+                  fat: 10,
+                  instructions: [
+                    'Prepare all ingredients',
+                    'Heat oil in a pan',
+                    'Add ingredients and cook',
+                    'Season and serve'
+                  ],
+                  ingredients: ingredientNames.map(ing => ({
+                    name: ing,
+                    amount: 1,
+                    unit: 'cup'
+                  }))
+                }
+              ];
+            }
+          }
+          if (!Array.isArray(aiRecipes) || aiRecipes.length === 0) throw new Error('No valid recipes found');
+        } catch {
+          // Fallback recipe
+          aiRecipes = [
+            {
+              title: `Creative Recipe with ${ingredientNames.slice(0, 2).join(' & ')}`,
+              description: `A delicious combination using ${ingredientNames.join(', ')}.`,
+              difficulty: 'Medium',
+              prep_time: 15,
+              cook_time: 25,
+              servings: 4,
+              cuisine_type: 'Fusion',
+              calories: 320,
+              protein: 20,
+              carbs: 25,
+              fat: 12,
+              instructions: [
+                'Prepare and wash all ingredients',
+                'Heat oil in a large pan',
+                'Add ingredients in order of cook time needed',
+                'Season with salt, pepper, and preferred spices',
+                'Cook until ingredients are tender',
+                'Adjust seasoning and serve hot'
+              ],
+              ingredients: ingredientNames.map(ing => ({
+                name: ing,
+                amount: 1,
+                unit: 'cup'
+              }))
+            }
+          ];
+        }
+
+        // Transform to Recipe format
+        results = aiRecipes.map((recipe: any, index: number): Recipe => ({
+          id: `ai-recipe-${Date.now()}-${index}`,
+          title: recipe.title || `Recipe with ${ingredientNames.join(', ')}`,
+          description: recipe.description || `A recipe using ${ingredientNames.join(', ')}`,
+          image_url: '',
+          image: '',
+          prep_time: recipe.prep_time || 15,
+          cook_time: recipe.cook_time || recipe.cook_time || 30,
+          total_time: (recipe.prep_time || 15) + (recipe.cook_time || recipe.cook_time || 30),
+          servings: recipe.servings || 4,
+          difficulty: recipe.difficulty || 'Medium' as 'Easy' | 'Medium' | 'Hard',
+          calories: recipe.calories || 300,
+          protein: recipe.protein || Math.floor(Math.random() * 20) + 15,
+          carbs: recipe.carbs || Math.floor(Math.random() * 30) + 20,
+          fat: recipe.fat || Math.floor(Math.random() * 15) + 10,
+          rating: 0,
+          rating_count: 0,
+          instructions: Array.isArray(recipe.instructions) ? recipe.instructions :
+            (recipe.instructions ? [recipe.instructions] : ['Follow recipe steps']),
+          categories: [],
+          tags: ['AI Generated'],
+          isFavorite: false,
+          is_published: true,
+          is_public: true,
+          user_id: 'ai-chef',
+          author_id: 'ai-chef',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          is_verified: true,
+          ingredients: Array.isArray(recipe.ingredients) ?
+            recipe.ingredients.map((ing: any) => ({
+              id: `ing-${Math.random()}`,
+              name: typeof ing === 'string' ? ing : (ing.name || ing.ingredient || 'Unknown'),
+              quantity: typeof ing === 'object' ? (ing.amount || ing.quantity || 1) : 1,
+              unit: typeof ing === 'object' ? (ing.unit || 'cup') : 'cup'
+            })) :
+            ingredientNames.map(ing => ({
+              id: `ing-${Math.random()}`,
+              name: ing,
+              quantity: 1,
+              unit: 'cup'
+            }))
+        }));
+      }
+
+      setSearchResults(results);
+      setShowResults(true);
+
+      if (results.length === 0) {
+        toast({
+          title: t('search.noResults') || "No Results Found",
+          description: t('search.noRecipesMatchingIngredients') || "No recipes found with your selected ingredients. Try different ingredients or remove some filters.",
+        });
+      } else {
+        toast({
+          title: t('search.success') || "Search Complete",
+          description: `${t('search.foundRecipes') || 'Found'} ${results.length} ${t('search.recipes') || 'recipes'}!`,
+        });
+      }
+    } catch (error: any) {
       toast({
-        title: "Search failed",
-        description: "Please try again later.",
-        variant: "destructive"
+        title: t('error.title') || "Error",
+        description: error.message || t('error.searchFailed') || "Failed to search recipes. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsSearching(false);
     }
   };
 
-  const parseAIResponse = (response: string) => {
-    // Simple parsing - in a real app, you'd want more sophisticated parsing
-    const recipes = [];
-    const sections = response.split(/\d+\./);
-    
-    sections.slice(1, 6).forEach((section, index) => {
-      recipes.push({
-        id: `ai-recipe-${index}`,
-        title: `AI Recipe ${index + 1}`,
-        description: section.substring(0, 150) + '...',
-        time: Math.floor(Math.random() * 60) + 15,
-        servings: Math.floor(Math.random() * 4) + 2,
-        difficulty: ['Easy', 'Medium', 'Hard'][Math.floor(Math.random() * 3)],
-        fullContent: section,
-        image: '/placeholder.svg'
-      });
-    });
-    
-    return recipes;
-  };
+  // --- Step Indicator ---
+  const renderStepIndicator = () => (
+    <div className="flex justify-center mb-6">
+      <div className="flex space-x-2">
+        {[1, 2, 3, 4].map((step) => (
+          <div
+            key={step}
+            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors ${
+              step <= currentStep
+                ? 'bg-wasfah-bright-teal text-white'
+                : 'bg-gray-200 text-gray-500'
+            }`}
+          >
+            {step}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
-  return (
-    <PageContainer 
-      header={{ 
-        title: t('Find Recipe by Ingredients', 'البحث عن وصفة بالمكونات'), 
-        showBackButton: true 
-      }}
-    >
-      <div className="space-y-6 pb-20">
-        <div className="bg-gradient-to-br from-wasfah-bright-teal to-wasfah-deep-teal p-6 rounded-lg text-white text-center">
-          <Sparkles className="h-12 w-12 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold mb-2">
-            {t('AI-Powered Recipe Discovery', 'اكتشاف الوصفات بالذكاء الاصطناعي')}
-          </h1>
-          <p className="opacity-90">
-            {t('Tell us what ingredients you have, and our AI will create amazing recipes for you!', 'أخبرنا بالمكونات التي لديك، وسيقوم الذكاء الاصطناعي لدينا بإنشاء وصفات رائعة لك!')}
-          </p>
-        </div>
+  const showDrinkCustomizationForm = currentStep === 3 && selectedCategory?.id === 'drinks' && selectedSubcategory?.requiresCustomForm;
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ChefHat className="h-5 w-5 text-wasfah-bright-teal" />
-              {t('Your Ingredients', 'مكوناتك')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Add ingredient input */}
-            <div className="flex gap-2">
-              <Input
-                placeholder={t('Add an ingredient...', 'أضف مكوناً...')}
-                value={currentIngredient}
-                onChange={(e) => setCurrentIngredient(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="flex-1"
-              />
-              <Button 
-                onClick={addIngredient}
-                disabled={!currentIngredient.trim()}
-                size="icon"
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
+  // --- Results View ---
+  if (showResults) {
+    return (
+      <PageContainer
+        header={{
+          title: t('search.results') || 'Search Results',
+          showBackButton: true
+        }}
+        className="bg-gradient-to-br from-wasfah-light-gray to-white min-h-screen"
+      >
+        <div className="space-y-6 pb-6">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-2">
+              {t('search.foundRecipesCount') || `Found ${searchResults.length} recipes`}
+            </h2>
+            <p className="text-gray-600">
+              {t('search.withIngredients') || 'Recipes using your selected ingredients'}
+            </p>
+          </div>
+          <RecipeGrid recipes={searchResults} />
+          {searchResults.length === 0 && (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                <ChefHat className="w-8 h-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-medium mb-2">
+                {t('search.noRecipesFound') || 'No recipes found'}
+              </h3>
+              <p className="text-gray-500 mb-4">
+                {t('search.tryDifferentIngredients') || 'Try different ingredients or adjust your filters'}
+              </p>
             </div>
+          )}
+        </div>
+      </PageContainer>
+    );
+  }
 
-            {/* Ingredients list */}
-            {ingredients.length > 0 && (
-              <div className="space-y-2">
-                <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300">
-                  {t('Available Ingredients', 'المكونات المتاحة')} ({ingredients.length})
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {ingredients.map((ingredient, index) => (
-                    <Badge 
-                      key={index} 
-                      variant="secondary" 
-                      className="flex items-center gap-1 bg-wasfah-bright-teal/10 text-wasfah-deep-teal"
-                    >
-                      {ingredient}
-                      <button
-                        onClick={() => removeIngredient(ingredient)}
-                        className="ml-1 hover:text-red-600"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </Badge>
-                  ))}
-                </div>
+  // --- Main Multi-Step UI ---
+  return (
+    <PageContainer
+      header={{
+        title: t('findRecipe.title') || 'Find Recipe',
+        showBackButton: true,
+      }}
+      className="bg-gradient-to-br from-wasfah-light-gray to-white min-h-screen"
+    >
+      <div className="space-y-6 pb-6">
+        {renderStepIndicator()}
+
+        <FilterPanel
+          filters={filters}
+          filterOptions={FILTER_OPTIONS}
+          showFilters={showFilters}
+          onFilterChange={handleFilterChange}
+          onToggleFilters={() => setShowFilters(!showFilters)}
+          onCloseFilters={() => setShowFilters(false)}
+        />
+
+        {currentStep === 1 && (
+          <CategorySelector
+            categories={mainCategories}
+            selectedCategory={selectedCategory}
+            selectedSubcategory={selectedSubcategory}
+            currentStep={currentStep}
+            onCategorySelect={handleCategorySelect}
+            onSubcategorySelect={handleSubcategorySelect}
+            onBack={() => {}}
+          />
+        )}
+
+        {currentStep === 2 && selectedCategory && (
+          <CategorySelector
+            categories={mainCategories}
+            selectedCategory={selectedCategory}
+            selectedSubcategory={selectedSubcategory}
+            currentStep={currentStep}
+            onCategorySelect={handleCategorySelect}
+            onSubcategorySelect={handleSubcategorySelect}
+            onBack={() => setCurrentStep(1)}
+          />
+        )}
+
+        {currentStep === 3 && (
+          showDrinkCustomizationForm ? (
+            <DrinkCustomizationForm
+              onGenerateDrink={handleGenerateCustomDrink}
+              onBack={() => setCurrentStep(2)}
+            />
+          ) : (
+            <>
+              <IngredientManager
+                addedIngredients={addedIngredients}
+                pantryItems={PANTRY_ITEMS}
+                onAddIngredient={handleAddIngredient}
+                onRemoveIngredient={handleRemoveIngredient}
+                onAddPantryItem={handleAddPantryItem}
+                onScanIngredients={handleScanIngredients}
+                onVoiceInput={handleVoiceInput}
+              />
+              <div className="pt-4">
+                <button
+                  onClick={() => setCurrentStep(4)}
+                  disabled={addedIngredients.length === 0}
+                  className="w-full h-12 mt-6 bg-wasfah-bright-teal hover:bg-wasfah-teal text-white disabled:bg-gray-300 rounded-lg font-medium transition-colors"
+                >
+                  {t('action.continueToSearch') || 'Continue to Search'}
+                </button>
+              </div>
+            </>
+          )
+        )}
+
+        {currentStep === 4 && (
+          <>
+            <SearchSummary
+              selectedCategory={selectedCategory}
+              selectedSubcategory={selectedSubcategory}
+              ingredientCount={showDrinkCustomizationForm ? 0 : addedIngredients.length}
+              filterCount={Object.values(filters).filter(v => v).length}
+              customDrinkOptions={customDrinkOptions}
+              onSearch={handleSearchRecipes}
+            />
+            {isSearching && (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-wasfah-bright-teal mr-2" />
+                <span className="text-gray-600">
+                  {t('search.searching') || 'Searching for recipes...'}
+                </span>
               </div>
             )}
-
-            {/* Preferences */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                {t('Additional Preferences (Optional)', 'تفضيلات إضافية (اختياري)')}
-              </label>
-              <Textarea
-                placeholder={t('e.g., vegetarian, spicy, quick meals, comfort food...', 'مثل: نباتي، حار، وجبات سريعة، طعام مريح...')}
-                value={preferences}
-                onChange={(e) => setPreferences(e.target.value)}
-                rows={3}
-              />
-            </div>
-
-            {/* Search button */}
-            <Button 
-              onClick={findRecipes}
-              className="w-full bg-wasfah-bright-teal hover:bg-wasfah-deep-teal"
-              disabled={isSearching || ingredients.length === 0}
-            >
-              {isSearching ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('AI is creating recipes...', 'الذكاء الاصطناعي ينشئ الوصفات...')}
-                </>
-              ) : (
-                <>
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  {t('Find Recipes with AI', 'ابحث عن الوصفات بالذكاء الاصطناعي')}
-                </>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Results */}
-        {discoveredRecipes.length > 0 && (
-          <div className="space-y-4">
-            <h3 className="font-bold text-xl text-wasfah-deep-teal">
-              {t('AI-Generated Recipes', 'الوصفات المُنشأة بالذكاء الاصطناعي')}
-            </h3>
-            <div className="grid gap-4">
-              {discoveredRecipes.map((recipe) => (
-                <Card key={recipe.id} className="overflow-hidden hover:shadow-lg transition-all duration-200">
-                  <div className="flex">
-                    <img
-                      src={recipe.image}
-                      alt={recipe.title}
-                      className="w-24 h-24 object-cover"
-                    />
-                    <CardContent className="flex-1 p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-bold text-lg text-wasfah-deep-teal">
-                          {recipe.title}
-                        </h4>
-                        <Badge variant="outline" className="ml-2">
-                          {recipe.difficulty}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                        {recipe.description}
-                      </p>
-                      <div className="flex items-center gap-4 text-xs text-gray-500">
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          <span>{recipe.time} {t('min', 'دقيقة')}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Users className="h-3 w-3" />
-                          <span>{recipe.servings} {t('servings', 'حصص')}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Sparkles className="h-3 w-3 text-wasfah-bright-teal" />
-                          <span className="text-wasfah-bright-teal font-medium">AI Generated</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </div>
+          </>
         )}
       </div>
     </PageContainer>
   );
-};
-
-export default AIFindByIngredientsPage;
+}
