@@ -6,14 +6,14 @@ import { Settings, X } from 'lucide-react';
 
 interface FilterOptions {
   dietary: string[];
-  cookingTime: string[];
+  cookTime: string[];
   difficulty: string[];
   cuisine: string[];
 }
 
 interface Filters {
   dietary: string;
-  cookingTime: string;
+  cookTime: string;
   difficulty: string;
   cuisine: string;
 }
