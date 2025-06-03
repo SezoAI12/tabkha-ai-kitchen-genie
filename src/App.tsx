@@ -49,6 +49,10 @@ import ShoppingListPage from "./pages/ShoppingListPage";
 import NotFound from "./pages/NotFound";
 import EditProfilePage from "./pages/EditProfilePage";
 import AIFeaturesPage from '@/pages/AIFeaturesPage';
+import AiChefPage from './pages/AiChefPage';
+
+// Import the SmartPantry component as a page wrapper
+import SmartPantryPageWrapper from './pages/SmartPantryPageWrapper';
 
 // Admin pages
 import AdminPage from "./pages/AdminPage";
@@ -104,7 +108,10 @@ function App() {
                   <Route path="/create-recipe" element={<CreateRecipePage />} />
                   <Route path="/favorites" element={<FavoritesPage />} />
                   <Route path="/find-by-ingredients" element={<AIFindByIngredientsPage />} />
+                  <Route path="/ai-find-by-ingredients" element={<AIFindByIngredientsPage />} />
                   <Route path="/pantry" element={<PantryPage />} />
+                  <Route path="/smart-pantry" element={<SmartPantryPageWrapper />} />
+                  <Route path="/ai-chef" element={<AiChefPage />} />
                   <Route path="/meal-plan" element={<MealPlanPage />} />
                   <Route path="/search" element={<SearchPage />} />
                   <Route path="/community" element={<CommunityPage />} />
