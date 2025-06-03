@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Recipe } from '@/types/index';
 import { Button } from '@/components/ui/button';
@@ -202,7 +201,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
             <div className="space-y-3">
               {recipe.ingredients.map((ingredient) => {
                 const isChecked = checkedIngredients.has(ingredient.id);
-                const adjustedAmount = Math.round((ingredient.amount * servingMultiplier) * 100) / 100;
+                const adjustedAmount = Math.round(((ingredient.amount || 0) * servingMultiplier) * 100) / 100;
                 
                 return (
                   <div 
@@ -366,7 +365,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
       <div className="max-w-6xl mx-auto px-6 py-8">
         <RecipeSocialInteractions
           recipeId={recipe.id}
-          commentCount={recipe.ratingCount}
+          commentCount={recipe.ratingCount || 0}
           shares={Math.floor((recipe.rating || 0) * 5)}
           rating={recipe.rating}
           ratingCount={recipe.ratingCount}
