@@ -29,7 +29,6 @@ interface Filters {
   cookTime: string;
   difficulty: string;
   cuisine: string;
-  cookingTime: string;
 }
 
 interface Ingredient {
@@ -103,7 +102,6 @@ export default function FindByIngredients() {
     cookTime: ['Under 30 mins', '30-60 mins', '1-2 hours', 'Over 2 hours'],
     difficulty: ['Beginner', 'Intermediate', 'Expert'],
     cuisine: ['Levant', 'Italian', 'Mexican', 'Chinese', 'Indian', 'American'],
-    cookingTime: ['Under 30 mins', '30-60 mins', '1-2 hours', 'Over 2 hours'],
   };
 
   const PANTRY_ITEMS: PantryItem[] = [
@@ -133,7 +131,6 @@ export default function FindByIngredients() {
     cookTime: '',
     difficulty: '',
     cuisine: '',
-    cookingTime: '',
   });
   const [addedIngredients, setAddedIngredients] = useState<Ingredient[]>([]);
   const [customDrinkOptions, setCustomDrinkOptions] = useState<DrinkOptions | null>(null);
@@ -362,7 +359,7 @@ Focus on practical recipes that can be made with the ingredients provided.`;
           ];
         }
 
-        // Transform to Recipe format
+        // Transform to Recipe format - removed totalTime property
         results = aiRecipes.map((recipe: any, index: number): Recipe => ({
           id: `ai-recipe-${Date.now()}-${index}`,
           title: recipe.title || `Recipe with ${ingredientNames.join(', ')}`,
@@ -370,39 +367,30 @@ Focus on practical recipes that can be made with the ingredients provided.`;
           image: '',
           prepTime: recipe.prepTime || 15,
           cookTime: recipe.cookTime || 30,
-          totalTime: (recipe.prepTime || 15) + (recipe.cookTime || 30),
           servings: recipe.servings || 4,
-          difficulty: recipe.difficulty || 'Medium' as 'Easy' | 'Medium' | 'Hard',
+          difficulty: recipe.difficulty || 'Medium',
           calories: recipe.calories || 300,
-          protein: recipe.protein || Math.floor(Math.random() * 20) + 15,
-          carbs: recipe.carbs || Math.floor(Math.random() * 30) + 20,
-          fat: recipe.fat || Math.floor(Math.random() * 15) + 10,
           rating: 0,
-          rating_count: 0,
+          ratingCount: 0,
           instructions: Array.isArray(recipe.instructions) ? recipe.instructions :
             (recipe.instructions ? [recipe.instructions] : ['Follow recipe steps']),
           categories: [],
           tags: ['AI Generated'],
           isFavorite: false,
-          is_published: true,
-          is_public: true,
-          user_id: 'ai-chef',
-          author_id: 'ai-chef',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          is_verified: true,
           ingredients: Array.isArray(recipe.ingredients) ?
             recipe.ingredients.map((ing: any) => ({
               id: `ing-${Math.random()}`,
               name: typeof ing === 'string' ? ing : (ing.name || ing.ingredient || 'Unknown'),
-              quantity: typeof ing === 'object' ? (ing.amount || ing.quantity || 1) : 1,
-              unit: typeof ing === 'object' ? (ing.unit || 'cup') : 'cup'
+              amount: typeof ing === 'object' ? (ing.amount || ing.quantity || '1') : '1',
+              unit: typeof ing === 'object' ? (ing.unit || 'cup') : 'cup',
+              category: 'general'
             })) :
             ingredientNames.map(ing => ({
               id: `ing-${Math.random()}`,
               name: ing,
-              quantity: 1,
-              unit: 'cup'
+              amount: '1',
+              unit: 'cup',
+              category: 'general'
             }))
         }));
       }
