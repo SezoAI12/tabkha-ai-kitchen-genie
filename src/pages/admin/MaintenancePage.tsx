@@ -23,7 +23,10 @@ import {
   Shield,
   Clock,
   Users,
-  FileText
+  FileText,
+  Settings,
+  Power,
+  Download
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
@@ -33,12 +36,12 @@ export default function MaintenancePage() {
   const [activeTask, setActiveTask] = useState('');
 
   const systemMetrics = [
-    { label: 'CPU Usage', value: '45%', status: 'good', icon: Cpu },
-    { label: 'Memory Usage', value: '62%', status: 'warning', icon: MemoryStick },
-    { label: 'Disk Space', value: '78%', status: 'warning', icon: HardDrive },
-    { label: 'Network', value: '98%', status: 'good', icon: Wifi },
-    { label: 'Active Users', value: '1,234', status: 'good', icon: Users },
-    { label: 'Database Connections', value: '23/100', status: 'good', icon: Database }
+    { label: 'CPU Usage', value: '45%', status: 'good', icon: Cpu, color: 'text-green-600' },
+    { label: 'Memory Usage', value: '62%', status: 'warning', icon: MemoryStick, color: 'text-yellow-600' },
+    { label: 'Disk Space', value: '78%', status: 'warning', icon: HardDrive, color: 'text-yellow-600' },
+    { label: 'Network', value: '98%', status: 'good', icon: Wifi, color: 'text-green-600' },
+    { label: 'Active Users', value: '1,234', status: 'good', icon: Users, color: 'text-blue-600' },
+    { label: 'Database Connections', value: '23/100', status: 'good', icon: Database, color: 'text-green-600' }
   ];
 
   const maintenanceTasks = [
@@ -50,7 +53,8 @@ export default function MaintenancePage() {
       status: 'ready',
       lastRun: '2 days ago',
       category: 'cleanup',
-      estimatedTime: '5 minutes'
+      estimatedTime: '5 minutes',
+      priority: 'medium'
     },
     {
       id: 'optimize-db',
@@ -60,7 +64,8 @@ export default function MaintenancePage() {
       status: 'ready',
       lastRun: '1 week ago',
       category: 'performance',
-      estimatedTime: '15 minutes'
+      estimatedTime: '15 minutes',
+      priority: 'high'
     },
     {
       id: 'refresh-cache',
@@ -70,7 +75,8 @@ export default function MaintenancePage() {
       status: 'ready',
       lastRun: '1 day ago',
       category: 'performance',
-      estimatedTime: '3 minutes'
+      estimatedTime: '3 minutes',
+      priority: 'low'
     },
     {
       id: 'check-storage',
@@ -80,7 +86,8 @@ export default function MaintenancePage() {
       status: 'ready',
       lastRun: '3 days ago',
       category: 'cleanup',
-      estimatedTime: '10 minutes'
+      estimatedTime: '10 minutes',
+      priority: 'medium'
     },
     {
       id: 'security-scan',
@@ -90,7 +97,8 @@ export default function MaintenancePage() {
       status: 'ready',
       lastRun: '1 week ago',
       category: 'security',
-      estimatedTime: '20 minutes'
+      estimatedTime: '20 minutes',
+      priority: 'high'
     },
     {
       id: 'backup-verification',
@@ -100,15 +108,16 @@ export default function MaintenancePage() {
       status: 'ready',
       lastRun: '6 hours ago',
       category: 'backup',
-      estimatedTime: '8 minutes'
+      estimatedTime: '8 minutes',
+      priority: 'high'
     }
   ];
 
   const scheduledTasks = [
-    { name: 'Daily Log Cleanup', nextRun: '2024-01-16 02:00', status: 'scheduled' },
-    { name: 'Weekly Database Optimization', nextRun: '2024-01-21 03:00', status: 'scheduled' },
-    { name: 'Monthly Security Scan', nextRun: '2024-02-01 01:00', status: 'scheduled' },
-    { name: 'Backup Verification', nextRun: '2024-01-16 04:00', status: 'scheduled' }
+    { name: 'Daily Log Cleanup', nextRun: '2024-01-16 02:00', status: 'scheduled', frequency: 'Daily' },
+    { name: 'Weekly Database Optimization', nextRun: '2024-01-21 03:00', status: 'scheduled', frequency: 'Weekly' },
+    { name: 'Monthly Security Scan', nextRun: '2024-02-01 01:00', status: 'scheduled', frequency: 'Monthly' },
+    { name: 'Backup Verification', nextRun: '2024-01-16 04:00', status: 'scheduled', frequency: 'Every 6 hours' }
   ];
 
   const runMaintenance = async (task: any) => {
@@ -116,7 +125,6 @@ export default function MaintenancePage() {
     setActiveTask(task.title);
     setProgress(0);
 
-    // Simulate maintenance task with realistic progress
     const steps = [
       { progress: 10, message: 'Initializing task...' },
       { progress: 30, message: 'Processing data...' },
@@ -177,25 +185,38 @@ export default function MaintenancePage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'good':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-green-50 text-green-700 border-green-200';
       case 'warning':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-yellow-50 text-yellow-700 border-yellow-200';
       case 'error':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-red-50 text-red-700 border-red-200';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-gray-50 text-gray-700 border-gray-200';
     }
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'cleanup':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-50 text-blue-700 border-blue-200';
       case 'performance':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-purple-50 text-purple-700 border-purple-200';
       case 'security':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-50 text-red-700 border-red-200';
       case 'backup':
+        return 'bg-green-50 text-green-700 border-green-200';
+      default:
+        return 'bg-gray-50 text-gray-700 border-gray-200';
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high':
+        return 'bg-red-100 text-red-800';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'low':
         return 'bg-green-100 text-green-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -203,21 +224,21 @@ export default function MaintenancePage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">System Maintenance</h1>
-          <p className="text-gray-600 mt-1">Monitor and maintain system health</p>
+          <p className="text-gray-600 mt-1">Monitor and maintain system health and performance</p>
         </div>
         <div className="flex items-center gap-4">
-          <Badge variant="outline" className="flex items-center gap-2 px-3 py-1">
-            <Server className="h-4 w-4 text-green-500" />
+          <Badge variant="outline" className="flex items-center gap-2 px-3 py-1 bg-green-50 border-green-200">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             System Online
           </Badge>
           <Button 
             onClick={runAllMaintenance} 
             disabled={isRunning}
-            className="bg-wasfah-bright-teal hover:bg-wasfah-teal"
+            className="bg-wasfah-bright-teal hover:bg-wasfah-teal text-white"
           >
             {isRunning ? (
               <>
@@ -225,7 +246,10 @@ export default function MaintenancePage() {
                 Running...
               </>
             ) : (
-              'Run All Tasks'
+              <>
+                <Settings className="h-4 w-4 mr-2" />
+                Run All Tasks
+              </>
             )}
           </Button>
         </div>
@@ -233,15 +257,15 @@ export default function MaintenancePage() {
 
       {/* Progress Indicator */}
       {isRunning && (
-        <Alert className="border-blue-200 bg-blue-50">
+        <Alert className="border-blue-200 bg-gradient-to-r from-blue-50 to-blue-100">
           <Monitor className="h-4 w-4" />
           <AlertDescription>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <p className="font-medium">{activeTask}</p>
-                <span className="text-sm text-gray-600">{progress}%</span>
+                <p className="font-medium text-blue-800">{activeTask}</p>
+                <span className="text-sm text-blue-600 font-semibold">{progress}%</span>
               </div>
-              <Progress value={progress} className="w-full h-2" />
+              <Progress value={progress} className="w-full h-3 bg-blue-200" />
             </div>
           </AlertDescription>
         </Alert>
@@ -252,16 +276,20 @@ export default function MaintenancePage() {
         {systemMetrics.map((metric, index) => {
           const Icon = metric.icon;
           return (
-            <Card key={index} className="border-l-4 border-l-wasfah-bright-teal">
+            <Card key={index} className="border-l-4 border-l-wasfah-bright-teal hover:shadow-lg transition-shadow">
               <CardContent className="p-4">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <Icon className="h-4 w-4 text-wasfah-bright-teal" />
-                    <span className="text-sm font-medium text-gray-600">{metric.label}</span>
+                    <div className="p-2 bg-wasfah-bright-teal/10 rounded-lg">
+                      <Icon className="h-4 w-4 text-wasfah-bright-teal" />
+                    </div>
+                    {getStatusIcon(metric.status)}
                   </div>
-                  {getStatusIcon(metric.status)}
                 </div>
-                <p className="text-2xl font-bold mt-1">{metric.value}</p>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-gray-600">{metric.label}</p>
+                  <p className="text-2xl font-bold text-gray-900">{metric.value}</p>
+                </div>
               </CardContent>
             </Card>
           );
@@ -269,16 +297,22 @@ export default function MaintenancePage() {
       </div>
 
       <Tabs defaultValue="tasks" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="tasks">Maintenance Tasks</TabsTrigger>
-          <TabsTrigger value="scheduled">Scheduled Tasks</TabsTrigger>
-          <TabsTrigger value="emergency">Emergency Actions</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 bg-white shadow-sm">
+          <TabsTrigger value="tasks" className="data-[state=active]:bg-wasfah-bright-teal data-[state=active]:text-white">
+            Maintenance Tasks
+          </TabsTrigger>
+          <TabsTrigger value="scheduled" className="data-[state=active]:bg-wasfah-bright-teal data-[state=active]:text-white">
+            Scheduled Tasks
+          </TabsTrigger>
+          <TabsTrigger value="emergency" className="data-[state=active]:bg-wasfah-bright-teal data-[state=active]:text-white">
+            Emergency Actions
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="tasks" className="mt-6">
-          <Card>
+          <Card className="shadow-lg">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-wasfah-deep-teal">
                 <Activity className="h-5 w-5" />
                 Available Maintenance Tasks
               </CardTitle>
@@ -288,28 +322,32 @@ export default function MaintenancePage() {
                 {maintenanceTasks.map((task) => {
                   const Icon = task.icon;
                   return (
-                    <div key={task.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-                      <div className="flex items-center gap-4">
-                        <div className="p-3 bg-wasfah-bright-teal/10 rounded-lg">
-                          <Icon className="h-5 w-5 text-wasfah-bright-teal" />
+                    <div key={task.id} className="flex items-center justify-between p-6 border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-wasfah-bright-teal/30 transition-all duration-200">
+                      <div className="flex items-center gap-4 flex-1">
+                        <div className="p-3 bg-wasfah-bright-teal/10 rounded-xl">
+                          <Icon className="h-6 w-6 text-wasfah-bright-teal" />
                         </div>
                         <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-semibold">{task.title}</h3>
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="font-semibold text-lg text-gray-900">{task.title}</h3>
                             <Badge className={getCategoryColor(task.category)}>{task.category}</Badge>
+                            <Badge className={getPriorityColor(task.priority)}>{task.priority}</Badge>
                           </div>
-                          <p className="text-sm text-gray-600 mb-2">{task.description}</p>
-                          <div className="flex items-center gap-4 text-xs text-gray-500">
+                          <p className="text-gray-600 mb-3">{task.description}</p>
+                          <div className="flex items-center gap-6 text-sm text-gray-500">
                             <span className="flex items-center gap-1">
-                              <Clock className="h-3 w-3" />
+                              <Clock className="h-4 w-4" />
                               Est. {task.estimatedTime}
                             </span>
-                            <span>Last run: {task.lastRun}</span>
+                            <span className="flex items-center gap-1">
+                              <RefreshCw className="h-4 w-4" />
+                              Last run: {task.lastRun}
+                            </span>
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge className={getStatusColor(task.status)}>
+                      <div className="flex items-center gap-3">
+                        <Badge className={getStatusColor(task.status)} variant="outline">
                           {task.status}
                         </Badge>
                         <Button
@@ -317,11 +355,12 @@ export default function MaintenancePage() {
                           disabled={isRunning}
                           variant="outline"
                           size="sm"
+                          className="border-wasfah-bright-teal text-wasfah-bright-teal hover:bg-wasfah-bright-teal hover:text-white"
                         >
                           {isRunning ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
                           ) : (
-                            'Run'
+                            'Run Task'
                           )}
                         </Button>
                       </div>
@@ -334,22 +373,29 @@ export default function MaintenancePage() {
         </TabsContent>
 
         <TabsContent value="scheduled" className="mt-6">
-          <Card>
+          <Card className="shadow-lg">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-wasfah-deep-teal">
                 <Clock className="h-5 w-5" />
                 Scheduled Maintenance
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {scheduledTasks.map((task, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div>
-                      <p className="font-medium">{task.name}</p>
-                      <p className="text-sm text-gray-600">Next run: {task.nextRun}</p>
+                  <div key={index} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center gap-4">
+                      <div className="w-3 h-3 bg-wasfah-bright-teal rounded-full"></div>
+                      <div>
+                        <p className="font-medium text-gray-900">{task.name}</p>
+                        <div className="flex items-center gap-4 text-sm text-gray-600 mt-1">
+                          <span>Next run: {task.nextRun}</span>
+                          <span>•</span>
+                          <span>{task.frequency}</span>
+                        </div>
+                      </div>
                     </div>
-                    <Badge className="bg-blue-100 text-blue-800">
+                    <Badge className="bg-blue-50 text-blue-700 border-blue-200">
                       {task.status}
                     </Badge>
                   </div>
@@ -360,7 +406,7 @@ export default function MaintenancePage() {
         </TabsContent>
 
         <TabsContent value="emergency" className="mt-6">
-          <Card className="border-red-200">
+          <Card className="border-red-200 shadow-lg">
             <CardHeader>
               <CardTitle className="text-red-600 flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5" />
@@ -368,35 +414,36 @@ export default function MaintenancePage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Alert className="mb-4">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
+              <Alert className="mb-6 border-red-200 bg-red-50">
+                <AlertTriangle className="h-4 w-4 text-red-600" />
+                <AlertDescription className="text-red-800">
                   These actions should only be used in emergency situations and may cause temporary service interruption.
+                  Use with extreme caution.
                 </AlertDescription>
               </Alert>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                <Button variant="destructive" size="sm" className="w-full">
-                  <RefreshCw className="h-4 w-4 mr-2" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <Button variant="destructive" size="sm" className="w-full h-12 flex items-center gap-2">
+                  <RefreshCw className="h-4 w-4" />
                   Force Cache Clear
                 </Button>
-                <Button variant="destructive" size="sm" className="w-full">
-                  <Server className="h-4 w-4 mr-2" />
+                <Button variant="destructive" size="sm" className="w-full h-12 flex items-center gap-2">
+                  <Power className="h-4 w-4" />
                   Restart Services
                 </Button>
-                <Button variant="destructive" size="sm" className="w-full">
-                  <Database className="h-4 w-4 mr-2" />
+                <Button variant="destructive" size="sm" className="w-full h-12 flex items-center gap-2">
+                  <Download className="h-4 w-4" />
                   Emergency Backup
                 </Button>
-                <Button variant="destructive" size="sm" className="w-full">
-                  <Shield className="h-4 w-4 mr-2" />
+                <Button variant="destructive" size="sm" className="w-full h-12 flex items-center gap-2">
+                  <Shield className="h-4 w-4" />
                   Lock System
                 </Button>
-                <Button variant="destructive" size="sm" className="w-full">
-                  <AlertTriangle className="h-4 w-4 mr-2" />
+                <Button variant="destructive" size="sm" className="w-full h-12 flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4" />
                   Safe Mode
                 </Button>
-                <Button variant="destructive" size="sm" className="w-full">
-                  <Monitor className="h-4 w-4 mr-2" />
+                <Button variant="destructive" size="sm" className="w-full h-12 flex items-center gap-2">
+                  <Monitor className="h-4 w-4" />
                   System Reset
                 </Button>
               </div>

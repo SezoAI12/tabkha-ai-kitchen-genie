@@ -5,7 +5,7 @@ import { WasfahLogo } from '@/components/icons/WasfahLogo';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Mail, Lock, User, ArrowRight, Languages, Loader2, Phone, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, Languages, Loader2, Phone, Eye, EyeOff, KeyRound } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -19,11 +19,13 @@ export default function AuthPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [language, setLanguage] = useState('en');
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
-  // Form states
+  // Login states
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
 
+  // Register states
   const [registerFullName, setRegisterFullName] = useState('');
   const [registerMethod, setRegisterMethod] = useState('email');
   const [registerEmail, setRegisterEmail] = useState('');
@@ -31,6 +33,10 @@ export default function AuthPage() {
   const [registerPassword, setRegisterPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [registerLanguage, setRegisterLanguage] = useState('en');
+
+  // Forgot password states
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [resetSent, setResetSent] = useState(false);
 
   const t = (en: string, ar?: string) => language === 'ar' && ar ? ar : en;
 
@@ -47,6 +53,10 @@ export default function AuthPage() {
 
   const validatePassword = (password: string) => {
     return password.length >= 6;
+  };
+
+  const validatePhoneNumber = (phone: string) => {
+    return /^\+?[\d\s-()]{10,}$/.test(phone);
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -111,10 +121,10 @@ export default function AuthPage() {
       return;
     }
 
-    if (registerMethod === 'phone' && !registerPhoneNumber.trim()) {
+    if (registerMethod === 'phone' && !validatePhoneNumber(registerPhoneNumber)) {
       toast({
-        title: t("Phone Required", "الهاتف مطلوب"),
-        description: t("Please enter your phone number", "يرجى إدخال رقم هاتفك"),
+        title: t("Invalid Phone Number", "رقم هاتف غير صحيح"),
+        description: t("Please enter a valid phone number", "يرجى إدخال رقم هاتف صحيح"),
         variant: "destructive",
       });
       return;
@@ -154,6 +164,39 @@ export default function AuthPage() {
       toast({
         title: t("Registration failed", "فشل التسجيل"),
         description: error.message || t("Registration failed", "فشل التسجيل"),
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateEmail(forgotEmail)) {
+      toast({
+        title: t("Invalid Email", "بريد إلكتروني غير صحيح"),
+        description: t("Please enter a valid email address", "يرجى إدخال عنوان بريد إلكتروني صحيح"),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // Simulate password reset
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      setResetSent(true);
+      toast({
+        title: t("Reset email sent", "تم إرسال رسالة إعادة التعيين"),
+        description: t("Check your email for password reset instructions", "تحقق من بريدك الإلكتروني للحصول على تعليمات إعادة تعيين كلمة المرور"),
+      });
+    } catch (error: any) {
+      toast({
+        title: t("Reset failed", "فشل إعادة التعيين"),
+        description: error.message || t("Failed to send reset email", "فشل في إرسال رسالة إعادة التعيين"),
         variant: "destructive",
       });
     } finally {
@@ -242,252 +285,341 @@ export default function AuthPage() {
           transition={{ duration: 0.5 }}
           className="w-full max-w-md bg-white/80 backdrop-blur-sm dark:bg-gray-800/90 rounded-2xl shadow-2xl p-8 md:p-10 border border-white/20 dark:border-gray-700/50"
         >
-          <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-8 bg-gray-100/80 dark:bg-gray-700/80 backdrop-blur-sm rounded-xl p-1">
-              <TabsTrigger
-                value="login"
-                className="text-base font-semibold data-[state=active]:bg-wasfah-bright-teal data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg transition-all duration-200"
-              >
-                {t('Login', 'تسجيل الدخول')}
-              </TabsTrigger>
-              <TabsTrigger
-                value="register"
-                className="text-base font-semibold data-[state=active]:bg-wasfah-bright-teal data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg transition-all duration-200"
-              >
-                {t('Register', 'التسجيل')}
-              </TabsTrigger>
-            </TabsList>
-
-            <AnimatePresence mode="wait">
-              {activeTab === 'login' && (
-                <motion.div
-                  key="loginForm"
-                  variants={formVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
+          {!showForgotPassword ? (
+            <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-8 bg-gray-100/80 dark:bg-gray-700/80 backdrop-blur-sm rounded-xl p-1">
+                <TabsTrigger
+                  value="login"
+                  className="text-base font-semibold data-[state=active]:bg-wasfah-bright-teal data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg transition-all duration-200"
                 >
-                  <TabsContent value="login" className="mt-6">
-                    <form onSubmit={handleLogin} className="space-y-6">
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                        <Input
-                          type="email"
-                          placeholder={t("Email", "البريد الإلكتروني")}
-                          className="pl-10 h-12 text-base bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-200/50 focus:border-wasfah-bright-teal transition-all duration-200"
-                          required
-                          value={loginEmail}
-                          onChange={(e) => setLoginEmail(e.target.value)}
-                        />
-                      </div>
-                      
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          placeholder={t("Password", "كلمة المرور")}
-                          className="pl-10 pr-10 h-12 text-base bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-200/50 focus:border-wasfah-bright-teal transition-all duration-200"
-                          required
-                          value={loginPassword}
-                          onChange={(e) => setLoginPassword(e.target.value)}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                        >
-                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                        </button>
-                      </div>
+                  {t('Login', 'تسجيل الدخول')}
+                </TabsTrigger>
+                <TabsTrigger
+                  value="register"
+                  className="text-base font-semibold data-[state=active]:bg-wasfah-bright-teal data-[state=active]:text-white data-[state=active]:shadow-lg rounded-lg transition-all duration-200"
+                >
+                  {t('Register', 'التسجيل')}
+                </TabsTrigger>
+              </TabsList>
 
-                      <div className="text-right">
-                        <Button variant="link" className="text-sm text-wasfah-bright-teal p-0 hover:underline font-medium">
-                          {t('Forgot password?', 'هل نسيت كلمة المرور؟')}
+              <AnimatePresence mode="wait">
+                {activeTab === 'login' && (
+                  <motion.div
+                    key="loginForm"
+                    variants={formVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                  >
+                    <TabsContent value="login" className="mt-6">
+                      <form onSubmit={handleLogin} className="space-y-6">
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                          <Input
+                            type="email"
+                            placeholder={t("Email", "البريد الإلكتروني")}
+                            className="pl-10 h-12 text-base bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-200/50 focus:border-wasfah-bright-teal transition-all duration-200"
+                            required
+                            value={loginEmail}
+                            onChange={(e) => setLoginEmail(e.target.value)}
+                          />
+                        </div>
+                        
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                          <Input
+                            type={showPassword ? "text" : "password"}
+                            placeholder={t("Password", "كلمة المرور")}
+                            className="pl-10 pr-10 h-12 text-base bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-200/50 focus:border-wasfah-bright-teal transition-all duration-200"
+                            required
+                            value={loginPassword}
+                            onChange={(e) => setLoginPassword(e.target.value)}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                          >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </button>
+                        </div>
+
+                        <div className="text-right">
+                          <Button 
+                            type="button"
+                            variant="link" 
+                            className="text-sm text-wasfah-bright-teal p-0 hover:underline font-medium"
+                            onClick={() => setShowForgotPassword(true)}
+                          >
+                            {t('Forgot password?', 'هل نسيت كلمة المرور؟')}
+                          </Button>
+                        </div>
+
+                        <Button
+                          type="submit"
+                          className="w-full h-12 bg-gradient-to-r from-wasfah-bright-teal to-wasfah-teal hover:from-wasfah-teal hover:to-wasfah-deep-teal transition-all duration-300 text-lg font-semibold shadow-lg hover:shadow-xl"
+                          disabled={isLoading}
+                        >
+                          {isLoading ? (
+                            <>
+                              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                              {t('Logging in...', 'جاري تسجيل الدخول...')}
+                            </>
+                          ) : (
+                            t('Login', 'تسجيل الدخول')
+                          )}
                         </Button>
-                      </div>
+                      </form>
+                    </TabsContent>
+                  </motion.div>
+                )}
 
-                      <Button
-                        type="submit"
-                        className="w-full h-12 bg-gradient-to-r from-wasfah-bright-teal to-wasfah-teal hover:from-wasfah-teal hover:to-wasfah-deep-teal transition-all duration-300 text-lg font-semibold shadow-lg hover:shadow-xl"
-                        disabled={isLoading}
-                      >
-                        {isLoading ? (
-                          <>
-                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                            {t('Logging in...', 'جاري تسجيل الدخول...')}
-                          </>
-                        ) : (
-                          t('Login', 'تسجيل الدخول')
-                        )}
-                      </Button>
-                    </form>
-                  </TabsContent>
-                </motion.div>
-              )}
+                {activeTab === 'register' && (
+                  <motion.div
+                    key="registerForm"
+                    variants={formVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                  >
+                    <TabsContent value="register" className="mt-6">
+                      <form onSubmit={handleRegister} className="space-y-6">
+                        <div className="relative">
+                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                          <Input
+                            type="text"
+                            placeholder={t("Full Name", "الاسم الكامل")}
+                            className="pl-10 h-12 text-base bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-200/50 focus:border-wasfah-bright-teal transition-all duration-200"
+                            required
+                            value={registerFullName}
+                            onChange={(e) => setRegisterFullName(e.target.value)}
+                          />
+                        </div>
 
-              {activeTab === 'register' && (
-                <motion.div
-                  key="registerForm"
-                  variants={formVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                >
-                  <TabsContent value="register" className="mt-6">
-                    <form onSubmit={handleRegister} className="space-y-6">
-                      <div className="relative">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                        <Input
-                          type="text"
-                          placeholder={t("Full Name", "الاسم الكامل")}
-                          className="pl-10 h-12 text-base bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-200/50 focus:border-wasfah-bright-teal transition-all duration-200"
-                          required
-                          value={registerFullName}
-                          onChange={(e) => setRegisterFullName(e.target.value)}
-                        />
-                      </div>
+                        <div className="w-full">
+                          <Tabs value={registerMethod} onValueChange={setRegisterMethod} className="w-full">
+                            <TabsList className="grid w-full grid-cols-2 mb-4 bg-gray-100/50 dark:bg-gray-700/50 backdrop-blur-sm rounded-lg">
+                              <TabsTrigger
+                                value="email"
+                                className="text-sm font-medium data-[state=active]:bg-wasfah-teal data-[state=active]:text-white rounded-md transition-all duration-200"
+                              >
+                                <Mail size={16} className="mr-1" /> {t('Email', 'البريد الإلكتروني')}
+                              </TabsTrigger>
+                              <TabsTrigger
+                                value="phone"
+                                className="text-sm font-medium data-[state=active]:bg-wasfah-teal data-[state=active]:text-white rounded-md transition-all duration-200"
+                              >
+                                <Phone size={16} className="mr-1" /> {t('Phone', 'الهاتف')}
+                              </TabsTrigger>
+                            </TabsList>
+                          </Tabs>
+                        </div>
 
-                      <div className="w-full">
-                        <Tabs value={registerMethod} onValueChange={setRegisterMethod} className="w-full">
-                          <TabsList className="grid w-full grid-cols-2 mb-4 bg-gray-100/50 dark:bg-gray-700/50 backdrop-blur-sm rounded-lg">
-                            <TabsTrigger
-                              value="email"
-                              className="text-sm font-medium data-[state=active]:bg-wasfah-teal data-[state=active]:text-white rounded-md transition-all duration-200"
+                        <AnimatePresence mode="wait">
+                          {registerMethod === 'email' && (
+                            <motion.div
+                              key="registerEmailInput"
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.3 }}
                             >
-                              <Mail size={16} className="mr-1" /> {t('Email', 'البريد الإلكتروني')}
-                            </TabsTrigger>
-                            <TabsTrigger
-                              value="phone"
-                              className="text-sm font-medium data-[state=active]:bg-wasfah-teal data-[state=active]:text-white rounded-md transition-all duration-200"
+                              <div className="relative">
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                <Input
+                                  type="email"
+                                  placeholder={t("Email", "البريد الإلكتروني")}
+                                  className="pl-10 h-12 text-base bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-200/50 focus:border-wasfah-bright-teal transition-all duration-200"
+                                  required={registerMethod === 'email'}
+                                  value={registerEmail}
+                                  onChange={(e) => setRegisterEmail(e.target.value)}
+                                />
+                              </div>
+                            </motion.div>
+                          )}
+                          {registerMethod === 'phone' && (
+                            <motion.div
+                              key="registerPhoneInput"
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.3 }}
                             >
-                              <Phone size={16} className="mr-1" /> {t('Phone', 'الهاتف')}
-                            </TabsTrigger>
-                          </TabsList>
-                        </Tabs>
-                      </div>
+                              <div className="relative">
+                                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                <Input
+                                  type="tel"
+                                  placeholder={t("Phone Number (e.g., +1234567890)", "رقم الهاتف (مثال: +9665xxxxxxxx)")}
+                                  className="pl-10 h-12 text-base bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-200/50 focus:border-wasfah-bright-teal transition-all duration-200"
+                                  required={registerMethod === 'phone'}
+                                  value={registerPhoneNumber}
+                                  onChange={(e) => setRegisterPhoneNumber(e.target.value)}
+                                />
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
 
-                      <AnimatePresence mode="wait">
-                        {registerMethod === 'email' && (
-                          <motion.div
-                            key="registerEmailInput"
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.3 }}
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                          <Input
+                            type={showPassword ? "text" : "password"}
+                            placeholder={t("Password", "كلمة المرور")}
+                            className="pl-10 pr-10 h-12 text-base bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-200/50 focus:border-wasfah-bright-teal transition-all duration-200"
+                            required
+                            value={registerPassword}
+                            onChange={(e) => setRegisterPassword(e.target.value)}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                           >
-                            <div className="relative">
-                              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                              <Input
-                                type="email"
-                                placeholder={t("Email", "البريد الإلكتروني")}
-                                className="pl-10 h-12 text-base bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-200/50 focus:border-wasfah-bright-teal transition-all duration-200"
-                                required={registerMethod === 'email'}
-                                value={registerEmail}
-                                onChange={(e) => setRegisterEmail(e.target.value)}
-                              />
-                            </div>
-                          </motion.div>
-                        )}
-                        {registerMethod === 'phone' && (
-                          <motion.div
-                            key="registerPhoneInput"
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.3 }}
-                          >
-                            <div className="relative">
-                              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                              <Input
-                                type="tel"
-                                placeholder={t("Phone Number (e.g., +1234567890)", "رقم الهاتف (مثال: +9665xxxxxxxx)")}
-                                className="pl-10 h-12 text-base bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-200/50 focus:border-wasfah-bright-teal transition-all duration-200"
-                                required={registerMethod === 'phone'}
-                                value={registerPhoneNumber}
-                                onChange={(e) => setRegisterPhoneNumber(e.target.value)}
-                              />
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </button>
+                        </div>
 
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          placeholder={t("Password", "كلمة المرور")}
-                          className="pl-10 pr-10 h-12 text-base bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-200/50 focus:border-wasfah-bright-teal transition-all duration-200"
-                          required
-                          value={registerPassword}
-                          onChange={(e) => setRegisterPassword(e.target.value)}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                          <Input
+                            type="password"
+                            placeholder={t("Confirm Password", "تأكيد كلمة المرور")}
+                            className="pl-10 h-12 text-base bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-200/50 focus:border-wasfah-bright-teal transition-all duration-200"
+                            required
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                          />
+                        </div>
+
+                        <div className="relative">
+                          <Languages className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                          <Select value={registerLanguage} onValueChange={setRegisterLanguage}>
+                            <SelectTrigger className="pl-10 h-12 text-base bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-200/50 focus:border-wasfah-bright-teal transition-all duration-200">
+                              <SelectValue placeholder={t("Select language", "اختر اللغة")} />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white dark:bg-gray-800">
+                              {languages.map((lang) => (
+                                <SelectItem key={lang.code} value={lang.code}>
+                                  {lang.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <Button
+                          type="submit"
+                          className="w-full h-12 bg-gradient-to-r from-wasfah-bright-teal to-wasfah-teal hover:from-wasfah-teal hover:to-wasfah-deep-teal transition-all duration-300 text-lg font-semibold shadow-lg hover:shadow-xl"
+                          disabled={isLoading}
                         >
-                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                        </button>
-                      </div>
-
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                        <Input
-                          type="password"
-                          placeholder={t("Confirm Password", "تأكيد كلمة المرور")}
-                          className="pl-10 h-12 text-base bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-200/50 focus:border-wasfah-bright-teal transition-all duration-200"
-                          required
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                        />
-                      </div>
-
-                      <div className="relative">
-                        <Languages className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                        <Select value={registerLanguage} onValueChange={setRegisterLanguage}>
-                          <SelectTrigger className="pl-10 h-12 text-base bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-200/50 focus:border-wasfah-bright-teal transition-all duration-200">
-                            <SelectValue placeholder={t("Select language", "اختر اللغة")} />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-gray-800">
-                            {languages.map((lang) => (
-                              <SelectItem key={lang.code} value={lang.code}>
-                                {lang.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <Button
-                        type="submit"
-                        className="w-full h-12 bg-gradient-to-r from-wasfah-bright-teal to-wasfah-teal hover:from-wasfah-teal hover:to-wasfah-deep-teal transition-all duration-300 text-lg font-semibold shadow-lg hover:shadow-xl"
-                        disabled={isLoading}
-                      >
-                        {isLoading ? (
-                          <>
-                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                            {t('Registering...', 'جاري التسجيل...')}
-                          </>
-                        ) : (
-                          t('Register', 'التسجيل')
-                        )}
-                      </Button>
-                    </form>
-                  </TabsContent>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </Tabs>
-
-          <div className="mt-8 text-center">
-            <Button
-              variant="ghost"
-              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 font-medium"
-              onClick={handleSkip}
+                          {isLoading ? (
+                            <>
+                              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                              {t('Registering...', 'جاري التسجيل...')}
+                            </>
+                          ) : (
+                            t('Register', 'التسجيل')
+                          )}
+                        </Button>
+                      </form>
+                    </TabsContent>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </Tabs>
+          ) : (
+            // Forgot Password Form
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-6"
             >
-              {t('Continue as guest', 'المتابعة كضيف')} <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
+              <div className="text-center mb-6">
+                <KeyRound className="h-12 w-12 mx-auto text-wasfah-bright-teal mb-4" />
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {t('Reset Password', 'إعادة تعيين كلمة المرور')}
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 mt-2">
+                  {t('Enter your email to receive reset instructions', 'أدخل بريدك الإلكتروني لتلقي تعليمات إعادة التعيين')}
+                </p>
+              </div>
+
+              {!resetSent ? (
+                <form onSubmit={handleForgotPassword} className="space-y-6">
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <Input
+                      type="email"
+                      placeholder={t("Email", "البريد الإلكتروني")}
+                      className="pl-10 h-12 text-base bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm border-gray-200/50 focus:border-wasfah-bright-teal transition-all duration-200"
+                      required
+                      value={forgotEmail}
+                      onChange={(e) => setForgotEmail(e.target.value)}
+                    />
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full h-12 bg-gradient-to-r from-wasfah-bright-teal to-wasfah-teal hover:from-wasfah-teal hover:to-wasfah-deep-teal transition-all duration-300 text-lg font-semibold shadow-lg hover:shadow-xl"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        {t('Sending...', 'جاري الإرسال...')}
+                      </>
+                    ) : (
+                      t('Send Reset Email', 'إرسال رسالة إعادة التعيين')
+                    )}
+                  </Button>
+
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-full text-gray-500 hover:text-gray-700"
+                    onClick={() => setShowForgotPassword(false)}
+                  >
+                    {t('Back to Login', 'العودة لتسجيل الدخول')}
+                  </Button>
+                </form>
+              ) : (
+                <div className="text-center space-y-4">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                    <Mail className="h-8 w-8 text-green-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    {t('Email Sent!', 'تم إرسال الرسالة!')}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    {t('Check your inbox for password reset instructions', 'تحقق من صندوق الوارد للحصول على تعليمات إعادة تعيين كلمة المرور')}
+                  </p>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => {
+                      setShowForgotPassword(false);
+                      setResetSent(false);
+                      setForgotEmail('');
+                    }}
+                  >
+                    {t('Back to Login', 'العودة لتسجيل الدخول')}
+                  </Button>
+                </div>
+              )}
+            </motion.div>
+          )}
+
+          {!showForgotPassword && (
+            <div className="mt-8 text-center">
+              <Button
+                variant="ghost"
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 font-medium"
+                onClick={handleSkip}
+              >
+                {t('Continue as guest', 'المتابعة كضيف')} <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          )}
         </motion.div>
       </div>
     </div>
