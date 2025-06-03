@@ -13,7 +13,6 @@ import RecipesPage from "./pages/RecipesPage";
 import RecipeDetailPage from "./pages/RecipeDetailPage";
 import CreateRecipePage from "./pages/CreateRecipePage";
 import FavoritesPage from "./pages/FavoritesPage";
-import FindByIngredientsPage from "./pages/AIFindByIngredientsPage";
 import AIFindByIngredientsPage from "./pages/AIFindByIngredientsPage";
 import PantryPage from "./pages/PantryPage";
 import MealPlanPage from "./pages/MealPlanPage";

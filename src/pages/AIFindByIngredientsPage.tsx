@@ -365,7 +365,6 @@ Focus on practical recipes that can be made with the ingredients provided.`;
           id: `ai-recipe-${Date.now()}-${index}`,
           title: recipe.title || `Recipe with ${ingredientNames.join(', ')}`,
           description: recipe.description || `A recipe using ${ingredientNames.join(', ')}`,
-          image_url: '',
           image: '',
           prep_time: recipe.prep_time || 15,
           cook_time: recipe.cook_time || recipe.cook_time || 30,
