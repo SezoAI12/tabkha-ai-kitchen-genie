@@ -13,7 +13,7 @@ import RecipesPage from "./pages/RecipesPage";
 import RecipeDetailPage from "./pages/RecipeDetailPage";
 import CreateRecipePage from "./pages/CreateRecipePage";
 import FavoritesPage from "./pages/FavoritesPage";
-import FindByIngredientsPage from "./pages/FindByIngredientsPage";
+import FindByIngredientsPage from "./pages/AIFindByIngredientsPage";
 import AIFindByIngredientsPage from "./pages/AIFindByIngredientsPage";
 import PantryPage from "./pages/PantryPage";
 import MealPlanPage from "./pages/MealPlanPage";
@@ -103,7 +103,7 @@ function App() {
                   <Route path="/recipe/:id" element={<RecipeDetailPage />} />
                   <Route path="/create-recipe" element={<CreateRecipePage />} />
                   <Route path="/favorites" element={<FavoritesPage />} />
-                  <Route path="/find-by-ingredients" element={<FindByIngredientsPage />} />
+                  <Route path="/find-by-ingredients" element={<AIFindByIngredientsPage />} />
                   <Route path="/pantry" element={<PantryPage />} />
                   <Route path="/meal-plan" element={<MealPlanPage />} />
                   <Route path="/search" element={<SearchPage />} />
