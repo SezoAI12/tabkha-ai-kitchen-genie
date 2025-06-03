@@ -1,4 +1,3 @@
-
 import React, { useState, ElementType, useEffect } from 'react';
 import {
   Utensils, Cake, Coffee, Camera, Mic, Soup, Salad, Egg, Milk, Drumstick,
@@ -30,6 +29,7 @@ interface Filters {
   cookTime: string;
   difficulty: string;
   cuisine: string;
+  cookingTime: string;
 }
 
 interface Ingredient {
@@ -103,6 +103,7 @@ export default function FindByIngredients() {
     cookTime: ['Under 30 mins', '30-60 mins', '1-2 hours', 'Over 2 hours'],
     difficulty: ['Beginner', 'Intermediate', 'Expert'],
     cuisine: ['Levant', 'Italian', 'Mexican', 'Chinese', 'Indian', 'American'],
+    cookingTime: ['Under 30 mins', '30-60 mins', '1-2 hours', 'Over 2 hours'],
   };
 
   const PANTRY_ITEMS: PantryItem[] = [
@@ -132,6 +133,7 @@ export default function FindByIngredients() {
     cookTime: '',
     difficulty: '',
     cuisine: '',
+    cookingTime: '',
   });
   const [addedIngredients, setAddedIngredients] = useState<Ingredient[]>([]);
   const [customDrinkOptions, setCustomDrinkOptions] = useState<DrinkOptions | null>(null);
@@ -259,8 +261,8 @@ Return ONLY valid JSON array. Format:
   "title": "Recipe Name",
   "description": "Brief description", 
   "difficulty": "Easy",
-  "prep_time": 10,
-  "cook_time": 20,
+  "prepTime": 10,
+  "cookingTime": 20,
   "servings": 4,
   "cuisine_type": "International",
   "calories": 300,
@@ -304,8 +306,8 @@ Focus on practical recipes that can be made with the ingredients provided.`;
                   title: `Recipe with ${ingredientNames.slice(0, 2).join(' & ')}`,
                   description: `A delicious combination using ${ingredientNames.join(', ')}.`,
                   difficulty: 'Easy',
-                  prep_time: 10,
-                  cook_time: 20,
+                  prepTime: 10,
+                  cookingTime: 20,
                   servings: 4,
                   cuisine_type: 'Fusion',
                   calories: 300,
@@ -335,8 +337,8 @@ Focus on practical recipes that can be made with the ingredients provided.`;
               title: `Creative Recipe with ${ingredientNames.slice(0, 2).join(' & ')}`,
               description: `A delicious combination using ${ingredientNames.join(', ')}.`,
               difficulty: 'Medium',
-              prep_time: 15,
-              cook_time: 25,
+              prepTime: 15,
+              cookingTime: 25,
               servings: 4,
               cuisine_type: 'Fusion',
               calories: 320,
@@ -366,9 +368,9 @@ Focus on practical recipes that can be made with the ingredients provided.`;
           title: recipe.title || `Recipe with ${ingredientNames.join(', ')}`,
           description: recipe.description || `A recipe using ${ingredientNames.join(', ')}`,
           image: '',
-          prep_time: recipe.prep_time || 15,
-          cook_time: recipe.cook_time || recipe.cook_time || 30,
-          total_time: (recipe.prep_time || 15) + (recipe.cook_time || recipe.cook_time || 30),
+          prepTime: recipe.prepTime || 15,
+          cookingTime: recipe.cookingTime || 30,
+          totalTime: (recipe.prepTime || 15) + (recipe.cookingTime || 30),
           servings: recipe.servings || 4,
           difficulty: recipe.difficulty || 'Medium' as 'Easy' | 'Medium' | 'Hard',
           calories: recipe.calories || 300,

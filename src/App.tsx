@@ -1,10 +1,10 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { RTLProvider } from "@/contexts/RTLContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import ErrorBoundary from "@/components/monitoring/ErrorBoundary";
 import NewHomePage from "./pages/NewHomePage";
 import MenuPage from "./pages/MenuPage";
@@ -84,14 +84,14 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <RTLProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <ErrorBoundary>
-              <div className="min-h-screen bg-background text-foreground">
-                <Routes>
+      <LanguageProvider>
+        <RTLProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <ErrorBoundary>
+                <div className="min-h-screen bg-background text-foreground">
                   {/* Redirect root to splash screen */}
                   <Route path="/" element={<Navigate to="/splash" replace />} />
 
@@ -205,12 +205,12 @@ function App() {
 
                   {/* Fallback */}
                   <Route path="*" element={<NotFound />} />
-                </Routes>
-              </div>
-            </ErrorBoundary>
-          </BrowserRouter>
-        </TooltipProvider>
-      </RTLProvider>
+                </div>
+              </ErrorBoundary>
+            </BrowserRouter>
+          </TooltipProvider>
+        </RTLProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }
