@@ -27,7 +27,7 @@ interface SavedRecipe {
 }
 
 export default function CookingHistoryPage() {
-  const { t, direction } = useRTL();
+  const { t, direction, language } = useRTL();
   const { toast } = useToast();
 
   // Mock data for cooked recipes
@@ -236,7 +236,7 @@ export default function CookingHistoryPage() {
                             <div className={`flex items-center space-x-4 text-sm text-gray-600 ${direction === 'rtl' ? 'space-x-reverse' : ''}`}>
                               <div className={`flex items-center space-x-1 ${direction === 'rtl' ? 'space-x-reverse' : ''}`}>
                                 <Clock className="h-4 w-4" />
-                                <span>{savedRecipe.recipe.prepTime + savedRecipe.recipe.cookTime} min</span>
+                                <span>{(savedRecipe.recipe.prepTime || 0) + (savedRecipe.recipe.cookTime || 0)} min</span>
                               </div>
                               <div className={`flex items-center space-x-1 ${direction === 'rtl' ? 'space-x-reverse' : ''}`}>
                                 <Star className="h-4 w-4 text-yellow-500 fill-current" />

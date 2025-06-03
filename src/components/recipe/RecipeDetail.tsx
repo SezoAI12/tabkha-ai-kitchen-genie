@@ -164,7 +164,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
           <div className={`flex items-center space-x-6 ${direction === 'rtl' ? 'space-x-reverse' : ''}`}>
             <div className={`flex items-center space-x-2 ${direction === 'rtl' ? 'space-x-reverse' : ''}`}>
               <Clock className="h-5 w-5 text-wasfah-bright-teal" />
-              <span className="font-medium text-gray-700">{recipe.prepTime + recipe.cookTime} min</span>
+              <span className="font-medium text-gray-700">{(recipe.prepTime || 0) + (recipe.cookTime || 0)} min</span>
             </div>
             <ServingsAdjuster 
               servings={currentServings} 
@@ -183,7 +183,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
             </div>
             <div className={`flex items-center space-x-1 ${direction === 'rtl' ? 'space-x-reverse' : ''}`}>
               <Eye className="h-4 w-4 text-gray-500" />
-              <span className="text-gray-600">{Math.floor(recipe.rating * 20)}</span>
+              <span className="text-gray-600">{Math.floor((recipe.rating || 0) * 20)}</span>
             </div>
           </div>
         </div>
@@ -322,7 +322,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
                   <div className="text-2xl font-bold text-wasfah-deep-teal">
-                    {Math.round(recipe.calories * servingMultiplier)}
+                    {Math.round((recipe.calories || 0) * servingMultiplier)}
                   </div>
                   <div className="text-sm text-gray-600">
                     {t('Calories', 'سعرات حرارية')}
@@ -332,7 +332,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
                   <>
                     <div className="text-center p-4 bg-gray-50 rounded-lg">
                       <div className="text-2xl font-bold text-wasfah-deep-teal">
-                        {Math.round(recipe.nutritionalInfo.protein * servingMultiplier)}g
+                        {Math.round((recipe.nutritionalInfo.protein || 0) * servingMultiplier)}g
                       </div>
                       <div className="text-sm text-gray-600">
                         {t('Protein', 'بروتين')}
@@ -340,7 +340,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
                     </div>
                     <div className="text-center p-4 bg-gray-50 rounded-lg">
                       <div className="text-2xl font-bold text-wasfah-deep-teal">
-                        {Math.round(recipe.nutritionalInfo.carbs * servingMultiplier)}g
+                        {Math.round((recipe.nutritionalInfo.carbs || 0) * servingMultiplier)}g
                       </div>
                       <div className="text-sm text-gray-600">
                         {t('Carbs', 'كربوهيدرات')}
@@ -348,7 +348,7 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
                     </div>
                     <div className="text-center p-4 bg-gray-50 rounded-lg">
                       <div className="text-2xl font-bold text-wasfah-deep-teal">
-                        {Math.round(recipe.nutritionalInfo.fat * servingMultiplier)}g
+                        {Math.round((recipe.nutritionalInfo.fat || 0) * servingMultiplier)}g
                       </div>
                       <div className="text-sm text-gray-600">
                         {t('Fat', 'دهون')}
@@ -367,10 +367,10 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
         <RecipeSocialInteractions
           recipeId={recipe.id}
           commentCount={recipe.ratingCount}
-          shares={Math.floor(recipe.rating * 5)}
+          shares={Math.floor((recipe.rating || 0) * 5)}
           rating={recipe.rating}
           ratingCount={recipe.ratingCount}
-          usedCount={Math.floor(recipe.rating * 20)}
+          usedCount={Math.floor((recipe.rating || 0) * 20)}
           isLiked={isLiked}
           comments={[]}
           onLike={handleLike}
