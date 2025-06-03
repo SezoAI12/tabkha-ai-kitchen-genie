@@ -39,7 +39,7 @@ interface PantryItem {
 
 interface Filters {
   dietary: string;
-  cookingTime: string;
+  cookTime: string;
   difficulty: string;
   cuisine: string;
 }
@@ -102,7 +102,7 @@ export default function FindByIngredientsPage() {
 
   const FILTER_OPTIONS = {
     dietary: ['Normal', 'Healthy', 'Vegetarian', 'Vegan', 'Gluten-Free'],
-    cookingTime: ['Under 30 mins', '30-60 mins', '1-2 hours', 'Over 2 hours'],
+    cookTime: ['Under 30 mins', '30-60 mins', '1-2 hours', 'Over 2 hours'],
     difficulty: ['Beginner', 'Intermediate', 'Expert'],
     cuisine: ['Levant', 'Italian', 'Mexican', 'Chinese', 'Indian', 'American'],
   };
@@ -130,7 +130,7 @@ export default function FindByIngredientsPage() {
   const [selectedSubcategory, setSelectedSubcategory] = useState<{ name: string; icon: ElementType; requiresCustomForm?: boolean } | null>(null);
   const [filters, setFilters] = useState<Filters>({
     dietary: '',
-    cookingTime: '',
+    cookTime: '',
     difficulty: '',
     cuisine: '',
   });

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Card, CardContent } from '@/components/ui/card';
@@ -32,14 +33,14 @@ export default function ServicesPage() {
           icon: <Share2 className="h-6 w-6 text-blue-500" />, // Using Share2 icon
           title: t('Share Recipe', 'مشاركة وصفة', 'Tarif Paylaş'),
           description: t('Share your favorite recipes with others', 'شارك وصفاتك المفضلة مع الآخرين', 'Favori tariflerinizi başkalarıyla paylaşın'),
-          link: '/share-recipe', // Placeholder link
+          link: '/shared-recipes', // Updated to point to shared recipes page
       },
       {
           id: 'smart-pantry',
           icon: <Archive className="h-6 w-6 text-amber-600" />, // Using Archive icon
           title: t('Smart Pantry', 'مخزن ذكي', 'Akıllı Kiler'),
           description: t('Manage your ingredients and find recipes', 'إدارة مكوناتك والعثور على الوصفات', 'Malzemelerinizi yönetin ve tarif bulun'),
-          link: '/smart-pantry', // Placeholder link
+          link: '/smart-pantry',
       },
   ];
 
