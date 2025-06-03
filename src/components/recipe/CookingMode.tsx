@@ -10,10 +10,14 @@ import {
   Volume2,
   VolumeX,
   Mic,
-  MicOff
+  MicOff,
+  Timer as TimerIcon,
+  Video,
+  VideoOff
 } from 'lucide-react';
 import { Recipe } from '@/types/index';
 import { Progress } from '@/components/ui/progress';
+import { Timer } from '@/components/cooking/Timer';
 import { useToast } from '@/hooks/use-toast';
 import { useRTL } from '@/contexts/RTLContext';
 
@@ -25,11 +29,12 @@ interface CookingModeProps {
 export const CookingMode: React.FC<CookingModeProps> = ({ recipe, onClose }) => {
   const { t, language, direction } = useRTL();
   const [currentStep, setCurrentStep] = useState(0);
-  const [timer, setTimer] = useState(300); // 5 minutes in seconds
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [isVoiceEnabled, setIsVoiceEnabled] = useState(true);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
+  const [showTimer, setShowTimer] = useState(false);
+  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const { toast } = useToast();
   
   const synthRef = useRef<SpeechSynthesis | null>(null);
@@ -95,8 +100,8 @@ export const CookingMode: React.FC<CookingModeProps> = ({ recipe, onClose }) => 
     const nextCommands = ['next', 'forward', 'التالي', 'sonraki'];
     const prevCommands = ['previous', 'back', 'السابق', 'önceki'];
     const repeatCommands = ['repeat', 'again', 'إعادة', 'tekrar'];
-    const startCommands = ['start', 'begin', 'ابدأ', 'başla'];
-    const pauseCommands = ['stop', 'pause', 'توقف', 'dur'];
+    const timerCommands = ['timer', 'set timer', 'مؤقت', 'zamanlayıcı'];
+    const completeCommands = ['done', 'complete', 'finished', 'تم', 'انتهيت', 'tamamlandı'];
     
     if (nextCommands.some(cmd => command.includes(cmd))) {
       nextStep();
@@ -104,11 +109,10 @@ export const CookingMode: React.FC<CookingModeProps> = ({ recipe, onClose }) => 
       prevStep();
     } else if (repeatCommands.some(cmd => command.includes(cmd))) {
       speakCurrentStep();
-    } else if (startCommands.some(cmd => command.includes(cmd))) {
-      setCurrentStep(0);
-      speakCurrentStep();
-    } else if (pauseCommands.some(cmd => command.includes(cmd))) {
-      stopSpeaking();
+    } else if (timerCommands.some(cmd => command.includes(cmd))) {
+      setShowTimer(true);
+    } else if (completeCommands.some(cmd => command.includes(cmd))) {
+      toggleStepComplete(currentStep);
     }
   };
 
@@ -131,10 +135,10 @@ export const CookingMode: React.FC<CookingModeProps> = ({ recipe, onClose }) => 
       toast({
         title: t("Voice assistant activated", "تم تفعيل المساعد الصوتي"),
         description: language === 'ar' 
-          ? "قل 'التالي'، 'السابق'، 'إعادة'، أو 'ابدأ'"
+          ? "قل 'التالي'، 'السابق'، 'إعادة'، 'مؤقت'، أو 'تم'"
           : language === 'tr'
-          ? "Söyle 'sonraki', 'önceki', 'tekrar', veya 'başla'"
-          : "Say 'next', 'previous', 'repeat', or 'start'"
+          ? "Söyle 'sonraki', 'önceki', 'tekrar', 'zamanlayıcı', veya 'tamamlandı'"
+          : "Say 'next', 'previous', 'repeat', 'timer', or 'done'"
       });
     }
   };
@@ -210,38 +214,23 @@ export const CookingMode: React.FC<CookingModeProps> = ({ recipe, onClose }) => 
       }
     }
   };
-  
-  const toggleTimer = () => {
-    setIsTimerRunning(!isTimerRunning);
-  };
-  
-  const resetTimer = () => {
-    setTimer(300);
-  };
-  
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-  
-  React.useEffect(() => {
-    let interval: NodeJS.Timeout;
-    
-    if (isTimerRunning && timer > 0) {
-      interval = setInterval(() => {
-        setTimer(prev => prev - 1);
-      }, 1000);
-    } else if (timer === 0) {
-      setIsTimerRunning(false);
-      toast({
-        title: t("Timer Complete", "انتهى المؤقت"),
-        description: t("Your timer has finished!", "انتهى مؤقتك!"),
-      });
+
+  const toggleStepComplete = (stepIndex: number) => {
+    const newCompleted = new Set(completedSteps);
+    if (newCompleted.has(stepIndex)) {
+      newCompleted.delete(stepIndex);
+    } else {
+      newCompleted.add(stepIndex);
     }
-    
-    return () => clearInterval(interval);
-  }, [isTimerRunning, timer, toast, t]);
+    setCompletedSteps(newCompleted);
+  };
+
+  // Auto-speak current step when voice is enabled
+  useEffect(() => {
+    if (isVoiceEnabled && currentStep === 0) {
+      setTimeout(() => speakCurrentStep(), 1000);
+    }
+  }, [isVoiceEnabled]);
   
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col">
@@ -254,6 +243,14 @@ export const CookingMode: React.FC<CookingModeProps> = ({ recipe, onClose }) => 
             {t("Cooking Mode", "وضع الطبخ")}
           </h2>
           <div className={`flex items-center space-x-2 ${direction === 'rtl' ? 'space-x-reverse' : ''}`}>
+            <Button
+              variant={showVideo ? "default" : "outline"}
+              size="sm"
+              onClick={() => setShowVideo(!showVideo)}
+              className="text-xs"
+            >
+              {showVideo ? <VideoOff className="h-4 w-4" /> : <Video className="h-4 w-4" />}
+            </Button>
             <Button
               variant={isVoiceEnabled ? "default" : "outline"}
               size="sm"
@@ -283,28 +280,67 @@ export const CookingMode: React.FC<CookingModeProps> = ({ recipe, onClose }) => 
           <Progress value={progress} className="h-2" />
         </div>
         
-        {recipe.image && (
+        {/* Video Section (Premium Feature) */}
+        {showVideo && (
+          <div className="w-full h-48 mb-4 bg-gray-100 rounded-lg flex items-center justify-center">
+            <div className="text-center text-gray-500">
+              <Video className="h-12 w-12 mx-auto mb-2" />
+              <p className="text-sm">{t('Video instructions (Premium)', 'تعليمات فيديو (مميز)')}</p>
+            </div>
+          </div>
+        )}
+        
+        {recipe.image && !showVideo && (
           <div 
             className="w-full h-48 mb-4 bg-cover bg-center rounded-lg"
             style={{ backgroundImage: `url(${recipe.image})` }}
           />
         )}
         
-        <div className={`mb-6 p-4 bg-white dark:bg-gray-800 rounded-lg shadow ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
-          <p className="text-lg leading-relaxed">{recipe.instructions[currentStep]}</p>
-        </div>
-        
-        <div className="mb-6 p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
-          <div className={`flex items-center justify-center space-x-4 ${direction === 'rtl' ? 'space-x-reverse' : ''}`}>
-            <Button variant="outline" size="icon" onClick={resetTimer}>
-              <RefreshCw size={18} />
+        <div className={`mb-6 p-6 bg-white dark:bg-gray-800 rounded-lg shadow ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
+          <div className={`flex items-start justify-between mb-4 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
+            <p className="text-lg leading-relaxed flex-1">{recipe.instructions[currentStep]}</p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => toggleStepComplete(currentStep)}
+              className={`ml-4 ${direction === 'rtl' ? 'mr-4 ml-0' : ''} ${
+                completedSteps.has(currentStep) ? 'bg-green-100 text-green-700 border-green-300' : ''
+              }`}
+            >
+              {completedSteps.has(currentStep) ? t('Completed', 'مكتمل') : t('Mark Done', 'تم')}
             </Button>
-            <div className="text-2xl font-bold">{formatTime(timer)}</div>
-            <Button variant="outline" size="icon" onClick={toggleTimer}>
-              {isTimerRunning ? <Pause size={18} /> : <Play size={18} />}
+          </div>
+          
+          {/* Voice Instructions Controls */}
+          <div className={`flex items-center space-x-2 ${direction === 'rtl' ? 'space-x-reverse' : ''}`}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={speakCurrentStep}
+              disabled={!isVoiceEnabled || isSpeaking}
+            >
+              {isSpeaking ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+              <span className="ml-1">{t('Read Step', 'اقرأ الخطوة')}</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowTimer(!showTimer)}
+            >
+              <TimerIcon className="h-4 w-4" />
+              <span className="ml-1">{t('Timer', 'مؤقت')}</span>
             </Button>
           </div>
         </div>
+
+        {/* Timer Section (Premium Feature) */}
+        {showTimer && (
+          <Timer 
+            initialMinutes={5}
+            label={t(`Timer for Step ${currentStep + 1}`, `مؤقت للخطوة ${currentStep + 1}`)}
+          />
+        )}
 
         {/* Voice status indicator */}
         {(isListening || isSpeaking) && (

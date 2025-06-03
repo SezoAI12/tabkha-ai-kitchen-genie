@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import {
   Camera, Scale, Smartphone, Award, Gift, CreditCard, ShoppingCart,
   Activity, Heart, Book, Bot, Utensils, Users, MapPin,
-  PlusCircle, Share2, Archive // Added icons for new services
+  PlusCircle, Share2, Archive, History // Added History icon
 } from 'lucide-react';
 import { useRTL } from '@/contexts/RTLContext';
 
@@ -41,6 +41,13 @@ export default function ServicesPage() {
           title: t('Smart Pantry', 'مخزن ذكي', 'Akıllı Kiler'),
           description: t('Manage your ingredients and find recipes', 'إدارة مكوناتك والعثور على الوصفات', 'Malzemelerinizi yönetin ve tarif bulun'),
           link: '/smart-pantry',
+      },
+      {
+          id: 'cooking-history',
+          icon: <History className="h-6 w-6 text-purple-600" />, // Using History icon
+          title: t('Cooking History', 'سجل الطبخ', 'Pişirme Geçmişi'),
+          description: t('View your cooked and saved recipes', 'عرض وصفاتك المطبوخة والمحفوظة', 'Pişirdiğiniz ve kaydettiğiniz tarifleri görün'),
+          link: '/cooking-history',
       },
   ];
 
