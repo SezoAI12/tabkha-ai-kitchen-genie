@@ -1,4 +1,3 @@
-
 import React, { useState, ElementType, useEffect } from 'react';
 import {
   Utensils, Cake, Coffee, Camera, Mic, Soup, Salad, Egg, Milk, Drumstick,
@@ -370,22 +369,19 @@ Focus on practical recipes that can be made with the ingredients provided.`;
           tags: ['AI Generated'],
           isFavorite: false,
           cuisineType: recipe.cuisine_type || 'Fusion',
+          status: 'published',
           ingredients: Array.isArray(recipe.ingredients) ?
             recipe.ingredients.map((ing: any) => ({
               id: `ing-${Math.random()}`,
               name: typeof ing === 'string' ? ing : (ing.name || ing.ingredient || 'Unknown'),
-              amount: typeof ing === 'object' ? (ing.amount || ing.quantity || '1') : '1',
+              amount: typeof ing === 'object' ? String(ing.amount || ing.quantity || '1') : '1',
               unit: typeof ing === 'object' ? (ing.unit || 'cup') : 'cup',
-              category: 'general',
-              inPantry: false
             })) :
             ingredientNames.map(ing => ({
               id: `ing-${Math.random()}`,
               name: ing,
               amount: '1',
               unit: 'cup',
-              category: 'general',
-              inPantry: false
             }))
         }));
       }
