@@ -1,3 +1,4 @@
+
 import React, { useState, ElementType, useEffect } from 'react';
 import {
   Utensils, Cake, Coffee, Camera, Mic, Soup, Salad, Egg, Milk, Drumstick,
@@ -11,7 +12,7 @@ import { FilterPanel } from '@/components/ingredients/FilterPanel';
 import { SearchSummary } from '@/components/ingredients/SearchSummary';
 import { RecipeGrid } from '@/components/recipe/RecipeGrid';
 import { useToast } from '@/hooks/use-toast';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useRTL } from '@/contexts/RTLContext';
 import { DrinkCustomizationForm, DrinkOptions } from '@/components/drinks/DrinkCustomizationForm';
 import { Recipe } from '@/types/index';
 import { supabase } from '@/integrations/supabase/client';
@@ -24,9 +25,9 @@ interface MainCategory {
   subcategories: { name: string; icon: ElementType; requiresCustomForm?: boolean }[];
 }
 
-interface Filters {
+interface AIFilters {
   dietary: string;
-  cookTime: string;
+  cookingTime: string;
   difficulty: string;
   cuisine: string;
 }
@@ -50,7 +51,7 @@ interface PantryItem {
 
 export default function FindByIngredients() {
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t } = useRTL();
   const location = useLocation();
 
   // Get ingredients from previous page if navigated from ingredient selection
@@ -97,9 +98,9 @@ export default function FindByIngredients() {
     },
   ];
 
-  const FILTER_OPTIONS = {
+  const AI_FILTER_OPTIONS = {
     dietary: ['Normal', 'Healthy', 'Vegetarian', 'Vegan', 'Gluten-Free'],
-    cookTime: ['Under 30 mins', '30-60 mins', '1-2 hours', 'Over 2 hours'],
+    cookingTime: ['Under 30 mins', '30-60 mins', '1-2 hours', 'Over 2 hours'],
     difficulty: ['Beginner', 'Intermediate', 'Expert'],
     cuisine: ['Levant', 'Italian', 'Mexican', 'Chinese', 'Indian', 'American'],
   };
@@ -126,9 +127,9 @@ export default function FindByIngredients() {
   const [selectedSubcategory, setSelectedSubcategory] = useState<{ name: string; icon: ElementType; requiresCustomForm?: boolean } | null>(
     stateIngredients.length > 0 ? mainCategories[0].subcategories[0] : null
   );
-  const [filters, setFilters] = useState<Filters>({
+  const [filters, setFilters] = useState<AIFilters>({
     dietary: '',
-    cookTime: '',
+    cookingTime: '',
     difficulty: '',
     cuisine: '',
   });
@@ -176,7 +177,7 @@ export default function FindByIngredients() {
     setCurrentStep(3);
   };
 
-  const handleFilterChange = (filterType: keyof Filters, value: string) => {
+  const handleFilterChange = (filterType: keyof AIFilters, value: string) => {
     setFilters(prev => ({ ...prev, [filterType]: value }));
   };
 
@@ -233,8 +234,8 @@ export default function FindByIngredients() {
     const isAlcoholicDrinkSearch = selectedCategory?.id === 'drinks' && selectedSubcategory?.requiresCustomForm;
     if (!isAlcoholicDrinkSearch && addedIngredients.length === 0) {
       toast({
-        title: t('error.title') || "Error",
-        description: t('error.selectIngredients') || "Please select at least one ingredient",
+        title: t('Error', 'خطأ'),
+        description: t('Please select at least one ingredient', 'يرجى اختيار مكون واحد على الأقل'),
         variant: "destructive",
       });
       return;
@@ -244,8 +245,8 @@ export default function FindByIngredients() {
       let results: Recipe[] = [];
       if (isAlcoholicDrinkSearch && customDrinkOptions) {
         toast({
-          title: t('feature.customDrinks') || "Custom Drinks",
-          description: t('feature.customDrinksDescription') || "Custom drink generation coming soon!",
+          title: t('Custom Drinks', 'المشروبات المخصصة'),
+          description: t('Custom drink generation coming soon!', 'توليد المشروبات المخصصة قريباً!'),
         });
         results = [];
       } else {
@@ -258,14 +259,11 @@ Return ONLY valid JSON array. Format:
   "title": "Recipe Name",
   "description": "Brief description", 
   "difficulty": "Easy",
-  "prepTime": 10,
-  "cookTime": 20,
+  "prep_time": 10,
+  "cook_time": 20,
   "servings": 4,
   "cuisine_type": "International",
   "calories": 300,
-  "protein": 20,
-  "carbs": 25,
-  "fat": 12,
   "ingredients": [{"name": "ingredient", "amount": 1, "unit": "cup"}],
   "instructions": ["Step 1", "Step 2"]
 }]
@@ -303,14 +301,11 @@ Focus on practical recipes that can be made with the ingredients provided.`;
                   title: `Recipe with ${ingredientNames.slice(0, 2).join(' & ')}`,
                   description: `A delicious combination using ${ingredientNames.join(', ')}.`,
                   difficulty: 'Easy',
-                  prepTime: 10,
-                  cookTime: 20,
+                  prep_time: 10,
+                  cook_time: 20,
                   servings: 4,
                   cuisine_type: 'Fusion',
                   calories: 300,
-                  protein: 18,
-                  carbs: 22,
-                  fat: 10,
                   instructions: [
                     'Prepare all ingredients',
                     'Heat oil in a pan',
@@ -334,14 +329,11 @@ Focus on practical recipes that can be made with the ingredients provided.`;
               title: `Creative Recipe with ${ingredientNames.slice(0, 2).join(' & ')}`,
               description: `A delicious combination using ${ingredientNames.join(', ')}.`,
               difficulty: 'Medium',
-              prepTime: 15,
-              cookTime: 25,
+              prep_time: 15,
+              cook_time: 25,
               servings: 4,
               cuisine_type: 'Fusion',
               calories: 320,
-              protein: 20,
-              carbs: 25,
-              fat: 12,
               instructions: [
                 'Prepare and wash all ingredients',
                 'Heat oil in a large pan',
@@ -359,16 +351,19 @@ Focus on practical recipes that can be made with the ingredients provided.`;
           ];
         }
 
-        // Transform to Recipe format - removed totalTime property
+        // Transform to Recipe format
         results = aiRecipes.map((recipe: any, index: number): Recipe => ({
           id: `ai-recipe-${Date.now()}-${index}`,
           title: recipe.title || `Recipe with ${ingredientNames.join(', ')}`,
           description: recipe.description || `A recipe using ${ingredientNames.join(', ')}`,
+          image_url: '',
           image: '',
-          prepTime: recipe.prepTime || 15,
-          cookTime: recipe.cookTime || 30,
+          prep_time: recipe.prep_time || 15,
+          prepTime: recipe.prep_time || 15,
+          cook_time: recipe.cook_time || 30,
+          cookTime: recipe.cook_time || 30,
           servings: recipe.servings || 4,
-          difficulty: recipe.difficulty || 'Medium',
+          difficulty: recipe.difficulty || 'Medium' as 'Easy' | 'Medium' | 'Hard',
           calories: recipe.calories || 300,
           rating: 0,
           ratingCount: 0,
@@ -377,20 +372,25 @@ Focus on practical recipes that can be made with the ingredients provided.`;
           categories: [],
           tags: ['AI Generated'],
           isFavorite: false,
+          author_id: 'ai-chef',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          is_verified: true,
+          cuisine_type: recipe.cuisine_type || 'Fusion',
+          cuisineType: recipe.cuisine_type || 'Fusion',
+          status: 'published' as 'draft' | 'published' | 'pending_review',
           ingredients: Array.isArray(recipe.ingredients) ?
             recipe.ingredients.map((ing: any) => ({
               id: `ing-${Math.random()}`,
               name: typeof ing === 'string' ? ing : (ing.name || ing.ingredient || 'Unknown'),
-              amount: typeof ing === 'object' ? (ing.amount || ing.quantity || '1') : '1',
-              unit: typeof ing === 'object' ? (ing.unit || 'cup') : 'cup',
-              category: 'general'
+              amount: typeof ing === 'object' ? (ing.amount || ing.quantity || 1) : 1,
+              unit: typeof ing === 'object' ? (ing.unit || 'cup') : 'cup'
             })) :
             ingredientNames.map(ing => ({
               id: `ing-${Math.random()}`,
               name: ing,
-              amount: '1',
-              unit: 'cup',
-              category: 'general'
+              amount: 1,
+              unit: 'cup'
             }))
         }));
       }
@@ -400,19 +400,19 @@ Focus on practical recipes that can be made with the ingredients provided.`;
 
       if (results.length === 0) {
         toast({
-          title: t('search.noResults') || "No Results Found",
-          description: t('search.noRecipesMatchingIngredients') || "No recipes found with your selected ingredients. Try different ingredients or remove some filters.",
+          title: t('No Results Found', 'لم يتم العثور على نتائج'),
+          description: t('No recipes found with your selected ingredients. Try different ingredients or remove some filters.', 'لم يتم العثور على وصفات بالمكونات المختارة. جرب مكونات أخرى أو احذف بعض المرشحات.'),
         });
       } else {
         toast({
-          title: t('search.success') || "Search Complete",
-          description: `${t('search.foundRecipes') || 'Found'} ${results.length} ${t('search.recipes') || 'recipes'}!`,
+          title: t('Search Complete', 'اكتمل البحث'),
+          description: `${t('Found', 'تم العثور على')} ${results.length} ${t('recipes', 'وصفة')}!`,
         });
       }
     } catch (error: any) {
       toast({
-        title: t('error.title') || "Error",
-        description: error.message || t('error.searchFailed') || "Failed to search recipes. Please try again.",
+        title: t('Error', 'خطأ'),
+        description: error.message || t('Failed to search recipes. Please try again.', 'فشل في البحث عن الوصفات. يرجى المحاولة مرة أخرى.'),
         variant: "destructive",
       });
     } finally {
@@ -447,7 +447,7 @@ Focus on practical recipes that can be made with the ingredients provided.`;
     return (
       <PageContainer
         header={{
-          title: t('search.results') || 'Search Results',
+          title: t('Search Results', 'نتائج البحث'),
           showBackButton: true
         }}
         className="bg-gradient-to-br from-wasfah-light-gray to-white min-h-screen"
@@ -455,10 +455,10 @@ Focus on practical recipes that can be made with the ingredients provided.`;
         <div className="space-y-6 pb-6">
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-2">
-              {t('search.foundRecipesCount') || `Found ${searchResults.length} recipes`}
+              {t(`Found ${searchResults.length} recipes`, `تم العثور على ${searchResults.length} وصفة`)}
             </h2>
             <p className="text-gray-600">
-              {t('search.withIngredients') || 'Recipes using your selected ingredients'}
+              {t('Recipes using your selected ingredients', 'وصفات باستخدام المكونات المختارة')}
             </p>
           </div>
           <RecipeGrid recipes={searchResults} />
@@ -468,10 +468,10 @@ Focus on practical recipes that can be made with the ingredients provided.`;
                 <ChefHat className="w-8 h-8 text-gray-400" />
               </div>
               <h3 className="text-lg font-medium mb-2">
-                {t('search.noRecipesFound') || 'No recipes found'}
+                {t('No recipes found', 'لم يتم العثور على وصفات')}
               </h3>
               <p className="text-gray-500 mb-4">
-                {t('search.tryDifferentIngredients') || 'Try different ingredients or adjust your filters'}
+                {t('Try different ingredients or adjust your filters', 'جرب مكونات مختلفة أو عدل المرشحات')}
               </p>
             </div>
           )}
@@ -484,7 +484,7 @@ Focus on practical recipes that can be made with the ingredients provided.`;
   return (
     <PageContainer
       header={{
-        title: t('findRecipe.title') || 'Find Recipe',
+        title: t('Find Recipe', 'ابحث عن وصفة'),
         showBackButton: true,
       }}
       className="bg-gradient-to-br from-wasfah-light-gray to-white min-h-screen"
@@ -494,7 +494,7 @@ Focus on practical recipes that can be made with the ingredients provided.`;
 
         <FilterPanel
           filters={filters}
-          filterOptions={FILTER_OPTIONS}
+          filterOptions={AI_FILTER_OPTIONS}
           showFilters={showFilters}
           onFilterChange={handleFilterChange}
           onToggleFilters={() => setShowFilters(!showFilters)}
@@ -548,7 +548,7 @@ Focus on practical recipes that can be made with the ingredients provided.`;
                   disabled={addedIngredients.length === 0}
                   className="w-full h-12 mt-6 bg-wasfah-bright-teal hover:bg-wasfah-teal text-white disabled:bg-gray-300 rounded-lg font-medium transition-colors"
                 >
-                  {t('action.continueToSearch') || 'Continue to Search'}
+                  {t('Continue to Search', 'متابعة للبحث')}
                 </button>
               </div>
             </>
@@ -569,7 +569,7 @@ Focus on practical recipes that can be made with the ingredients provided.`;
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="h-8 w-8 animate-spin text-wasfah-bright-teal mr-2" />
                 <span className="text-gray-600">
-                  {t('search.searching') || 'Searching for recipes...'}
+                  {t('Searching for recipes...', 'البحث عن الوصفات...')}
                 </span>
               </div>
             )}

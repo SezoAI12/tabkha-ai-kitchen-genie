@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { mockRecipes } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
-import { Heart, Share, ArrowLeft } from 'lucide-react';
+import { Heart, Share, ArrowLeft, ChefHat } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { CookingMode } from '@/components/recipe/CookingMode';
 import { RecipeDetail } from '@/components/recipe/RecipeDetail';
@@ -27,14 +27,33 @@ export default function RecipeDetailPage() {
           showBackButton: true,
         }}
       >
-        <div className={`container px-4 py-8 text-center ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
-          <p>{t("The recipe you're looking for doesn't exist.", "الوصفة التي تبحث عنها غير موجودة.")}</p>
-          <Button 
-            className="mt-4 bg-wasfah-bright-teal hover:bg-wasfah-teal"
-            onClick={() => navigate('/recipes')}
-          >
-            {t('Browse Recipes', 'تصفح الوصفات')}
-          </Button>
+        <div className={`min-h-screen flex items-center justify-center px-4 ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
+          <div className="text-center max-w-md mx-auto">
+            <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
+              <ChefHat className="w-12 h-12 text-gray-400" />
+            </div>
+            <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+              {t("Oops! Recipe not found", "عفواً! الوصفة غير موجودة")}
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              {t("The recipe you're looking for doesn't exist or has been removed.", "الوصفة التي تبحث عنها غير موجودة أو تم حذفها.")}
+            </p>
+            <div className="space-y-3">
+              <Button 
+                className="w-full bg-wasfah-bright-teal hover:bg-wasfah-teal text-white"
+                onClick={() => navigate('/recipes')}
+              >
+                {t('Browse All Recipes', 'تصفح جميع الوصفات')}
+              </Button>
+              <Button 
+                variant="outline"
+                className="w-full"
+                onClick={() => navigate('/home')}
+              >
+                {t('Back to Home', 'العودة للرئيسية')}
+              </Button>
+            </div>
+          </div>
         </div>
       </PageContainer>
     );

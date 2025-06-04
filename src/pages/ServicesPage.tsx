@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Card, CardContent } from '@/components/ui/card';
@@ -6,7 +5,7 @@ import { Link } from 'react-router-dom';
 import {
   Camera, Scale, Smartphone, Award, Gift, CreditCard, ShoppingCart,
   Activity, Heart, Book, Bot, Utensils, Users, MapPin,
-  PlusCircle, Share2, Archive, History // Added History icon
+  PlusCircle, Share2, Archive // Added icons for new services
 } from 'lucide-react';
 import { useRTL } from '@/contexts/RTLContext';
 
@@ -33,21 +32,14 @@ export default function ServicesPage() {
           icon: <Share2 className="h-6 w-6 text-blue-500" />, // Using Share2 icon
           title: t('Share Recipe', 'مشاركة وصفة', 'Tarif Paylaş'),
           description: t('Share your favorite recipes with others', 'شارك وصفاتك المفضلة مع الآخرين', 'Favori tariflerinizi başkalarıyla paylaşın'),
-          link: '/shared-recipes', // Updated to point to shared recipes page
+          link: '/share-recipe', // Placeholder link
       },
       {
           id: 'smart-pantry',
           icon: <Archive className="h-6 w-6 text-amber-600" />, // Using Archive icon
           title: t('Smart Pantry', 'مخزن ذكي', 'Akıllı Kiler'),
           description: t('Manage your ingredients and find recipes', 'إدارة مكوناتك والعثور على الوصفات', 'Malzemelerinizi yönetin ve tarif bulun'),
-          link: '/smart-pantry',
-      },
-      {
-          id: 'cooking-history',
-          icon: <History className="h-6 w-6 text-purple-600" />, // Using History icon
-          title: t('Cooking History', 'سجل الطبخ', 'Pişirme Geçmişi'),
-          description: t('View your cooked and saved recipes', 'عرض وصفاتك المطبوخة والمحفوظة', 'Pişirdiğiniz ve kaydettiğiniz tarifleri görün'),
-          link: '/cooking-history',
+          link: '/smart-pantry', // Placeholder link
       },
   ];
 
