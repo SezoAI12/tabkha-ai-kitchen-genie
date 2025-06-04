@@ -1,3 +1,4 @@
+
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from 'sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -74,8 +75,8 @@ import AdminCommunicationsPage from './pages/admin/AdminCommunicationsPage';
 import AdminRecipeApproval from './pages/admin/AdminRecipeApproval';
 import AdminIngredients from './pages/admin/AdminIngredients';
 import SupportTicketsPage from './pages/admin/SupportTicketsPage';
-import CommunityPage from './pages/admin/CommunityPage';
-import NotificationsPage from './pages/admin/NotificationsPage';
+import AdminCommunityPage from './pages/admin/CommunityPage';
+import AdminNotificationsPage from './pages/admin/NotificationsPage';
 import AdvertisementPage from './pages/admin/AdvertisementPage';
 import ImageControlPage from './pages/admin/ImageControlPage';
 import ContentLibraryPage from './pages/admin/ContentLibraryPage';
@@ -174,8 +175,8 @@ function App() {
                       <Route path="recipe-approval" element={<AdminRecipeApproval />} />
                       <Route path="ingredients" element={<AdminIngredients />} />
                       <Route path="support-tickets" element={<SupportTicketsPage />} />
-                      <Route path="community" element={<CommunityPage />} />
-                      <Route path="notifications" element={<NotificationsPage />} />
+                      <Route path="community" element={<AdminCommunityPage />} />
+                      <Route path="notifications" element={<AdminNotificationsPage />} />
                       <Route path="advertisement" element={<AdvertisementPage />} />
                       <Route path="image-control" element={<ImageControlPage />} />
                       <Route path="content-library" element={<ContentLibraryPage />} />

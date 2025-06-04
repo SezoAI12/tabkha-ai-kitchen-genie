@@ -356,7 +356,6 @@ Focus on practical recipes that can be made with the ingredients provided.`;
           id: `ai-recipe-${Date.now()}-${index}`,
           title: recipe.title || `Recipe with ${ingredientNames.join(', ')}`,
           description: recipe.description || `A recipe using ${ingredientNames.join(', ')}`,
-          image_url: '',
           image: '',
           prep_time: recipe.prep_time || 15,
           prepTime: recipe.prep_time || 15,
@@ -480,6 +479,26 @@ Focus on practical recipes that can be made with the ingredients provided.`;
     );
   }
 
+  // Convert AIFilters to match FilterPanel expected types
+  const convertedFilters = {
+    dietary: filters.dietary,
+    cookTime: filters.cookingTime,
+    difficulty: filters.difficulty,
+    cuisine: filters.cuisine,
+  };
+
+  const convertedFilterOptions = {
+    dietary: AI_FILTER_OPTIONS.dietary,
+    cookTime: AI_FILTER_OPTIONS.cookingTime,
+    difficulty: AI_FILTER_OPTIONS.difficulty,
+    cuisine: AI_FILTER_OPTIONS.cuisine,
+  };
+
+  const handleConvertedFilterChange = (filterType: 'dietary' | 'cookTime' | 'difficulty' | 'cuisine', value: string) => {
+    const aiFilterType = filterType === 'cookTime' ? 'cookingTime' : filterType;
+    handleFilterChange(aiFilterType as keyof AIFilters, value);
+  };
+
   // --- Main Multi-Step UI ---
   return (
     <PageContainer
@@ -493,10 +512,10 @@ Focus on practical recipes that can be made with the ingredients provided.`;
         {renderStepIndicator()}
 
         <FilterPanel
-          filters={filters}
-          filterOptions={AI_FILTER_OPTIONS}
+          filters={convertedFilters}
+          filterOptions={convertedFilterOptions}
           showFilters={showFilters}
-          onFilterChange={handleFilterChange}
+          onFilterChange={handleConvertedFilterChange}
           onToggleFilters={() => setShowFilters(!showFilters)}
           onCloseFilters={() => setShowFilters(false)}
         />
