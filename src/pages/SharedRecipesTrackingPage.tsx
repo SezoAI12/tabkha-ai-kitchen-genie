@@ -13,86 +13,65 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 // Mock shared recipes data with complete Recipe interface
 const mockSharedRecipes: Recipe[] = [
-  { 
-    id: 's1', 
-    title: 'Homemade Pasta', 
-    image: '/placeholder.svg', // Use 'image' instead of 'image_url'
-    description: 'My special homemade pasta recipe with fresh herbs.',
-    prepTime: 30,
-    prep_time: 30,
-    cookTime: 15,
-    cook_time: 15,
-    servings: 4,
-    difficulty: 'Medium', 
-    calories: 450, 
-    rating: 4.8, 
-    ratingCount: 32, 
-    cuisineType: 'Italian',
-    cuisine_type: 'Italian',
-    ingredients: [],
-    instructions: ['Prepare pasta dough', 'Roll and cut', 'Cook in boiling water'],
-    categories: ['Italian', 'Main Course'],
-    tags: ['Italian', 'Pasta', 'Homemade'],
-    isFavorite: true,
-    status: 'published',
-    author_id: 'user1',
-    is_verified: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  },
-  { 
-    id: 's2', 
-    title: 'Spicy Chicken Curry', 
-    image: '/placeholder.svg', // Use 'image' instead of 'image_url'
-    description: 'A flavorful curry with just the right amount of heat.',
-    prepTime: 20,
-    prep_time: 20,
-    cookTime: 40,
-    cook_time: 40,
-    servings: 6,
-    difficulty: 'Medium', 
-    calories: 520, 
-    rating: 4.6, 
-    ratingCount: 18,
-    cuisineType: 'Indian',
-    cuisine_type: 'Indian',
-    ingredients: [],
-    instructions: ['Marinate chicken', 'Prepare spices', 'Cook curry'],
-    categories: ['Indian', 'Main Course'],
-    tags: ['Indian', 'Spicy', 'Chicken'],
-    isFavorite: false,
-    status: 'published',
-    author_id: 'user1',
-    is_verified: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
-  },
-  { 
-    id: 's3', 
-    title: 'Chocolate Lava Cake', 
-    image: '/placeholder.svg', // Use 'image' instead of 'image_url'
-    description: 'Decadent chocolate cake with a molten center.',
+  {
+    id: '1',
+    title: 'Mediterranean Quinoa Bowl',
+    description: 'A healthy and colorful quinoa bowl with Mediterranean flavors',
+    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=300&h=200&fit=crop',
     prepTime: 15,
-    prep_time: 15,
-    cookTime: 12,
-    cook_time: 12,
-    servings: 4,
-    difficulty: 'Easy', 
-    calories: 380, 
-    rating: 4.9, 
-    ratingCount: 45,
-    cuisineType: 'International',
-    cuisine_type: 'International',
-    ingredients: [],
-    instructions: ['Melt chocolate', 'Mix batter', 'Bake in ramekins'],
-    categories: ['Dessert'],
-    tags: ['Dessert', 'Chocolate'],
-    isFavorite: true,
+    cookTime: 20,
+    servings: 2,
+    difficulty: 'Easy',
+    calories: 420,
+    cuisineType: 'Mediterranean',
+    instructions: [],
+    categories: ['Healthy', 'Vegetarian'],
+    tags: ['quinoa', 'mediterranean'],
     status: 'published',
     author_id: 'user1',
     is_verified: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
+    created_at: '2024-01-15T10:00:00Z',
+    updated_at: '2024-01-15T10:00:00Z'
+  },
+  {
+    id: '2',
+    title: 'Spicy Thai Green Curry',
+    description: 'Authentic Thai green curry with coconut milk and fresh herbs',
+    image: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=300&h=200&fit=crop',
+    prepTime: 20,
+    cookTime: 25,
+    servings: 4,
+    difficulty: 'Medium',
+    calories: 380,
+    cuisineType: 'Thai',
+    instructions: [],
+    categories: ['Spicy', 'Asian'],
+    tags: ['curry', 'thai', 'coconut'],
+    status: 'published',
+    author_id: 'user2',
+    is_verified: true,
+    created_at: '2024-01-14T15:30:00Z',
+    updated_at: '2024-01-14T15:30:00Z'
+  },
+  {
+    id: '3',
+    title: 'Classic Italian Risotto',
+    description: 'Creamy Arborio rice cooked to perfection with Italian herbs',
+    image: 'https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=300&h=200&fit=crop',
+    prepTime: 10,
+    cookTime: 35,
+    servings: 6,
+    difficulty: 'Hard',
+    calories: 450,
+    cuisineType: 'Italian',
+    instructions: [],
+    categories: ['Comfort Food', 'Italian'],
+    tags: ['risotto', 'italian', 'rice'],
+    status: 'published',
+    author_id: 'user3',
+    is_verified: true,
+    created_at: '2024-01-13T12:00:00Z',
+    updated_at: '2024-01-13T12:00:00Z'
   }
 ];
 
@@ -106,7 +85,7 @@ const mockStatistics = [
 // Time periods for filtering
 const timePeriods = ['Last 7 days', 'Last 30 days', 'Last 3 months', 'All time'];
 
-export default function SharedRecipesTrackingPage() {
+const SharedRecipesTrackingPage = () => {
   const [selectedTab, setSelectedTab] = useState('recipes');
   const [timePeriod, setTimePeriod] = useState('Last 30 days');
   const [sortBy, setSortBy] = useState('popularity');
@@ -364,4 +343,6 @@ export default function SharedRecipesTrackingPage() {
       </div>
     </PageContainer>
   );
-}
+};
+
+export default SharedRecipesTrackingPage;

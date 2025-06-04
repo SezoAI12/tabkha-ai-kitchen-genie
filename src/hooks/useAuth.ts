@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -9,6 +8,11 @@ export interface User {
   full_name?: string;
   avatar_url?: string;
   role?: 'user' | 'admin' | 'super_admin';
+  user_metadata?: {
+    full_name?: string;
+    avatar_url?: string;
+    [key: string]: any;
+  };
 }
 
 export const useAuth = () => {
@@ -39,9 +43,10 @@ export const useAuth = () => {
         setUser({
           id: authUser.id,
           email: authUser.email!,
-          full_name: profileData?.full_name || undefined,
-          avatar_url: profileData?.avatar_url || undefined,
-          role: roleData?.role || 'user'
+          full_name: profileData?.full_name || authUser.user_metadata?.full_name || undefined,
+          avatar_url: profileData?.avatar_url || authUser.user_metadata?.avatar_url || undefined,
+          role: roleData?.role || 'user',
+          user_metadata: authUser.user_metadata || {}
         });
       } else {
         setUser(null);
