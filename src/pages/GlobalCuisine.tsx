@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
@@ -7,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Flag, Utensils, Martini, Search, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { globalCuisineService, Recipe, SearchParams } from '@/services/globalCuisineService';
+import { globalCuisineService, SearchParams } from '@/services/globalCuisineService';
+import { Recipe } from '@/types/recipe';
 import { toast } from '@/hooks/use-toast';
 
 const GlobalCuisinePage = () => {
@@ -133,7 +135,7 @@ const GlobalCuisinePage = () => {
   const loadRandomRecipes = async () => {
     setIsLoading(true);
     try {
-      const result = await globalCuisineService.getRandomRecipes(undefined, 12);
+      const result = await globalCuisineService.getRandomRecipes(12);
       setRecipes(result.recipes || []);
     } catch (error) {
       console.error('Error loading random recipes:', error);
@@ -159,46 +161,24 @@ const GlobalCuisinePage = () => {
     }
   };
 
-  // Convert API recipes to the format expected by RecipeGrid
+  // Convert recipes to the format expected by RecipeGrid
   const convertedRecipes = recipes.map(recipe => ({
-    id: recipe.id.toString(),
-    title: recipe.title,
-    description: recipe.summary?.replace(/<[^>]*>/g, '').substring(0, 100) + '...' || '',
+    ...recipe,
     image_url: recipe.image,
-    image: recipe.image,
-    prep_time: Math.floor(recipe.readyInMinutes / 2),
-    prepTime: Math.floor(recipe.readyInMinutes / 2),
-    cook_time: Math.ceil(recipe.readyInMinutes / 2),
-    cookTime: Math.ceil(recipe.readyInMinutes / 2),
-    servings: recipe.servings,
-    difficulty: 'Medium' as const,
-    calories: recipe.nutrition?.calories || 300,
-    cuisine_type: recipe.cuisines?.[0] || '',
-    cuisineType: recipe.cuisines?.[0] || '',
-    instructions: recipe.instructions?.replace(/<[^>]*>/g, '').split('.').filter(s => s.trim()).map(s => s.trim()) || [],
-    categories: recipe.cuisines || [],
-    tags: recipe.dishTypes || [],
-    status: 'published' as const,
-    author_id: 'api',
-    is_verified: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    prep_time: recipe.prepTime,
+    cook_time: recipe.cookTime,
+    cuisine_type: recipe.cuisineType,
     rating: 4.5,
     ratingCount: 89,
     isFavorite: false,
-    ingredients: recipe.ingredients?.map(ing => ({
-      id: `ing-${Math.random()}`,
-      name: ing.name,
-      amount: ing.amount,
-      unit: ing.unit
-    })) || [],
-    nutritionalInfo: recipe.nutrition ? {
-      calories: Number(recipe.nutrition.calories) || 0,
-      protein: Number(recipe.nutrition.protein) || 0,
-      carbs: Number(recipe.nutrition.carbohydrates) || 0,
-      fat: Number(recipe.nutrition.fat) || 0,
-      fiber: 0
-    } : undefined
+    ingredients: recipe.ingredients || [],
+    nutritionalInfo: {
+      calories: recipe.calories || 300,
+      protein: 25,
+      carbs: 45,
+      fat: 15,
+      fiber: 5
+    }
   }));
 
   return (

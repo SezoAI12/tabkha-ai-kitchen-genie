@@ -14,6 +14,10 @@ export interface SearchParams {
   query?: string;
   cuisine?: string;
   difficulty?: string;
+  diet?: string;
+  type?: string;
+  number?: number;
+  offset?: number;
 }
 
 const mockCuisines: CuisineType[] = [
@@ -67,7 +71,7 @@ export const globalCuisineService = {
     return mockCuisines.find(c => c.id === id) || null;
   },
 
-  async searchRecipes(params: SearchParams): Promise<Recipe[]> {
+  async searchRecipes(params: SearchParams): Promise<{ results: Recipe[] }> {
     let results = mockRecipes;
     
     if (params.query) {
@@ -78,15 +82,18 @@ export const globalCuisineService = {
     
     if (params.cuisine) {
       results = results.filter(recipe =>
-        recipe.cuisineType.toLowerCase() === params.cuisine!.toLowerCase()
+        recipe.cuisineType?.toLowerCase() === params.cuisine!.toLowerCase()
       );
     }
     
-    return results;
+    return { results };
   },
 
-  async getRandomRecipes(count: number = 6): Promise<Recipe[]> {
+  async getRandomRecipes(count: number = 6): Promise<{ recipes: Recipe[] }> {
     const shuffled = [...mockRecipes].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, count);
+    return { recipes: shuffled.slice(0, count) };
   }
 };
+
+// Export Recipe type for use in other files
+export { Recipe };
