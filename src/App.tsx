@@ -101,6 +101,7 @@ function App() {
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/profile/edit" element={<EditProfilePage />} />
                     <Route path="/profile/dietary-preferences" element={<DietaryPreferencesPage />} />
+                    <Route path="/dietary-preferences" element={<DietaryPreferencesPage />} />
                     <Route path="/favorites" element={<FavoritesPage />} />
                     <Route path="/meal-plan" element={<MealPlanPage />} />
                     <Route path="/search" element={<SearchPage />} />
@@ -117,11 +118,10 @@ function App() {
                     <Route path="/help" element={<HelpPage />} />
                     <Route path="/settings" element={<SettingsPage />} />
                     <Route path="/system-settings" element={<MainSettingsPage />} />
-                    <Route path="/settings/language" element={<LanguageSettingsPage />} />
-                    <Route path="/settings/appearance" element={<AppearancePage />} />
-                    <Route path="/settings/notifications" element={<NotificationsPage />} />
-                    <Route path="/settings/payment-methods" element={<PaymentMethodsPage />} />
-                    <Route path="/settings/privacy" element={<PrivacyPage />} />
+                    <Route path="/language" element={<LanguageSettingsPage />} />
+                    <Route path="/appearance" element={<AppearancePage />} />
+                    <Route path="/notifications" element={<NotificationsPage />} />
+                    <Route path="/payment-methods" element={<PaymentMethodsPage />} />
                     <Route path="/privacy" element={<PrivacyPage />} />
                     <Route path="/body-information" element={<BodyInformationPage />} />
                     <Route path="/health-information" element={<HealthInformationPage />} />
@@ -143,6 +143,7 @@ function App() {
                     <Route path="/mood-recipes" element={<MoodRecipesPage />} />
                     <Route path="/recipe-adaptation" element={<SmartRecipeAdaptationPage />} />
                     <Route path="/micronutrient-tracker" element={<MicronutrientTrackerPage />} />
+                    <Route path="/delete-account" element={<NotFound />} />
                     
                     {/* Admin Routes */}
                     <Route path="/admin/login" element={<AdminLoginPage />} />
