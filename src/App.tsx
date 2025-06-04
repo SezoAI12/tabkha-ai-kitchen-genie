@@ -1,11 +1,11 @@
 import { Toaster } from '@/components/ui/toaster';
-import { Sonner } from '@/components/ui/sonner';
+import { Toaster as Sonner } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { RTLProvider } from '@/contexts/RTLContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
-import Index from './pages/Index';
+import SplashScreen from './pages/SplashScreen';
 import AuthPage from './pages/AuthPage';
 import RecipesPage from './pages/RecipesPage';
 import RecipeDetailPage from './pages/RecipeDetailPage';
@@ -43,7 +43,6 @@ import LoyaltyProgramPage from './pages/LoyaltyProgramPage';
 import SubscriptionPage from './pages/SubscriptionPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import AIFeaturesPage from './pages/AIFeaturesPage';
-import SplashScreen from './pages/SplashScreen';
 import SharedRecipesPage from './pages/SharedRecipesPage';
 import SharedRecipesTrackingPage from './pages/SharedRecipesTrackingPage';
 import IngredientSwapPage from './pages/IngredientSwapPage';
@@ -78,7 +77,7 @@ function App() {
             <Sonner />
             <BrowserRouter>
               <Routes>
-                <Route path="/" element={<Index />} />
+                <Route path="/" element={<SplashScreen />} />
                 <Route path="/splash" element={<SplashScreen />} />
                 <Route path="/home" element={<NewHomePage />} />
                 <Route path="/auth" element={<AuthPage />} />
