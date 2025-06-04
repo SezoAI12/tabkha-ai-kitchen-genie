@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -27,11 +28,20 @@ const mockSharedRecipes: Recipe[] = [
     instructions: [],
     categories: ['Healthy', 'Vegetarian'],
     tags: ['quinoa', 'mediterranean'],
-    status: 'published',
-    author_id: 'user1',
-    is_verified: true,
-    created_at: '2024-01-15T10:00:00Z',
-    updated_at: '2024-01-15T10:00:00Z'
+    rating: 4.5,
+    ratingCount: 89,
+    isFavorite: false,
+    ingredients: [
+      { id: '1', name: 'Quinoa', amount: '1', unit: 'cup', category: 'grains', inPantry: false },
+      { id: '2', name: 'Cucumber', amount: '1', unit: 'piece', category: 'vegetables', inPantry: false }
+    ],
+    nutritionalInfo: {
+      calories: 420,
+      protein: 25,
+      carbs: 45,
+      fat: 15,
+      fiber: 5
+    }
   },
   {
     id: '2',
@@ -47,11 +57,20 @@ const mockSharedRecipes: Recipe[] = [
     instructions: [],
     categories: ['Spicy', 'Asian'],
     tags: ['curry', 'thai', 'coconut'],
-    status: 'published',
-    author_id: 'user2',
-    is_verified: true,
-    created_at: '2024-01-14T15:30:00Z',
-    updated_at: '2024-01-14T15:30:00Z'
+    rating: 4.3,
+    ratingCount: 67,
+    isFavorite: false,
+    ingredients: [
+      { id: '1', name: 'Green curry paste', amount: '2', unit: 'tbsp', category: 'condiments', inPantry: false },
+      { id: '2', name: 'Coconut milk', amount: '400', unit: 'ml', category: 'dairy', inPantry: false }
+    ],
+    nutritionalInfo: {
+      calories: 380,
+      protein: 20,
+      carbs: 30,
+      fat: 25,
+      fiber: 3
+    }
   },
   {
     id: '3',
@@ -67,11 +86,20 @@ const mockSharedRecipes: Recipe[] = [
     instructions: [],
     categories: ['Comfort Food', 'Italian'],
     tags: ['risotto', 'italian', 'rice'],
-    status: 'published',
-    author_id: 'user3',
-    is_verified: true,
-    created_at: '2024-01-13T12:00:00Z',
-    updated_at: '2024-01-13T12:00:00Z'
+    rating: 4.7,
+    ratingCount: 123,
+    isFavorite: false,
+    ingredients: [
+      { id: '1', name: 'Arborio rice', amount: '300', unit: 'g', category: 'grains', inPantry: false },
+      { id: '2', name: 'Parmesan cheese', amount: '100', unit: 'g', category: 'dairy', inPantry: false }
+    ],
+    nutritionalInfo: {
+      calories: 450,
+      protein: 15,
+      carbs: 60,
+      fat: 18,
+      fiber: 2
+    }
   }
 ];
 

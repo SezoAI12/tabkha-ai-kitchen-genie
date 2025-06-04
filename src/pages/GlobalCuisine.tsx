@@ -10,7 +10,8 @@ import { Flag, Utensils, Martini, Search, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { globalCuisineService, SearchParams } from '@/services/globalCuisineService';
-import { Recipe } from '@/types/recipe';
+import { Recipe as ServiceRecipe } from '@/types/recipe';
+import { Recipe } from '@/types/index';
 import { toast } from '@/hooks/use-toast';
 
 const GlobalCuisinePage = () => {
@@ -20,7 +21,7 @@ const GlobalCuisinePage = () => {
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
   const [selectedCuisine, setSelectedCuisine] = useState('');
   const [selectedDiet, setSelectedDiet] = useState('');
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [recipes, setRecipes] = useState<ServiceRecipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -163,7 +164,7 @@ const GlobalCuisinePage = () => {
   };
 
   // Convert recipes to the format expected by RecipeGrid
-  const convertedRecipes = recipes.map(recipe => ({
+  const convertedRecipes: Recipe[] = recipes.map(recipe => ({
     ...recipe,
     image_url: recipe.image,
     prep_time: recipe.prepTime,
@@ -174,6 +175,7 @@ const GlobalCuisinePage = () => {
     isFavorite: false,
     ingredients: (recipe.ingredients || []).map(ing => ({
       ...ing,
+      amount: String(ing.amount), // Convert number to string
       category: 'general',
       inPantry: false
     })),
