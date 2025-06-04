@@ -28,6 +28,7 @@ interface MainCategory {
 interface AIFilters {
   dietary: string;
   cookingTime: string;
+  cookTime: string; // Add this to match Filters interface
   difficulty: string;
   cuisine: string;
 }
@@ -101,6 +102,7 @@ export default function FindByIngredients() {
   const AI_FILTER_OPTIONS = {
     dietary: ['Normal', 'Healthy', 'Vegetarian', 'Vegan', 'Gluten-Free'],
     cookingTime: ['Under 30 mins', '30-60 mins', '1-2 hours', 'Over 2 hours'],
+    cookTime: ['Under 30 mins', '30-60 mins', '1-2 hours', 'Over 2 hours'], // Add this to match
     difficulty: ['Beginner', 'Intermediate', 'Expert'],
     cuisine: ['Levant', 'Italian', 'Mexican', 'Chinese', 'Indian', 'American'],
   };
@@ -130,6 +132,7 @@ export default function FindByIngredients() {
   const [filters, setFilters] = useState<AIFilters>({
     dietary: '',
     cookingTime: '',
+    cookTime: '', // Add this to match
     difficulty: '',
     cuisine: '',
   });
@@ -351,13 +354,12 @@ Focus on practical recipes that can be made with the ingredients provided.`;
           ];
         }
 
-        // Transform to Recipe format
+        // Transform to Recipe format - Fix image property
         results = aiRecipes.map((recipe: any, index: number): Recipe => ({
           id: `ai-recipe-${Date.now()}-${index}`,
           title: recipe.title || `Recipe with ${ingredientNames.join(', ')}`,
           description: recipe.description || `A recipe using ${ingredientNames.join(', ')}`,
-          image_url: '',
-          image: '',
+          image: '', // Use 'image' instead of 'image_url'
           prep_time: recipe.prep_time || 15,
           prepTime: recipe.prep_time || 15,
           cook_time: recipe.cook_time || 30,

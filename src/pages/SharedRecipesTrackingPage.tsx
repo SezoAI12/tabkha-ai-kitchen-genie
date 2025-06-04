@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -17,8 +16,7 @@ const mockSharedRecipes: Recipe[] = [
   { 
     id: 's1', 
     title: 'Homemade Pasta', 
-    image: '/placeholder.svg',
-    image_url: '/placeholder.svg',
+    image: '/placeholder.svg', // Use 'image' instead of 'image_url'
     description: 'My special homemade pasta recipe with fresh herbs.',
     prepTime: 30,
     prep_time: 30,
@@ -45,8 +43,7 @@ const mockSharedRecipes: Recipe[] = [
   { 
     id: 's2', 
     title: 'Spicy Chicken Curry', 
-    image: '/placeholder.svg',
-    image_url: '/placeholder.svg',
+    image: '/placeholder.svg', // Use 'image' instead of 'image_url'
     description: 'A flavorful curry with just the right amount of heat.',
     prepTime: 20,
     prep_time: 20,
@@ -73,8 +70,7 @@ const mockSharedRecipes: Recipe[] = [
   { 
     id: 's3', 
     title: 'Chocolate Lava Cake', 
-    image: '/placeholder.svg',
-    image_url: '/placeholder.svg',
+    image: '/placeholder.svg', // Use 'image' instead of 'image_url'
     description: 'Decadent chocolate cake with a molten center.',
     prepTime: 15,
     prep_time: 15,

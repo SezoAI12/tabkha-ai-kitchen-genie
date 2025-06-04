@@ -3,7 +3,7 @@ export interface Recipe {
   id: string;
   title: string;
   description: string;
-  image_url: string;
+  image: string; // Changed from image_url to image for consistency
   prep_time: number;
   cook_time: number;
   servings: number;
@@ -22,6 +22,10 @@ export interface Recipe {
   rating?: number;
   ratingCount?: number;
   isFavorite?: boolean;
+  // Legacy properties for backward compatibility
+  prepTime?: number;
+  cookTime?: number;
+  cuisineType?: string;
 }
 
 export interface RecipeIngredient {
