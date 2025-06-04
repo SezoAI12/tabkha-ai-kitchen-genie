@@ -1,5 +1,5 @@
 
-import { Recipe } from '@/types/recipe';
+import { Recipe, RecipeFilters } from '@/types/recipe';
 
 const API_BASE_URL = 'https://api.example.com'; // Replace with actual API URL
 
@@ -40,7 +40,6 @@ const mockRecipes: Recipe[] = [
 
 export const recipeService = {
   async getAllRecipes(): Promise<Recipe[]> {
-    // In production, this would be an actual API call
     return mockRecipes;
   },
 
@@ -103,4 +102,48 @@ export const recipeService = {
     mockRecipes.splice(index, 1);
     return true;
   }
+};
+
+// Export additional functions needed by useRecipes hook
+export const fetchRecipesFromDB = async (filters?: RecipeFilters): Promise<Recipe[]> => {
+  let recipes = mockRecipes;
+  
+  if (filters?.search) {
+    recipes = recipes.filter(recipe =>
+      recipe.title.toLowerCase().includes(filters.search!.toLowerCase()) ||
+      recipe.description.toLowerCase().includes(filters.search!.toLowerCase())
+    );
+  }
+  
+  if (filters?.category) {
+    recipes = recipes.filter(recipe =>
+      recipe.categories.includes(filters.category!)
+    );
+  }
+  
+  if (filters?.difficulty) {
+    recipes = recipes.filter(recipe =>
+      recipe.difficulty === filters.difficulty
+    );
+  }
+  
+  return recipes;
+};
+
+export const createRecipeInDB = async (recipeData: Partial<Recipe>): Promise<Recipe> => {
+  return recipeService.createRecipe(recipeData);
+};
+
+export const updateRecipeInDB = async (id: string, updates: Partial<Recipe>): Promise<Recipe | null> => {
+  return recipeService.updateRecipe(id, updates);
+};
+
+export const deleteRecipeFromDB = async (id: string): Promise<boolean> => {
+  return recipeService.deleteRecipe(id);
+};
+
+export const toggleFavoriteInDB = async (recipeId: string): Promise<boolean> => {
+  // Mock implementation - in real app this would update the favorites table
+  console.log('Toggling favorite for recipe:', recipeId);
+  return true;
 };

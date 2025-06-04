@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export type Language = 'en' | 'ar' | 'tr';
+export type Language = 'en' | 'ar' | 'tr' | 'fr';
 
 export interface LanguageContextType {
   language: Language;
@@ -58,6 +58,21 @@ const translations = {
     'Cancel': 'İptal',
     'Delete': 'Sil',
     'Edit': 'Düzenle'
+  },
+  fr: {
+    // Navigation
+    'Home': 'Accueil',
+    'Recipes': 'Recettes',
+    'Search': 'Recherche',
+    'Profile': 'Profil',
+    'Settings': 'Paramètres',
+    // Common
+    'Loading': 'Chargement...',
+    'Error': 'Erreur',
+    'Save': 'Enregistrer',
+    'Cancel': 'Annuler',
+    'Delete': 'Supprimer',
+    'Edit': 'Modifier'
   }
 };
 
@@ -67,7 +82,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const availableLanguages = [
     { code: 'en' as Language, name: 'English', nativeName: 'English' },
     { code: 'ar' as Language, name: 'Arabic', nativeName: 'العربية' },
-    { code: 'tr' as Language, name: 'Turkish', nativeName: 'Türkçe' }
+    { code: 'tr' as Language, name: 'Turkish', nativeName: 'Türkçe' },
+    { code: 'fr' as Language, name: 'French', nativeName: 'Français' }
   ];
 
   const isRTL = language === 'ar';
