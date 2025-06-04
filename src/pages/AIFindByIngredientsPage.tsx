@@ -357,9 +357,7 @@ Focus on practical recipes that can be made with the ingredients provided.`;
           title: recipe.title || `Recipe with ${ingredientNames.join(', ')}`,
           description: recipe.description || `A recipe using ${ingredientNames.join(', ')}`,
           image: '',
-          prep_time: recipe.prep_time || 15,
           prepTime: recipe.prep_time || 15,
-          cook_time: recipe.cook_time || 30,
           cookTime: recipe.cook_time || 30,
           servings: recipe.servings || 4,
           difficulty: recipe.difficulty || 'Medium' as 'Easy' | 'Medium' | 'Hard',
@@ -375,7 +373,6 @@ Focus on practical recipes that can be made with the ingredients provided.`;
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
           is_verified: true,
-          cuisine_type: recipe.cuisine_type || 'Fusion',
           cuisineType: recipe.cuisine_type || 'Fusion',
           status: 'published' as 'draft' | 'published' | 'pending_review',
           ingredients: Array.isArray(recipe.ingredients) ?
