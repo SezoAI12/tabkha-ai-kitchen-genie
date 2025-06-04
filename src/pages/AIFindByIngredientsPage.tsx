@@ -360,7 +360,7 @@ Focus on practical recipes that can be made with the ingredients provided.`;
           prepTime: recipe.prep_time || 15,
           cookTime: recipe.cook_time || 30,
           servings: recipe.servings || 4,
-          difficulty: recipe.difficulty || 'Medium' as 'Easy' | 'Medium' | 'Hard',
+          difficulty: recipe.difficulty || 'Medium',
           calories: recipe.calories || 300,
           rating: 0,
           ratingCount: 0,
@@ -369,23 +369,23 @@ Focus on practical recipes that can be made with the ingredients provided.`;
           categories: [],
           tags: ['AI Generated'],
           isFavorite: false,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          is_verified: true,
           cuisineType: recipe.cuisine_type || 'Fusion',
-          status: 'published' as 'draft' | 'published' | 'pending_review',
           ingredients: Array.isArray(recipe.ingredients) ?
             recipe.ingredients.map((ing: any) => ({
               id: `ing-${Math.random()}`,
               name: typeof ing === 'string' ? ing : (ing.name || ing.ingredient || 'Unknown'),
-              amount: typeof ing === 'object' ? (ing.amount || ing.quantity || 1) : 1,
-              unit: typeof ing === 'object' ? (ing.unit || 'cup') : 'cup'
+              amount: typeof ing === 'object' ? (ing.amount || ing.quantity || '1') : '1',
+              unit: typeof ing === 'object' ? (ing.unit || 'cup') : 'cup',
+              category: 'general',
+              inPantry: false
             })) :
             ingredientNames.map(ing => ({
               id: `ing-${Math.random()}`,
               name: ing,
-              amount: 1,
-              unit: 'cup'
+              amount: '1',
+              unit: 'cup',
+              category: 'general',
+              inPantry: false
             }))
         }));
       }
