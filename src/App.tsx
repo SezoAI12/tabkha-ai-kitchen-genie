@@ -1,4 +1,3 @@
-
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from 'sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -83,6 +82,11 @@ import ContentLibraryPage from './pages/admin/ContentLibraryPage';
 import TranslationsPage from './pages/admin/TranslationsPage';
 import LanguagesPage from './pages/admin/LanguagesPage';
 import SubscriptionsPage from './pages/admin/SubscriptionsPage';
+import AdminIntegrationsPage from './pages/admin/AdminIntegrationsPage';
+import AdminUserTypesPage from './pages/admin/AdminUserTypesPage';
+import AdminAccountingPage from './pages/admin/AdminAccountingPage';
+import AdminSystemPage from './pages/admin/AdminSystemPage';
+import AdminMaintenancePage from './pages/admin/AdminMaintenancePage';
 
 const queryClient = new QueryClient();
 
@@ -167,22 +171,28 @@ function App() {
                       <Route index element={<AdminDashboard />} />
                       <Route path="dashboard" element={<AdminDashboard />} />
                       <Route path="users" element={<AdminUsers />} />
+                      <Route path="user-types" element={<AdminUserTypesPage />} />
                       <Route path="recipes" element={<AdminRecipes />} />
-                      <Route path="analytics" element={<AdminAnalyticsPage />} />
-                      <Route path="settings" element={<AdminSettingsPage />} />
-                      <Route path="security" element={<AdminSecurityPage />} />
-                      <Route path="communications" element={<AdminCommunicationsPage />} />
-                      <Route path="recipe-approval" element={<AdminRecipeApproval />} />
                       <Route path="ingredients" element={<AdminIngredients />} />
+                      <Route path="ingredient-images" element={<ImageControlPage />} />
+                      <Route path="translations" element={<TranslationsPage />} />
+                      <Route path="subscriptions" element={<SubscriptionsPage />} />
+                      <Route path="accounting" element={<AdminAccountingPage />} />
+                      <Route path="rewards" element={<AdminDashboard />} />
+                      <Route path="languages" element={<LanguagesPage />} />
+                      <Route path="integrations" element={<AdminIntegrationsPage />} />
+                      <Route path="system" element={<AdminSystemPage />} />
+                      <Route path="analytics" element={<AdminAnalyticsPage />} />
+                      <Route path="communications" element={<AdminCommunicationsPage />} />
+                      <Route path="security" element={<AdminSecurityPage />} />
+                      <Route path="maintenance" element={<AdminMaintenancePage />} />
+                      <Route path="settings" element={<AdminSettingsPage />} />
+                      <Route path="recipe-approval" element={<AdminRecipeApproval />} />
                       <Route path="support-tickets" element={<SupportTicketsPage />} />
                       <Route path="community" element={<AdminCommunityPage />} />
                       <Route path="notifications" element={<AdminNotificationsPage />} />
                       <Route path="advertisement" element={<AdvertisementPage />} />
-                      <Route path="image-control" element={<ImageControlPage />} />
                       <Route path="content-library" element={<ContentLibraryPage />} />
-                      <Route path="translations" element={<TranslationsPage />} />
-                      <Route path="languages" element={<LanguagesPage />} />
-                      <Route path="subscriptions" element={<SubscriptionsPage />} />
                     </Route>
                     
                     <Route path="*" element={<NotFound />} />
