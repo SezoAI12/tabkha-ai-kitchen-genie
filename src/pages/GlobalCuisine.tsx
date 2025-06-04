@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
@@ -175,7 +174,7 @@ const GlobalCuisinePage = () => {
     isFavorite: false,
     ingredients: (recipe.ingredients || []).map(ing => ({
       ...ing,
-      amount: String(ing.amount), // Convert number to string
+      amount: String(ing.amount || 0), // Convert number to string and handle undefined
       category: 'general',
       inPantry: false
     })),
