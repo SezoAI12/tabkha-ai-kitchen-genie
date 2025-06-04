@@ -94,6 +94,3 @@ export const globalCuisineService = {
     return { recipes: shuffled.slice(0, count) };
   }
 };
-
-// Export Recipe type for use in other files
-export { Recipe };

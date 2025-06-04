@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
@@ -171,7 +172,11 @@ const GlobalCuisinePage = () => {
     rating: 4.5,
     ratingCount: 89,
     isFavorite: false,
-    ingredients: recipe.ingredients || [],
+    ingredients: (recipe.ingredients || []).map(ing => ({
+      ...ing,
+      category: 'general',
+      inPantry: false
+    })),
     nutritionalInfo: {
       calories: recipe.calories || 300,
       protein: 25,
