@@ -14,7 +14,7 @@ import { RecipeGrid } from '@/components/recipe/RecipeGrid';
 import { useToast } from '@/hooks/use-toast';
 import { useRTL } from '@/contexts/RTLContext';
 import { DrinkCustomizationForm, DrinkOptions } from '@/components/drinks/DrinkCustomizationForm';
-import { Recipe } from '@/types/recipe';
+import { Recipe } from '@/types/index';
 import { supabase } from '@/integrations/supabase/client';
 import { useLocation } from 'react-router-dom';
 
@@ -370,19 +370,22 @@ Focus on practical recipes that can be made with the ingredients provided.`;
           tags: ['AI Generated'],
           isFavorite: false,
           cuisineType: recipe.cuisine_type || 'Fusion',
-          status: 'published',
           ingredients: Array.isArray(recipe.ingredients) ?
             recipe.ingredients.map((ing: any) => ({
               id: `ing-${Math.random()}`,
               name: typeof ing === 'string' ? ing : (ing.name || ing.ingredient || 'Unknown'),
               amount: typeof ing === 'object' ? String(ing.amount || ing.quantity || '1') : '1',
               unit: typeof ing === 'object' ? (ing.unit || 'cup') : 'cup',
+              category: 'general',
+              inPantry: false
             })) :
             ingredientNames.map(ing => ({
               id: `ing-${Math.random()}`,
               name: ing,
               amount: '1',
               unit: 'cup',
+              category: 'general',
+              inPantry: false
             }))
         }));
       }
