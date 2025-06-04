@@ -27,7 +27,7 @@ interface MainCategory {
 
 interface AIFilters {
   dietary: string;
-  cookingTime: string;
+  cookTime: string;
   difficulty: string;
   cuisine: string;
 }
@@ -100,7 +100,7 @@ export default function FindByIngredients() {
 
   const AI_FILTER_OPTIONS = {
     dietary: ['Normal', 'Healthy', 'Vegetarian', 'Vegan', 'Gluten-Free'],
-    cookingTime: ['Under 30 mins', '30-60 mins', '1-2 hours', 'Over 2 hours'],
+    cookTime: ['Under 30 mins', '30-60 mins', '1-2 hours', 'Over 2 hours'],
     difficulty: ['Beginner', 'Intermediate', 'Expert'],
     cuisine: ['Levant', 'Italian', 'Mexican', 'Chinese', 'Indian', 'American'],
   };
@@ -129,7 +129,7 @@ export default function FindByIngredients() {
   );
   const [filters, setFilters] = useState<AIFilters>({
     dietary: '',
-    cookingTime: '',
+    cookTime: '',
     difficulty: '',
     cuisine: '',
   });
@@ -369,7 +369,6 @@ Focus on practical recipes that can be made with the ingredients provided.`;
           categories: [],
           tags: ['AI Generated'],
           isFavorite: false,
-          author_id: 'ai-chef',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
           is_verified: true,
@@ -476,26 +475,6 @@ Focus on practical recipes that can be made with the ingredients provided.`;
     );
   }
 
-  // Convert AIFilters to match FilterPanel expected types
-  const convertedFilters = {
-    dietary: filters.dietary,
-    cookTime: filters.cookingTime,
-    difficulty: filters.difficulty,
-    cuisine: filters.cuisine,
-  };
-
-  const convertedFilterOptions = {
-    dietary: AI_FILTER_OPTIONS.dietary,
-    cookTime: AI_FILTER_OPTIONS.cookingTime,
-    difficulty: AI_FILTER_OPTIONS.difficulty,
-    cuisine: AI_FILTER_OPTIONS.cuisine,
-  };
-
-  const handleConvertedFilterChange = (filterType: 'dietary' | 'cookTime' | 'difficulty' | 'cuisine', value: string) => {
-    const aiFilterType = filterType === 'cookTime' ? 'cookingTime' : filterType;
-    handleFilterChange(aiFilterType as keyof AIFilters, value);
-  };
-
   // --- Main Multi-Step UI ---
   return (
     <PageContainer
@@ -509,10 +488,10 @@ Focus on practical recipes that can be made with the ingredients provided.`;
         {renderStepIndicator()}
 
         <FilterPanel
-          filters={convertedFilters}
-          filterOptions={convertedFilterOptions}
+          filters={filters}
+          filterOptions={AI_FILTER_OPTIONS}
           showFilters={showFilters}
-          onFilterChange={handleConvertedFilterChange}
+          onFilterChange={handleFilterChange}
           onToggleFilters={() => setShowFilters(!showFilters)}
           onCloseFilters={() => setShowFilters(false)}
         />
