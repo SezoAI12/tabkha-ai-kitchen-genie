@@ -1,6 +1,6 @@
 
 import { Toaster } from '@/components/ui/toaster';
-import { Toaster as Sonner } from '@/components/ui/sonner';
+import { Toaster as Sonner } from 'sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -52,6 +52,10 @@ import HealthTrackingPage from './pages/HealthTrackingPage';
 import HealthTrackingHomePage from './pages/HealthTrackingHomePage';
 import SmartPantryPageWrapper from './pages/SmartPantryPageWrapper';
 import CookingHistoryPage from './pages/CookingHistoryPage';
+import CookingMode from './pages/CookingMode';
+import MoodRecipesPage from './pages/MoodRecipesPage';
+import SmartRecipeAdaptationPage from './pages/SmartRecipeAdaptationPage';
+import MicronutrientTrackerPage from './pages/MicronutrientTrackerPage';
 
 // Admin Pages
 import AdminLoginPage from './pages/admin/AdminLoginPage';
@@ -84,6 +88,8 @@ function App() {
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/recipes" element={<RecipesPage />} />
                 <Route path="/recipes/:id" element={<RecipeDetailPage />} />
+                <Route path="/recipe/:id" element={<RecipeDetailPage />} />
+                <Route path="/cooking/:id" element={<CookingMode />} />
                 <Route path="/create-recipe" element={<CreateRecipePage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/profile/edit" element={<EditProfilePage />} />
@@ -124,6 +130,9 @@ function App() {
                 <Route path="/ingredient-swap" element={<IngredientSwapPage />} />
                 <Route path="/health-tracking" element={<HealthTrackingPage />} />
                 <Route path="/health-tracking-home" element={<HealthTrackingHomePage />} />
+                <Route path="/mood-recipes" element={<MoodRecipesPage />} />
+                <Route path="/recipe-adaptation" element={<SmartRecipeAdaptationPage />} />
+                <Route path="/micronutrient-tracker" element={<MicronutrientTrackerPage />} />
                 
                 {/* Admin Routes */}
                 <Route path="/admin/login" element={<AdminLoginPage />} />
