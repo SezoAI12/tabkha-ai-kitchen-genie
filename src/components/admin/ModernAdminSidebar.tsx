@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Users, BookOpen, Settings, Shield, 
   BarChart3, CreditCard, Gift, Languages, Monitor,
   UserCog, Building, Plug, Image, FileText, Library,
-  Crown, MessageCircle
+  Crown, MessageCircle, HelpCircle, Globe, Megaphone
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -39,6 +39,7 @@ const mainItems: SidebarItem[] = [
   { title: 'User Types', href: '/admin/user-types', icon: UserCog, requireSuperAdmin: true },
   { title: 'Recipes', href: '/admin/recipes', icon: BookOpen },
   { title: 'Content Library', href: '/admin/content-library', icon: Library },
+  { title: 'Support Tickets', href: '/admin/support-tickets', icon: HelpCircle },
 ];
 
 const contentItems: SidebarItem[] = [
@@ -46,6 +47,7 @@ const contentItems: SidebarItem[] = [
   { title: 'Ingredient Images', href: '/admin/ingredient-images', icon: Image },
   { title: 'Translations', href: '/admin/translations', icon: FileText },
   { title: 'Languages', href: '/admin/languages', icon: Languages },
+  { title: 'Image Control', href: '/admin/image-control', icon: Image },
 ];
 
 const businessItems: SidebarItem[] = [
@@ -54,6 +56,12 @@ const businessItems: SidebarItem[] = [
   { title: 'Rewards', href: '/admin/rewards', icon: Gift },
   { title: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   { title: 'Communications', href: '/admin/communications', icon: MessageCircle },
+  { title: 'Advertisement', href: '/admin/advertisement', icon: Megaphone },
+];
+
+const communityItems: SidebarItem[] = [
+  { title: 'Community', href: '/admin/community', icon: Users },
+  { title: 'Notifications', href: '/admin/notifications', icon: MessageCircle },
 ];
 
 const systemItems: SidebarItem[] = [
@@ -158,6 +166,21 @@ export const ModernAdminSidebar: React.FC = () => {
           <SidebarGroupContent>
             <SidebarMenu>
               {businessItems.map((item) => (
+                <SidebarItemComponent key={item.href} item={item} />
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator className="bg-gray-800" />
+
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-gray-400 text-xs uppercase tracking-wider">
+            Community
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {communityItems.map((item) => (
                 <SidebarItemComponent key={item.href} item={item} />
               ))}
             </SidebarMenu>
