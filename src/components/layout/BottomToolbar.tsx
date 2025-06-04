@@ -32,7 +32,7 @@ const BottomToolbar = () => {
       icon: UtensilsCrossed,
       label: 'Recipes',
       href: '/recipes',
-      isActive: pathname === '/recipes'
+      isActive: pathname === '/recipes' || pathname.startsWith('/recipe/')
     },
     {
       icon: Compass,
@@ -50,13 +50,13 @@ const BottomToolbar = () => {
       icon: Activity,
       label: 'Health',
       href: '/health-tracking-home',
-      isActive: pathname === '/health-tracking-home'
+      isActive: pathname === '/health-tracking-home' || pathname.startsWith('/health-tracking')
     },
     {
       icon: Settings2,
       label: 'Settings',
       href: '/settings',
-      isActive: pathname === '/settings'
+      isActive: pathname === '/settings' || pathname.startsWith('/settings/')
     }
   ];
 
