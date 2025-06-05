@@ -1,4 +1,3 @@
-
 import React, { useState, ElementType, useEffect } from 'react';
 import {
   Utensils, Cake, Coffee, Camera, Mic, Soup, Salad, Egg, Milk, Drumstick,
@@ -351,7 +350,7 @@ Focus on practical recipes that can be made with the ingredients provided.`;
           ];
         }
 
-        // Transform to Recipe format
+        // Transform to Recipe format with all required properties
         results = aiRecipes.map((recipe: any, index: number): Recipe => ({
           id: `ai-recipe-${Date.now()}-${index}`,
           title: recipe.title || `Recipe with ${ingredientNames.join(', ')}`,
@@ -370,6 +369,11 @@ Focus on practical recipes that can be made with the ingredients provided.`;
           tags: ['AI Generated'],
           isFavorite: false,
           cuisineType: recipe.cuisine_type || 'Fusion',
+          // Add required properties that were missing
+          author_id: 'ai-generated',
+          is_verified: false,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
           ingredients: Array.isArray(recipe.ingredients) ?
             recipe.ingredients.map((ing: any) => ({
               id: `ing-${Math.random()}`,
