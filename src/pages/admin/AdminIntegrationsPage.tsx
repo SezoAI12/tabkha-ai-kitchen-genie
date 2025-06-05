@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 import { Plug, Settings, CheckCircle, XCircle, Plus, RefreshCw, AlertTriangle } from 'lucide-react';
@@ -19,6 +18,10 @@ interface Integration {
   enabled: boolean;
   lastSync?: string;
   category: string;
+  cloudName?: string;
+  apiKey?: string;
+  apiSecret?: string;
+  apiEnvironmentVariable?: string;
 }
 
 const AdminIntegrationsPage = () => {
@@ -63,14 +66,29 @@ const AdminIntegrationsPage = () => {
       id: 'cloudinary',
       name: 'Cloudinary',
       description: 'Image optimization and CDN delivery',
-      status: 'disconnected',
-      enabled: false,
-      category: 'media'
+      status: 'connected',
+      enabled: true,
+      category: 'media',
+      cloudName: 'dftedcc6o',
+      apiKey: 'Q5SAGi2b4-xH1bAHmhfBbG_Ta5M',
+      apiSecret: 'Q5SAGi2b4-xH1bAHmhfBbG_Ta5M',
+      apiEnvironmentVariable: 'CLOUDINARY_URL=cloudinary://878259499524876:Q5SAGi2b4-xH1bAHmhfBbG_Ta5M@dftedcc6o',
+      lastSync: '2024-01-15 11:00:00'
     }
   ]);
 
   const [configDialog, setConfigDialog] = useState(false);
+  const [addDialog, setAddDialog] = useState(false);
   const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
+  const [newIntegration, setNewIntegration] = useState({
+    name: '',
+    description: '',
+    category: '',
+    cloudName: '',
+    apiKey: '',
+    apiSecret: '',
+    apiEnvironmentVariable: ''
+  });
 
   const handleToggleIntegration = (id: string) => {
     setIntegrations(prev => 
@@ -106,6 +124,47 @@ const AdminIntegrationsPage = () => {
         description: `${integration.name} has been synchronized successfully.`,
       });
     }
+  };
+
+  const handleAddIntegration = () => {
+    if (!newIntegration.name || !newIntegration.description) {
+      toast({
+        title: 'Error',
+        description: 'Please fill in the required fields (name and description).',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const integration: Integration = {
+      id: newIntegration.name.toLowerCase().replace(/\s+/g, '-'),
+      name: newIntegration.name,
+      description: newIntegration.description,
+      status: 'disconnected',
+      enabled: false,
+      category: newIntegration.category || 'custom',
+      cloudName: newIntegration.cloudName || undefined,
+      apiKey: newIntegration.apiKey || undefined,
+      apiSecret: newIntegration.apiSecret || undefined,
+      apiEnvironmentVariable: newIntegration.apiEnvironmentVariable || undefined,
+    };
+
+    setIntegrations(prev => [...prev, integration]);
+    setNewIntegration({
+      name: '',
+      description: '',
+      category: '',
+      cloudName: '',
+      apiKey: '',
+      apiSecret: '',
+      apiEnvironmentVariable: ''
+    });
+    setAddDialog(false);
+    
+    toast({
+      title: 'Integration Added',
+      description: `${integration.name} has been added successfully.`,
+    });
   };
 
   const getStatusBadge = (status: string) => {
@@ -146,7 +205,7 @@ const AdminIntegrationsPage = () => {
             <h1 className="text-2xl font-semibold">Integrations</h1>
             <p className="text-muted-foreground">Manage third-party service integrations.</p>
           </div>
-          <Button>
+          <Button onClick={() => setAddDialog(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Add Integration
           </Button>
@@ -256,8 +315,109 @@ const AdminIntegrationsPage = () => {
           ))}
         </div>
 
+        {/* Add Integration Dialog */}
+        <Dialog open={addDialog} onOpenChange={setAddDialog}>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>Add New Integration</DialogTitle>
+              <DialogDescription>
+                Add a new third-party service integration with optional API configuration.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="name">Integration Name *</Label>
+                  <Input
+                    id="name"
+                    placeholder="Enter integration name"
+                    value={newIntegration.name}
+                    onChange={(e) => setNewIntegration(prev => ({ ...prev, name: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="category">Category</Label>
+                  <Input
+                    id="category"
+                    placeholder="e.g., media, payments, ai"
+                    value={newIntegration.category}
+                    onChange={(e) => setNewIntegration(prev => ({ ...prev, category: e.target.value }))}
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="description">Description *</Label>
+                <Input
+                  id="description"
+                  placeholder="Brief description of the integration"
+                  value={newIntegration.description}
+                  onChange={(e) => setNewIntegration(prev => ({ ...prev, description: e.target.value }))}
+                />
+              </div>
+
+              <div className="border-t pt-4">
+                <h4 className="text-sm font-medium mb-3">API Configuration (Optional)</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="cloudName">Cloud Name</Label>
+                    <Input
+                      id="cloudName"
+                      placeholder="Enter cloud name"
+                      value={newIntegration.cloudName}
+                      onChange={(e) => setNewIntegration(prev => ({ ...prev, cloudName: e.target.value }))}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="apiKey">API Key</Label>
+                    <Input
+                      id="apiKey"
+                      placeholder="Enter API key"
+                      type="password"
+                      value={newIntegration.apiKey}
+                      onChange={(e) => setNewIntegration(prev => ({ ...prev, apiKey: e.target.value }))}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 gap-4 mt-4">
+                  <div>
+                    <Label htmlFor="apiSecret">API Secret</Label>
+                    <Input
+                      id="apiSecret"
+                      placeholder="Enter API secret"
+                      type="password"
+                      value={newIntegration.apiSecret}
+                      onChange={(e) => setNewIntegration(prev => ({ ...prev, apiSecret: e.target.value }))}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="apiEnvironmentVariable">API Environment Variable</Label>
+                    <Input
+                      id="apiEnvironmentVariable"
+                      placeholder="e.g., CLOUDINARY_URL=cloudinary://..."
+                      value={newIntegration.apiEnvironmentVariable}
+                      onChange={(e) => setNewIntegration(prev => ({ ...prev, apiEnvironmentVariable: e.target.value }))}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setAddDialog(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleAddIntegration}>
+                Add Integration
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Configure Integration Dialog */}
         <Dialog open={configDialog} onOpenChange={setConfigDialog}>
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
               <DialogTitle>Configure {selectedIntegration?.name}</DialogTitle>
               <DialogDescription>
@@ -266,19 +426,40 @@ const AdminIntegrationsPage = () => {
             </DialogHeader>
             
             <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="configCloudName">Cloud Name</Label>
+                  <Input
+                    id="configCloudName"
+                    placeholder="Enter cloud name"
+                    defaultValue={selectedIntegration?.cloudName || ''}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="configApiKey">API Key</Label>
+                  <Input
+                    id="configApiKey"
+                    placeholder="Enter API key"
+                    type="password"
+                    defaultValue={selectedIntegration?.apiKey || ''}
+                  />
+                </div>
+              </div>
               <div>
-                <Label htmlFor="apiKey">API Key</Label>
+                <Label htmlFor="configApiSecret">API Secret</Label>
                 <Input
-                  id="apiKey"
-                  placeholder="Enter API key"
+                  id="configApiSecret"
+                  placeholder="Enter API secret"
                   type="password"
+                  defaultValue={selectedIntegration?.apiSecret || ''}
                 />
               </div>
               <div>
-                <Label htmlFor="endpoint">Endpoint URL</Label>
+                <Label htmlFor="configApiEnvironmentVariable">API Environment Variable</Label>
                 <Input
-                  id="endpoint"
-                  placeholder="https://api.example.com"
+                  id="configApiEnvironmentVariable"
+                  placeholder="e.g., CLOUDINARY_URL=cloudinary://..."
+                  defaultValue={selectedIntegration?.apiEnvironmentVariable || ''}
                 />
               </div>
             </div>
