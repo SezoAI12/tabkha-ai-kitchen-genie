@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { PageContainer } from '@/components/layout/PageContainer';
@@ -94,9 +93,20 @@ const RecipeDetailPage = () => {
     navigate(`/cooking/${recipe?.id}`);
   };
 
-  const handleAddToMealPlan = (recipeId: string, mealType: string, date: string) => {
-    // In a real app, this would save to the backend
-    console.log('Adding to meal plan:', { recipeId, mealType, date });
+  const handleAddToMealPlan = async (recipeId: string, mealType: string, date: string) => {
+    try {
+      // Here you would typically make an API call to save to meal plan
+      // For now, we'll just show a success message
+      console.log('Adding to meal plan:', { recipeId, mealType, date });
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      return Promise.resolve();
+    } catch (error) {
+      console.error('Error adding to meal plan:', error);
+      throw error;
+    }
   };
 
   if (!recipe) {
@@ -173,19 +183,25 @@ const RecipeDetailPage = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-3">
-          <Button 
-            onClick={handleStartCooking}
-            className="bg-wasfah-bright-teal hover:bg-wasfah-teal"
+        <div className="flex gap-4 mb-6">
+          <Button
+            variant={recipe.isFavorite ? "default" : "outline"}
+            onClick={handleToggleFavorite}
+            className="flex-1"
           >
-            <PlayCircle className="h-4 w-4 mr-2" />
-            Start Cooking
+            <Heart className={`h-4 w-4 mr-2 ${recipe.isFavorite ? 'fill-current' : ''}`} />
+            {recipe.isFavorite ? 'Favorited' : 'Add to Favorites'}
           </Button>
           
           <MealPlanManager 
-            recipe={recipe}
+            recipe={recipe} 
             onAddToMealPlan={handleAddToMealPlan}
           />
+          
+          <Button variant="outline" className="flex-1">
+            <Share2 className="h-4 w-4 mr-2" />
+            Share Recipe
+          </Button>
         </div>
 
         <div className="grid grid-cols-3 gap-3">

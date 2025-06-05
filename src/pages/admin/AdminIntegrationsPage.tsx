@@ -1,63 +1,76 @@
 
 import React, { useState } from 'react';
 import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
-import { Plug, Settings, CheckCircle, XCircle, Plus } from 'lucide-react';
+import { Plug, Settings, CheckCircle, XCircle, Plus, RefreshCw, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 
-const mockIntegrations = [
-  {
-    id: 'stripe',
-    name: 'Stripe',
-    description: 'Payment processing and subscription management',
-    status: 'connected',
-    enabled: true,
-    lastSync: '2024-01-15 10:30:00'
-  },
-  {
-    id: 'mailchimp',
-    name: 'MailChimp',
-    description: 'Email marketing and newsletter management',
-    status: 'connected',
-    enabled: true,
-    lastSync: '2024-01-15 09:15:00'
-  },
-  {
-    id: 'analytics',
-    name: 'Google Analytics',
-    description: 'Web analytics and user tracking',
-    status: 'disconnected',
-    enabled: false,
-    lastSync: null
-  },
-  {
-    id: 'social',
-    name: 'Social Media APIs',
-    description: 'Share recipes on social platforms',
-    status: 'connected',
-    enabled: false,
-    lastSync: '2024-01-14 16:45:00'
-  }
-];
+interface Integration {
+  id: string;
+  name: string;
+  description: string;
+  status: 'connected' | 'disconnected' | 'error';
+  enabled: boolean;
+  lastSync?: string;
+  category: string;
+}
 
 const AdminIntegrationsPage = () => {
   const { toast } = useToast();
-  const [integrations, setIntegrations] = useState(mockIntegrations);
+  const [integrations, setIntegrations] = useState<Integration[]>([
+    {
+      id: 'stripe',
+      name: 'Stripe',
+      description: 'Payment processing and subscription management',
+      status: 'connected',
+      enabled: true,
+      lastSync: '2024-01-15 10:30:00',
+      category: 'payments'
+    },
+    {
+      id: 'openai',
+      name: 'OpenAI',
+      description: 'AI Chef Assistant functionality',
+      status: 'connected',
+      enabled: true,
+      lastSync: '2024-01-15 09:15:00',
+      category: 'ai'
+    },
+    {
+      id: 'resend',
+      name: 'Resend',
+      description: 'Email delivery service',
+      status: 'connected',
+      enabled: true,
+      lastSync: '2024-01-15 08:45:00',
+      category: 'notifications'
+    },
+    {
+      id: 'analytics',
+      name: 'Google Analytics',
+      description: 'Web analytics and user tracking',
+      status: 'disconnected',
+      enabled: false,
+      category: 'analytics'
+    },
+    {
+      id: 'cloudinary',
+      name: 'Cloudinary',
+      description: 'Image optimization and CDN delivery',
+      status: 'disconnected',
+      enabled: false,
+      category: 'media'
+    }
+  ]);
+
   const [configDialog, setConfigDialog] = useState(false);
-  const [selectedIntegration, setSelectedIntegration] = useState<any>(null);
+  const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
 
   const handleToggleIntegration = (id: string) => {
     setIntegrations(prev => 
@@ -75,24 +88,55 @@ const AdminIntegrationsPage = () => {
     });
   };
 
-  const handleConfigureIntegration = (integration: any) => {
+  const handleConfigureIntegration = (integration: Integration) => {
     setSelectedIntegration(integration);
     setConfigDialog(true);
   };
 
-  const getStatusBadge = (status: string) => {
-    return status === 'connected' ? (
-      <Badge className="bg-green-100 text-green-800">
-        <CheckCircle className="h-3 w-3 mr-1" />
-        Connected
-      </Badge>
-    ) : (
-      <Badge className="bg-red-100 text-red-800">
-        <XCircle className="h-3 w-3 mr-1" />
-        Disconnected
-      </Badge>
-    );
+  const handleSyncIntegration = (id: string) => {
+    const integration = integrations.find(i => i.id === id);
+    if (integration) {
+      setIntegrations(prev =>
+        prev.map(i =>
+          i.id === id ? { ...i, lastSync: new Date().toLocaleString() } : i
+        )
+      );
+      toast({
+        title: 'Sync Complete',
+        description: `${integration.name} has been synchronized successfully.`,
+      });
+    }
   };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'connected':
+        return (
+          <Badge className="bg-green-100 text-green-800">
+            <CheckCircle className="h-3 w-3 mr-1" />
+            Connected
+          </Badge>
+        );
+      case 'error':
+        return (
+          <Badge className="bg-red-100 text-red-800">
+            <AlertTriangle className="h-3 w-3 mr-1" />
+            Error
+          </Badge>
+        );
+      default:
+        return (
+          <Badge className="bg-gray-100 text-gray-800">
+            <XCircle className="h-3 w-3 mr-1" />
+            Disconnected
+          </Badge>
+        );
+    }
+  };
+
+  const connectedCount = integrations.filter(i => i.status === 'connected').length;
+  const enabledCount = integrations.filter(i => i.enabled).length;
+  const errorCount = integrations.filter(i => i.status === 'error').length;
 
   return (
     <AdminPageWrapper title="Integrations">
@@ -121,29 +165,35 @@ const AdminIntegrationsPage = () => {
           </Card>
 
           <Card>
-            <CardContent className="p-6">
-              <div className="text-2xl font-bold text-green-600">
-                {integrations.filter(i => i.status === 'connected').length}
-              </div>
-              <div className="text-sm text-gray-600">Connected</div>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Connected</CardTitle>
+              <CheckCircle className="h-4 w-4 text-green-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600">{connectedCount}</div>
+              <p className="text-xs text-muted-foreground">Active connections</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardContent className="p-6">
-              <div className="text-2xl font-bold text-blue-600">
-                {integrations.filter(i => i.enabled).length}
-              </div>
-              <div className="text-sm text-gray-600">Active</div>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Enabled</CardTitle>
+              <Settings className="h-4 w-4 text-blue-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-blue-600">{enabledCount}</div>
+              <p className="text-xs text-muted-foreground">Currently active</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardContent className="p-6">
-              <div className="text-2xl font-bold text-red-600">
-                {integrations.filter(i => i.status === 'disconnected').length}
-              </div>
-              <div className="text-sm text-gray-600">Disconnected</div>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Issues</CardTitle>
+              <AlertTriangle className="h-4 w-4 text-red-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-red-600">{errorCount}</div>
+              <p className="text-xs text-muted-foreground">Need attention</p>
             </CardContent>
           </Card>
         </div>
@@ -185,6 +235,16 @@ const AdminIntegrationsPage = () => {
                     <Settings className="h-4 w-4 mr-1" />
                     Configure
                   </Button>
+                  {integration.status === 'connected' && (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleSyncIntegration(integration.id)}
+                    >
+                      <RefreshCw className="h-4 w-4 mr-1" />
+                      Sync
+                    </Button>
+                  )}
                   {integration.status === 'disconnected' ? (
                     <Button size="sm">Connect</Button>
                   ) : (

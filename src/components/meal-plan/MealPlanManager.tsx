@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Calendar, Plus, Clock, Utensils } from 'lucide-react';
+import { Calendar, Plus, Clock, Utensils, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Recipe } from '@/types/index';
 
@@ -21,16 +21,17 @@ export const MealPlanManager: React.FC<MealPlanManagerProps> = ({
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedMealType, setSelectedMealType] = useState<string>('');
   const [isOpen, setIsOpen] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
   const { toast } = useToast();
 
   const mealTypes = [
-    { value: 'breakfast', label: 'Breakfast', icon: '🌅' },
-    { value: 'lunch', label: 'Lunch', icon: '☀️' },
-    { value: 'dinner', label: 'Dinner', icon: '🌙' },
-    { value: 'snack', label: 'Snack', icon: '🍎' }
+    { value: 'breakfast', label: 'Breakfast', icon: '🌅', time: '8:00 AM' },
+    { value: 'lunch', label: 'Lunch', icon: '☀️', time: '12:30 PM' },
+    { value: 'dinner', label: 'Dinner', icon: '🌙', time: '7:00 PM' },
+    { value: 'snack', label: 'Snack', icon: '🍎', time: 'Anytime' }
   ];
 
-  const handleAddToMealPlan = () => {
+  const handleAddToMealPlan = async () => {
     if (!selectedMealType) {
       toast({
         title: "Please select a meal type",
@@ -40,19 +41,40 @@ export const MealPlanManager: React.FC<MealPlanManagerProps> = ({
       return;
     }
 
-    // Call the callback if provided
-    if (onAddToMealPlan) {
-      onAddToMealPlan(recipe.id, selectedMealType, selectedDate);
+    setIsAdding(true);
+
+    try {
+      // Call the callback if provided
+      if (onAddToMealPlan) {
+        await onAddToMealPlan(recipe.id, selectedMealType, selectedDate);
+      }
+
+      // Show success message
+      const selectedMeal = mealTypes.find(m => m.value === selectedMealType);
+      const formattedDate = new Date(selectedDate).toLocaleDateString();
+      
+      toast({
+        title: "Recipe added to meal plan!",
+        description: `${recipe.title} has been scheduled for ${selectedMeal?.label} on ${formattedDate}.`,
+      });
+
+      // Close dialog and reset form
+      setIsOpen(false);
+      setSelectedMealType('');
+      setSelectedDate(new Date().toISOString().split('T')[0]);
+      
+    } catch (error) {
+      toast({
+        title: "Error adding to meal plan",
+        description: "There was an issue adding the recipe to your meal plan. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAdding(false);
     }
-
-    toast({
-      title: "Recipe added to meal plan!",
-      description: `${recipe.title} has been scheduled for ${selectedMealType} on ${new Date(selectedDate).toLocaleDateString()}.`,
-    });
-
-    setIsOpen(false);
-    setSelectedMealType('');
   };
+
+  const selectedMeal = mealTypes.find(m => m.value === selectedMealType);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -76,13 +98,15 @@ export const MealPlanManager: React.FC<MealPlanManagerProps> = ({
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div 
-                  className="w-12 h-12 rounded-lg bg-cover bg-center"
-                  style={{ backgroundImage: `url(${recipe.image})` }}
-                />
+                  className="w-12 h-12 rounded-lg bg-gray-200 bg-cover bg-center flex items-center justify-center"
+                  style={recipe.image ? { backgroundImage: `url(${recipe.image})` } : {}}
+                >
+                  {!recipe.image && <Utensils className="h-6 w-6 text-gray-400" />}
+                </div>
                 <div>
                   <h4 className="font-medium">{recipe.title}</h4>
                   <p className="text-sm text-gray-600">
-                    {recipe.prepTime + recipe.cookTime} min • {recipe.servings} servings
+                    {(recipe.prepTime || 0) + (recipe.cookTime || 0)} min • {recipe.servings || 1} servings
                   </p>
                 </div>
               </div>
@@ -123,18 +147,11 @@ export const MealPlanManager: React.FC<MealPlanManagerProps> = ({
           </div>
 
           {/* Time Suggestion */}
-          {selectedMealType && (
+          {selectedMeal && (
             <div className="p-3 bg-gray-50 rounded-lg">
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <Clock className="h-4 w-4" />
-                <span>
-                  Suggested time: {
-                    selectedMealType === 'breakfast' ? '8:00 AM' :
-                    selectedMealType === 'lunch' ? '12:30 PM' :
-                    selectedMealType === 'dinner' ? '7:00 PM' :
-                    'Anytime'
-                  }
-                </span>
+                <span>Suggested time: {selectedMeal.time}</span>
               </div>
             </div>
           )}
@@ -145,16 +162,26 @@ export const MealPlanManager: React.FC<MealPlanManagerProps> = ({
               variant="outline" 
               onClick={() => setIsOpen(false)}
               className="flex-1"
+              disabled={isAdding}
             >
               Cancel
             </Button>
             <Button 
               onClick={handleAddToMealPlan}
               className="flex-1"
-              disabled={!selectedMealType}
+              disabled={!selectedMealType || isAdding}
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Recipe
+              {isAdding ? (
+                <>
+                  <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  Adding...
+                </>
+              ) : (
+                <>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Recipe
+                </>
+              )}
             </Button>
           </div>
         </div>
