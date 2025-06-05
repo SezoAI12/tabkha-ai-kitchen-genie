@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -44,9 +45,9 @@ const mainItems: SidebarItem[] = [
 const contentItems: SidebarItem[] = [
   { title: 'Ingredients', href: '/admin/ingredients', icon: Image },
   { title: 'Ingredient Images', href: '/admin/ingredient-images', icon: Image },
-  { title: 'Image Control', href: '/admin/image-control', icon: Image },
   { title: 'Translations', href: '/admin/translations', icon: FileText },
   { title: 'Languages', href: '/admin/languages', icon: Languages },
+  { title: 'Image Control', href: '/admin/image-control', icon: Image },
 ];
 
 const businessItems: SidebarItem[] = [
