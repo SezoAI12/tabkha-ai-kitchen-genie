@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import {
   BrowserRouter as Router,
@@ -34,7 +33,7 @@ import AdminUserTypesPage from './pages/admin/AdminUserTypesPage';
 import AdminAccountingPage from './pages/admin/AdminAccountingPage';
 import AdminSystemPage from './pages/admin/AdminSystemPage';
 import AdminMaintenancePage from './pages/admin/AdminMaintenancePage';
-import CommunityPage from './pages/CommunityPage';
+import CommunityPage from './pages/admin/CommunityPage';
 import ContentLibraryPage from './pages/admin/ContentLibraryPage';
 import TranslationsPage from './pages/admin/TranslationsPage';
 import LanguagesPage from './pages/admin/LanguagesPage';
