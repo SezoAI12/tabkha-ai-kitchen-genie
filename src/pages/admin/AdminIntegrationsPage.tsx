@@ -1,137 +1,126 @@
+
 import React, { useState } from 'react';
-import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
-import { Plug, Settings, CheckCircle, XCircle, Plus, RefreshCw, AlertTriangle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Settings, Key, AlertTriangle, CheckCircle2, RefreshCw, ExternalLink, Plus, Plug, Cloud, Code } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Integration {
   id: string;
   name: string;
   description: string;
-  status: 'connected' | 'disconnected' | 'error';
-  enabled: boolean;
+  icon: React.ReactNode;
+  isConnected: boolean;
+  status: 'active' | 'inactive' | 'error';
   lastSync?: string;
-  category: string;
-  cloudName?: string;
-  apiKey?: string;
-  apiSecret?: string;
-  apiEnvironmentVariable?: string;
+  category: 'analytics' | 'monitoring' | 'ai' | 'media' | 'notifications' | 'social' | 'payments' | 'storage';
+  hasApiKey?: boolean;
 }
 
-const AdminIntegrationsPage = () => {
-  const { toast } = useToast();
-  const [integrations, setIntegrations] = useState<Integration[]>([
-    {
-      id: 'stripe',
-      name: 'Stripe',
-      description: 'Payment processing and subscription management',
-      status: 'connected',
-      enabled: true,
-      lastSync: '2024-01-15 10:30:00',
-      category: 'payments'
-    },
-    {
-      id: 'openai',
-      name: 'OpenAI',
-      description: 'AI Chef Assistant functionality',
-      status: 'connected',
-      enabled: true,
-      lastSync: '2024-01-15 09:15:00',
-      category: 'ai'
-    },
-    {
-      id: 'resend',
-      name: 'Resend',
-      description: 'Email delivery service',
-      status: 'connected',
-      enabled: true,
-      lastSync: '2024-01-15 08:45:00',
-      category: 'notifications'
-    },
-    {
-      id: 'analytics',
-      name: 'Google Analytics',
-      description: 'Web analytics and user tracking',
-      status: 'disconnected',
-      enabled: false,
-      category: 'analytics'
-    },
-    {
-      id: 'cloudinary',
-      name: 'Cloudinary',
-      description: 'Image optimization and CDN delivery',
-      status: 'connected',
-      enabled: true,
-      category: 'media',
-      cloudName: 'dftedcc6o',
-      apiKey: 'Q5SAGi2b4-xH1bAHmhfBbG_Ta5M',
-      apiSecret: 'Q5SAGi2b4-xH1bAHmhfBbG_Ta5M',
-      apiEnvironmentVariable: 'CLOUDINARY_URL=cloudinary://878259499524876:Q5SAGi2b4-xH1bAHmhfBbG_Ta5M@dftedcc6o',
-      lastSync: '2024-01-15 11:00:00'
-    }
-  ]);
+const mockIntegrations: Integration[] = [
+  {
+    id: 'cloudinary',
+    name: 'Cloudinary',
+    description: 'Image and video management platform',
+    icon: <Cloud className="w-6 h-6 text-blue-600" />,
+    isConnected: true,
+    status: 'active',
+    lastSync: '2 minutes ago',
+    category: 'media',
+    hasApiKey: true
+  },
+  {
+    id: 'openai',
+    name: 'OpenAI API',
+    description: 'AI Chef Assistant functionality',
+    icon: <Code className="w-6 h-6 text-green-600" />,
+    isConnected: true,
+    status: 'active',
+    lastSync: '1 minute ago',
+    category: 'ai',
+    hasApiKey: true
+  },
+  {
+    id: 'stripe',
+    name: 'Stripe',
+    description: 'Payment processing integration',
+    icon: <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M14 8.5C14 8.5 14 4 9.5 4C5 4 5 8.5 5 8.5C5 8.5 5 13 9.5 13C14 13 14 8.5 14 8.5Z" stroke="#7A73FF" strokeWidth="2" />
+      <path d="M19 15.5C19 15.5 19 11 14.5 11C10 11 10 15.5 10 15.5C10 15.5 10 20 14.5 20C19 20 19 15.5 19 15.5Z" stroke="#7A73FF" strokeWidth="2" />
+    </svg>,
+    isConnected: false,
+    status: 'inactive',
+    category: 'payments',
+    hasApiKey: true
+  }
+];
 
-  const [configDialog, setConfigDialog] = useState(false);
-  const [addDialog, setAddDialog] = useState(false);
-  const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
+const AdminIntegrationsPage: React.FC = () => {
+  const [integrations, setIntegrations] = useState<Integration[]>(mockIntegrations);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newIntegration, setNewIntegration] = useState({
     name: '',
-    description: '',
-    category: '',
     cloudName: '',
     apiKey: '',
     apiSecret: '',
-    apiEnvironmentVariable: ''
+    environmentVariable: ''
   });
-
+  const { toast } = useToast();
+  
   const handleToggleIntegration = (id: string) => {
-    setIntegrations(prev => 
-      prev.map(integration => 
-        integration.id === id 
-          ? { ...integration, enabled: !integration.enabled }
-          : integration
-      )
-    );
+    setIntegrations(integrations.map(integration => 
+      integration.id === id 
+        ? { 
+            ...integration, 
+            isConnected: !integration.isConnected,
+            status: !integration.isConnected ? 'active' : 'inactive'
+          }
+        : integration
+    ));
     
-    const integration = integrations.find(i => i.id === id);
-    toast({
-      title: `Integration ${integration?.enabled ? 'Disabled' : 'Enabled'}`,
-      description: `${integration?.name} has been ${integration?.enabled ? 'disabled' : 'enabled'}.`,
-    });
-  };
-
-  const handleConfigureIntegration = (integration: Integration) => {
-    setSelectedIntegration(integration);
-    setConfigDialog(true);
-  };
-
-  const handleSyncIntegration = (id: string) => {
-    const integration = integrations.find(i => i.id === id);
+    const integration = integrations.find(int => int.id === id);
     if (integration) {
-      setIntegrations(prev =>
-        prev.map(i =>
-          i.id === id ? { ...i, lastSync: new Date().toLocaleString() } : i
-        )
-      );
       toast({
-        title: 'Sync Complete',
-        description: `${integration.name} has been synchronized successfully.`,
+        title: integration.isConnected ? 'Integration Disabled' : 'Integration Enabled',
+        description: `${integration.name} has been ${integration.isConnected ? 'disconnected' : 'connected'} successfully.`,
       });
+    }
+  };
+  
+  const handleSyncIntegration = (id: string) => {
+    const integration = integrations.find(int => int.id === id);
+    if (integration) {
+      toast({
+        title: 'Syncing Integration',
+        description: `Synchronizing data with ${integration.name}...`,
+      });
+      
+      setTimeout(() => {
+        setIntegrations(integrations.map(int => 
+          int.id === id ? { ...int, lastSync: 'Just now' } : int
+        ));
+        
+        toast({
+          title: 'Sync Complete',
+          description: `${integration.name} data has been synchronized.`,
+        });
+      }, 2000);
     }
   };
 
   const handleAddIntegration = () => {
-    if (!newIntegration.name || !newIntegration.description) {
+    if (!newIntegration.name) {
       toast({
         title: 'Error',
-        description: 'Please fill in the required fields (name and description).',
-        variant: 'destructive',
+        description: 'Integration name is required.',
+        variant: 'destructive'
       });
       return;
     }
@@ -139,343 +128,270 @@ const AdminIntegrationsPage = () => {
     const integration: Integration = {
       id: newIntegration.name.toLowerCase().replace(/\s+/g, '-'),
       name: newIntegration.name,
-      description: newIntegration.description,
-      status: 'disconnected',
-      enabled: false,
-      category: newIntegration.category || 'custom',
-      cloudName: newIntegration.cloudName || undefined,
-      apiKey: newIntegration.apiKey || undefined,
-      apiSecret: newIntegration.apiSecret || undefined,
-      apiEnvironmentVariable: newIntegration.apiEnvironmentVariable || undefined,
+      description: 'Custom integration',
+      icon: <Plug className="w-6 h-6 text-gray-600" />,
+      isConnected: false,
+      status: 'inactive',
+      category: 'storage',
+      hasApiKey: !!(newIntegration.apiKey || newIntegration.apiSecret)
     };
 
-    setIntegrations(prev => [...prev, integration]);
+    setIntegrations([...integrations, integration]);
     setNewIntegration({
       name: '',
-      description: '',
-      category: '',
       cloudName: '',
       apiKey: '',
       apiSecret: '',
-      apiEnvironmentVariable: ''
+      environmentVariable: ''
     });
-    setAddDialog(false);
-    
+    setIsAddDialogOpen(false);
+
     toast({
       title: 'Integration Added',
-      description: `${integration.name} has been added successfully.`,
+      description: `${newIntegration.name} has been added successfully.`,
     });
   };
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'connected':
-        return (
-          <Badge className="bg-green-100 text-green-800">
-            <CheckCircle className="h-3 w-3 mr-1" />
-            Connected
-          </Badge>
-        );
-      case 'error':
-        return (
-          <Badge className="bg-red-100 text-red-800">
-            <AlertTriangle className="h-3 w-3 mr-1" />
-            Error
-          </Badge>
-        );
-      default:
-        return (
-          <Badge className="bg-gray-100 text-gray-800">
-            <XCircle className="h-3 w-3 mr-1" />
-            Disconnected
-          </Badge>
-        );
-    }
-  };
-
-  const connectedCount = integrations.filter(i => i.status === 'connected').length;
-  const enabledCount = integrations.filter(i => i.enabled).length;
-  const errorCount = integrations.filter(i => i.status === 'error').length;
-
   return (
-    <AdminPageWrapper title="Integrations">
-      <div className="space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-semibold">Integrations</h1>
-            <p className="text-muted-foreground">Manage third-party service integrations.</p>
-          </div>
-          <Button onClick={() => setAddDialog(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Integration
-          </Button>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-semibold flex items-center">
+            <Settings className="mr-2 h-6 w-6" /> Integrations Manager
+          </h1>
+          <p className="text-muted-foreground">Manage third-party integrations and API connections</p>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Integrations</CardTitle>
-              <Plug className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{integrations.length}</div>
-              <p className="text-xs text-muted-foreground">Available services</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Connected</CardTitle>
-              <CheckCircle className="h-4 w-4 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">{connectedCount}</div>
-              <p className="text-xs text-muted-foreground">Active connections</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Enabled</CardTitle>
-              <Settings className="h-4 w-4 text-blue-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{enabledCount}</div>
-              <p className="text-xs text-muted-foreground">Currently active</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Issues</CardTitle>
-              <AlertTriangle className="h-4 w-4 text-red-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-red-600">{errorCount}</div>
-              <p className="text-xs text-muted-foreground">Need attention</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {integrations.map((integration) => (
-            <Card key={integration.id} className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-lg">{integration.name}</CardTitle>
-                    <p className="text-sm text-gray-600 mt-1">{integration.description}</p>
-                  </div>
-                  {getStatusBadge(integration.status)}
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Enable Integration</span>
-                  <Switch
-                    checked={integration.enabled}
-                    onCheckedChange={() => handleToggleIntegration(integration.id)}
-                    disabled={integration.status === 'disconnected'}
-                  />
-                </div>
-                
-                {integration.lastSync && (
-                  <p className="text-xs text-gray-500">
-                    Last sync: {integration.lastSync}
-                  </p>
-                )}
-                
-                <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => handleConfigureIntegration(integration)}
-                  >
-                    <Settings className="h-4 w-4 mr-1" />
-                    Configure
-                  </Button>
-                  {integration.status === 'connected' && (
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleSyncIntegration(integration.id)}
-                    >
-                      <RefreshCw className="h-4 w-4 mr-1" />
-                      Sync
-                    </Button>
-                  )}
-                  {integration.status === 'disconnected' ? (
-                    <Button size="sm">Connect</Button>
-                  ) : (
-                    <Button variant="outline" size="sm">Disconnect</Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Add Integration Dialog */}
-        <Dialog open={addDialog} onOpenChange={setAddDialog}>
-          <DialogContent className="sm:max-w-[600px]">
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Integration
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>Add New Integration</DialogTitle>
-              <DialogDescription>
-                Add a new third-party service integration with optional API configuration.
-              </DialogDescription>
             </DialogHeader>
-            
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="name">Integration Name *</Label>
-                  <Input
-                    id="name"
-                    placeholder="Enter integration name"
-                    value={newIntegration.name}
-                    onChange={(e) => setNewIntegration(prev => ({ ...prev, name: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="category">Category</Label>
-                  <Input
-                    id="category"
-                    placeholder="e.g., media, payments, ai"
-                    value={newIntegration.category}
-                    onChange={(e) => setNewIntegration(prev => ({ ...prev, category: e.target.value }))}
-                  />
-                </div>
-              </div>
-              
               <div>
-                <Label htmlFor="description">Description *</Label>
+                <Label htmlFor="integrationName">Integration Name *</Label>
                 <Input
-                  id="description"
-                  placeholder="Brief description of the integration"
-                  value={newIntegration.description}
-                  onChange={(e) => setNewIntegration(prev => ({ ...prev, description: e.target.value }))}
+                  id="integrationName"
+                  placeholder="Enter integration name"
+                  value={newIntegration.name}
+                  onChange={(e) => setNewIntegration({...newIntegration, name: e.target.value})}
                 />
               </div>
 
-              <div className="border-t pt-4">
-                <h4 className="text-sm font-medium mb-3">API Configuration (Optional)</h4>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="cloudName">Cloud Name</Label>
-                    <Input
-                      id="cloudName"
-                      placeholder="Enter cloud name"
-                      value={newIntegration.cloudName}
-                      onChange={(e) => setNewIntegration(prev => ({ ...prev, cloudName: e.target.value }))}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="apiKey">API Key</Label>
-                    <Input
-                      id="apiKey"
-                      placeholder="Enter API key"
-                      type="password"
-                      value={newIntegration.apiKey}
-                      onChange={(e) => setNewIntegration(prev => ({ ...prev, apiKey: e.target.value }))}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 gap-4 mt-4">
-                  <div>
-                    <Label htmlFor="apiSecret">API Secret</Label>
-                    <Input
-                      id="apiSecret"
-                      placeholder="Enter API secret"
-                      type="password"
-                      value={newIntegration.apiSecret}
-                      onChange={(e) => setNewIntegration(prev => ({ ...prev, apiSecret: e.target.value }))}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="apiEnvironmentVariable">API Environment Variable</Label>
-                    <Input
-                      id="apiEnvironmentVariable"
-                      placeholder="e.g., CLOUDINARY_URL=cloudinary://..."
-                      value={newIntegration.apiEnvironmentVariable}
-                      onChange={(e) => setNewIntegration(prev => ({ ...prev, apiEnvironmentVariable: e.target.value }))}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setAddDialog(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleAddIntegration}>
-                Add Integration
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Configure Integration Dialog */}
-        <Dialog open={configDialog} onOpenChange={setConfigDialog}>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogHeader>
-              <DialogTitle>Configure {selectedIntegration?.name}</DialogTitle>
-              <DialogDescription>
-                Update the configuration settings for this integration.
-              </DialogDescription>
-            </DialogHeader>
-            
-            <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="configCloudName">Cloud Name</Label>
+                  <Label htmlFor="cloudName">Cloud Name (Optional)</Label>
                   <Input
-                    id="configCloudName"
-                    placeholder="Enter cloud name"
-                    defaultValue={selectedIntegration?.cloudName || ''}
+                    id="cloudName"
+                    placeholder="Your cloud name"
+                    value={newIntegration.cloudName}
+                    onChange={(e) => setNewIntegration({...newIntegration, cloudName: e.target.value})}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="configApiKey">API Key</Label>
+                  <Label htmlFor="environmentVariable">Environment Variable (Optional)</Label>
                   <Input
-                    id="configApiKey"
-                    placeholder="Enter API key"
+                    id="environmentVariable"
+                    placeholder="ENV_VAR_NAME"
+                    value={newIntegration.environmentVariable}
+                    onChange={(e) => setNewIntegration({...newIntegration, environmentVariable: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="apiKey">API Key (Optional)</Label>
+                  <Input
+                    id="apiKey"
                     type="password"
-                    defaultValue={selectedIntegration?.apiKey || ''}
+                    placeholder="Your API key"
+                    value={newIntegration.apiKey}
+                    onChange={(e) => setNewIntegration({...newIntegration, apiKey: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="apiSecret">API Secret (Optional)</Label>
+                  <Input
+                    id="apiSecret"
+                    type="password"
+                    placeholder="Your API secret"
+                    value={newIntegration.apiSecret}
+                    onChange={(e) => setNewIntegration({...newIntegration, apiSecret: e.target.value})}
                   />
                 </div>
               </div>
-              <div>
-                <Label htmlFor="configApiSecret">API Secret</Label>
-                <Input
-                  id="configApiSecret"
-                  placeholder="Enter API secret"
-                  type="password"
-                  defaultValue={selectedIntegration?.apiSecret || ''}
-                />
+
+              <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5" />
+                  <div className="text-sm">
+                    <p className="font-medium text-amber-800 dark:text-amber-300">Security Note:</p>
+                    <p className="text-amber-700 dark:text-amber-400">
+                      API keys and secrets will be stored securely. Only provide credentials for services you trust.
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div>
-                <Label htmlFor="configApiEnvironmentVariable">API Environment Variable</Label>
-                <Input
-                  id="configApiEnvironmentVariable"
-                  placeholder="e.g., CLOUDINARY_URL=cloudinary://..."
-                  defaultValue={selectedIntegration?.apiEnvironmentVariable || ''}
-                />
+
+              <div className="flex gap-2">
+                <Button onClick={handleAddIntegration} className="flex-1">
+                  Add Integration
+                </Button>
+                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                  Cancel
+                </Button>
               </div>
             </div>
-
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setConfigDialog(false)}>
-                Cancel
-              </Button>
-              <Button onClick={() => setConfigDialog(false)}>
-                Save Configuration
-              </Button>
-            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
-    </AdminPageWrapper>
+
+      <Tabs defaultValue="integrations">
+        <TabsList className="mb-4">
+          <TabsTrigger value="integrations">Active Integrations</TabsTrigger>
+          <TabsTrigger value="api-keys">API Management</TabsTrigger>
+          <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="integrations">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {integrations.map((integration) => (
+              <Card key={integration.id} className={integration.status === 'error' ? 'border-red-300' : ''}>
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-md">
+                        {integration.icon}
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg">{integration.name}</CardTitle>
+                        <CardDescription>{integration.description}</CardDescription>
+                      </div>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        {integration.status === 'active' && (
+                          <div className="flex items-center text-green-600">
+                            <CheckCircle2 className="h-4 w-4 mr-1" />
+                            <span className="text-sm">Active</span>
+                          </div>
+                        )}
+                        {integration.status === 'inactive' && (
+                          <div className="flex items-center text-gray-600">
+                            <div className="h-2 w-2 rounded-full bg-gray-600 mr-2" />
+                            <span className="text-sm">Inactive</span>
+                          </div>
+                        )}
+                        {integration.status === 'error' && (
+                          <div className="flex items-center text-red-600">
+                            <AlertTriangle className="h-4 w-4 mr-1" />
+                            <span className="text-sm">Error</span>
+                          </div>
+                        )}
+                      </div>
+                      <Switch 
+                        checked={integration.isConnected}
+                        onCheckedChange={() => handleToggleIntegration(integration.id)}
+                      />
+                    </div>
+
+                    {integration.lastSync && (
+                      <p className="text-xs text-gray-500">Last sync: {integration.lastSync}</p>
+                    )}
+
+                    {integration.hasApiKey && (
+                      <Badge variant="outline" className="text-xs">
+                        <Key className="h-3 w-3 mr-1" />
+                        API Configured
+                      </Badge>
+                    )}
+                  </div>
+                </CardContent>
+                
+                {integration.isConnected && (
+                  <CardFooter className="flex gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => handleSyncIntegration(integration.id)}
+                    >
+                      <RefreshCw className="h-3 w-3 mr-1" />
+                      Sync
+                    </Button>
+                    <Button size="sm" variant="outline" className="flex-1">
+                      <Settings className="h-3 w-3 mr-1" />
+                      Configure
+                    </Button>
+                  </CardFooter>
+                )}
+                
+                {integration.status === 'error' && (
+                  <CardFooter className="bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 text-sm p-4">
+                    <AlertTriangle className="h-4 w-4 mr-2 flex-shrink-0" />
+                    Connection error. Please check your API credentials and try again.
+                  </CardFooter>
+                )}
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="api-keys">
+          <Card>
+            <CardHeader>
+              <CardTitle>API Key Management</CardTitle>
+              <CardDescription>Manage API keys for external service access</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {integrations.filter(int => int.hasApiKey).map((integration) => (
+                  <div key={integration.id} className="p-4 border rounded-lg flex justify-between items-center">
+                    <div className="flex items-center space-x-3">
+                      {integration.icon}
+                      <div>
+                        <div className="font-medium">{integration.name}</div>
+                        <div className="text-sm text-gray-500">API Key configured</div>
+                      </div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button variant="outline" size="sm">Edit</Button>
+                      <Button variant="destructive" size="sm">Revoke</Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="webhooks">
+          <Card>
+            <CardHeader>
+              <CardTitle>Webhook Configuration</CardTitle>
+              <CardDescription>Configure endpoints for real-time event notifications</CardDescription>
+            </CardHeader>
+            <CardContent className="flex justify-center items-center h-64 text-muted-foreground">
+              <div className="text-center">
+                <ExternalLink className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p className="text-lg font-medium">Webhook Configuration Coming Soon</p>
+                <p className="mt-2">Set up webhook endpoints to receive event notifications in real-time.</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 };
 
