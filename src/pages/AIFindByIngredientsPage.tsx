@@ -1,213 +1,214 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Search, Plus, X, Filter } from 'lucide-react';
+import { Sparkles, Clock, Users, ChefHat } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { IngredientImage } from '@/types/recipe';
 import { useRTL } from '@/contexts/RTLContext';
 
-interface Filters {
-  dietary: string[];
-  cookTime: string[];
-  difficulty: string[];
-  cuisine: string[];
-}
-
-interface FilterOptions {
-  dietary: string[];
-  cookTime: string[];
-  difficulty: string[];
-  cuisine: string[];
-}
-
-const FindByIngredientsPage = () => {
+const AIFindByIngredientsPage = () => {
   const { t } = useRTL();
-  const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [availableIngredients, setAvailableIngredients] = useState<IngredientImage[]>([]);
-  const [showFilters, setShowFilters] = useState(false);
   const { toast } = useToast();
+  const [ingredients, setIngredients] = useState<string[]>([]);
+  const [currentIngredient, setCurrentIngredient] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [suggestedRecipes, setSuggestedRecipes] = useState<any[]>([]);
 
-  const [filters, setFilters] = useState<Filters>({
-    dietary: [],
-    cookTime: [],
-    difficulty: [],
-    cuisine: []
-  });
-
-  const filterOptions: FilterOptions = {
-    dietary: ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free'],
-    cookTime: ['Under 15 min', '15-30 min', '30-60 min', 'Over 1 hour'],
-    difficulty: ['Easy', 'Medium', 'Hard'],
-    cuisine: ['Italian', 'Asian', 'Mexican', 'Indian', 'Mediterranean']
-  };
-
-  const handleFilterChange = (filterType: keyof Filters, value: string) => {
-    setFilters(prev => ({
-      ...prev,
-      [filterType]: prev[filterType].includes(value)
-        ? prev[filterType].filter(item => item !== value)
-        : [...prev[filterType], value]
-    }));
-  };
-
-  useEffect(() => {
-    const mockIngredientImages: IngredientImage[] = [
-      {
-        id: '1',
-        ingredient_name: 'Tomato',
-        name: 'Tomato',
-        image_url: 'https://images.unsplash.com/photo-1546470427-e-576x300?crop=1',
-        alt_text: 'Fresh tomato',
-        category: 'vegetables',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }
-    ];
-    setAvailableIngredients(mockIngredientImages);
-  }, []);
-
-  const addIngredient = (ingredient: string) => {
-    if (!selectedIngredients.includes(ingredient)) {
-      setSelectedIngredients([...selectedIngredients, ingredient]);
+  const addIngredient = () => {
+    if (currentIngredient.trim() && !ingredients.includes(currentIngredient.trim())) {
+      setIngredients([...ingredients, currentIngredient.trim()]);
+      setCurrentIngredient('');
     }
   };
 
   const removeIngredient = (ingredient: string) => {
-    setSelectedIngredients(selectedIngredients.filter(i => i !== ingredient));
+    setIngredients(ingredients.filter(ing => ing !== ingredient));
   };
 
-  const findRecipes = () => {
-    if (selectedIngredients.length === 0) {
+  const findRecipes = async () => {
+    if (ingredients.length === 0) {
       toast({
-        title: t("No ingredients selected", "لم يتم اختيار مكونات"),
-        description: t("Please select at least one ingredient", "يرجى اختيار مكون واحد على الأقل"),
-        variant: "destructive"
+        title: t("No Ingredients", "لا توجد مكونات"),
+        description: t("Please add at least one ingredient", "يرجى إضافة مكون واحد على الأقل"),
+        variant: "destructive",
       });
       return;
     }
-    
-    toast({
-      title: t("Finding recipes...", "جاري البحث عن الوصفات..."),
-      description: `${t("Searching for recipes with", "البحث عن وصفات تحتوي على")} ${selectedIngredients.join(', ')}`
-    });
-  };
 
-  const filteredIngredients = availableIngredients.filter(ingredient =>
-    ingredient.ingredient_name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    setIsLoading(true);
+    
+    // Simulate AI recipe generation
+    setTimeout(() => {
+      const mockRecipes = [
+        {
+          id: '1',
+          title: 'AI-Generated Pasta Dish',
+          description: 'A delicious pasta recipe created based on your available ingredients',
+          prepTime: 30,
+          servings: 4,
+          difficulty: 'Medium',
+          ingredients: ingredients.slice(0, 3),
+          isAIGenerated: true
+        },
+        {
+          id: '2', 
+          title: 'Smart Ingredient Salad',
+          description: 'Fresh salad optimized for your pantry items',
+          prepTime: 15,
+          servings: 2,
+          difficulty: 'Easy',
+          ingredients: ingredients.slice(0, 2),
+          isAIGenerated: true
+        }
+      ];
+      
+      setSuggestedRecipes(mockRecipes);
+      setIsLoading(false);
+      
+      toast({
+        title: t("Recipes Found!", "تم العثور على وصفات!"),
+        description: t("AI has generated personalized recipes for you", "قام الذكي الاصطناعي بإنشاء وصفات شخصية لك"),
+      });
+    }, 2000);
+  };
 
   return (
     <PageContainer
       header={{
-        title: t("Find by Ingredients", "البحث بالمكونات"),
-        showBackButton: true
+        title: t("AI Recipe Generator", "مولد الوصفات الذكي"),
+        showBackButton: true,
       }}
     >
-      <div className="space-y-6 pb-24">
+      <div className="p-4 pb-24 space-y-6">
+        <div className="bg-gradient-to-br from-purple-500 to-pink-500 p-6 rounded-lg text-white text-center">
+          <Sparkles className="w-12 h-12 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold mb-2">
+            {t("AI Recipe Generator", "مولد الوصفات الذكي")}
+          </h1>
+          <p className="opacity-90">
+            {t("Let AI create personalized recipes based on your ingredients", "دع الذكاء الاصطناعي ينشئ وصفات شخصية بناءً على مكوناتك")}
+          </p>
+        </div>
+
+        {/* Ingredient Input */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <Search className="h-5 w-5" />
-                {t("Search Ingredients", "البحث في المكونات")}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowFilters(!showFilters)}
-              >
-                <Filter className="h-4 w-4 mr-2" />
-                {t("Filters", "المرشحات")}
-              </Button>
-            </CardTitle>
+            <CardTitle>{t("Add Your Ingredients", "أضف مكوناتك")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+            <div className="flex gap-2">
               <Input
-                placeholder={t("Search ingredients...", "البحث في المكونات...")}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                value={currentIngredient}
+                onChange={(e) => setCurrentIngredient(e.target.value)}
+                placeholder={t("Enter ingredient...", "أدخل المكون...")}
+                onKeyPress={(e) => e.key === 'Enter' && addIngredient()}
               />
+              <Button onClick={addIngredient}>
+                {t("Add", "إضافة")}
+              </Button>
             </div>
 
-            {showFilters && (
-              <Card className="p-4">
-                <div className="space-y-4">
-                  {Object.entries(filterOptions).map(([filterType, options]) => (
-                    <div key={filterType}>
-                      <h4 className="font-medium mb-2 capitalize">{filterType}</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {options.map((option) => (
-                          <Badge
-                            key={option}
-                            variant={filters[filterType as keyof Filters].includes(option) ? "default" : "outline"}
-                            className="cursor-pointer"
-                            onClick={() => handleFilterChange(filterType as keyof Filters, option)}
-                          >
-                            {option}
+            {/* Ingredients List */}
+            {ingredients.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {ingredients.map((ingredient, index) => (
+                  <Badge
+                    key={index}
+                    variant="secondary"
+                    className="cursor-pointer"
+                    onClick={() => removeIngredient(ingredient)}
+                  >
+                    {ingredient} ×
+                  </Badge>
+                ))}
+              </div>
+            )}
+
+            <Button
+              onClick={findRecipes}
+              disabled={isLoading || ingredients.length === 0}
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+            >
+              {isLoading ? (
+                <>
+                  <Sparkles className="w-4 h-4 mr-2 animate-spin" />
+                  {t("Generating Recipes...", "جاري إنشاء الوصفات...")}
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  {t("Generate AI Recipes", "إنشاء وصفات ذكية")}
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* AI Generated Recipes */}
+        {suggestedRecipes.length > 0 && (
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold">
+              {t("AI Generated Recipes", "الوصفات المولدة بالذكاء الاصطناعي")}
+            </h2>
+            
+            {suggestedRecipes.map((recipe) => (
+              <Card key={recipe.id} className="overflow-hidden">
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h3 className="text-lg font-semibold">{recipe.title}</h3>
+                        <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                          <Sparkles className="w-3 h-3 mr-1" />
+                          AI
+                        </Badge>
+                      </div>
+                      <p className="text-gray-600 mb-4">{recipe.description}</p>
+                      
+                      <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                        <div className="flex items-center gap-1">
+                          <Clock className="w-4 h-4" />
+                          {recipe.prepTime} {t("min", "دقيقة")}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Users className="w-4 h-4" />
+                          {recipe.servings} {t("servings", "حصص")}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <ChefHat className="w-4 h-4" />
+                          {recipe.difficulty}
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-1">
+                        {recipe.ingredients.map((ingredient: string, index: number) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {ingredient}
                           </Badge>
                         ))}
                       </div>
                     </div>
-                  ))}
-                </div>
-              </Card>
-            )}
+                  </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {filteredIngredients.map((ingredient) => (
-                <Card 
-                  key={ingredient.id} 
-                  className="cursor-pointer hover:shadow-md transition-shadow"
-                  onClick={() => addIngredient(ingredient.ingredient_name)}
-                >
-                  <CardContent className="p-4 text-center">
-                    <img
-                      src={ingredient.image_url}
-                      alt={ingredient.alt_text}
-                      className="w-full h-20 object-cover rounded-md mb-2"
-                    />
-                    <p className="text-sm font-medium">{ingredient.ingredient_name}</p>
-                    <Button size="sm" className="mt-2 w-full">
-                      <Plus className="h-4 w-4 mr-1" />
-                      {t("Add", "إضافة")}
+                  <div className="flex gap-2">
+                    <Button className="flex-1">
+                      {t("View Recipe", "عرض الوصفة")}
                     </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {selectedIngredients.length > 0 && (
-              <div className="space-y-2">
-                <h3 className="font-medium">{t("Selected Ingredients:", "المكونات المختارة:")}</h3>
-                <div className="flex flex-wrap gap-2">
-                  {selectedIngredients.map((ingredient) => (
-                    <Badge key={ingredient} variant="secondary" className="flex items-center gap-1">
-                      {ingredient}
-                      <X 
-                        className="h-3 w-3 cursor-pointer" 
-                        onClick={() => removeIngredient(ingredient)}
-                      />
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <Button onClick={findRecipes} className="w-full" size="lg">
-              {t("Find Recipes", "البحث عن الوصفات")} ({selectedIngredients.length} {t("ingredients", "مكونات")})
-            </Button>
-          </CardContent>
-        </Card>
+                    <Button variant="outline">
+                      {t("Save", "حفظ")}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </PageContainer>
   );
 };
 
-export default FindByIngredientsPage;
+export default AIFindByIngredientsPage;
