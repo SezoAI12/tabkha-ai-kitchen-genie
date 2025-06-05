@@ -1,6 +1,6 @@
 
 import React from 'react';
-import AdminIngredients from './AdminIngredients';
+import { AdminIngredients } from './AdminIngredients';
 
 const AdminIngredientsPage = () => {
   return <AdminIngredients />;
