@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { AdminPageWrapper } from '@/components/admin/AdminPageWrapper';
 import { Plug, Settings, CheckCircle, XCircle, Plus, RefreshCw, AlertTriangle } from 'lucide-react';
@@ -18,10 +19,6 @@ interface Integration {
   enabled: boolean;
   lastSync?: string;
   category: string;
-  cloudName?: string;
-  apiKey?: string;
-  apiSecret?: string;
-  apiEnvironmentVariable?: string;
 }
 
 const AdminIntegrationsPage = () => {
@@ -66,36 +63,14 @@ const AdminIntegrationsPage = () => {
       id: 'cloudinary',
       name: 'Cloudinary',
       description: 'Image optimization and CDN delivery',
-      status: 'connected',
-      enabled: true,
-      lastSync: '2024-01-15 11:00:00',
-      category: 'media',
-      cloudName: 'dftedcc6o',
-      apiKey: 'Q5SAGi2b4-xH1bAHmhfBbG_Ta5M',
-      apiSecret: 'Q5SAGi2b4-xH1bAHmhfBbG_Ta5M',
-      apiEnvironmentVariable: 'CLOUDINARY_URL=cloudinary://878259499524876:Q5SAGi2b4-xH1bAHmhfBbG_Ta5M@dftedcc6o'
+      status: 'disconnected',
+      enabled: false,
+      category: 'media'
     }
   ]);
 
   const [configDialog, setConfigDialog] = useState(false);
-  const [addIntegrationDialog, setAddIntegrationDialog] = useState(false);
   const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
-  const [newIntegrationForm, setNewIntegrationForm] = useState({
-    name: '',
-    description: '',
-    category: '',
-    cloudName: '',
-    apiKey: '',
-    apiSecret: '',
-    apiEnvironmentVariable: ''
-  });
-
-  const [configForm, setConfigForm] = useState({
-    cloudName: '',
-    apiKey: '',
-    apiSecret: '',
-    apiEnvironmentVariable: ''
-  });
 
   const handleToggleIntegration = (id: string) => {
     setIntegrations(prev => 
@@ -115,12 +90,6 @@ const AdminIntegrationsPage = () => {
 
   const handleConfigureIntegration = (integration: Integration) => {
     setSelectedIntegration(integration);
-    setConfigForm({
-      cloudName: integration.cloudName || '',
-      apiKey: integration.apiKey || '',
-      apiSecret: integration.apiSecret || '',
-      apiEnvironmentVariable: integration.apiEnvironmentVariable || ''
-    });
     setConfigDialog(true);
   };
 
@@ -136,76 +105,6 @@ const AdminIntegrationsPage = () => {
         title: 'Sync Complete',
         description: `${integration.name} has been synchronized successfully.`,
       });
-    }
-  };
-
-  const handleAddIntegration = () => {
-    setAddIntegrationDialog(true);
-  };
-
-  const handleSaveNewIntegration = () => {
-    if (!newIntegrationForm.name || !newIntegrationForm.description) {
-      toast({
-        title: 'Error',
-        description: 'Please fill in the required fields (Name and Description).',
-        variant: 'destructive'
-      });
-      return;
-    }
-
-    const newIntegration: Integration = {
-      id: newIntegrationForm.name.toLowerCase().replace(/\s+/g, '-'),
-      name: newIntegrationForm.name,
-      description: newIntegrationForm.description,
-      status: 'disconnected',
-      enabled: false,
-      category: newIntegrationForm.category || 'other',
-      cloudName: newIntegrationForm.cloudName || undefined,
-      apiKey: newIntegrationForm.apiKey || undefined,
-      apiSecret: newIntegrationForm.apiSecret || undefined,
-      apiEnvironmentVariable: newIntegrationForm.apiEnvironmentVariable || undefined
-    };
-
-    setIntegrations(prev => [...prev, newIntegration]);
-    setAddIntegrationDialog(false);
-    setNewIntegrationForm({
-      name: '',
-      description: '',
-      category: '',
-      cloudName: '',
-      apiKey: '',
-      apiSecret: '',
-      apiEnvironmentVariable: ''
-    });
-
-    toast({
-      title: 'Integration Added',
-      description: `${newIntegration.name} has been added successfully.`,
-    });
-  };
-
-  const handleSaveConfiguration = () => {
-    if (selectedIntegration) {
-      setIntegrations(prev =>
-        prev.map(integration =>
-          integration.id === selectedIntegration.id
-            ? {
-                ...integration,
-                cloudName: configForm.cloudName || undefined,
-                apiKey: configForm.apiKey || undefined,
-                apiSecret: configForm.apiSecret || undefined,
-                apiEnvironmentVariable: configForm.apiEnvironmentVariable || undefined
-              }
-            : integration
-        )
-      );
-      
-      toast({
-        title: 'Configuration Saved',
-        description: `${selectedIntegration.name} configuration has been updated.`,
-      });
-      
-      setConfigDialog(false);
     }
   };
 
@@ -247,7 +146,7 @@ const AdminIntegrationsPage = () => {
             <h1 className="text-2xl font-semibold">Integrations</h1>
             <p className="text-muted-foreground">Manage third-party service integrations.</p>
           </div>
-          <Button onClick={handleAddIntegration}>
+          <Button>
             <Plus className="h-4 w-4 mr-2" />
             Add Integration
           </Button>
@@ -357,110 +256,8 @@ const AdminIntegrationsPage = () => {
           ))}
         </div>
 
-        {/* Add Integration Dialog */}
-        <Dialog open={addIntegrationDialog} onOpenChange={setAddIntegrationDialog}>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogHeader>
-              <DialogTitle>Add New Integration</DialogTitle>
-              <DialogDescription>
-                Add a new third-party service integration. API configuration fields are optional.
-              </DialogDescription>
-            </DialogHeader>
-            
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="name">Integration Name *</Label>
-                  <Input
-                    id="name"
-                    placeholder="e.g., Cloudinary"
-                    value={newIntegrationForm.name}
-                    onChange={(e) => setNewIntegrationForm(prev => ({ ...prev, name: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="category">Category</Label>
-                  <Input
-                    id="category"
-                    placeholder="e.g., media, payments, analytics"
-                    value={newIntegrationForm.category}
-                    onChange={(e) => setNewIntegrationForm(prev => ({ ...prev, category: e.target.value }))}
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <Label htmlFor="description">Description *</Label>
-                <Input
-                  id="description"
-                  placeholder="Brief description of the integration"
-                  value={newIntegrationForm.description}
-                  onChange={(e) => setNewIntegrationForm(prev => ({ ...prev, description: e.target.value }))}
-                />
-              </div>
-
-              <div className="border-t pt-4">
-                <h4 className="font-medium mb-3">API Configuration (Optional)</h4>
-                <div className="space-y-3">
-                  <div>
-                    <Label htmlFor="cloudName">Cloud Name</Label>
-                    <Input
-                      id="cloudName"
-                      placeholder="e.g., dftedcc6o"
-                      value={newIntegrationForm.cloudName}
-                      onChange={(e) => setNewIntegrationForm(prev => ({ ...prev, cloudName: e.target.value }))}
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="apiKey">API Key</Label>
-                    <Input
-                      id="apiKey"
-                      type="password"
-                      placeholder="Enter API key"
-                      value={newIntegrationForm.apiKey}
-                      onChange={(e) => setNewIntegrationForm(prev => ({ ...prev, apiKey: e.target.value }))}
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="apiSecret">API Secret</Label>
-                    <Input
-                      id="apiSecret"
-                      type="password"
-                      placeholder="Enter API secret"
-                      value={newIntegrationForm.apiSecret}
-                      onChange={(e) => setNewIntegrationForm(prev => ({ ...prev, apiSecret: e.target.value }))}
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="apiEnvironmentVariable">API Environment Variable</Label>
-                    <Input
-                      id="apiEnvironmentVariable"
-                      placeholder="e.g., CLOUDINARY_URL=cloudinary://..."
-                      value={newIntegrationForm.apiEnvironmentVariable}
-                      onChange={(e) => setNewIntegrationForm(prev => ({ ...prev, apiEnvironmentVariable: e.target.value }))}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setAddIntegrationDialog(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleSaveNewIntegration}>
-                Add Integration
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Configure Integration Dialog */}
         <Dialog open={configDialog} onOpenChange={setConfigDialog}>
-          <DialogContent className="sm:max-w-[600px]">
+          <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
               <DialogTitle>Configure {selectedIntegration?.name}</DialogTitle>
               <DialogDescription>
@@ -470,44 +267,18 @@ const AdminIntegrationsPage = () => {
             
             <div className="space-y-4">
               <div>
-                <Label htmlFor="configCloudName">Cloud Name</Label>
+                <Label htmlFor="apiKey">API Key</Label>
                 <Input
-                  id="configCloudName"
-                  value={configForm.cloudName}
-                  onChange={(e) => setConfigForm(prev => ({ ...prev, cloudName: e.target.value }))}
-                  placeholder="Enter cloud name"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="configApiKey">API Key</Label>
-                <Input
-                  id="configApiKey"
-                  value={configForm.apiKey}
-                  onChange={(e) => setConfigForm(prev => ({ ...prev, apiKey: e.target.value }))}
+                  id="apiKey"
                   placeholder="Enter API key"
                   type="password"
                 />
               </div>
-              
               <div>
-                <Label htmlFor="configApiSecret">API Secret</Label>
+                <Label htmlFor="endpoint">Endpoint URL</Label>
                 <Input
-                  id="configApiSecret"
-                  value={configForm.apiSecret}
-                  onChange={(e) => setConfigForm(prev => ({ ...prev, apiSecret: e.target.value }))}
-                  placeholder="Enter API secret"
-                  type="password"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="configApiEnvironmentVariable">API Environment Variable</Label>
-                <Input
-                  id="configApiEnvironmentVariable"
-                  value={configForm.apiEnvironmentVariable}
-                  onChange={(e) => setConfigForm(prev => ({ ...prev, apiEnvironmentVariable: e.target.value }))}
-                  placeholder="Enter environment variable"
+                  id="endpoint"
+                  placeholder="https://api.example.com"
                 />
               </div>
             </div>
@@ -516,7 +287,7 @@ const AdminIntegrationsPage = () => {
               <Button variant="outline" onClick={() => setConfigDialog(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleSaveConfiguration}>
+              <Button onClick={() => setConfigDialog(false)}>
                 Save Configuration
               </Button>
             </DialogFooter>
