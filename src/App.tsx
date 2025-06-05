@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import {
   BrowserRouter as Router,
@@ -40,9 +39,9 @@ import TranslationsPage from './pages/admin/TranslationsPage';
 import LanguagesPage from './pages/admin/LanguagesPage';
 import ImageControlPage from './pages/admin/ImageControlPage';
 import NotificationsPage from './pages/NotificationsPage';
-import SubscriptionsPage from './pages/SubscriptionsPage';
-import AdvertisementPage from './pages/AdvertisementPage';
-import SupportTicketsPage from './pages/SupportTicketsPage';
+import SubscriptionsPage from './pages/admin/SubscriptionsPage';
+import AdvertisementPage from './pages/admin/AdvertisementPage';
+import SupportTicketsPage from './pages/admin/SupportTicketsPage';
 import AIFindByIngredientsPage from './pages/AIFindByIngredientsPage';
 import ScanDishPage from './pages/ScanDishPage';
 import GlobalCuisinePage from './pages/GlobalCuisinePage';
