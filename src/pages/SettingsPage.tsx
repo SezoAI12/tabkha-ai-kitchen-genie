@@ -1,10 +1,7 @@
 
 import React from 'react';
 import { PageContainer } from '@/components/layout/PageContainer';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { 
   User, 
@@ -26,14 +23,12 @@ import {
   SlidersHorizontal
 } from 'lucide-react';
 import { useRTL } from '@/contexts/RTLContext';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { LanguageSelector } from '@/components/language/LanguageSelector';
 import { SignOut } from '@/components/auth/SignOut';
 
 const SettingsPage = () => {
   const { t, direction } = useRTL();
-  const navigate = useNavigate();
   const { user } = useAuth();
 
   const settingGroups = [
@@ -112,7 +107,7 @@ const SettingsPage = () => {
       <div className={`space-y-6 p-4 ${direction === 'rtl' ? 'text-right' : 'text-left'}`} dir={direction}>
         {/* Header */}
         <div className="bg-gradient-to-br from-wasfah-bright-teal to-wasfah-deep-teal p-6 rounded-lg text-white text-center">
-          <h1 className="text-2xl font-bold mb-2">{t("Settings", "الإعدادات", "Ayarlar")}</h1>
+          <h1 className="text-2xl font-bold mb-2">{t("All Settings", "جميع الإعدادات", "Tüm Ayarlar")}</h1>
           <p className="opacity-90">{t("Manage all your app preferences and account settings", "إدارة جميع تفضيلات التطبيق وإعدادات الحساب", "Tüm uygulama tercihlerinizi ve hesap ayarlarınızı yönetin")}</p>
         </div>
 
