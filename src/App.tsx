@@ -1,4 +1,3 @@
-
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from 'sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -78,11 +77,13 @@ import SupportTicketsPage from './pages/admin/SupportTicketsPage';
 import AdminCommunityPage from './pages/admin/CommunityPage';
 import AdminNotificationsPage from './pages/admin/NotificationsPage';
 import AdvertisementPage from './pages/admin/AdvertisementPage';
-import ImageControlPage from './pages/admin/ImageControlPage';
 import ContentLibraryPage from './pages/admin/ContentLibraryPage';
 import TranslationsPage from './pages/admin/TranslationsPage';
 import LanguagesPage from './pages/admin/LanguagesPage';
 import SubscriptionsPage from './pages/admin/SubscriptionsPage';
+import AdminImageControlPage from './pages/admin/AdminImageControlPage';
+import AdminIntegrationsPage from './pages/admin/AdminIntegrationsPage';
+import AdminIngredientImagesManager from './pages/admin/AdminIngredientImagesManager';
 
 const queryClient = new QueryClient();
 
@@ -178,11 +179,13 @@ function App() {
                       <Route path="community" element={<AdminCommunityPage />} />
                       <Route path="notifications" element={<AdminNotificationsPage />} />
                       <Route path="advertisement" element={<AdvertisementPage />} />
-                      <Route path="image-control" element={<ImageControlPage />} />
+                      <Route path="image-control" element={<AdminImageControlPage />} />
                       <Route path="content-library" element={<ContentLibraryPage />} />
                       <Route path="translations" element={<TranslationsPage />} />
                       <Route path="languages" element={<LanguagesPage />} />
                       <Route path="subscriptions" element={<SubscriptionsPage />} />
+                      <Route path="integrations" element={<AdminIntegrationsPage />} />
+                      <Route path="ingredient-images" element={<AdminIngredientImagesManager />} />
                     </Route>
                     
                     <Route path="*" element={<NotFound />} />
