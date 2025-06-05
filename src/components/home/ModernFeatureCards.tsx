@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
-import { Search, Globe, Calendar, Activity, ShoppingCart, Users, Heart, Plus, Camera, Sparkles, Apple } from 'lucide-react';
+import { Search, Globe, Calendar, Activity, ShoppingCart, Users, Heart, Plus, Camera, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const mainFeatures = [
@@ -15,12 +15,11 @@ const mainFeatures = [
     isNew: true,
   },
   {
-    icon: <Apple className="h-8 w-8 text-white" />,
+    icon: <Search className="h-8 w-8 text-white" />,
     label: "Find by Ingredients",
     description: "Cook with what you have at home",
     path: "/find-by-ingredients",
     gradient: "from-wasfah-bright-teal to-wasfah-teal",
-    image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=300&fit=crop"
   },
   {
     icon: <Globe className="h-8 w-8 text-white" />,
@@ -96,14 +95,6 @@ export const ModernFeatureCards: React.FC = () => {
             <Link to={feature.path} className="block h-full">
               <Card className="relative h-full overflow-hidden glass-card card-hover border-0 shadow-lg group-hover:shadow-food">
                 <CardContent className="p-6 h-full flex flex-col">
-                  {/* Background Image for Find by Ingredients */}
-                  {feature.image && (
-                    <div 
-                      className="absolute inset-0 bg-cover bg-center opacity-10 group-hover:opacity-20 transition-opacity duration-300"
-                      style={{ backgroundImage: `url(${feature.image})` }}
-                    />
-                  )}
-                  
                   {/* New Badge */}
                   {feature.isNew && (
                     <div className="absolute top-3 right-3">
@@ -115,12 +106,12 @@ export const ModernFeatureCards: React.FC = () => {
                   )}
                   
                   {/* Icon */}
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300 relative z-10`}>
+                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                     {feature.icon}
                   </div>
                   
                   {/* Content */}
-                  <div className="flex-1 relative z-10">
+                  <div className="flex-1">
                     <h3 className="font-semibold text-lg text-gray-900 mb-2 group-hover:text-gray-700 transition-colors">
                       {feature.label}
                     </h3>
@@ -130,7 +121,7 @@ export const ModernFeatureCards: React.FC = () => {
                   </div>
                   
                   {/* Hover Arrow */}
-                  <div className="mt-4 flex justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300 relative z-10">
+                  <div className="mt-4 flex justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
                       <motion.div
                         animate={{ x: [0, 4, 0] }}

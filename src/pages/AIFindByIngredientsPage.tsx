@@ -1,3 +1,4 @@
+
 import React, { useState, ElementType, useEffect } from 'react';
 import {
   Utensils, Cake, Coffee, Camera, Mic, Soup, Salad, Egg, Milk, Drumstick,
@@ -26,7 +27,7 @@ interface MainCategory {
 
 interface AIFilters {
   dietary: string;
-  cookTime: string;
+  cookingTime: string;
   difficulty: string;
   cuisine: string;
 }
@@ -99,7 +100,7 @@ export default function FindByIngredients() {
 
   const AI_FILTER_OPTIONS = {
     dietary: ['Normal', 'Healthy', 'Vegetarian', 'Vegan', 'Gluten-Free'],
-    cookTime: ['Under 30 mins', '30-60 mins', '1-2 hours', 'Over 2 hours'],
+    cookingTime: ['Under 30 mins', '30-60 mins', '1-2 hours', 'Over 2 hours'],
     difficulty: ['Beginner', 'Intermediate', 'Expert'],
     cuisine: ['Levant', 'Italian', 'Mexican', 'Chinese', 'Indian', 'American'],
   };
@@ -128,7 +129,7 @@ export default function FindByIngredients() {
   );
   const [filters, setFilters] = useState<AIFilters>({
     dietary: '',
-    cookTime: '',
+    cookingTime: '',
     difficulty: '',
     cuisine: '',
   });
@@ -350,16 +351,18 @@ Focus on practical recipes that can be made with the ingredients provided.`;
           ];
         }
 
-        // Transform to Recipe format with correct properties for @/types/index Recipe interface
+        // Transform to Recipe format
         results = aiRecipes.map((recipe: any, index: number): Recipe => ({
           id: `ai-recipe-${Date.now()}-${index}`,
           title: recipe.title || `Recipe with ${ingredientNames.join(', ')}`,
           description: recipe.description || `A recipe using ${ingredientNames.join(', ')}`,
           image: '',
+          prep_time: recipe.prep_time || 15,
           prepTime: recipe.prep_time || 15,
+          cook_time: recipe.cook_time || 30,
           cookTime: recipe.cook_time || 30,
           servings: recipe.servings || 4,
-          difficulty: recipe.difficulty || 'Medium',
+          difficulty: recipe.difficulty || 'Medium' as 'Easy' | 'Medium' | 'Hard',
           calories: recipe.calories || 300,
           rating: 0,
           ratingCount: 0,
@@ -368,23 +371,25 @@ Focus on practical recipes that can be made with the ingredients provided.`;
           categories: [],
           tags: ['AI Generated'],
           isFavorite: false,
+          author_id: 'ai-chef',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          is_verified: true,
+          cuisine_type: recipe.cuisine_type || 'Fusion',
           cuisineType: recipe.cuisine_type || 'Fusion',
+          status: 'published' as 'draft' | 'published' | 'pending_review',
           ingredients: Array.isArray(recipe.ingredients) ?
             recipe.ingredients.map((ing: any) => ({
               id: `ing-${Math.random()}`,
               name: typeof ing === 'string' ? ing : (ing.name || ing.ingredient || 'Unknown'),
-              amount: typeof ing === 'object' ? String(ing.amount || ing.quantity || '1') : '1',
-              unit: typeof ing === 'object' ? (ing.unit || 'cup') : 'cup',
-              category: 'general',
-              inPantry: false
+              amount: typeof ing === 'object' ? (ing.amount || ing.quantity || 1) : 1,
+              unit: typeof ing === 'object' ? (ing.unit || 'cup') : 'cup'
             })) :
             ingredientNames.map(ing => ({
               id: `ing-${Math.random()}`,
               name: ing,
-              amount: '1',
-              unit: 'cup',
-              category: 'general',
-              inPantry: false
+              amount: 1,
+              unit: 'cup'
             }))
         }));
       }
@@ -474,6 +479,26 @@ Focus on practical recipes that can be made with the ingredients provided.`;
     );
   }
 
+  // Convert AIFilters to match FilterPanel expected types
+  const convertedFilters = {
+    dietary: filters.dietary,
+    cookTime: filters.cookingTime,
+    difficulty: filters.difficulty,
+    cuisine: filters.cuisine,
+  };
+
+  const convertedFilterOptions = {
+    dietary: AI_FILTER_OPTIONS.dietary,
+    cookTime: AI_FILTER_OPTIONS.cookingTime,
+    difficulty: AI_FILTER_OPTIONS.difficulty,
+    cuisine: AI_FILTER_OPTIONS.cuisine,
+  };
+
+  const handleConvertedFilterChange = (filterType: 'dietary' | 'cookTime' | 'difficulty' | 'cuisine', value: string) => {
+    const aiFilterType = filterType === 'cookTime' ? 'cookingTime' : filterType;
+    handleFilterChange(aiFilterType as keyof AIFilters, value);
+  };
+
   // --- Main Multi-Step UI ---
   return (
     <PageContainer
@@ -487,10 +512,10 @@ Focus on practical recipes that can be made with the ingredients provided.`;
         {renderStepIndicator()}
 
         <FilterPanel
-          filters={filters}
-          filterOptions={AI_FILTER_OPTIONS}
+          filters={convertedFilters}
+          filterOptions={convertedFilterOptions}
           showFilters={showFilters}
-          onFilterChange={handleFilterChange}
+          onFilterChange={handleConvertedFilterChange}
           onToggleFilters={() => setShowFilters(!showFilters)}
           onCloseFilters={() => setShowFilters(false)}
         />
