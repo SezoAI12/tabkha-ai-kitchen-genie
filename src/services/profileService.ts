@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 
 export interface UserProfile {
@@ -17,7 +18,7 @@ export const profileService = {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
-      .eq('user_id', userId)
+      .eq('id', userId)
       .single();
 
     if (error) {
@@ -49,7 +50,7 @@ export const profileService = {
         cuisine_preferences: updates.cuisine_preferences,
         allergies: updates.allergies
       })
-      .eq('user_id', userId)
+      .eq('id', userId)
       .select()
       .single();
 
@@ -75,7 +76,7 @@ export const profileService = {
     const { data, error } = await supabase
       .from('profiles')
       .insert([{
-        user_id: profile.id, // Use id as user_id
+        id: profile.id,
         full_name: profile.full_name,
         avatar_url: profile.avatar_url
       }])

@@ -1,7 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { Recipe } from '@/types/index';
-import recipeService from './recipeService';
 
 export interface MealPlan {
   id: string;
@@ -29,16 +28,6 @@ class MealPlanService {
       
       if (!data) return null;
 
-      // Since the current schema has recipe_id, meal_type structure
-      // We need to query all meals for this date and group them
-      const { data: meals, error: mealsError } = await supabase
-        .from('meal_plans')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('date', date);
-
-      if (mealsError) throw mealsError;
-
       const mealPlan: MealPlan = {
         id: data.id,
         date: data.date,
@@ -46,31 +35,6 @@ class MealPlanService {
         created_at: data.created_at,
         updated_at: data.updated_at,
       };
-
-      // Group meals by type
-      if (meals) {
-        for (const meal of meals) {
-          if (meal.recipe_id && meal.meal_type) {
-            const recipe = await this.getRecipeById(meal.recipe_id);
-            if (recipe) {
-              switch (meal.meal_type) {
-                case 'breakfast':
-                  mealPlan.breakfast = recipe;
-                  break;
-                case 'lunch':
-                  mealPlan.lunch = recipe;
-                  break;
-                case 'dinner':
-                  mealPlan.dinner = recipe;
-                  break;
-                case 'snack':
-                  mealPlan.snack = recipe;
-                  break;
-              }
-            }
-          }
-        }
-      }
 
       return mealPlan;
     } catch (error) {
@@ -89,7 +53,6 @@ class MealPlanService {
 
       if (error) throw error;
 
-      // Convert Json[] to string[] for instructions
       const instructionsArray = Array.isArray(data.instructions) 
         ? data.instructions.map(instruction => String(instruction))
         : [];
@@ -102,8 +65,8 @@ class MealPlanService {
         image_url: data.image_url,
         prepTime: data.prep_time || 0,
         prep_time: data.prep_time || 0,
-        cookTime: data.cooking_time || 0,
-        cook_time: data.cooking_time || 0,
+        cookTime: data.cook_time || 0,
+        cook_time: data.cook_time || 0,
         servings: data.servings,
         difficulty: data.difficulty as 'Easy' | 'Medium' | 'Hard',
         calories: data.calories,
@@ -111,13 +74,13 @@ class MealPlanService {
         ratingCount: 89,
         cuisineType: data.cuisine_type,
         cuisine_type: data.cuisine_type,
-        categories: [], // Database doesn't have categories field, so use empty array
-        tags: [], // Database doesn't have tags field, so use empty array
+        categories: [],
+        tags: [],
         ingredients: [],
         instructions: instructionsArray,
         isFavorite: false,
         status: 'published' as const,
-        author_id: data.user_id,
+        author_id: data.author_id,
         is_verified: true,
         created_at: data.created_at,
         updated_at: data.updated_at,
@@ -136,13 +99,12 @@ class MealPlanService {
   ): Promise<boolean> {
     try {
       const { error } = await supabase
-        .from('meal_plans')
+        .from('meal_plan_meals')
         .upsert({
-          user_id: userId,
-          date,
+          meal_plan_id: `${userId}-${date}`,
           meal_type: mealType,
           recipe_id: recipeId,
-          updated_at: new Date().toISOString(),
+          created_at: new Date().toISOString(),
         });
 
       if (error) throw error;
