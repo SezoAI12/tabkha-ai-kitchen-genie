@@ -16,7 +16,7 @@ export class RecipeService {
             unit
           )
         `)
-        .eq('is_published', true);
+        .eq('status', 'published');
 
       if (error) throw error;
 
@@ -35,8 +35,8 @@ export class RecipeService {
           image: recipe.image_url,
           prep_time: recipe.prep_time || 0,
           prepTime: recipe.prep_time || 0,
-          cook_time: recipe.cooking_time || 0,
-          cookTime: recipe.cooking_time || 0,
+          cook_time: recipe.cook_time || 0,
+          cookTime: recipe.cook_time || 0,
           servings: recipe.servings,
           difficulty: recipe.difficulty as 'Easy' | 'Medium' | 'Hard',
           calories: recipe.calories,
@@ -46,7 +46,7 @@ export class RecipeService {
           categories: [], // Database doesn't have categories field, use empty array
           tags: [], // Database doesn't have tags field, use empty array
           status: 'published' as const,
-          author_id: recipe.user_id,
+          author_id: recipe.author_id,
           is_verified: recipe.is_verified || false,
           created_at: recipe.created_at,
           updated_at: recipe.updated_at,
