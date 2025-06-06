@@ -29,6 +29,18 @@ const NewHomePage = () => {
       label: t("AI Features", "ميزات الذكاء الاصطناعي"),
       path: "/ai-features",
       color: "bg-cyan-500/10"
+    },
+    {
+      image: "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=150&h=150&fit=crop&crop=center",
+      label: t("Services", "الخدمات"),
+      path: "/services",
+      color: "bg-purple-500/10"
+    },
+    {
+      image: "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=150&h=150&fit=crop&crop=center",
+      label: t("Alcohol Recipes", "وصفات المشروبات الكحولية"),
+      path: "/ai-find-by-ingredients?category=alcohol",
+      color: "bg-amber-500/10"
     }
   ];
 
@@ -69,7 +81,7 @@ const NewHomePage = () => {
               {t("Main Features", "الميزات الرئيسية")}
             </h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
             {mainFeatures.map((feature, index) => (
               <Link
                 key={index}
