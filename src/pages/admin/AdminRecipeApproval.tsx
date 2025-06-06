@@ -58,13 +58,12 @@ const AdminRecipeApproval = () => {
             description,
             image_url,
             difficulty,
-            category,
-            subcategory,
+            category_id,
             author_id
           )
         `)
         .eq('status', 'pending')
-        .order('submitted_at', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
       setRecipes(pendingRecipes || []);
@@ -103,11 +102,11 @@ const AdminRecipeApproval = () => {
 
       if (error) throw error;
 
-      // Update recipe status
+      // Update recipe is_published status
       const { error: recipeError } = await supabase
         .from('recipes')
         .update({
-          status: reviewAction === 'approve' ? 'published' : 'draft'
+          is_published: reviewAction === 'approve'
         })
         .eq('id', selectedRecipe.recipe_id);
 
@@ -217,13 +216,12 @@ const AdminRecipeApproval = () => {
                   </TableCell>
                   <TableCell>
                     <div className="text-sm">
-                      <div className="font-medium">{recipe.recipes?.category || 'N/A'}</div>
-                      <div className="text-gray-500">{recipe.recipes?.subcategory || 'N/A'}</div>
+                      <div className="font-medium">{recipe.recipes?.category_id || 'N/A'}</div>
                     </div>
                   </TableCell>
                   <TableCell>{getDifficultyBadge(recipe.recipes?.difficulty || 'Medium')}</TableCell>
                   <TableCell>{getStatusBadge(recipe.status)}</TableCell>
-                  <TableCell>{new Date(recipe.submitted_at).toLocaleDateString()}</TableCell>
+                  <TableCell>{new Date(recipe.created_at).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
                       <Button
@@ -293,7 +291,7 @@ const AdminRecipeApproval = () => {
                   />
                   <div>
                     <div className="font-medium">{selectedRecipe.recipes?.title}</div>
-                    <div className="text-sm text-gray-500">{selectedRecipe.recipes?.category} - {selectedRecipe.recipes?.subcategory}</div>
+                    <div className="text-sm text-gray-500">{selectedRecipe.recipes?.category_id}</div>
                   </div>
                 </div>
               )}
