@@ -6,9 +6,13 @@ export const mockUser: User = {
   name: 'John Doe',
   email: 'john@example.com',
   avatar: '/placeholder.svg',
-  preferences: {
-    dietary: ['vegetarian'],
-    allergies: ['nuts']
+  dietaryPreferences: ['vegetarian'],
+  cuisinePreferences: ['Italian', 'Mediterranean'],
+  allergies: ['nuts'],
+  chefAvatar: 'The Grill Master',
+  nutritionalGoals: {
+    calories: 2000,
+    protein: 150
   }
 };
 
@@ -71,18 +75,22 @@ export const mockRecipes: Recipe[] = [
     title: 'Mediterranean Salad',
     description: 'Fresh and healthy Mediterranean salad with olive oil dressing',
     image: '/placeholder.svg',
+    image_url: '/placeholder.svg',
     prepTime: 15,
+    prep_time: 15,
     cookTime: 0,
+    cook_time: 0,
     servings: 4,
     difficulty: 'Easy',
     calories: 250,
     rating: 4.5,
     ratingCount: 120,
     cuisineType: 'Mediterranean',
+    cuisine_type: 'Mediterranean',
     ingredients: [
-      { id: '1', name: 'Lettuce', amount: '1', unit: 'head', category: 'vegetables' },
-      { id: '2', name: 'Tomatoes', amount: '2', unit: 'medium', category: 'vegetables' },
-      { id: '3', name: 'Olive Oil', amount: '3', unit: 'tbsp', category: 'oils' }
+      { id: '1', name: 'Lettuce', amount: 1, unit: 'head' },
+      { id: '2', name: 'Tomatoes', amount: 2, unit: 'medium' },
+      { id: '3', name: 'Olive Oil', amount: 3, unit: 'tbsp' }
     ],
     instructions: [
       'Wash and chop the lettuce',
@@ -91,25 +99,34 @@ export const mockRecipes: Recipe[] = [
     ],
     categories: ['Salad', 'Mediterranean'],
     tags: ['healthy', 'quick', 'vegetarian'],
-    isFavorite: false
+    isFavorite: false,
+    status: 'published',
+    author_id: '1',
+    is_verified: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
   },
   {
     id: '2',
     title: 'Chicken Stir Fry',
     description: 'Quick and delicious chicken stir fry with vegetables',
     image: '/placeholder.svg',
+    image_url: '/placeholder.svg',
     prepTime: 20,
+    prep_time: 20,
     cookTime: 15,
+    cook_time: 15,
     servings: 4,
     difficulty: 'Medium',
     calories: 380,
     rating: 4.3,
     ratingCount: 89,
     cuisineType: 'Asian',
+    cuisine_type: 'Asian',
     ingredients: [
-      { id: '4', name: 'Chicken Breast', amount: '500', unit: 'g', category: 'meat' },
-      { id: '5', name: 'Bell Peppers', amount: '2', unit: 'pieces', category: 'vegetables' },
-      { id: '6', name: 'Soy Sauce', amount: '2', unit: 'tbsp', category: 'sauces' }
+      { id: '4', name: 'Chicken Breast', amount: 500, unit: 'g' },
+      { id: '5', name: 'Bell Peppers', amount: 2, unit: 'pieces' },
+      { id: '6', name: 'Soy Sauce', amount: 2, unit: 'tbsp' }
     ],
     instructions: [
       'Cut chicken into strips',
@@ -118,25 +135,34 @@ export const mockRecipes: Recipe[] = [
     ],
     categories: ['Main Course', 'Asian'],
     tags: ['protein', 'quick'],
-    isFavorite: true
+    isFavorite: true,
+    status: 'published',
+    author_id: '1',
+    is_verified: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
   },
   {
     id: '3',
     title: 'Pancakes',
     description: 'Fluffy morning pancakes with maple syrup',
     image: '/placeholder.svg',
+    image_url: '/placeholder.svg',
     prepTime: 10,
+    prep_time: 10,
     cookTime: 15,
+    cook_time: 15,
     servings: 4,
     difficulty: 'Easy',
     calories: 320,
     rating: 4.7,
     ratingCount: 156,
     cuisineType: 'American',
+    cuisine_type: 'American',
     ingredients: [
-      { id: '7', name: 'Flour', amount: '2', unit: 'cups', category: 'grains' },
-      { id: '8', name: 'Milk', amount: '1', unit: 'cup', category: 'dairy' },
-      { id: '9', name: 'Eggs', amount: '2', unit: 'pieces', category: 'dairy' }
+      { id: '7', name: 'Flour', amount: 2, unit: 'cups' },
+      { id: '8', name: 'Milk', amount: 1, unit: 'cup' },
+      { id: '9', name: 'Eggs', amount: 2, unit: 'pieces' }
     ],
     instructions: [
       'Mix dry ingredients',
@@ -145,7 +171,12 @@ export const mockRecipes: Recipe[] = [
     ],
     categories: ['Breakfast'],
     tags: ['breakfast', 'sweet'],
-    isFavorite: false
+    isFavorite: false,
+    status: 'published',
+    author_id: '1',
+    is_verified: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
   }
 ];
 
@@ -155,19 +186,19 @@ export const favoriteRecipes = mockRecipes.filter(recipe => recipe.isFavorite);
 const mockMeals: Meal[] = [
   {
     id: '1',
-    type: 'Breakfast',
+    type: 'breakfast',
     recipe: mockRecipes[2], // Pancakes
     scheduledTime: '08:00'
   },
   {
     id: '2',
-    type: 'Lunch',
+    type: 'lunch',
     recipe: mockRecipes[0], // Mediterranean Salad
     scheduledTime: '12:30'
   },
   {
     id: '3',
-    type: 'Dinner',
+    type: 'dinner',
     recipe: mockRecipes[1], // Chicken Stir Fry
     scheduledTime: '19:00'
   }
@@ -178,8 +209,7 @@ export const mockMealPlan: MealPlan = {
   id: '1',
   date: new Date().toISOString().split('T')[0], // Today's date
   meals: mockMeals,
-  totalCalories: mockMeals.reduce((total, meal) => total + meal.recipe.calories, 0),
-  totalProtein: 45,
-  totalCarbs: 120,
-  totalFat: 25
+  user_id: '1',
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString()
 };
