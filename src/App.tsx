@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@/contexts/ThemeContext';
@@ -30,6 +31,7 @@ import ContactPage from '@/pages/ContactPage';
 import GlobalCuisinePage from '@/pages/GlobalCuisinePage';
 import MealPlanPage from '@/pages/MealPlanPage';
 import HealthTrackingHomePage from '@/pages/HealthTrackingHomePage';
+import NutritionGoalsPage from '@/pages/NutritionGoalsPage';
 import MicronutrientTracker from '@/components/ai/MicronutrientTracker';
 import PantryPage from '@/pages/PantryPage';
 import FavoritesPage from '@/pages/FavoritesPage';
