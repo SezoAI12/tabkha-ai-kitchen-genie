@@ -201,7 +201,8 @@ export const RecipeDetail: React.FC<RecipeDetailProps> = ({
             <div className="space-y-3">
               {recipe.ingredients.map((ingredient) => {
                 const isChecked = checkedIngredients.has(ingredient.id);
-                const adjustedAmount = Math.round((parseFloat(ingredient.amount || '0') * servingMultiplier) * 100) / 100;
+                const amountValue = ingredient.amount || 0;
+                const adjustedAmount = Math.round((Number(amountValue) * servingMultiplier) * 100) / 100;
                 
                 return (
                   <div 
