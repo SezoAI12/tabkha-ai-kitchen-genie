@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { Recipe, RecipeIngredient } from '@/types/index';
 
