@@ -7,7 +7,8 @@ import {
   UtensilsCrossed,
   Sparkles,
   Activity,
-  Settings2,
+  Settings,
+  Shield,
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -53,10 +54,10 @@ const BottomToolbar = () => {
       isActive: pathname === '/health-tracking-home' || pathname.startsWith('/health-tracking')
     },
     {
-      icon: Settings2,
+      icon: Settings,
       label: 'Settings',
       href: '/settings',
-      isActive: pathname === '/settings' || pathname.startsWith('/settings/')
+      isActive: pathname === '/settings'
     }
   ];
 
