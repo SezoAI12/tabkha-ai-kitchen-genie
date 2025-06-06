@@ -11,13 +11,13 @@ interface SuperAdminGuardProps {
 export const SuperAdminGuard = ({ children }: SuperAdminGuardProps) => {
   const { user, loading: authLoading } = useAuth();
 
-  const { data: userRole, isLoading: roleLoading } = useQuery({
+  const { data: hasRole, isLoading: roleLoading } = useQuery({
     queryKey: ['user-role', user?.id],
     queryFn: async () => {
-      if (!user?.id) return null;
+      if (!user?.id) return false;
       
       const { data, error } = await supabase
-        .rpc('get_user_role', { user_id: user.id });
+        .rpc('has_role', { _user_id: user.id, _role: 'super_admin' });
       
       if (error) throw error;
       return data;
@@ -33,7 +33,7 @@ export const SuperAdminGuard = ({ children }: SuperAdminGuardProps) => {
     );
   }
 
-  if (!user || userRole !== 'super_admin') {
+  if (!user || !hasRole) {
     return <Navigate to="/" replace />;
   }
 
