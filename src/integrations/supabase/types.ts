@@ -11,49 +11,55 @@ export type Database = {
     Tables: {
       daily_challenges: {
         Row: {
-          category: string | null
-          created_at: string | null
+          challenge_type: string
+          created_at: string
+          date: string
           description: string
           id: string
-          is_active: boolean | null
-          name: string
-          updated_at: string | null
+          is_active: boolean
+          points: number
+          title: string
+          updated_at: string
         }
         Insert: {
-          category?: string | null
-          created_at?: string | null
+          challenge_type: string
+          created_at?: string
+          date?: string
           description: string
           id?: string
-          is_active?: boolean | null
-          name: string
-          updated_at?: string | null
+          is_active?: boolean
+          points?: number
+          title: string
+          updated_at?: string
         }
         Update: {
-          category?: string | null
-          created_at?: string | null
+          challenge_type?: string
+          created_at?: string
+          date?: string
           description?: string
           id?: string
-          is_active?: boolean | null
-          name?: string
-          updated_at?: string | null
+          is_active?: boolean
+          points?: number
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
       favorites: {
         Row: {
-          created_at: string | null
+          created_at: string
           id: string
           recipe_id: string | null
           user_id: string | null
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           id?: string
           recipe_id?: string | null
           user_id?: string | null
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           id?: string
           recipe_id?: string | null
           user_id?: string | null
@@ -70,82 +76,76 @@ export type Database = {
       }
       ingredient_images: {
         Row: {
-          category: string | null
-          created_at: string | null
+          alt_text: string | null
+          created_at: string
           id: string
           image_url: string
-          name: string
-          updated_at: string | null
+          ingredient_name: string
+          updated_at: string
         }
         Insert: {
-          category?: string | null
-          created_at?: string | null
+          alt_text?: string | null
+          created_at?: string
           id?: string
           image_url: string
-          name: string
-          updated_at?: string | null
+          ingredient_name: string
+          updated_at?: string
         }
         Update: {
-          category?: string | null
-          created_at?: string | null
+          alt_text?: string | null
+          created_at?: string
           id?: string
           image_url?: string
-          name?: string
-          updated_at?: string | null
+          ingredient_name?: string
+          updated_at?: string
         }
         Relationships: []
       }
       ingredients: {
         Row: {
-          category: string | null
-          created_at: string | null
+          created_at: string
           id: string
-          image_url: string | null
           name: string
-          unit: string | null
         }
         Insert: {
-          category?: string | null
-          created_at?: string | null
+          created_at?: string
           id?: string
-          image_url?: string | null
           name: string
-          unit?: string | null
         }
         Update: {
-          category?: string | null
-          created_at?: string | null
+          created_at?: string
           id?: string
-          image_url?: string | null
           name?: string
-          unit?: string | null
         }
         Relationships: []
       }
       meal_plan_meals: {
         Row: {
-          created_at: string | null
+          created_at: string
           id: string
           meal_plan_id: string | null
-          meal_type: Database["public"]["Enums"]["meal_type"]
+          meal_type: string
           recipe_id: string | null
           scheduled_time: string | null
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           id?: string
           meal_plan_id?: string | null
-          meal_type: Database["public"]["Enums"]["meal_type"]
+          meal_type: string
           recipe_id?: string | null
           scheduled_time?: string | null
+          updated_at?: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           id?: string
           meal_plan_id?: string | null
-          meal_type?: Database["public"]["Enums"]["meal_type"]
+          meal_type?: string
           recipe_id?: string | null
           scheduled_time?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -166,60 +166,74 @@ export type Database = {
       }
       meal_plans: {
         Row: {
-          created_at: string | null
+          created_at: string
           date: string
           id: string
-          updated_at: string | null
+          meal_type: string | null
+          notes: string | null
+          recipe_id: string | null
+          updated_at: string
           user_id: string | null
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           date: string
           id?: string
-          updated_at?: string | null
+          meal_type?: string | null
+          notes?: string | null
+          recipe_id?: string | null
+          updated_at?: string
           user_id?: string | null
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           date?: string
           id?: string
-          updated_at?: string | null
+          meal_type?: string | null
+          notes?: string | null
+          recipe_id?: string | null
+          updated_at?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "meal_plans_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       pantry_items: {
         Row: {
-          created_at: string | null
+          created_at: string
           expiry_date: string | null
           id: string
           ingredient_id: string | null
-          location: string | null
-          quantity: number
+          quantity: number | null
           unit: string | null
-          updated_at: string | null
+          updated_at: string
           user_id: string | null
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           expiry_date?: string | null
           id?: string
           ingredient_id?: string | null
-          location?: string | null
-          quantity: number
+          quantity?: number | null
           unit?: string | null
-          updated_at?: string | null
+          updated_at?: string
           user_id?: string | null
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           expiry_date?: string | null
           id?: string
           ingredient_id?: string | null
-          location?: string | null
-          quantity?: number
+          quantity?: number | null
           unit?: string | null
-          updated_at?: string | null
+          updated_at?: string
           user_id?: string | null
         }
         Relationships: [
@@ -237,73 +251,76 @@ export type Database = {
           allergies: string[] | null
           avatar_url: string | null
           bio: string | null
-          created_at: string | null
+          chef_avatar: string | null
+          created_at: string
           cuisine_preferences: string[] | null
           dietary_preferences: string[] | null
           full_name: string | null
           id: string
-          updated_at: string | null
+          nutritional_goals: Json | null
+          updated_at: string
+          user_id: string
         }
         Insert: {
           allergies?: string[] | null
           avatar_url?: string | null
           bio?: string | null
-          created_at?: string | null
+          chef_avatar?: string | null
+          created_at?: string
           cuisine_preferences?: string[] | null
           dietary_preferences?: string[] | null
           full_name?: string | null
-          id: string
-          updated_at?: string | null
+          id?: string
+          nutritional_goals?: Json | null
+          updated_at?: string
+          user_id: string
         }
         Update: {
           allergies?: string[] | null
           avatar_url?: string | null
           bio?: string | null
-          created_at?: string | null
+          chef_avatar?: string | null
+          created_at?: string
           cuisine_preferences?: string[] | null
           dietary_preferences?: string[] | null
           full_name?: string | null
           id?: string
-          updated_at?: string | null
+          nutritional_goals?: Json | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
       recipe_approvals: {
         Row: {
-          created_at: string | null
+          created_at: string
           id: string
           recipe_id: string | null
           review_notes: string | null
           reviewed_at: string | null
           reviewed_by: string | null
-          status: string | null
-          submitted_at: string | null
-          submitted_by: string | null
-          updated_at: string | null
+          status: string
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           id?: string
           recipe_id?: string | null
           review_notes?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
-          status?: string | null
-          submitted_at?: string | null
-          submitted_by?: string | null
-          updated_at?: string | null
+          status?: string
+          updated_at?: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           id?: string
           recipe_id?: string | null
           review_notes?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
-          status?: string | null
-          submitted_at?: string | null
-          submitted_by?: string | null
-          updated_at?: string | null
+          status?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -317,53 +334,70 @@ export type Database = {
       }
       recipe_categories: {
         Row: {
-          category: string
-          created_at: string | null
+          category: string | null
+          created_at: string
           display_order: number | null
           id: string
           is_active: boolean | null
-          subcategory: string
-          updated_at: string | null
+          name: string
+          parent_id: string | null
+          slug: string
+          subcategory: string | null
         }
         Insert: {
-          category: string
-          created_at?: string | null
+          category?: string | null
+          created_at?: string
           display_order?: number | null
           id?: string
           is_active?: boolean | null
-          subcategory: string
-          updated_at?: string | null
+          name: string
+          parent_id?: string | null
+          slug: string
+          subcategory?: string | null
         }
         Update: {
-          category?: string
-          created_at?: string | null
+          category?: string | null
+          created_at?: string
           display_order?: number | null
           id?: string
           is_active?: boolean | null
-          subcategory?: string
-          updated_at?: string | null
+          name?: string
+          parent_id?: string | null
+          slug?: string
+          subcategory?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "recipe_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "recipe_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       recipe_ingredients: {
         Row: {
-          amount: number | null
+          created_at: string
           id: string
           ingredient_id: string | null
+          quantity: number | null
           recipe_id: string | null
           unit: string | null
         }
         Insert: {
-          amount?: number | null
+          created_at?: string
           id?: string
           ingredient_id?: string | null
+          quantity?: number | null
           recipe_id?: string | null
           unit?: string | null
         }
         Update: {
-          amount?: number | null
+          created_at?: string
           id?: string
           ingredient_id?: string | null
+          quantity?: number | null
           recipe_id?: string | null
           unit?: string | null
         }
@@ -384,171 +418,156 @@ export type Database = {
           },
         ]
       }
-      recipe_ratings: {
+      recipes: {
         Row: {
-          created_at: string | null
+          calories: number | null
+          carbs: number | null
+          category_id: string | null
+          cooking_time: number | null
+          created_at: string
+          cuisine_type: string | null
+          description: string | null
+          difficulty: string | null
+          fat: number | null
           id: string
+          image_url: string | null
+          instructions: Json | null
+          is_public: boolean | null
+          is_published: boolean | null
+          is_verified: boolean | null
+          prep_time: number | null
+          protein: number | null
           rating: number | null
-          recipe_id: string | null
-          review: string | null
-          updated_at: string | null
+          rating_count: number | null
+          servings: number | null
+          title: string
+          total_time: number | null
+          updated_at: string
           user_id: string | null
         }
         Insert: {
-          created_at?: string | null
+          calories?: number | null
+          carbs?: number | null
+          category_id?: string | null
+          cooking_time?: number | null
+          created_at?: string
+          cuisine_type?: string | null
+          description?: string | null
+          difficulty?: string | null
+          fat?: number | null
           id?: string
+          image_url?: string | null
+          instructions?: Json | null
+          is_public?: boolean | null
+          is_published?: boolean | null
+          is_verified?: boolean | null
+          prep_time?: number | null
+          protein?: number | null
           rating?: number | null
-          recipe_id?: string | null
-          review?: string | null
-          updated_at?: string | null
+          rating_count?: number | null
+          servings?: number | null
+          title: string
+          total_time?: number | null
+          updated_at?: string
           user_id?: string | null
         }
         Update: {
-          created_at?: string | null
+          calories?: number | null
+          carbs?: number | null
+          category_id?: string | null
+          cooking_time?: number | null
+          created_at?: string
+          cuisine_type?: string | null
+          description?: string | null
+          difficulty?: string | null
+          fat?: number | null
           id?: string
+          image_url?: string | null
+          instructions?: Json | null
+          is_public?: boolean | null
+          is_published?: boolean | null
+          is_verified?: boolean | null
+          prep_time?: number | null
+          protein?: number | null
           rating?: number | null
-          recipe_id?: string | null
-          review?: string | null
-          updated_at?: string | null
+          rating_count?: number | null
+          servings?: number | null
+          title?: string
+          total_time?: number | null
+          updated_at?: string
           user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "recipe_ratings_recipe_id_fkey"
-            columns: ["recipe_id"]
+            foreignKeyName: "recipes_category_id_fkey"
+            columns: ["category_id"]
             isOneToOne: false
-            referencedRelation: "recipes"
+            referencedRelation: "recipe_categories"
             referencedColumns: ["id"]
           },
         ]
       }
-      recipes: {
-        Row: {
-          author_id: string | null
-          calories: number | null
-          categories: string[] | null
-          category: string | null
-          cook_time: number | null
-          created_at: string | null
-          cuisine_type: string | null
-          description: string | null
-          difficulty: Database["public"]["Enums"]["difficulty_level"] | null
-          id: string
-          image_url: string | null
-          instructions: Json | null
-          is_verified: boolean | null
-          prep_time: number | null
-          servings: number | null
-          status: Database["public"]["Enums"]["recipe_status"] | null
-          subcategory: string | null
-          tags: string[] | null
-          title: string
-          updated_at: string | null
-        }
-        Insert: {
-          author_id?: string | null
-          calories?: number | null
-          categories?: string[] | null
-          category?: string | null
-          cook_time?: number | null
-          created_at?: string | null
-          cuisine_type?: string | null
-          description?: string | null
-          difficulty?: Database["public"]["Enums"]["difficulty_level"] | null
-          id?: string
-          image_url?: string | null
-          instructions?: Json | null
-          is_verified?: boolean | null
-          prep_time?: number | null
-          servings?: number | null
-          status?: Database["public"]["Enums"]["recipe_status"] | null
-          subcategory?: string | null
-          tags?: string[] | null
-          title: string
-          updated_at?: string | null
-        }
-        Update: {
-          author_id?: string | null
-          calories?: number | null
-          categories?: string[] | null
-          category?: string | null
-          cook_time?: number | null
-          created_at?: string | null
-          cuisine_type?: string | null
-          description?: string | null
-          difficulty?: Database["public"]["Enums"]["difficulty_level"] | null
-          id?: string
-          image_url?: string | null
-          instructions?: Json | null
-          is_verified?: boolean | null
-          prep_time?: number | null
-          servings?: number | null
-          status?: Database["public"]["Enums"]["recipe_status"] | null
-          subcategory?: string | null
-          tags?: string[] | null
-          title?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       translations: {
         Row: {
-          created_at: string | null
+          created_at: string
           id: string
           key: string
           language_code: string
-          updated_at: string | null
+          updated_at: string
           value: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           id?: string
           key: string
           language_code: string
-          updated_at?: string | null
+          updated_at?: string
           value: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           id?: string
           key?: string
           language_code?: string
-          updated_at?: string | null
+          updated_at?: string
           value?: string
         }
         Relationships: []
       }
-      user_challenge_progress: {
+      user_challenges: {
         Row: {
-          challenge_id: string | null
-          completed: boolean | null
+          challenge_id: string
           completed_at: string | null
-          created_at: string | null
-          date: string | null
+          created_at: string
           id: string
-          user_id: string | null
+          is_completed: boolean
+          progress: number
+          updated_at: string
+          user_id: string
         }
         Insert: {
-          challenge_id?: string | null
-          completed?: boolean | null
+          challenge_id: string
           completed_at?: string | null
-          created_at?: string | null
-          date?: string | null
+          created_at?: string
           id?: string
-          user_id?: string | null
+          is_completed?: boolean
+          progress?: number
+          updated_at?: string
+          user_id: string
         }
         Update: {
-          challenge_id?: string | null
-          completed?: boolean | null
+          challenge_id?: string
           completed_at?: string | null
-          created_at?: string | null
-          date?: string | null
+          created_at?: string
           id?: string
-          user_id?: string | null
+          is_completed?: boolean
+          progress?: number
+          updated_at?: string
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "user_challenge_progress_challenge_id_fkey"
+            foreignKeyName: "user_challenges_challenge_id_fkey"
             columns: ["challenge_id"]
             isOneToOne: false
             referencedRelation: "daily_challenges"
@@ -556,24 +575,53 @@ export type Database = {
           },
         ]
       }
-      user_roles: {
+      user_favorites: {
         Row: {
           created_at: string | null
           id: string
-          role: Database["public"]["Enums"]["user_role"]
+          recipe_id: string | null
           user_id: string | null
         }
         Insert: {
           created_at?: string | null
           id?: string
-          role?: Database["public"]["Enums"]["user_role"]
+          recipe_id?: string | null
           user_id?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
-          role?: Database["public"]["Enums"]["user_role"]
+          recipe_id?: string | null
           user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_favorites_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -582,19 +630,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      has_role: {
-        Args: {
-          _user_id: string
-          _role: Database["public"]["Enums"]["user_role"]
-        }
-        Returns: boolean
+      get_user_role: {
+        Args: { user_id: string }
+        Returns: string
       }
     }
     Enums: {
-      difficulty_level: "Easy" | "Medium" | "Hard"
-      meal_type: "breakfast" | "lunch" | "dinner" | "snack"
-      recipe_status: "draft" | "published" | "pending_review"
-      user_role: "user" | "admin" | "super_admin"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -709,11 +751,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      difficulty_level: ["Easy", "Medium", "Hard"],
-      meal_type: ["breakfast", "lunch", "dinner", "snack"],
-      recipe_status: ["draft", "published", "pending_review"],
-      user_role: ["user", "admin", "super_admin"],
-    },
+    Enums: {},
   },
 } as const
