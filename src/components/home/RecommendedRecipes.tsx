@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -34,8 +35,11 @@ export const RecommendedRecipes: React.FC<RecommendedRecipesProps> = ({
       title: 'Quick Pasta Primavera',
       description: 'Fresh vegetables with pasta in a light sauce',
       image: '/placeholder.svg',
+      image_url: '/placeholder.svg',
       prepTime: 15,
+      prep_time: 15,
       cookTime: 20,
+      cook_time: 20,
       servings: 4,
       difficulty: 'Easy' as const,
       calories: 320,
@@ -45,15 +49,25 @@ export const RecommendedRecipes: React.FC<RecommendedRecipesProps> = ({
       instructions: [],
       categories: ['Italian', 'Vegetarian'],
       tags: ['quick', 'healthy'],
-      isFavorite: false
+      isFavorite: false,
+      cuisine_type: 'Italian',
+      cuisineType: 'Italian',
+      status: 'published',
+      author_id: '1',
+      is_verified: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     },
     {
       id: '2',
       title: 'Mediterranean Bowl',
       description: 'Healthy bowl with quinoa and fresh vegetables',
       image: '/placeholder.svg',
+      image_url: '/placeholder.svg',
       prepTime: 10,
+      prep_time: 10,
       cookTime: 15,
+      cook_time: 15,
       servings: 2,
       difficulty: 'Easy' as const,
       calories: 280,
@@ -63,7 +77,14 @@ export const RecommendedRecipes: React.FC<RecommendedRecipesProps> = ({
       instructions: [],
       categories: ['Mediterranean', 'Healthy'],
       tags: ['bowl', 'quinoa'],
-      isFavorite: true
+      isFavorite: true,
+      cuisine_type: 'Mediterranean',
+      cuisineType: 'Mediterranean',
+      status: 'published',
+      author_id: '2',
+      is_verified: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     }
   ];
 
