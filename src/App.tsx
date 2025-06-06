@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@/contexts/ThemeContext';
@@ -87,13 +86,13 @@ import SupportTicketsPage from '@/pages/admin/SupportTicketsPage';
 import AdvertisementPage from '@/pages/admin/AdvertisementPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 import BottomToolbar from '@/components/layout/BottomToolbar';
+import MealTimingPage from '@/pages/MealTimingPage';
+import WeightManagementPage from '@/pages/WeightManagementPage';
+import ActivityMonitorPage from '@/pages/ActivityMonitorPage';
+import HealthGoalsPage from '@/pages/HealthGoalsPage';
 
 // --- NEW Placeholder Components for Health & Wellness Features ---
 const NutritionTrackingPage = () => <div>Nutrition Tracking Page (Coming Soon!)</div>;
-const WeightManagementPage = () => <div>Weight Management Page (Coming Soon!)</div>;
-const ActivityMonitorPage = () => <div>Activity Monitor Page (Coming Soon!)</div>;
-const HealthGoalsPage = () => <div>Health Goals Page (Coming Soon!)</div>;
-const MealTimingPage = () => <div>Meal Timing Page (Coming Soon!)</div>;
 
 // Default recipe for VoiceRecipeAssistant
 const defaultRecipe = {
