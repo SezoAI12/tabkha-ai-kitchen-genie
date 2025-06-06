@@ -1,114 +1,122 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export type Language = 'en' | 'ar' | 'tr' | 'fr';
+interface Language {
+  code: string;
+  name: string;
+  nativeName: string;
+  direction: 'ltr' | 'rtl';
+}
 
-export interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
-  t: (key: string, fallback?: string) => string;
-  availableLanguages: { code: Language; name: string; nativeName: string }[];
+interface LanguageContextType {
+  language: string;
+  setLanguage: (lang: string) => void;
+  t: (key: string) => string;
+  availableLanguages: Language[];
   isRTL: boolean;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-const translations = {
+const translations: Record<string, Record<string, string>> = {
   en: {
-    // Navigation
-    'Home': 'Home',
-    'Recipes': 'Recipes',
-    'Search': 'Search',
-    'Profile': 'Profile',
-    'Settings': 'Settings',
-    // Common
-    'Loading': 'Loading...',
-    'Error': 'Error',
-    'Save': 'Save',
-    'Cancel': 'Cancel',
-    'Delete': 'Delete',
-    'Edit': 'Edit'
+    'app.name': 'Wasfah',
+    'nav.home': 'Home',
+    'nav.explore': 'Explore',
+    'nav.mealPlan': 'Meal Plan',
+    'nav.pantry': 'Pantry',
+    'nav.profile': 'Profile',
+    'action.login': 'Login',
+    'action.register': 'Register',
+    'scan.title': 'Scan Dish',
+    'scan.subtitle': 'Identify Any Dish',
+    'scan.description': 'Take a photo or upload an image to get dish information, ingredients, and recipe suggestions',
+    'scan.takePhoto': 'Take Photo',
+    'scan.uploadPhoto': 'Upload Photo'
   },
   ar: {
-    // Navigation
-    'Home': 'الرئيسية',
-    'Recipes': 'الوصفات',
-    'Search': 'البحث',
-    'Profile': 'الملف الشخصي',
-    'Settings': 'الإعدادات',
-    // Common
-    'Loading': 'جاري التحميل...',
-    'Error': 'خطأ',
-    'Save': 'حفظ',
-    'Cancel': 'إلغاء',
-    'Delete': 'حذف',
-    'Edit': 'تعديل'
-  },
-  tr: {
-    // Navigation
-    'Home': 'Ana Sayfa',
-    'Recipes': 'Tarifler',
-    'Search': 'Ara',
-    'Profile': 'Profil',
-    'Settings': 'Ayarlar',
-    // Common
-    'Loading': 'Yükleniyor...',
-    'Error': 'Hata',
-    'Save': 'Kaydet',
-    'Cancel': 'İptal',
-    'Delete': 'Sil',
-    'Edit': 'Düzenle'
+    'app.name': 'وصفة',
+    'nav.home': 'الرئيسية',
+    'nav.explore': 'استكشف',
+    'nav.mealPlan': 'خطة الوجبات',
+    'nav.pantry': 'المخزن',
+    'nav.profile': 'الملف الشخصي',
+    'action.login': 'تسجيل الدخول',
+    'action.register': 'إنشاء حساب',
+    'scan.title': 'مسح الطبق',
+    'scan.subtitle': 'تحديد أي طبق',
+    'scan.description': 'التقط صورة أو قم بتحميل صورة للحصول على معلومات الطبق والمكونات واقتراحات الوصفات',
+    'scan.takePhoto': 'التقط صورة',
+    'scan.uploadPhoto': 'تحميل صورة'
   },
   fr: {
-    // Navigation
-    'Home': 'Accueil',
-    'Recipes': 'Recettes',
-    'Search': 'Recherche',
-    'Profile': 'Profil',
-    'Settings': 'Paramètres',
-    // Common
-    'Loading': 'Chargement...',
-    'Error': 'Erreur',
-    'Save': 'Enregistrer',
-    'Cancel': 'Annuler',
-    'Delete': 'Supprimer',
-    'Edit': 'Modifier'
+    'app.name': 'Wasfah',
+    'nav.home': 'Accueil',
+    'nav.explore': 'Explorer',
+    'nav.mealPlan': 'Plan de Repas',
+    'nav.pantry': 'Garde-manger',
+    'nav.profile': 'Profil',
+    'action.login': 'Connexion',
+    'action.register': 'S\'inscrire',
+    'scan.title': 'Scanner le Plat',
+    'scan.subtitle': 'Identifier Tout Plat',
+    'scan.description': 'Prenez une photo ou téléchargez une image pour obtenir des informations sur le plat, les ingrédients et les suggestions de recettes',
+    'scan.takePhoto': 'Prendre une Photo',
+    'scan.uploadPhoto': 'Télécharger une Photo'
   }
 };
 
+const availableLanguages: Language[] = [
+  { code: 'en', name: 'English', nativeName: 'English', direction: 'ltr' },
+  { code: 'ar', name: 'Arabic', nativeName: 'العربية', direction: 'rtl' },
+  { code: 'fr', name: 'French', nativeName: 'Français', direction: 'ltr' },
+  { code: 'es', name: 'Spanish', nativeName: 'Español', direction: 'ltr' },
+  { code: 'de', name: 'German', nativeName: 'Deutsch', direction: 'ltr' },
+  { code: 'it', name: 'Italian', nativeName: 'Italiano', direction: 'ltr' }
+];
+
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>('en');
+  const [language, setLanguageState] = useState('en');
 
-  const availableLanguages = [
-    { code: 'en' as Language, name: 'English', nativeName: 'English' },
-    { code: 'ar' as Language, name: 'Arabic', nativeName: 'العربية' },
-    { code: 'tr' as Language, name: 'Turkish', nativeName: 'Türkçe' },
-    { code: 'fr' as Language, name: 'French', nativeName: 'Français' }
-  ];
-
-  const isRTL = language === 'ar';
-
-  const t = (key: string, fallback?: string) => {
-    const translation = translations[language]?.[key as keyof typeof translations['en']];
-    return translation || fallback || key;
+  const setLanguage = (lang: string) => {
+    setLanguageState(lang);
+    localStorage.setItem('language', lang);
+    
+    // Update document direction for RTL languages
+    const selectedLang = availableLanguages.find(l => l.code === lang);
+    if (selectedLang) {
+      document.documentElement.dir = selectedLang.direction;
+      document.documentElement.lang = lang;
+    }
   };
 
+  const t = (key: string): string => {
+    return translations[language]?.[key] || translations['en']?.[key] || key;
+  };
+
+  const isRTL = availableLanguages.find(l => l.code === language)?.direction === 'rtl';
+
   useEffect(() => {
-    // Set document direction based on language
-    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
-    document.documentElement.lang = language;
-  }, [language, isRTL]);
+    const savedLanguage = localStorage.getItem('language');
+    if (savedLanguage && availableLanguages.some(l => l.code === savedLanguage)) {
+      setLanguage(savedLanguage);
+    } else {
+      // Detect browser language
+      const browserLang = navigator.language.split('-')[0];
+      if (availableLanguages.some(l => l.code === browserLang)) {
+        setLanguage(browserLang);
+      }
+    }
+  }, []);
 
   return (
-    <LanguageContext.Provider 
-      value={{ 
-        language, 
-        setLanguage, 
-        t, 
-        availableLanguages,
-        isRTL
-      }}
-    >
+    <LanguageContext.Provider value={{
+      language,
+      setLanguage,
+      t,
+      availableLanguages,
+      isRTL
+    }}>
       {children}
     </LanguageContext.Provider>
   );
