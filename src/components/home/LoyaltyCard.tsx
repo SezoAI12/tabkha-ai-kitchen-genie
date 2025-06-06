@@ -18,7 +18,7 @@ export const LoyaltyCard: React.FC = () => {
   }, []);
 
   return (
-    <Link to="/loyalty">
+    <Link to="/loyalty-program">
       <Card className="border-2 border-wasfah-bright-teal/20 hover:border-wasfah-bright-teal/40 hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] bg-gradient-to-r from-wasfah-bright-teal/5 to-wasfah-teal/5 animate-fade-in">
         <CardContent className="p-6">
           <div className={`flex items-center justify-between ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>

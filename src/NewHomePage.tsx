@@ -7,6 +7,7 @@ import { LoyaltyCard } from '@/components/home/LoyaltyCard';
 import { SubscriptionBanner } from '@/components/home/SubscriptionBanner';
 import { mockMealPlan } from '@/data/mockData';
 import { useRTL } from '@/contexts/RTLContext';
+import { Wine } from 'lucide-react';
 
 const NewHomePage = () => {
   const { t, direction } = useRTL();
@@ -65,6 +66,30 @@ const NewHomePage = () => {
             className="block group rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
           >
             <LoyaltyCard />
+          </Link>
+        </div>
+
+        {/* --- Alcohol Drinks Special Section --- */}
+        <div className="px-4">
+          <Link
+            to="/ai-find-by-ingredients?category=alcohol"
+            className="block group rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
+          >
+            <div className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-200 dark:border-amber-800 rounded-2xl p-6">
+              <div className={`flex items-center ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
+                <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
+                  <Wine className="h-8 w-8 text-white" />
+                </div>
+                <div className={direction === 'rtl' ? 'text-right' : 'text-left'}>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+                    {t("Alcohol Drinks", "المشروبات الكحولية")}
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {t("Explore cocktails, spirits & more", "استكشف الكوكتيلات والمشروبات الروحية وأكثر")}
+                  </p>
+                </div>
+              </div>
+            </div>
           </Link>
         </div>
 
