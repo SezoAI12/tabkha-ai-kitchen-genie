@@ -15,7 +15,7 @@ const NewHomePage = () => {
     {
       image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=150&h=150&fit=crop&crop=center",
       label: t("By Ingredients", "حسب المكونات"),
-      path: "/ai/recipe-finder",
+      path: "/ai-find-by-ingredients",
       color: "bg-emerald-500/10"
     },
     {
@@ -35,13 +35,7 @@ const NewHomePage = () => {
       label: t("Services", "الخدمات"),
       path: "/services",
       color: "bg-purple-500/10"
-    },
-    {
-      image: "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=150&h=150&fit=crop&crop=center",
-      label: t("Alcohol Recipes", "وصفات المشروبات الكحولية"),
-      path: "/ai-find-by-ingredients?category=alcohol",
-      color: "bg-amber-500/10"
-    },
+    }
   ];
 
   return (
@@ -81,7 +75,7 @@ const NewHomePage = () => {
               {t("Main Features", "الميزات الرئيسية")}
             </h2>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-2 sm:grid-cols-2 gap-4 mb-8">
             {mainFeatures.map((feature, index) => (
               <Link
                 key={index}
