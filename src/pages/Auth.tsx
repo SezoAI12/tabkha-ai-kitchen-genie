@@ -1,382 +1,358 @@
 
-import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
-import { useToast } from '@/hooks/use-toast';
-import { Eye, EyeOff, Mail, Phone } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, Globe, Phone } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-const AuthPage = () => {
-  const navigate = useNavigate();
-  const { lang } = useParams();
-  const { language } = useLanguage();
-  const { signIn, signInWithPhone, signUp, signUpWithPhone, sendOTP, verifyOTP, signInWithGoogle, signInWithFacebook } = useAuth();
-  const { toast } = useToast();
-  
-  const currentLanguage = lang || language || 'en';
-  
-  const [isLogin, setIsLogin] = useState(true);
-  const [authMethod, setAuthMethod] = useState<'email' | 'phone'>('email');
+const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [showOTPForm, setShowOTPForm] = useState(false);
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
-  
-  const [formData, setFormData] = useState({
-    email: '',
-    phone: '',
-    password: '',
-    fullName: '',
-    otp: ''
-  });
+  const [loginMethod, setLoginMethod] = useState<'email' | 'phone'>('email');
+  const { signIn, signUp, session } = useAuth();
+  const { t, language, setLanguage, availableLanguages } = useLanguage();
+  const navigate = useNavigate();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      if (showOTPForm) {
-        await verifyOTP(formData.phone, formData.otp);
-        toast({
-          title: 'Success!',
-          description: 'Phone verified successfully!'
-        });
-        navigate(`/${currentLanguage}/home`);
-        return;
-      }
-
-      if (isLogin) {
-        if (authMethod === 'email') {
-          await signIn(formData.email, formData.password);
-        } else {
-          await signInWithPhone(formData.phone, formData.password);
-        }
-        toast({
-          title: 'Welcome back!',
-          description: 'You have been signed in successfully.'
-        });
-        navigate(`/${currentLanguage}/home`);
-      } else {
-        if (authMethod === 'email') {
-          await signUp(formData.email, formData.password);
-          toast({
-            title: 'Account created!',
-            description: 'Please check your email to verify your account.'
-          });
-        } else {
-          await signUpWithPhone(formData.phone, formData.password, formData.fullName);
-          toast({
-            title: 'Account created!',
-            description: 'Please verify your phone number.'
-          });
-        }
-      }
-    } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.message || 'An error occurred during authentication.',
-        variant: 'destructive'
-      });
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (session) {
+      navigate("/");
     }
-  };
+  }, [session, navigate]);
 
-  const handleSendOTP = async () => {
-    if (!formData.phone) {
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const identifier = loginMethod === 'email' ? email : phone;
+    
+    if (!identifier || !password) {
       toast({
-        title: 'Error',
-        description: 'Please enter your phone number.',
-        variant: 'destructive'
+        title: t("error.title") || "Error",
+        description: t("error.fillFields") || "Please fill in all fields",
+        variant: "destructive",
       });
       return;
     }
 
     setLoading(true);
     try {
-      await sendOTP(formData.phone);
-      setShowOTPForm(true);
+      await signIn(identifier, password);
       toast({
-        title: 'OTP Sent!',
-        description: 'Please check your phone for the verification code.'
+        title: t("success.title") || "Success",
+        description: t("success.signedIn") || "Signed in successfully!",
       });
     } catch (error: any) {
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to send OTP.',
-        variant: 'destructive'
+        title: t("error.title") || "Error",
+        description: error.message || t("error.signInFailed") || "Failed to sign in",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleAuth = async () => {
-    await signInWithGoogle();
-  };
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !phone || !password || !confirmPassword || !fullName) {
+      toast({
+        title: t("error.title") || "Error",
+        description: t("error.fillFields") || "Please fill in all fields",
+        variant: "destructive",
+      });
+      return;
+    }
 
-  const handleFacebookAuth = async () => {
-    await signInWithFacebook();
+    if (password !== confirmPassword) {
+      toast({
+        title: t("error.title") || "Error",
+        description: t("error.passwordMismatch") || "Passwords do not match",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (password.length < 6) {
+      toast({
+        title: t("error.title") || "Error",
+        description: t("error.passwordLength") || "Password must be at least 6 characters",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Phone number validation
+    const phoneRegex = /^\+?[\d\s\-\(\)]{10,}$/;
+    if (!phoneRegex.test(phone)) {
+      toast({
+        title: t("error.title") || "Error",
+        description: "Please enter a valid phone number",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await signUp(email, password);
+      toast({
+        title: t("success.title") || "Success",
+        description: t("success.accountCreated") || "Account created successfully! Please check your email for verification.",
+      });
+    } catch (error: any) {
+      toast({
+        title: t("error.title") || "Error",
+        description: error.message || t("error.accountCreationFailed") || "Failed to create account",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-red-50 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-orange-600">
-            {isLogin ? 'Welcome Back' : 'Create Account'}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Social Login Buttons */}
-          <div className="space-y-3">
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full"
-              onClick={handleGoogleAuth}
-              disabled={loading}
-            >
-              <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-              </svg>
-              Continue with Google
-            </Button>
-            
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full"
-              onClick={handleFacebookAuth}
-              disabled={loading}
-            >
-              <svg className="w-5 h-5 mr-2" fill="#1877F2" viewBox="0 0 24 24">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-              Continue with Facebook
-            </Button>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-wasfah-cream via-white to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div className="flex items-center justify-between mb-4">
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/")}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft size={16} />
+            {t("action.backHome") || "Back to Home"}
+          </Button>
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <Separator className="w-full" />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <Globe size={16} />
+                <span className="hidden sm:inline">
+                  {availableLanguages.find(lang => lang.code === language)?.nativeName || 'English'}
+                </span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              {availableLanguages.map((lang) => (
+                <DropdownMenuItem
+                  key={lang.code}
+                  onClick={() => setLanguage(lang.code)}
+                  className={language === lang.code ? "bg-wasfah-orange/10" : ""}
+                >
+                  <span className="flex-1">{lang.nativeName}</span>
+                  <span className="text-sm text-gray-500">{lang.name}</span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        <Card className="shadow-lg dark:bg-gray-800 dark:border-gray-700">
+          <CardHeader className="text-center">
+            <div className="w-16 h-16 bg-gradient-to-r from-wasfah-orange to-wasfah-green rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-white font-bold text-2xl">W</span>
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-muted-foreground">
-                Or continue with
-              </span>
-            </div>
-          </div>
+            <CardTitle className="text-2xl font-display dark:text-white">{t("app.name")}</CardTitle>
+            <CardDescription className="dark:text-gray-300">{t("app.tagline")}</CardDescription>
+          </CardHeader>
 
-          {/* Auth Method Tabs */}
-          <Tabs value={authMethod} onValueChange={(value) => setAuthMethod(value as 'email' | 'phone')}>
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="email" className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                Email
-              </TabsTrigger>
-              <TabsTrigger value="phone" className="flex items-center gap-2">
-                <Phone className="h-4 w-4" />
-                Phone
-              </TabsTrigger>
-            </TabsList>
+          <CardContent>
+            <Tabs defaultValue="signin" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="signin">{t("action.login")}</TabsTrigger>
+                <TabsTrigger value="signup">{t("action.register")}</TabsTrigger>
+              </TabsList>
 
-            <TabsContent value="email" className="space-y-4">
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder="Enter your email"
-                    required
-                  />
-                </div>
-
-                {!isLogin && (
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName">Full Name</Label>
-                    <Input
-                      id="fullName"
-                      name="fullName"
-                      type="text"
-                      value={formData.fullName}
-                      onChange={handleInputChange}
-                      placeholder="Enter your full name"
-                      required
-                    />
-                  </div>
-                )}
-
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      name="password"
-                      type={showPassword ? 'text' : 'password'}
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      placeholder="Enter your password"
-                      required
-                    />
-                    <Button
+              <TabsContent value="signin">
+                <form onSubmit={handleSignIn} className="space-y-4">
+                  {/* Login Method Toggle */}
+                  <div className="flex space-x-1 bg-gray-100 dark:bg-gray-700 p-1 rounded-md">
+                    <button
                       type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={() => setLoginMethod('email')}
+                      className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-colors ${
+                        loginMethod === 'email'
+                          ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow'
+                          : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                      }`}
                     >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </Button>
+                      Email
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLoginMethod('phone')}
+                      className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-colors ${
+                        loginMethod === 'phone'
+                          ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow'
+                          : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                      }`}
+                    >
+                      Phone
+                    </button>
                   </div>
-                </div>
 
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? 'Processing...' : isLogin ? 'Sign In' : 'Sign Up'}
-                </Button>
-              </form>
-            </TabsContent>
-
-            <TabsContent value="phone" className="space-y-4">
-              {!showOTPForm ? (
-                <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      placeholder="+1234567890"
-                      required
-                    />
-                  </div>
-
-                  {!isLogin && (
-                    <>
-                      <div className="space-y-2">
-                        <Label htmlFor="fullName">Full Name</Label>
-                        <Input
-                          id="fullName"
-                          name="fullName"
-                          type="text"
-                          value={formData.fullName}
-                          onChange={handleInputChange}
-                          placeholder="Enter your full name"
-                          required
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="password">Password</Label>
-                        <div className="relative">
+                    <div className="relative">
+                      {loginMethod === 'email' ? (
+                        <>
+                          <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                           <Input
-                            id="password"
-                            name="password"
-                            type={showPassword ? 'text' : 'password'}
-                            value={formData.password}
-                            onChange={handleInputChange}
-                            placeholder="Enter your password"
+                            type="email"
+                            placeholder={t("auth.email") || "Email"}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="pl-10"
                             required
                           />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                            onClick={() => setShowPassword(!showPassword)}
-                          >
-                            {showPassword ? (
-                              <EyeOff className="h-4 w-4" />
-                            ) : (
-                              <Eye className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </div>
-                      </div>
-
-                      <Button type="button" onClick={handleSubmit} className="w-full" disabled={loading}>
-                        {loading ? 'Processing...' : 'Sign Up'}
-                      </Button>
-                    </>
-                  )}
-
-                  {isLogin && (
-                    <Button type="button" onClick={handleSendOTP} className="w-full" disabled={loading}>
-                      {loading ? 'Sending...' : 'Send OTP'}
-                    </Button>
-                  )}
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="otp">Verification Code</Label>
-                    <Input
-                      id="otp"
-                      name="otp"
-                      type="text"
-                      value={formData.otp}
-                      onChange={handleInputChange}
-                      placeholder="Enter 6-digit code"
-                      required
-                    />
+                        </>
+                      ) : (
+                        <>
+                          <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <Input
+                            type="tel"
+                            placeholder="Phone Number"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            className="pl-10"
+                            required
+                          />
+                        </>
+                      )}
+                    </div>
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? 'Verifying...' : 'Verify & Sign In'}
-                  </Button>
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder={t("auth.password") || "Password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="pl-10 pr-10"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-3 h-4 w-4 text-gray-400"
+                      >
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
+                  </div>
 
                   <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => setShowOTPForm(false)}
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-wasfah-orange to-wasfah-green"
+                    disabled={loading}
                   >
-                    Back
+                    {loading ? t("auth.signingIn") || "Signing In..." : t("action.login")}
                   </Button>
                 </form>
-              )}
-            </TabsContent>
-          </Tabs>
+              </TabsContent>
 
-          <div className="text-center">
-            <Button
-              type="button"
-              variant="link"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-orange-600"
-            >
-              {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+              <TabsContent value="signup">
+                <form onSubmit={handleSignUp} className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Input
+                        type="text"
+                        placeholder={t("auth.fullName") || "Full Name"}
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Input
+                        type="email"
+                        placeholder={t("auth.email") || "Email Address"}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Input
+                        type="tel"
+                        placeholder="Mobile Number"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder={t("auth.password") || "Password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Input
+                        type="password"
+                        placeholder={t("auth.confirmPassword") || "Confirm Password"}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-wasfah-orange to-wasfah-green"
+                    disabled={loading}
+                  >
+                    {loading ? t("auth.creatingAccount") || "Creating Account..." : t("action.register")}
+                  </Button>
+                </form>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
 
-export default AuthPage;
+export default Auth;

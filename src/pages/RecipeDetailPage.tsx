@@ -13,11 +13,12 @@ import {
   ChefHat,
   Flame,
   PlayCircle,
-  ShoppingCart
+  ShoppingCart,
+  Plus
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Recipe } from '@/types/index';
-import { MealPlanManager } from '@/components/meal-plan/MealPlanManager';
+import { CookingMode } from '@/components/recipe/CookingMode';
 
 // Mock recipe data
 const mockRecipe: Recipe = {
@@ -25,23 +26,32 @@ const mockRecipe: Recipe = {
   title: 'Mediterranean Quinoa Bowl',
   description: 'A healthy and delicious quinoa bowl with fresh Mediterranean flavors',
   image: 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=800&h=600&fit=crop',
+  image_url: 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=800&h=600&fit=crop',
   prepTime: 15,
+  prep_time: 15,
   cookTime: 20,
+  cook_time: 20,
   servings: 4,
   difficulty: 'Easy',
   calories: 450,
   rating: 4.5,
   ratingCount: 128,
   cuisineType: 'Mediterranean',
+  cuisine_type: 'Mediterranean',
   categories: ['Healthy', 'Vegetarian'],
   tags: ['Quick', 'Easy', 'Nutritious'],
+  status: 'published',
+  author_id: 'user-1',
+  is_verified: true,
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
   isFavorite: false,
   ingredients: [
-    { id: '1', name: 'Quinoa', amount: '1', unit: 'cup', category: 'grains', inPantry: false },
-    { id: '2', name: 'Cherry tomatoes', amount: '200', unit: 'g', category: 'vegetables', inPantry: false },
-    { id: '3', name: 'Cucumber', amount: '1', unit: 'medium', category: 'vegetables', inPantry: false },
-    { id: '4', name: 'Red onion', amount: '1/2', unit: 'medium', category: 'vegetables', inPantry: false },
-    { id: '5', name: 'Feta cheese', amount: '100', unit: 'g', category: 'dairy', inPantry: false }
+    { id: '1', name: 'Quinoa', amount: 1, unit: 'cup', inPantry: false },
+    { id: '2', name: 'Cherry tomatoes', amount: 200, unit: 'g', inPantry: false },
+    { id: '3', name: 'Cucumber', amount: 1, unit: 'medium', inPantry: false },
+    { id: '4', name: 'Red onion', amount: 0.5, unit: 'medium', inPantry: false },
+    { id: '5', name: 'Feta cheese', amount: 100, unit: 'g', inPantry: false }
   ],
   instructions: [
     'Rinse quinoa under cold water until water runs clear',
@@ -58,6 +68,7 @@ const RecipeDetailPage = () => {
   const { toast } = useToast();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [showCookingMode, setShowCookingMode] = useState(false);
 
   useEffect(() => {
     // In a real app, fetch recipe by id
@@ -90,24 +101,39 @@ const RecipeDetailPage = () => {
   };
 
   const handleStartCooking = () => {
-    navigate(`/cooking/${recipe?.id}`);
+    setShowCookingMode(true);
   };
 
-  const handleAddToMealPlan = async (recipeId: string, mealType: string, date: string) => {
+  const handleCloseCookingMode = () => {
+    setShowCookingMode(false);
+  };
+
+  const handleAddToMealPlan = async () => {
     try {
       // Here you would typically make an API call to save to meal plan
       // For now, we'll just show a success message
-      console.log('Adding to meal plan:', { recipeId, mealType, date });
+      console.log('Adding to meal plan:', { recipeId: recipe?.id });
       
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      return Promise.resolve();
+      toast({
+        title: "Added to meal plan",
+        description: "Recipe has been added to your meal plan",
+      });
     } catch (error) {
       console.error('Error adding to meal plan:', error);
-      throw error;
+      toast({
+        title: "Error",
+        description: "Failed to add recipe to meal plan",
+        variant: "destructive",
+      });
     }
   };
+
+  if (showCookingMode && recipe) {
+    return <CookingMode recipe={recipe} onClose={handleCloseCookingMode} />;
+  }
 
   if (!recipe) {
     return (
@@ -182,28 +208,17 @@ const RecipeDetailPage = () => {
           </Card>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-4 mb-6">
-          <Button
-            variant={recipe.isFavorite ? "default" : "outline"}
-            onClick={handleToggleFavorite}
-            className="flex-1"
-          >
-            <Heart className={`h-4 w-4 mr-2 ${recipe.isFavorite ? 'fill-current' : ''}`} />
-            {recipe.isFavorite ? 'Favorited' : 'Add to Favorites'}
-          </Button>
-          
-          <MealPlanManager 
-            recipe={recipe} 
-            onAddToMealPlan={handleAddToMealPlan}
-          />
-          
-          <Button variant="outline" className="flex-1">
-            <Share2 className="h-4 w-4 mr-2" />
-            Share Recipe
-          </Button>
-        </div>
+        {/* Cook Now Button - Prominent placement */}
+        <Button
+          onClick={handleStartCooking}
+          className="w-full bg-gradient-to-r from-wasfah-bright-teal to-wasfah-teal hover:from-wasfah-teal hover:to-wasfah-deep-teal text-white font-semibold py-6 text-lg"
+          size="lg"
+        >
+          <PlayCircle className="h-6 w-6 mr-2" />
+          Start Cooking Mode
+        </Button>
 
+        {/* Action Buttons */}
         <div className="grid grid-cols-3 gap-3">
           <Button 
             variant="outline" 
@@ -219,9 +234,9 @@ const RecipeDetailPage = () => {
             Share
           </Button>
           
-          <Button variant="outline">
-            <ShoppingCart className="h-4 w-4 mr-2" />
-            Shop
+          <Button variant="outline" onClick={handleAddToMealPlan}>
+            <Plus className="h-4 w-4 mr-2" />
+            Meal Plan
           </Button>
         </div>
 

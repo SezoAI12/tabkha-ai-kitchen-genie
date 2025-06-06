@@ -49,8 +49,13 @@ const MainSettingsPage = () => {
     }
   ];
 
-  // Add admin panel if user is admin
-  if (user?.user_metadata?.isAdmin) {
+  // Add admin panel - check multiple conditions for admin access
+  const isAdmin = user?.role === 'admin' || 
+                  user?.role === 'super_admin' || 
+                  user?.user_metadata?.isAdmin ||
+                  user?.email === 'admin@wasfah.ai'; // fallback for demo
+
+  if (isAdmin) {
     settingGroups.push({
       title: t("Administration", "الإدارة", "Yönetim"),
       items: [

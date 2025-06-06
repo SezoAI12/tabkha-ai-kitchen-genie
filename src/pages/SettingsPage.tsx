@@ -20,7 +20,8 @@ const SettingsPage = () => {
       title: t("User Settings", "إعدادات المستخدم", "Kullanıcı Ayarları"),
       items: [
         { id: 'profile', icon: <User className="h-6 w-6 text-wasfah-deep-teal" />, label: t("Profile", "الملف الشخصي", "Profil"), path: "/profile" },
-        { id: 'preferences', icon: <UserX className="h-6 w-6 text-gray-600" />, label: t("Preferences", "التفضيلات", "Tercihler"), path: "/dietary-preferences" },
+        { id: 'body-info', icon: <User className="h-6 w-6 text-pink-600" />, label: t("Body Information", "معلومات الجسم", "Vücut Bilgileri"), path: "/body-information" },
+        { id: 'preferences', icon: <UserX className="h-6 w-6 text-gray-600" />, label: t("Dietary Preferences", "التفضيلات الغذائية", "Beslenme Tercihleri"), path: "/dietary-preferences" },
       ]
     },
     {
@@ -51,7 +52,7 @@ const SettingsPage = () => {
 
   // Add admin panel if user is admin
   if (user?.user_metadata?.isAdmin) {
-    settingGroups.push({
+    settingGroups.unshift({
       title: t("Administration", "الإدارة", "Yönetim"),
       items: [
         { id: 'admin-panel', icon: <Settings className="h-6 w-6 text-purple-600" />, label: t("Admin Panel", "لوحة الإدارة", "Yönetici Paneli"), path: "/admin" },
