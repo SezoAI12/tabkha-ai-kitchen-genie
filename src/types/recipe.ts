@@ -3,13 +3,13 @@ export interface Recipe {
   id: string;
   title: string;
   description: string;
-  image: string;
-  prepTime: number;
-  cookTime: number;
+  image_url: string;
+  prep_time: number;
+  cook_time: number;
   servings: number;
   difficulty: 'Easy' | 'Medium' | 'Hard';
   calories: number;
-  cuisineType: string;
+  cuisine_type: string;
   instructions: string[];
   categories: string[];
   tags: string[];
@@ -22,11 +22,6 @@ export interface Recipe {
   rating?: number;
   ratingCount?: number;
   isFavorite?: boolean;
-  // Database field names for compatibility
-  prep_time?: number;
-  cook_time?: number;
-  cuisine_type?: string;
-  image_url?: string;
 }
 
 export interface RecipeIngredient {
@@ -45,10 +40,10 @@ export interface RecipeFilters {
 export interface IngredientImage {
   id: string;
   ingredient_name: string;
+  name: string;
   image_url: string;
   alt_text: string;
   category: string;
-  name: string;
   created_at: string;
   updated_at: string;
 }
